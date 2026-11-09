@@ -45,7 +45,7 @@
     var login = BL.h('a', { class: 'login', href: '/login.html', text: 'Log in' });
     var sign = BL.h('a', { class: 'btn primary', href: '/register.html', text: 'Sign up' });
     var bar = BL.h('div', { class: 'nav' }, BL.h('div', { class: 'wrap' },
-      BL.h('a', { class: 'brand', href: '/' }, BL.h('img', { src: '/assets/logo.png', alt: '' }), BL.h('b', { text: 'Botclub Labs' })),
+      BL.h('a', { class: 'brand', href: '/', 'aria-label': 'Botclub Labs home' }, BL.h('img', { src: '/assets/logo-wide.png', alt: 'Botclub Labs' })),
       linkBox, right, login, sign,
       BL.h('button', { class: 'menu-btn', 'aria-label': 'Menu', text: '☰', onclick: function () { linkBox.classList.toggle('open'); } })));
     mount.replaceWith(bar);
@@ -61,7 +61,7 @@
   BL.footer = function (mount) {
     var h = BL.h;
     mount.replaceWith(h('footer', null, h('div', { class: 'wrap' },
-      h('div', null, h('div', { class: 'f-brand' }, h('img', { src: '/assets/logo.png', alt: '' }), h('span', { text: 'Botclub Labs' })),
+      h('div', null, h('div', { class: 'f-brand' }, h('img', { src: '/assets/logo-wide.png', alt: 'Botclub Labs' })),
         h('p', { class: 'f-note', text: 'NCERT science as hands-on simulations for Classes 6 to 10. Learn by doing, not just reading.' })),
       h('div', null, h('h4', { text: 'Explore' }), h('nav', null, h('a', { href: '/#how', text: 'How it works' }), h('a', { href: '/#pricing', text: 'Pricing' }), h('a', { href: '/#faq', text: 'FAQ' }), h('a', { href: '/register.html', text: 'Create account' }))),
       h('div', null, h('h4', { text: 'Legal' }), h('nav', null, h('a', { href: '/privacy.html', text: 'Privacy Policy' }), h('a', { href: '/terms.html', text: 'Terms of Use' }), h('a', { href: '/refund.html', text: 'Refund Policy' }))),
