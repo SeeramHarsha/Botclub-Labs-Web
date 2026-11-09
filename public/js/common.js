@@ -39,6 +39,8 @@
     opts = opts || {};
     var links = opts.landing ? [['#how', 'How it works'], ['#features', 'Features'], ['#try', 'Try it'], ['#pricing', 'Pricing'], ['#faq', 'FAQ']] : [];
     var linkBox = BL.h('div', { class: 'links' }, links.map(function (l) { return BL.h('a', { href: (opts.landing ? '' : '/') + l[0], text: l[1], onclick: function () { linkBox.classList.remove('open'); } }); }));
+    var mobileLogin = BL.h('a', { class: 'only-m', href: '/login.html', text: 'Log in' });
+    linkBox.appendChild(mobileLogin);
     var right = BL.h('span', { class: 'sp' });
     var login = BL.h('a', { class: 'login', href: '/login.html', text: 'Log in' });
     var sign = BL.h('a', { class: 'btn primary', href: '/register.html', text: 'Sign up' });
@@ -49,16 +51,21 @@
     mount.replaceWith(bar);
     BL.me().then(function (m) {
       if (!m || !m.user) return;
-      login.textContent = m.user.name.split(' ')[0]; login.href = '/app';
+      mobileLogin.textContent = m.user.role === 'admin' ? 'Student view' : 'My learning'; mobileLogin.href = '/app';
+      if (m.user.role === 'admin') { login.textContent = 'Student view'; } else { login.textContent = m.user.name.split(' ')[0]; }
+      login.href = '/app';
       sign.textContent = m.user.role === 'admin' ? 'Admin' : 'Open app'; sign.href = m.user.role === 'admin' ? '/admin' : '/app';
     });
   };
 
   BL.footer = function (mount) {
-    mount.replaceWith(BL.h('footer', null, BL.h('div', { class: 'wrap' },
-      BL.h('div', null, BL.h('b', { text: 'Botclub Labs' }), BL.h('div', { text: 'NCERT science, as hands-on simulations. Classes 6 to 10.' })),
-      BL.h('nav', null, BL.h('a', { href: '/privacy.html', text: 'Privacy' }), BL.h('a', { href: '/terms.html', text: 'Terms' }), BL.h('a', { href: '/refund.html', text: 'Refunds' })),
-      BL.h('div', { text: '© ' + new Date().getFullYear() + ' Botclub Labs' }))));
+    var h = BL.h;
+    mount.replaceWith(h('footer', null, h('div', { class: 'wrap' },
+      h('div', null, h('div', { class: 'f-brand' }, h('img', { src: '/assets/logo.png', alt: '' }), h('span', { text: 'Botclub Labs' })),
+        h('p', { class: 'f-note', text: 'NCERT science as hands-on simulations for Classes 6 to 10. Learn by doing, not just reading.' })),
+      h('div', null, h('h4', { text: 'Explore' }), h('nav', null, h('a', { href: '/#how', text: 'How it works' }), h('a', { href: '/#pricing', text: 'Pricing' }), h('a', { href: '/#faq', text: 'FAQ' }), h('a', { href: '/register.html', text: 'Create account' }))),
+      h('div', null, h('h4', { text: 'Legal' }), h('nav', null, h('a', { href: '/privacy.html', text: 'Privacy Policy' }), h('a', { href: '/terms.html', text: 'Terms of Use' }), h('a', { href: '/refund.html', text: 'Refund Policy' }))),
+      h('div', { class: 'f-copy' }, h('span', { text: '© ' + new Date().getFullYear() + ' Botclub Labs. All rights reserved.' }), h('span', { text: 'Made for curious students in India' })))));
   };
 
   /** which element (if any) is the page's mount point */
