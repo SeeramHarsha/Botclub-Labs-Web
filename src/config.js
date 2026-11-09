@@ -18,7 +18,7 @@ const list = (v) => String(v || '').split(',').map((s) => s.trim()).filter(Boole
 let paymentMode = (env.PAYMENT_MODE || '').toLowerCase();
 if (!paymentMode) paymentMode = env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET ? 'razorpay' : production ? 'off' : 'demo';
 if (!['razorpay', 'demo', 'off'].includes(paymentMode)) paymentMode = 'off';
-if (paymentMode === 'razorpay' && !(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET)) { problems.push('PAYMENT_MODE=razorpay needs RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET'); paymentMode = 'off'; }
+if (paymentMode === 'razorpay' && !(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET)) { console.warn('PAYMENT_MODE=razorpay but RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET are not set: payments are switched off until they are added.'); paymentMode = 'off'; }
 
 const config = {
   production,
