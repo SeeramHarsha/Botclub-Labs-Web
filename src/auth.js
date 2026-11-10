@@ -83,6 +83,16 @@ async function login(emailRaw, password) {
 
 /** First start: create the admin from ADMIN_EMAIL / ADMIN_PASSWORD when there is no admin at all. */
 async function bootstrapAdmin() {
+  if (config.adminReset && config.adminEmail && config.adminPassword) {
+    if (!isEmail(cleanEmail(config.adminEmail)) || !strongEnough(config.adminPassword)) { console.warn('ADMIN_RESET: ADMIN_EMAIL or ADMIN_PASSWORD is not valid (password: at least 8 characters).'); }
+    else {
+      const passwordHash = await hash(config.adminPassword);
+      const adminEmail = cleanEmail(config.adminEmail);
+      const r = await users().updateOne({ email: adminEmail }, { $set: { role: 'admin', passwordHash, disabled: false, failedLogins: 0, lockUntil: null }, $setOnInsert: { name: 'Admin', cls: null, school: '', phone: '', consentAt: null, createdAt: new Date(), lastLoginAt: null } }, { upsert: true, collation: { locale: 'en', strength: 2 } });
+      console.log('ADMIN_RESET: ' + (r.upsertedCount ? 'admin created: ' : 'admin password reset: ') + adminEmail + ' (remove ADMIN_RESET now)');
+      return true;
+    }
+  }
   if (await users().countDocuments({ role: 'admin' }) > 0) return false;
   if (!config.adminEmail || !config.adminPassword) { console.warn('There is no admin yet. Set ADMIN_EMAIL and ADMIN_PASSWORD (or run: npm run make-admin).'); return false; }
   if (!isEmail(config.adminEmail) || !strongEnough(config.adminPassword)) { console.warn('ADMIN_EMAIL or ADMIN_PASSWORD is not valid (password: at least 8 characters).'); return false; }

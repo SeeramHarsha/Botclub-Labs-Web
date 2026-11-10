@@ -42,6 +42,8 @@ const config = {
   // the first admin (created only when there are no admins yet)
   adminEmail: (env.ADMIN_EMAIL || '').trim().toLowerCase() || null,
   adminPassword: env.ADMIN_PASSWORD || null,
+  // set ADMIN_RESET=true for one start to (re)create that admin with that password even if admins already exist; remove it afterwards
+  adminReset: String(env.ADMIN_RESET || '').toLowerCase() === 'true',
   // chapters every registered student can open for free (class/chapter), the free trial
   trialChapters: list(env.TRIAL_CHAPTERS || '6/1,7/1,8/1,9/1,10/1'),
   // the Botclub Labs apps (Windows, Android, Linux) send usage here; kept in their own database so the data of the earlier analytics service can be reused

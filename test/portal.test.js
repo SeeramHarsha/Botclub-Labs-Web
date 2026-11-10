@@ -235,6 +235,19 @@ test('apps report usage; the admin sees schools, screens and curriculum progress
   assert.equal((await b.call('/api/v1/ingest', { method: 'POST', body, headers: auth, raw: true })).status, 401);         // a blocked screen is refused
 });
 
+test('ADMIN_RESET creates or resets an admin with a known password even when admins already exist', async () => {
+  const config = require('../src/config'), auth = require('../src/auth'), b = browser();
+  Object.assign(config, { adminReset: true, adminEmail: 'Boss@Test.org', adminPassword: 'Test-admin-pass-1' });
+  await auth.bootstrapAdmin();
+  assert.equal((await b.call('/api/auth/login', { method: 'POST', body: { email: 'boss@test.org', password: 'Test-admin-pass-1' } })).status, 200);
+  assert.equal((await b.call('/api/admin/summary')).status, 200);
+  Object.assign(config, { adminPassword: 'Another-pass-99' });
+  await auth.bootstrapAdmin();                                                     // second run resets the password of the same account
+  assert.equal((await browser().call('/api/auth/login', { method: 'POST', body: { email: 'boss@test.org', password: 'Test-admin-pass-1' } })).status, 401);
+  assert.equal((await browser().call('/api/auth/login', { method: 'POST', body: { email: 'BOSS@test.org', password: 'Another-pass-99' } })).status, 200);
+  Object.assign(config, { adminReset: false });
+});
+
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {
   const { spawn } = require('node:child_process'), path = require('node:path');
   const run = async (env, port) => {
