@@ -47,7 +47,7 @@
     var bar = BL.h('div', { class: 'nav' }, BL.h('div', { class: 'wrap' },
       BL.h('a', { class: 'brand', href: '/', 'aria-label': 'Botclub Labs home' }, BL.h('img', { src: '/assets/logo-wide.png', alt: 'Botclub Labs' })),
       linkBox, right, login, sign,
-      BL.h('button', { class: 'menu-btn', 'aria-label': 'Menu', text: '☰', onclick: function () { linkBox.classList.toggle('open'); } })));
+      opts.landing ? BL.h('button', { class: 'menu-btn', 'aria-label': 'Menu', text: '☰', onclick: function () { linkBox.classList.toggle('open'); } }) : null));
     mount.replaceWith(bar);
     BL.me().then(function (m) {
       if (!m || !m.user) return;
@@ -55,6 +55,7 @@
       if (m.user.role === 'admin') { login.textContent = 'Student view'; } else { login.textContent = m.user.name.split(' ')[0]; }
       login.href = '/app';
       sign.textContent = m.user.role === 'admin' ? 'Admin' : 'Open app'; sign.href = m.user.role === 'admin' ? '/admin' : '/app';
+      if (/^\/(app|admin)(\/|$)/.test(location.pathname)) sign.classList.add('hide-m');
     });
   };
 

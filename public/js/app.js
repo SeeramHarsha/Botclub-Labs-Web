@@ -18,7 +18,7 @@
     var tabs = [['#/', 'Home'], ['#/plans', 'Plans'], ['#/profile', 'Profile']];
     return [
       h('div', { class: 'app-top' }, h('div', null, h('h1', { text: title }), sub ? h('div', { class: 'micro', text: sub }) : null)),
-      h('div', { class: 'subnav' }, tabs.map(function (t) { return h('a', { href: t[0], class: t[0] === active ? 'on' : '', text: t[1] }); }),
+      h('div', { class: 'subnav tabbar' }, tabs.map(function (t) { return h('a', { href: t[0], class: t[0] === active ? 'on' : '', text: t[1] }); }),
         S.me.user.role === 'admin' ? h('a', { href: '/admin', text: 'Admin' }) : null),
     ];
   }

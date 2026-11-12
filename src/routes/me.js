@@ -73,7 +73,7 @@ router.post('/progress/ping', wrap(async (req, res) => {
   const cur = await coll.findOne({ _id: id }, { projection: { lastPing: 1 } });
   const gap = cur && cur.lastPing ? (now - cur.lastPing) / 1000 : 30;
   const sec = Math.max(0, Math.min(Number(req.body.sec) || 0, 30, gap + 2));
-  await coll.updateOne({ _id: id }, { $inc: { sec, opens: req.body.open ? 1 : 0 }, $set: { lastAt: now, lastPing: now }, $setOnInsert: { userId: uid, cls: c, chapter: n, firstAt: now, done: false } }, { upsert: true });
+  await coll.updateOne({ _id: id }, { $inc: { sec }, $set: { lastAt: now, lastPing: now }, $setOnInsert: { userId: uid, cls: c, chapter: n, opens: 0, firstAt: now, done: false } }, { upsert: true });
   if (sec > 0) await db.get().collection('daily_usage').updateOne({ _id: `${uid}|${today()}` }, { $inc: { sec }, $setOnInsert: { userId: uid, date: today() } }, { upsert: true });
   res.json({ ok: true });
 }));
