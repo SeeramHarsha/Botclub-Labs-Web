@@ -29,7 +29,8 @@ router.get('/summary', wrap(async (req, res) => {
   ]);
   const sm = new Map(signups.map((x) => [x._id, x.n])), rm = new Map(sales.map((x) => [x._id, x]));
   const series = []; for (let i = 29; i >= 0; i--) { const k = dayKey(new Date(Date.now() - i * 864e5)); series.push({ date: k, signups: sm.get(k) || 0, revenueInr: rm.has(k) ? rm.get(k).paise / 100 : 0, orders: rm.has(k) ? rm.get(k).n : 0 }); }
-  res.json({ students, paidOrders: paid, revenueInr: (revenue[0] ? revenue[0].paise : 0) / 100, payingStudents: activeBuyers.length, series });
+  const newEnquiries = await d.collection('enquiries').countDocuments({ status: 'new' });
+  res.json({ newEnquiries, students, paidOrders: paid, revenueInr: (revenue[0] ? revenue[0].paise : 0) / 100, payingStudents: activeBuyers.length, series });
 }));
 
 router.get('/students', wrap(async (req, res) => {
@@ -81,6 +82,20 @@ router.get('/orders', wrap(async (req, res) => {
   const list = await db.get().collection('orders').find(status).sort({ createdAt: -1 }).limit(200).toArray();
   const users = new Map((await auth.users().find({ _id: { $in: list.map((o) => oid(o.userId)).filter(Boolean) } }).toArray()).map((u) => [String(u._id), u]));
   res.json({ orders: list.map((o) => ({ ...publicOrder(o), student: users.get(o.userId) ? users.get(o.userId).email : '', studentName: users.get(o.userId) ? users.get(o.userId).name : '' })) });
+}));
+
+// ---------------------------------------------------------------- enquiries ("Talk to sales")
+router.get('/enquiries', wrap(async (req, res) => {
+  const status = ['new', 'contacted', 'won', 'closed'].includes(req.query.status) ? { status: req.query.status } : {};
+  const list = await db.get().collection('enquiries').find(status).sort({ createdAt: -1 }).limit(300).toArray();
+  res.json({ enquiries: list.map((e) => ({ id: e._id, institute: e.institute, name: e.name, role: e.role, email: e.email, phone: e.phone, city: e.city, students: e.students, classes: e.classes, message: e.message, status: e.status, note: e.note || '', createdAt: e.createdAt })) });
+}));
+router.patch('/enquiries/:id', wrap(async (req, res) => {
+  const b = req.body || {}, set = {};
+  if (b.status !== undefined) { if (!['new', 'contacted', 'won', 'closed'].includes(b.status)) return res.status(400).json({ error: 'Unknown status.' }); set.status = b.status; }
+  if (b.note !== undefined) set.note = text(b.note, 500);
+  const r = await db.get().collection('enquiries').updateOne({ _id: String(req.params.id) }, { $set: set });
+  r.matchedCount ? res.json({ ok: true }) : res.status(404).json({ error: 'Enquiry not found.' });
 }));
 
 // ---------------------------------------------------------------- plans

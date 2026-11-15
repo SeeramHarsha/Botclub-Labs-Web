@@ -40,4 +40,5 @@ if (fs.existsSync(SITE)) {
   titles = vm.runInNewContext('(' + html.slice(start, end + 1) + ')', {}, { timeout: 1000 });
 } else console.warn('learning site index.html not found: chapter names will show as numbers');
 fs.writeFileSync(path.join(OUT, 'titles.json'), JSON.stringify(titles));
+fs.writeFileSync(path.join(OUT, 'activities.json'), JSON.stringify(require('./count-activities').countAll(OUT)));
 console.log(`content ready: ${files} files, ${(bytes / 1048576).toFixed(1)} MB, titles for classes ${Object.keys(titles).join(', ')}`);

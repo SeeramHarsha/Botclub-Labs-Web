@@ -3,6 +3,16 @@
   'use strict';
   var h = BL.h, NS = 'http://www.w3.org/2000/svg';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N = { chapters: 61, activities: 421, classes: 5 };
+  /** text with {chapters} / {activities} becomes pieces whose numbers are filled in from the server */
+  function tokens(text) { return String(text).split(/(\{[a-z]+\})/).map(function (p) { var m = /^\{([a-z]+)\}$/.exec(p); return m ? h('span', { 'data-n': m[1], text: String(N[m[1]]) }) : p; }); }
+  /** fade-and-rise when something scrolls into view */
+  var io = !reduce && 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.12 }) : null;
+  function reveal(root) { [].forEach.call((root || document).querySelectorAll('.sec-head,.feat,.price,.qa,.try>div,.how>div,.inst>div,.finale'), function (e) { if (e.classList.contains('reveal')) return; if (io) { e.classList.add('reveal'); io.observe(e); } }); }
+  function countUp(el, to) {
+    if (reduce) { el.textContent = to; return; }
+    var t0 = null; function step(ts) { if (t0 === null) t0 = ts; var p = Math.min(1, (ts - t0) / 1300); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); } requestAnimationFrame(step);
+  }
 
   // ------------------------------------------------------------------ the circuit: charges move faster when the current is bigger
   function s(tag, attrs, parent) { var e = document.createElementNS(NS, tag); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); if (parent) parent.appendChild(e); return e; }
@@ -89,7 +99,7 @@
       ticks: ['Classes 6, 7, 8, 9 and 10', 'Chapters named exactly like your book', 'Start where your class is today'],
       mock: function () { return h('div', { class: 'glow-card' }, h('div', { class: 'tag', text: 'Your class', style: 'margin-bottom:10px' }),
         h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px' }, [6, 7, 8, 9, 10].map(function (c) { return h('span', { class: 'tab' + (c === 8 ? ' on' : ''), text: 'Class ' + c }); })),
-        ['Exploring the Investigative World of Science', 'The Invisible Living World', 'Health: The Ultimate Treasure'].map(function (t, i) { return h('div', { class: 'ch', style: 'margin-bottom:8px' }, h('span', { class: 'n', text: i + 1 }), h('div', null, h('div', { class: 't', text: t }), h('div', { class: 'meta', text: 'Interactive chapter' })), h('span', { class: 'badge ' + (i === 0 ? 'green' : 'grey'), text: i === 0 ? 'Free' : 'Plan' })); })); } },
+        [['Exploring the Investigative World of Science', 4], ['The Invisible Living World', 9], ['Health: The Ultimate Treasure', 7]].map(function (tc, i) { var t = tc[0]; return h('div', { class: 'ch', style: 'margin-bottom:8px' }, h('span', { class: 'n', text: i + 1 }), h('div', null, h('div', { class: 't', text: t }), h('div', { class: 'meta', text: tc[1] + ' activities' })), h('span', { class: 'badge ' + (i === 0 ? 'green' : 'grey'), text: i === 0 ? 'Free' : 'Plan' })); })); } },
     { tab: 'Explore', n: '02', title: 'Change things and watch what happens', text: 'Each lab has sliders and buttons. Change a value and the picture responds at once, so the idea becomes something you can see.',
       ticks: ['Drag, tune and compare', 'Real formulas, worked live', 'No reading walls of text'],
       mock: function () { return h('div', { class: 'glow-card' }, h('div', { class: 'tag', text: 'Lab', style: 'margin-bottom:10px' }),
@@ -118,12 +128,12 @@
     flask: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3', book: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5zM4 19a2 2 0 0 1 2-2h13', sigma: 'M18 5H6l7 7-7 7h12',
     bolt: 'M13 2 4 14h7l-1 8 9-12h-7l1-8z', chart: 'M4 20V10M10 20V4M16 20v-7M22 20H2', device: 'M5 4h14v12H5zM2 20h20', shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4', gift: 'M3 9h18v4H3zM5 13v8h14v-8M12 9v12M12 9c-3 0-4-4-1-4 2 0 1 4 1 4zm0 0c3 0 4-4 1-4-2 0-1 4-1 4z',
   };
-  var FEATS = [['flask', 'Hands-on simulations', 'Every chapter is a set of labs you control, not a page to read.'], ['book', 'All 61 NCERT chapters', 'Classes 6 to 10, following the textbook chapter by chapter.'], ['sigma', 'Real formulas', 'Each result is worked out with the actual science, checked against the book.'], ['bolt', 'Instant feedback', 'Quick questions tell you at once what is right and why.'],
+  var FEATS = [['flask', 'Hands-on simulations', 'Every chapter is a set of labs you control, not a page to read.'], ['book', 'All {chapters} chapters', '{activities} hands-on activities across Classes 6 to 10, following the textbook.'], ['sigma', 'Real formulas', 'Each result is worked out with the actual science, checked against the book.'], ['bolt', 'Instant feedback', 'Quick questions tell you at once what is right and why.'],
     ['chart', 'Progress you can see', 'Time spent, streaks and finished chapters, saved for you.'], ['device', 'Any device', 'Phone, tablet or computer. Nothing to install: just open the website.'], ['shield', 'Safe for children', 'No ads, no chat with strangers. Only the lessons.'], ['gift', 'Free to start', 'Chapter 1 of every class is free, with no card needed.']];
   var fg = document.getElementById('featGrid');
   if (fg) FEATS.forEach(function (f) {
     var ic = s('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }); s('path', { d: ICONS[f[0]] }, ic);
-    fg.appendChild(h('div', { class: 'feat' }, h('div', { class: 'ic' }, ic), h('h4', { text: f[1] }), h('p', { text: f[2] })));
+    fg.appendChild(h('div', { class: 'feat' }, h('div', { class: 'ic' }, ic), h('h4', null, tokens(f[1])), h('p', null, tokens(f[2]))));
   });
 
   // ------------------------------------------------------------------ pricing (live from the server, so prices can be changed in the admin area)
@@ -141,24 +151,50 @@
         h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })),
         h('a', { class: 'btn primary', href: signedIn ? '/app#/plans' : '/register.html?plan=' + encodeURIComponent(p.id), text: 'Get ' + p.name })));
     });
-    box.replaceChildren.apply(box, cards);
+    cards.push(h('div', { class: 'price p-inst' }, h('h3', { text: 'Schools and institutes' }), h('div', { class: 'tg', text: 'Apps for your smart boards and a report for your school' }),
+      h('div', { class: 'amt' }, 'Custom', h('small', { text: ' pricing' })),
+      h('ul', null, ['Windows, Android and Linux apps', 'Usage reports by class and section', 'Set-up help for teachers'].map(function (t) { return h('li', { text: t }); })),
+      h('a', { class: 'btn ghost', href: '/sales.html', text: 'Talk to sales' })));
+    box.replaceChildren.apply(box, cards); reveal(box);
   }, function () { box.replaceChildren(h('div', { class: 'empty', text: 'Plans could not be loaded. Please refresh the page.' })); });
 
   // ------------------------------------------------------------------ faq
   var FAQ = [
     ['What is Botclub Labs?', 'It is NCERT science for Classes 6 to 10, turned into interactive simulations. Instead of only reading, you change values, watch the result and check yourself with quick questions.'],
-    ['Which classes and chapters are covered?', 'Classes 6, 7, 8, 9 and 10: 61 chapters in all, following the NCERT textbooks.'],
+    ['Which classes and chapters are covered?', 'Classes 6, 7, 8, 9 and 10: {chapters} chapters and {activities} activities in all, following the NCERT textbooks.'],
     ['What is free?', 'Chapter 1 of every class is free once you make an account. No card is needed.'],
     ['How do the plans work?', 'You pay once for a full year: either one class of your choice, or all five classes. There is no auto-renewal. When the year ends, you can renew if you want to.'],
     ['How do I pay?', 'Securely online with UPI, cards or net banking. We never see or store your card details.'],
     ['Can I get a refund?', 'Our refund rules are on the Refunds page. If something does not work for you, write to us and we will look into it.'],
     ['Which devices does it work on?', 'Any phone, tablet or computer with a modern browser. Nothing to install.'],
     ['Is my child\'s information safe?', 'We ask only for what we need (name, email, class). There are no ads and no chat. Read the Privacy page for details. Accounts should be made by a parent or guardian, or with their permission.'],
-    ['Is there a version for schools?', 'Yes. Botclub Labs also comes as apps for school smart-class screens (Windows, Android and Linux). Contact us to set up your school.'],
+    ['Is there a version for schools?', 'Yes. Botclub Labs also comes as apps for school smart-class screens and tablets (Windows, Android and Linux), with usage reports by class and section. Choose Talk to sales and we will set up your school.'],
   ];
   var fl = document.getElementById('faqList');
   if (fl) FAQ.forEach(function (q) {
-    var item = h('div', { class: 'qa' }, h('button', { type: 'button', text: q[0], onclick: function () { item.classList.toggle('open'); } }), h('div', { class: 'a', text: q[1] }));
+    var item = h('div', { class: 'qa' }, h('button', { type: 'button', text: q[0], onclick: function () { item.classList.toggle('open'); } }), h('div', { class: 'a' }, tokens(q[1])));
     fl.appendChild(item);
   });
+
+  // ------------------------------------------------------------------ numbers from the server, hero counters, example school report
+  function setNumbers() { [].forEach.call(document.querySelectorAll('[data-n]'), function (e) { var k = e.getAttribute('data-n'); if (N[k] != null && !e.hasAttribute('data-count')) e.textContent = N[k]; }); }
+  var strip = document.getElementById('statStrip');
+  function runStrip() { if (!strip) return; [].forEach.call(strip.querySelectorAll('[data-count]'), function (b) { countUp(b, N[b.getAttribute('data-n')] || +b.getAttribute('data-count')); }); }
+  BL.api('/config').then(function (c) { N.chapters = c.totalChapters || N.chapters; N.activities = c.totalActivities || N.activities; setNumbers(); }, function () {}).then(function () { if (strip && 'IntersectionObserver' in window) { var o = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { o.disconnect(); runStrip(); } }, { threshold: 0.4 }); o.observe(strip); } else runStrip(); });
+
+  var im = document.getElementById('instMock');
+  if (im) {
+    var rowsData = [['Class 8', 'A', 82, 24], ['Class 8', 'B', 61, 18], ['Class 9', 'A', 47, 15], ['Class 10', 'A', 33, 11]];
+    im.appendChild(h('div', { class: 'tag', text: 'Example school report', style: 'margin-bottom:4px' }));
+    im.appendChild(h('div', { style: 'font-weight:700;font-size:18px;margin-bottom:14px', text: 'Greenfield Public School' }));
+    rowsData.forEach(function (r) {
+      var fill = h('i', { style: 'width:0%' });
+      im.appendChild(h('div', { class: 'irow' }, h('div', { class: 'il' }, h('b', { text: r[0] + ' · Section ' + r[1] }), h('span', { text: r[3] + ' sessions this month' })), h('div', { class: 'bar' }, fill), h('div', { class: 'ip', text: r[2] + '% of chapters opened' })));
+      fill.setAttribute('data-w', r[2]);
+    });
+    im.appendChild(h('div', { class: 'micro', style: 'margin-top:12px', text: 'Illustration only. Your numbers come from your own screens.' }));
+    var grow = function () { [].forEach.call(im.querySelectorAll('.bar i'), function (f, i) { setTimeout(function () { f.style.width = f.getAttribute('data-w') + '%'; }, reduce ? 0 : 150 * i); }); };
+    if ('IntersectionObserver' in window) { var o2 = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { o2.disconnect(); grow(); } }, { threshold: 0.3 }); o2.observe(im); } else grow();
+  }
+  reveal();
 })();

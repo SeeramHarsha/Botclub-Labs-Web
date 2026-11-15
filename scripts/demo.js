@@ -24,6 +24,12 @@ async function seedUsage() {
     await d.collection('devices').insertOne({ _id: id, school, label, platform, appVersion: '2.0', kind: 'classroom', section: '', classes, expiry: '2027-06-30', tokenHash: 'x', registeredAt: now, lastSeen: new Date(Date.now() - n * 7 * 60e3), revoked: false });
     if (docs.length) await d.collection('usage_daily').insertMany(docs);
     if (chs.size) await d.collection('chapters').insertMany([...chs.values()]);
+    const sx = [];
+    for (let i = 0; i < 14; i++) for (const cls of classes) for (const section of ['A', 'B', 'C'].slice(0, 1 + ((n + cls) % 3))) {
+      const start = new Date(Date.now() - i * 864e5 - (cls * 5 + n) * 60e3).toISOString().slice(0, 19) + 'Z';
+      sx.push({ _id: id + '|' + start + section, deviceId: id, school, start, end: start, cls, section, sec: 900 + ((i * 131 + cls * 77) % 1800) });
+    }
+    if (sx.length) await d.collection('sessions').insertMany(sx);
   }
 }
 

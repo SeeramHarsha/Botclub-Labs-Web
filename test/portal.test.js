@@ -229,6 +229,10 @@ test('apps report usage; the admin sees schools, screens and curriculum progress
   const c8 = sc.byClass.find((x) => x.cls === 8);
   assert.equal(c8.chaptersUsed, 2); assert.equal(c8.chaptersTotal, 13); assert.ok(sc.chapters[0].title);
   assert.equal((await a.call('/api/admin/usage/schools')).json.schools.length, 1);
+  const cl = (await a.call('/api/admin/usage/classes')).json.classes.find((x) => x.cls === 8);
+  assert.equal(cl.schools, 1); assert.equal(cl.chaptersUsed, 2);
+  const cd = (await a.call('/api/admin/usage/class?cls=8')).json;
+  assert.equal(cd.schools[0].school, 'Hill School'); assert.equal(cd.chapters.length, 2);
   assert.equal((await a.call('/api/admin/usage/web')).status, 200);
   assert.match((await a.call('/api/admin/usage/export.csv')).text, /Hill School/);
   assert.equal((await a.call('/api/admin/usage/devices/' + reg.json.deviceId + '/revoke', { method: 'POST', body: {} })).status, 200);
@@ -246,6 +250,25 @@ test('ADMIN_RESET creates or resets an admin with a known password even when adm
   assert.equal((await browser().call('/api/auth/login', { method: 'POST', body: { email: 'boss@test.org', password: 'Test-admin-pass-1' } })).status, 401);
   assert.equal((await browser().call('/api/auth/login', { method: 'POST', body: { email: 'BOSS@test.org', password: 'Another-pass-99' } })).status, 200);
   Object.assign(config, { adminReset: false });
+});
+
+test('Talk to sales: a school can leave its details; the admin sees them; activity counts are public', async () => {
+  const b = browser();
+  const c = (await b.call('/api/config')).json;
+  assert.equal(c.totalChapters, 61); assert.equal(c.totalActivities, 421); assert.equal(c.classActivities['8'], 94);
+  const good = { institute: 'Hill Public School', name: 'Ravi', role: 'Principal / Head', email: 'ravi@hill.edu', phone: '+91 98765 43210', city: 'Pune', students: '100 to 500', classes: [8, 9, 99], message: 'Smart boards' };
+  assert.equal((await b.call('/api/enquiry', { method: 'POST', body: { ...good, email: 'nope' } })).status, 400);
+  assert.equal((await b.call('/api/enquiry', { method: 'POST', body: { ...good, website: 'http://spam.example' } })).status, 201);      // a bot: pretended ok, not saved
+  assert.equal((await b.call('/api/enquiry', { method: 'POST', body: good })).status, 201);
+  const a = browser(); await a.call('/api/auth/login', { method: 'POST', body: { email: 'admin@test.org', password: 'a-long-admin-password' } });
+  const list = (await a.call('/api/admin/enquiries')).json.enquiries.filter((e) => e.institute === 'Hill Public School');
+  assert.equal(list.length, 1); assert.deepEqual(list[0].classes, [8, 9]); assert.equal(list[0].status, 'new');
+  assert.equal((await a.call('/api/admin/enquiries/' + list[0].id, { method: 'PATCH', body: { status: 'contacted' } })).status, 200);
+  assert.equal((await a.call('/api/admin/enquiries?status=contacted')).json.enquiries.length, 1);
+  assert.equal((await a.call('/api/admin/enquiries/' + list[0].id, { method: 'PATCH', body: { status: 'bogus' } })).status, 400);
+  assert.equal((await browser().call('/api/admin/enquiries')).status, 401);                                                  // not signed in
+  const cat = (await (async () => { const s2 = browser(); await s2.call('/api/auth/login', { method: 'POST', body: { email: 'student2@test.org', password: 'student-password-2' } }); return s2.call('/api/catalog'); })()).json;
+  assert.ok(cat.classes.find((x) => x.cls === 8).chapters.every((x) => x.activities > 0));
 });
 
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {

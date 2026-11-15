@@ -45,7 +45,7 @@ router.get('/catalog', wrap(async (req, res) => {
     cls: Number(c),
     chapters: chs.map((x) => {
       const p = prog.get(`${c}/${x.chapter}`);
-      return { chapter: x.chapter, title: x.title, access: ent.allows(ents, Number(c), x.chapter), sec: p ? Math.round(p.sec) : 0, opens: p ? p.opens || 0 : 0, done: !!(p && p.done), lastAt: p ? p.lastAt : null };
+      return { chapter: x.chapter, title: x.title, activities: x.activities, access: ent.allows(ents, Number(c), x.chapter), sec: p ? Math.round(p.sec) : 0, opens: p ? p.opens || 0 : 0, done: !!(p && p.done), lastAt: p ? p.lastAt : null };
     }),
   }));
   const days = await db.get().collection('daily_usage').find({ userId: uid }).sort({ date: -1 }).limit(120).toArray();

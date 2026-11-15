@@ -12,6 +12,7 @@ let client = null, db = null, usageDb = null;
  * entitlements   { _id: uuid, userId, source: 'trial'|'purchase'|'admin', planId, orderId, classes[], chapters: 'all'|['6/1'..], startsAt, endsAt|null }
  * progress       { _id: "user|cls/ch", userId, cls, chapter, sec, opens, firstAt, lastAt, done }
  * (apps' usage data lives in the USAGE_DB database: devices, usage_daily, chapters, sessions; see usage/queries.js)
+ * enquiries      { _id: uuid, institute, name, role, email, phone, city, students, classes[], message, status: 'new'|'contacted'|'won'|'closed', note, createdAt }
  * daily_usage    { _id: "user|YYYY-MM-DD", userId, date, sec }
  */
 async function connect(uri, dbName, usageName) {
@@ -26,6 +27,7 @@ async function connect(uri, dbName, usageName) {
     db.collection('entitlements').createIndexes([{ key: { userId: 1 } }]),
     db.collection('progress').createIndexes([{ key: { userId: 1 } }]),
     db.collection('daily_usage').createIndexes([{ key: { userId: 1, date: -1 } }]),
+    db.collection('enquiries').createIndexes([{ key: { createdAt: -1 } }, { key: { status: 1, createdAt: -1 } }]),
     usageDb.collection('devices').createIndexes([{ key: { school: 1 } }, { key: { lastSeen: -1 } }, { key: { platform: 1 } },
       { key: { clientId: 1 }, unique: true, partialFilterExpression: { clientId: { $type: 'string' } } }]),
     usageDb.collection('usage_daily').createIndexes([{ key: { date: 1, school: 1 } }, { key: { deviceId: 1, date: 1 } }, { key: { date: 1, cls: 1 } }, { key: { page: 1, date: 1 } }]),

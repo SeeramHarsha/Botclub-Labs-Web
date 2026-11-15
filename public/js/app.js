@@ -36,15 +36,15 @@
   function viewHome() {
     var st = S.cat.stats, u = S.me.user;
     var cont = S.cat.continue ? S.cat.classes.find(function (c) { return c.cls === S.cat.continue.cls; }).chapters.find(function (x) { return x.chapter === S.cat.continue.chapter; }) : null;
-    render(head('#/', 'Hi ' + u.name.split(' ')[0] + ' 👋', 'Class ' + (u.cls || '') + ' · pick up where you left off').concat([
+    render(head('#/', 'Hi ' + u.name + ' 👋', 'Class ' + (u.cls || '') + ' · pick up where you left off').concat([
       accessLine(),
       h('div', { class: 'stats' }, stat('Time learning', BL.fmtTime(st.totalSec), 'all time', 'var(--blue)'), stat('Today', BL.fmtTime(st.todaySec), null, 'var(--cyan)'), stat('Streak', st.streak + (st.streak === 1 ? ' day' : ' days'), 'a day counts after 1 minute', 'var(--yellow)'), stat('Chapters done', String(st.chaptersDone), st.chaptersStarted + ' started', 'var(--green)')),
       cont && cont.access ? h('div', { class: 'card', style: 'margin-bottom:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap' }, h('div', { style: 'flex:1;min-width:220px' }, h('div', { class: 'tag', text: 'Continue' }), h('div', { style: 'font-weight:600;font-size:16px', text: 'Class ' + S.cat.continue.cls + ' · ' + cont.title })),
         h('a', { class: 'btn primary', href: lessonUrl(S.cat.continue.cls, S.cat.continue.chapter), text: 'Continue' })) : null,
       h('h2', { style: 'font-size:18px;margin:6px 0 12px', text: 'Your classes' }),
       h('div', { class: 'class-grid' }, S.cat.classes.map(function (c) {
-        var open = c.chapters.filter(function (x) { return x.access; }).length, done = c.chapters.filter(function (x) { return x.done; }).length;
-        return h('a', { class: 'cls', href: '#/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + open + ' open to you' }),
+        var acts = c.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0), open = c.chapters.filter(function (x) { return x.access; }).length, done = c.chapters.filter(function (x) { return x.done; }).length;
+        return h('a', { class: 'cls', href: '#/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + acts + ' activities' }), h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
           h('div', { class: 'bar' }, h('i', { style: 'width:' + (c.chapters.length ? Math.round(done / c.chapters.length * 100) : 0) + '%' })), h('div', { class: 'micro', style: 'margin-top:6px', text: done + ' of ' + c.chapters.length + ' done' }));
       })),
     ]));
@@ -55,11 +55,11 @@
   function viewClass(c) {
     var cl = S.cat.classes.find(function (x) { return x.cls === c; });
     if (!cl) return go('#/');
-    render(head('#/', 'Class ' + c, cl.chapters.length + ' chapters').concat([
+    render(head('#/', 'Class ' + c, cl.chapters.length + ' chapters · ' + cl.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0) + ' activities').concat([
       h('div', { class: 'crumbs' }, h('a', { href: '#/', text: '← All classes' })),
       h('div', { class: 'chapters' }, cl.chapters.map(function (x) {
         return h('div', { class: 'ch' + (x.access ? '' : ' locked') }, h('span', { class: 'n', text: x.access ? x.chapter : '🔒' }),
-          h('div', null, h('div', { class: 't', text: x.title }), h('div', { class: 'meta', text: x.access ? (x.sec ? BL.fmtTime(x.sec) + ' spent · opened ' + x.opens + '×' : 'Not started yet') : 'Part of a plan' })),
+          h('div', null, h('div', { class: 't', text: x.title }), h('div', { class: 'meta', text: (x.activities ? x.activities + ' activities · ' : '') + (x.access ? (x.sec ? BL.fmtTime(x.sec) + ' spent · opened ' + x.opens + '×' : 'Not started yet') : 'Part of a plan') })),
           h('div', { style: 'display:flex;gap:10px;align-items:center' }, x.done ? h('span', { class: 'badge green', text: 'Done' }) : null,
             x.access ? h('a', { class: 'btn primary small', href: lessonUrl(c, x.chapter), text: x.sec ? 'Continue' : 'Start' }) : h('a', { class: 'btn ghost small', href: '#/plans?need=' + c + '/' + x.chapter, text: 'Unlock' })));
       })),

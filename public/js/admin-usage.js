@@ -24,7 +24,7 @@
     return h('select', { 'aria-label': label, class: 'flt', onchange: function (e) { on(e.target.value); } }, opts.map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if (String(o[0]) === String(val)) op.selected = true; return op; }));
   }
   function frame(active, title, nodes, noFilters) {
-    var tabs = [['#/usage', 'Overview'], ['#/usage/schools', 'Schools'], ['#/usage/screens', 'Screens'], ['#/usage/chapters', 'Chapters']];
+    var tabs = [['#/usage', 'Overview'], ['#/usage/schools', 'Schools'], ['#/usage/classes', 'Classes'], ['#/usage/screens', 'Screens'], ['#/usage/chapters', 'Chapters']];
     var flt = noFilters ? null : h('div', { class: 'filters' },
       sel([[7, 'Last 7 days'], [30, 'Last 30 days'], [90, 'Last 90 days'], [365, 'Last year']], F.days, function (v) { F.days = Number(v); A.routes.usage(location.hash.slice(1)); }, 'Period'),
       sel([['', 'All classes'], [6, 'Class 6'], [7, 'Class 7'], [8, 'Class 8'], [9, 'Class 9'], [10, 'Class 10']], F.cls, function (v) { F.cls = v; A.routes.usage(location.hash.slice(1)); }, 'Class'),
@@ -93,7 +93,12 @@
                 h('div', { class: 'bar', style: 'margin-top:4px;height:10px' }, h('i', { style: 'width:' + Math.round(c.chaptersUsed / c.chaptersTotal * 100) + '%' })));
             }))),
           h('div', { class: 'card' }, h('h2', { style: 'font-size:16px;margin-bottom:12px', text: 'Hours per day' }), A.bars(r.daily, 'hours', 'var(--blue)', function (n) { return n + ' h'; }))),
-        h('h2', { style: 'font-size:17px;margin:8px 0 10px', text: 'Screens of this school' }),
+        h('h2', { style: 'font-size:17px;margin:8px 0 4px', text: 'Class and section' }),
+        h('div', { class: 'micro', style: 'margin-bottom:10px', text: 'From the "who is learning" choice on the school screens: how many times each section started a lesson session, and for how long.' }),
+        r.classSections.length ? A.table(['Class', 'Section', 'Sessions', 'Minutes', 'Last session'], r.classSections.map(function (x) {
+          return h('tr', null, h('td', null, h('a', { href: '#/usage/class/' + x.cls, text: 'Class ' + x.cls })), h('td', { text: x.section || '—' }), h('td', { text: String(x.sessions) }), h('td', { text: String(x.minutes) }), h('td', { text: x.last ? new Date(x.last).toLocaleDateString('en-IN') : '—' }));
+        })) : h('div', { class: 'empty', text: 'No class or section sessions in this period.' }),
+        h('h2', { style: 'font-size:17px;margin:22px 0 10px', text: 'Screens of this school' }),
         A.table(['Screen', 'Type', 'Device', 'Classes', 'Status', 'Last seen', 'Hours', 'Days used'], r.screens.map(function (s) {
           return h('tr', null, h('td', null, h('a', { href: '#/usage/screen/' + s.id, text: s.label || s.id.slice(0, 8) })), h('td', { text: s.kind === 'classroom' ? 'Classroom' : 'Student' + (s.section ? ' ' + s.section : '') }), h('td', { text: PLAT[s.platform] || s.platform }),
             h('td', { text: (s.classes || []).join(', ') || 'all' }), h('td', null, status(s.status)), h('td', { text: ago(s.lastSeen) }), h('td', { text: String(s.hours) }), h('td', { text: String(s.activeDays) }));
@@ -101,6 +106,41 @@
         h('h2', { style: 'font-size:17px;margin:22px 0 10px', text: 'Chapters used in this period' }),
         r.chapters.length ? A.table(['Chapter', 'Hours', 'Screens', 'Opened'], r.chapters.map(function (c) { return h('tr', null, h('td', { text: chLabel(c) }), h('td', { text: String(c.hours) }), h('td', { text: String(c.screens) }), h('td', { text: String(c.opens) })); })) : h('div', { class: 'empty', text: 'Nothing used in this period.' }),
       ], true);
+    }).catch(A.fail);
+  }
+
+  // -------------------------------------------------------------- classes
+  function classes() {
+    frame('#/usage/classes', 'App usage', [loading()]);
+    get('/classes').then(function (r) {
+      frame('#/usage/classes', 'App usage', [h('div', { class: 'class-grid' }, r.classes.map(function (c) {
+        var pct = Math.round(c.chaptersUsed / c.chaptersTotal * 100);
+        return h('a', { class: 'cls', href: '#/usage/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.hours + ' h · ' + c.schools + ' schools · ' + c.screens + ' screens' }),
+          h('div', { class: 'bar' }, h('i', { style: 'width:' + pct + '%' })), h('div', { class: 'micro', style: 'margin-top:6px', text: c.chaptersUsed + ' of ' + c.chaptersTotal + ' chapters opened · ' + c.sessions + ' sessions' }));
+      }))]);
+    }).catch(A.fail);
+  }
+
+  function classPage(n) {
+    frame('#/usage/classes', 'Class ' + n, [loading()], true);
+    get('/class', { cls: n }).then(function (r) {
+      frame('#/usage/classes', 'Class ' + r.cls, [
+        h('div', { class: 'crumbs' }, h('a', { href: '#/usage/classes', text: '← All classes' })),
+        h('div', { class: 'card', style: 'margin-bottom:18px' }, h('h2', { style: 'font-size:16px;margin-bottom:12px', text: 'Hours per day' }), A.bars(r.daily, 'hours', 'var(--blue)', function (x) { return x + ' h'; })),
+        h('h2', { style: 'font-size:17px;margin:8px 0 10px', text: 'Schools using Class ' + r.cls }),
+        r.schools.length ? A.table(['School', 'Hours', 'Screens', 'Days used', 'Chapters opened'], r.schools.map(function (s) {
+          return h('tr', null, h('td', null, h('a', { href: '#/usage/school/' + encodeURIComponent(s.school), text: s.school })), h('td', { text: String(s.hours) }), h('td', { text: String(s.screens) }), h('td', { text: String(s.activeDays) }),
+            h('td', null, h('div', { style: 'min-width:130px' }, h('span', { class: 'micro', text: s.chaptersUsed + ' of ' + s.chaptersTotal }), h('div', { class: 'bar', style: 'margin-top:3px' }, h('i', { style: 'width:' + Math.round(s.chaptersUsed / s.chaptersTotal * 100) + '%' })))));
+        })) : h('div', { class: 'empty', text: 'No school used this class in this period.' }),
+        h('h2', { style: 'font-size:17px;margin:22px 0 10px', text: 'Sections' }),
+        r.sections.length ? A.table(['School', 'Section', 'Sessions', 'Minutes'], r.sections.map(function (x) {
+          return h('tr', null, h('td', null, h('a', { href: '#/usage/school/' + encodeURIComponent(x.school), text: x.school })), h('td', { text: x.section || '—' }), h('td', { text: String(x.sessions) }), h('td', { text: String(x.minutes) }));
+        })) : h('div', { class: 'empty', text: 'No sections recorded.' }),
+        h('h2', { style: 'font-size:17px;margin:22px 0 10px', text: 'Chapters of Class ' + r.cls }),
+        r.chapters.length ? A.table(['Chapter', 'Hours', 'Schools', 'Screens', 'Opened'], r.chapters.map(function (c) {
+          return h('tr', null, h('td', { text: 'Ch ' + c.chapter + (c.title ? ' · ' + c.title : '') }), h('td', { text: String(c.hours) }), h('td', { text: String(c.schools) }), h('td', { text: String(c.screens) }), h('td', { text: String(c.opens) }));
+        })) : h('div', { class: 'empty', text: 'No chapter used in this period.' }),
+      ]);
     }).catch(A.fail);
   }
 
@@ -155,6 +195,8 @@
     var m;
     if ((m = /^\/usage\/school\/(.+)$/.exec(p))) return school(decodeURIComponent(m[1]));
     if ((m = /^\/usage\/screen\/(.+)$/.exec(p))) return screen(m[1]);
+    if ((m = /^\/usage\/class\/(\d+)$/.exec(p))) return classPage(Number(m[1]));
+    if (p === '/usage/classes') return classes();
     if (p === '/usage/schools') return schools();
     if (p === '/usage/screens') return screens();
     if (p === '/usage/chapters') return chapters();

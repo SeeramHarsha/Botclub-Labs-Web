@@ -37,7 +37,7 @@
   /** the top bar. `active` highlights a link on the landing page. */
   BL.nav = function (mount, opts) {
     opts = opts || {};
-    var links = opts.landing ? [['#how', 'How it works'], ['#features', 'Features'], ['#try', 'Try it'], ['#pricing', 'Pricing'], ['#faq', 'FAQ']] : [];
+    var links = opts.landing ? [['#how', 'How it works'], ['#labs', 'Labs'], ['#features', 'Features'], ['#pricing', 'Pricing'], ['#institutes', 'For schools'], ['#faq', 'FAQ']] : [];
     var linkBox = BL.h('div', { class: 'links' }, links.map(function (l) { return BL.h('a', { href: (opts.landing ? '' : '/') + l[0], text: l[1], onclick: function () { linkBox.classList.remove('open'); } }); }));
     var mobileLogin = BL.h('a', { class: 'only-m', href: '/login.html', text: 'Log in' });
     linkBox.appendChild(mobileLogin);
@@ -52,10 +52,14 @@
     BL.me().then(function (m) {
       if (!m || !m.user) return;
       mobileLogin.textContent = m.user.role === 'admin' ? 'Student view' : 'My learning'; mobileLogin.href = '/app';
-      if (m.user.role === 'admin') { login.textContent = 'Student view'; } else { login.textContent = m.user.name.split(' ')[0]; }
-      login.href = '/app';
+      var inApp = /^\/(app|admin)(\/|$)/.test(location.pathname);
+      if (m.user.role === 'admin') { login.textContent = 'Student view'; } else { login.textContent = m.user.name; login.title = m.user.email; login.classList.add('who'); }
+      login.href = inApp && m.user.role !== 'admin' ? '/app#/profile' : '/app';
       sign.textContent = m.user.role === 'admin' ? 'Admin' : 'Open app'; sign.href = m.user.role === 'admin' ? '/admin' : '/app';
-      if (/^\/(app|admin)(\/|$)/.test(location.pathname)) sign.classList.add('hide-m');
+      if (inApp) {
+        sign.textContent = 'Log out'; sign.href = '#'; sign.classList.remove('primary'); sign.classList.add('ghost');
+        sign.addEventListener('click', function (e) { e.preventDefault(); BL.api('/auth/logout', { method: 'POST', body: {} }).then(function () { location.href = '/'; }, function () { location.href = '/'; }); });
+      }
     });
   };
 
@@ -64,7 +68,7 @@
     mount.replaceWith(h('footer', null, h('div', { class: 'wrap' },
       h('div', null, h('div', { class: 'f-brand' }, h('img', { src: '/assets/logo-wide.png', alt: 'Botclub Labs' })),
         h('p', { class: 'f-note', text: 'NCERT science as hands-on simulations for Classes 6 to 10. Learn by doing, not just reading.' })),
-      h('div', null, h('h4', { text: 'Explore' }), h('nav', null, h('a', { href: '/#how', text: 'How it works' }), h('a', { href: '/#pricing', text: 'Pricing' }), h('a', { href: '/#faq', text: 'FAQ' }), h('a', { href: '/register.html', text: 'Create account' }))),
+      h('div', null, h('h4', { text: 'Explore' }), h('nav', null, h('a', { href: '/#how', text: 'How it works' }), h('a', { href: '/#pricing', text: 'Pricing' }), h('a', { href: '/#faq', text: 'FAQ' }), h('a', { href: '/register.html', text: 'Create account' }), h('a', { href: '/sales.html', text: 'Talk to sales' }))),
       h('div', null, h('h4', { text: 'Legal' }), h('nav', null, h('a', { href: '/privacy.html', text: 'Privacy Policy' }), h('a', { href: '/terms.html', text: 'Terms of Use' }), h('a', { href: '/refund.html', text: 'Refund Policy' }))),
       h('div', { class: 'f-copy' }, h('span', { text: '© ' + new Date().getFullYear() + ' Botclub Labs. All rights reserved.' }), h('span', { text: 'Made for curious students in India' })))));
   };

@@ -5,7 +5,7 @@
 
   function render(a) { view.replaceChildren.apply(view, a.filter(Boolean)); }
   function head(active, title) {
-    var tabs = [['#/', 'Overview'], ['#/students', 'Students'], ['#/orders', 'Payments'], ['#/plans', 'Plans'], ['#/usage', 'App usage']];
+    var tabs = [['#/', 'Overview'], ['#/students', 'Students'], ['#/orders', 'Payments'], ['#/plans', 'Plans'], ['#/enquiries', 'Enquiries'], ['#/usage', 'App usage']];
     return [h('div', { class: 'app-top' }, h('h1', { text: title })),
       h('div', { class: 'subnav' }, tabs.map(function (t) { return h('a', { href: t[0], class: t[0] === active ? 'on' : '', text: t[1] }); }), h('a', { href: '/app', text: 'Student view' }))];
   }
@@ -25,7 +25,7 @@
   function overview() {
     BL.api('/admin/summary').then(function (s) {
       show('#/', 'Overview', [
-        h('div', { class: 'stats' }, stat('Students', String(s.students), null, 'var(--cyan)'), stat('Paying now', String(s.payingStudents), 'active paid plans', 'var(--green)'), stat('Paid orders', String(s.paidOrders), null, 'var(--blue)'), stat('Revenue', BL.fmtInr(s.revenueInr), 'all time', 'var(--yellow)')),
+        h('div', { class: 'stats' }, stat('Students', String(s.students), null, 'var(--cyan)'), stat('Paying now', String(s.payingStudents), 'active paid plans', 'var(--green)'), stat('Paid orders', String(s.paidOrders), null, 'var(--blue)'), stat('Revenue', BL.fmtInr(s.revenueInr), 'all time', 'var(--yellow)'), stat('New enquiries', String(s.newEnquiries || 0), 'from Talk to sales', 'var(--red)')),
         h('div', { style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px' },
           h('div', { class: 'card' }, h('h2', { style: 'font-size:16px;margin-bottom:12px', text: 'Sign-ups, last 30 days' }), bars(s.series, 'signups', 'var(--cyan)', String)),
           h('div', { class: 'card' }, h('h2', { style: 'font-size:16px;margin-bottom:12px', text: 'Revenue, last 30 days' }), bars(s.series, 'revenueInr', 'var(--yellow)', BL.fmtInr))),
@@ -126,6 +126,25 @@
 
   window.BLA = { h: h, show: show, table: table, stat: stat, bars: bars, fail: fail, statusBadge: statusBadge, routes: {} };
 
+  function enquiries() {
+    var status = '', box = h('div');
+    var sel = h('select', { 'aria-label': 'Status', style: 'padding:9px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text)', onchange: function () { status = sel.value; load(); } },
+      [['', 'All'], ['new', 'New'], ['contacted', 'Contacted'], ['won', 'Won'], ['closed', 'Closed']].map(function (o) { return h('option', { value: o[0], text: o[1] }); }));
+    function load() {
+      BL.api('/admin/enquiries' + (status ? '?status=' + status : '')).then(function (r) {
+        box.replaceChildren.apply(box, r.enquiries.length ? r.enquiries.map(function (e) {
+          var st = h('select', { 'aria-label': 'Status', style: 'padding:7px 10px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--text)', onchange: function () { BL.api('/admin/enquiries/' + encodeURIComponent(e.id), { method: 'PATCH', body: { status: st.value } }).then(function () { BL.toast('Saved.'); }).catch(function (x) { BL.toast(x.message); }); } },
+            ['new', 'contacted', 'won', 'closed'].map(function (v) { var o = h('option', { value: v, text: v[0].toUpperCase() + v.slice(1) }); if (v === e.status) o.selected = true; return o; }));
+          return h('div', { class: 'card', style: 'margin-bottom:12px' },
+            h('div', { style: 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between' }, h('div', null, h('b', { style: 'font-size:16px', text: e.institute }), h('div', { class: 'micro', text: e.name + ' · ' + e.role + (e.city ? ' · ' + e.city : '') + ' · ' + new Date(e.createdAt).toLocaleString('en-IN') })), st),
+            h('div', { style: 'margin-top:10px;font-size:14px;display:flex;gap:16px;flex-wrap:wrap' }, h('a', { href: 'mailto:' + e.email, text: e.email }), h('a', { href: 'tel:' + e.phone, text: e.phone }), h('span', { text: 'Students: ' + (e.students || '—') }), h('span', { text: 'Classes: ' + (e.classes.length ? e.classes.join(', ') : '—') })),
+            e.message ? h('p', { style: 'margin-top:10px;color:var(--muted);font-size:14px', text: e.message }) : null);
+        }) : [h('div', { class: 'empty', text: 'No enquiries yet. They appear here when a school uses Talk to sales.' })]);
+      }).catch(fail);
+    }
+    show('#/enquiries', 'Enquiries', [h('div', { style: 'margin-bottom:14px' }, sel), box]); load();
+  }
+
   function route() {
     var p = location.hash.slice(1) || '/', m = /^\/student\/(.+)$/.exec(p);
     window.scrollTo(0, 0);
@@ -133,6 +152,7 @@
     if (p === '/students') return students();
     if (p === '/orders') return orders();
     if (p === '/plans') return plans();
+    if (p === '/enquiries') return enquiries();
     if (p === '/usage' || p.indexOf('/usage/') === 0) return window.BLA.routes.usage(p);
     overview();
   }

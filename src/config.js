@@ -32,6 +32,8 @@ const config = {
   baseUrl: String(env.BASE_URL || '').replace(/\/+$/, ''),
   brand: env.BRAND_NAME || 'Botclub Labs',
   supportEmail: env.SUPPORT_EMAIL || '',
+  // where "Talk to sales" enquiries are e-mailed (they are always saved and shown in Admin > Enquiries); defaults to SUPPORT_EMAIL
+  salesEmail: env.SALES_EMAIL || env.SUPPORT_EMAIL || '',
   paymentMode,
   razorpayKeyId: env.RAZORPAY_KEY_ID || '',
   razorpayKeySecret: env.RAZORPAY_KEY_SECRET || '',
