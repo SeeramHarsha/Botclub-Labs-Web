@@ -71,10 +71,28 @@
     var need = q.get('need'), pick = q.get('plan');
     var defCls = need ? Number(need.split('/')[0]) : S.me.user.cls || 8;
     var cards = S.plans.map(function (p) {
-      var sel = null;
+      var sel = null, picked = [S.me.user.cls || defCls];
+      if (p.scope === 'multi-class') {
+        var need = p.classCount || 2; picked = [defCls];
+        var chips = [6, 7, 8, 9, 10].map(function (n) {
+          var cb = h('input', { type: 'checkbox', value: n }); cb.checked = n === defCls;
+          cb.addEventListener('change', function () {
+            picked = chips.filter(function (x) { return x.cb.checked; }).map(function (x) { return x.n; });
+            chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need; });
+            hint.textContent = picked.length + ' of ' + need + ' chosen';
+          });
+          return { n: n, cb: cb, el: h('label', null, cb, h('i', { text: 'Class ' + n })) };
+        });
+        var hint = h('div', { class: 'micro', style: 'margin:0 0 8px', text: '1 of ' + need + ' chosen' });
+        chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need; });
+        sel = h('div', { style: 'margin-bottom:12px' }, h('div', { class: 'micro', style: 'margin-bottom:6px', text: 'Choose ' + need + ' classes' }), h('div', { class: 'chips' }, chips.map(function (x) { return x.el; })), hint);
+      }
       if (p.scope === 'one-class') sel = h('select', { 'aria-label': 'Class', style: 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);margin-bottom:12px' },
         [6, 7, 8, 9, 10].map(function (n) { var o = h('option', { value: n, text: 'Class ' + n }); if (n === defCls) o.selected = true; return o; }));
-      var btn = h('button', { class: 'btn primary', type: 'button', text: 'Buy for ' + BL.fmtInr(p.priceInr), onclick: function () { buy(p, sel ? Number(sel.value) : null, btn); } });
+      var btn = h('button', { class: 'btn primary', type: 'button', text: 'Buy for ' + BL.fmtInr(p.priceInr), onclick: function () {
+        if (p.scope === 'multi-class') { var need2 = p.classCount || 2; if (picked.length !== need2) return BL.toast('Please choose exactly ' + need2 + ' classes.'); return buy(p, { classes: picked }, btn); }
+        buy(p, p.scope === 'one-class' ? { cls: Number(sel.value) } : {}, btn);
+      } });
       return h('div', { class: 'price' + (p.badge ? ' best' : ''), id: 'plan-' + p.id }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
         h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: ' / ' + (p.durationDays % 365 === 0 ? 'year' : p.durationDays + ' days') })),
         h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })), sel, btn);
@@ -89,7 +107,7 @@
     if (pick && document.getElementById('plan-' + pick)) document.getElementById('plan-' + pick).scrollIntoView({ block: 'center' });
     BL.api('/billing/orders').then(function (r) {
       ordersBox.replaceChildren(r.orders.length ? h('div', { class: 'tw' }, h('table', { class: 'tbl' }, h('thead', null, h('tr', null, ['Date', 'Plan', 'Amount', 'Status', 'Payment id'].map(function (t) { return h('th', { text: t }); }))),
-        h('tbody', null, r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.cls ? ' · Class ' + o.cls : '') }), h('td', { text: BL.fmtInr(o.amountInr) }),
+        h('tbody', null, r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.label ? ' · ' + o.label : '') }), h('td', { text: BL.fmtInr(o.amountInr) }),
           h('td', null, h('span', { class: 'badge ' + (o.status === 'paid' ? 'green' : o.status === 'failed' ? 'red' : 'grey'), text: o.status === 'created' ? 'not completed' : o.status })), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' })); })))) : h('div', { class: 'empty', text: 'No payments yet.' }));
     }, function () {});
   }
@@ -98,7 +116,7 @@
 
   function buy(plan, cls, btn) {
     btn.disabled = true;
-    BL.api('/billing/checkout', { method: 'POST', body: { planId: plan.id, cls: cls } }).then(function (o) {
+    BL.api('/billing/checkout', { method: 'POST', body: Object.assign({ planId: plan.id }, cls) }).then(function (o) {
       if (o.provider === 'demo') return demoCheckout(o, btn);
       return razorpay(o, btn);
     }).catch(function (e) { BL.toast(e.message); btn.disabled = false; });

@@ -20,7 +20,8 @@ async function markPaid(orderId, paymentId) {
   return { granted: true, order: o };
 }
 
-const publicOrder = (o) => ({ id: o._id, planName: o.planName, cls: o.cls || null, amountInr: o.amountPaise / 100, status: o.status, createdAt: o.createdAt, paidAt: o.paidAt || null, paymentId: o.paymentId || '' });
+const orderLabel = (o) => (o.cls ? 'Class ' + o.cls : o.grant && o.grant.classes && o.grant.classes.length < CLASSES.length ? 'Classes ' + o.grant.classes.join(', ') : '');
+const publicOrder = (o) => ({ id: o._id, planName: o.planName, cls: o.cls || null, label: orderLabel(o), amountInr: o.amountPaise / 100, status: o.status, createdAt: o.createdAt, paidAt: o.paidAt || null, paymentId: o.paymentId || '' });
 
 // ---------------------------------------------------------------- Razorpay webhook (a backup way for "paid" to reach us if the browser closes early)
 const webhook = express.Router();
@@ -47,6 +48,11 @@ router.post('/checkout', checkoutLimit, wrap(async (req, res) => {
   if (!plan || !plan.active || !(plan.priceInr > 0)) return res.status(400).json({ error: 'That plan is not available.' });
   let classes, c = null;
   if (plan.scope === 'one-class') { c = cls(req.body.cls); if (!c) return res.status(400).json({ error: 'Please choose which class this plan is for.' }); classes = [c]; }
+  else if (plan.scope === 'multi-class') {
+    const need = plan.classCount || 2, chosen = [...new Set((Array.isArray(req.body.classes) ? req.body.classes : []).map(Number).filter((x) => CLASSES.includes(x)))].sort((a, b) => a - b);
+    if (chosen.length !== need) return res.status(400).json({ error: 'Please choose exactly ' + need + ' classes for this plan.' });
+    classes = chosen;
+  }
   else classes = [...CLASSES];
   const amountPaise = Math.round(plan.priceInr * 100);
   const id = crypto.randomUUID();
@@ -56,7 +62,7 @@ router.post('/checkout', checkoutLimit, wrap(async (req, res) => {
   await orders().insertOne({ _id: id, userId: String(req.user._id), planId: plan._id, planName: plan.name, cls: c, amountPaise, currency: 'INR', status: 'created', provider: o.provider, providerOrderId: o.providerOrderId,
     grant: { classes, days: plan.durationDays }, createdAt: new Date() });
   res.status(201).json({ orderId: id, provider: o.provider, providerOrderId: o.providerOrderId, amountPaise, currency: 'INR', keyId: o.provider === 'razorpay' ? config.razorpayKeyId : undefined,
-    description: `${plan.name}${c ? ' - Class ' + c : ''}`, prefill: { name: req.user.name, email: req.user.email, contact: req.user.phone || undefined } });
+    description: `${plan.name}${c ? ' - Class ' + c : classes.length < CLASSES.length ? ' - Classes ' + classes.join(', ') : ''}`, prefill: { name: req.user.name, email: req.user.email, contact: req.user.phone || undefined } });
 }));
 
 /** Razorpay Checkout finished in the browser: trust it only after checking the signature */

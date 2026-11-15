@@ -72,7 +72,7 @@
               BL.api('/admin/students/' + encodeURIComponent(id) + '/grant', { method: 'POST', body: { classes: picked, days: Number(days.value) } }).then(function () { student(id); BL.toast('Access given.'); }).catch(function (e) { err.textContent = e.message; });
             } })), err, ok),
         h('h2', { style: 'font-size:17px;margin:8px 0 10px', text: 'Payments' }),
-        r.orders.length ? table(['Date', 'Plan', 'Amount', 'Status', 'Payment id'], r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.cls ? ' · Class ' + o.cls : '') }), h('td', { text: BL.fmtInr(o.amountInr) }), h('td', null, statusBadge(o.status)), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' })); })) : h('div', { class: 'empty', text: 'No payments.' }),
+        r.orders.length ? table(['Date', 'Plan', 'Amount', 'Status', 'Payment id'], r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.label ? ' · ' + o.label : '') }), h('td', { text: BL.fmtInr(o.amountInr) }), h('td', null, statusBadge(o.status)), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' })); })) : h('div', { class: 'empty', text: 'No payments.' }),
         h('div', { style: 'margin-top:22px' }, h('button', { class: 'btn ghost', type: 'button', text: s.disabled ? 'Enable this account' : 'Disable this account', onclick: function () {
           if (!s.disabled && !confirm('Disable this account? The student will not be able to log in.')) return;
           BL.api('/admin/students/' + encodeURIComponent(id) + '/disable', { method: 'POST', body: { disabled: !s.disabled } }).then(function () { student(id); }).catch(function (e) { BL.toast(e.message); });
@@ -88,7 +88,7 @@
     function load() {
       BL.api('/admin/orders' + (status ? '?status=' + status : '')).then(function (r) {
         box.replaceChildren(r.orders.length ? table(['Date', 'Student', 'Plan', 'Amount', 'Status', 'Payment id'], r.orders.map(function (o) {
-          return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.studentName }, h('div', { class: 'micro', text: o.student })), h('td', { text: o.planName + (o.cls ? ' · Class ' + o.cls : '') }), h('td', { text: BL.fmtInr(o.amountInr) }), h('td', null, statusBadge(o.status)), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' }));
+          return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.studentName }, h('div', { class: 'micro', text: o.student })), h('td', { text: o.planName + (o.label ? ' · ' + o.label : '') }), h('td', { text: BL.fmtInr(o.amountInr) }), h('td', null, statusBadge(o.status)), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' }));
         })) : h('div', { class: 'empty', text: 'No payments.' }));
       }).catch(function (e) { box.replaceChildren(h('div', { class: 'empty', text: e.message })); });
     }
@@ -102,17 +102,28 @@
       var isNew = !p, err = h('p', { class: 'err' });
       var f = h('form', { class: 'card', style: 'margin-bottom:16px', onsubmit: function (e) {
         e.preventDefault(); err.textContent = '';
-        var body = { name: f.name.value, tagline: f.tagline.value, priceInr: Number(f.price.value), durationDays: Number(f.days.value), scope: f.scope.value, badge: f.badge.value, active: f.active.checked, features: f.features.value.split('\n') };
+        var body = { name: f.name.value, tagline: f.tagline.value, priceInr: Number(f.price.value), durationDays: Number(f.days.value), scope: f.scope.value, classCount: Number(f.classCount.value), badge: f.badge.value, active: f.active.checked, features: f.features.value.split('\n') };
         BL.api(isNew ? '/admin/plans' : '/admin/plans/' + encodeURIComponent(p._id), { method: isNew ? 'POST' : 'PATCH', body: body }).then(function () { BL.toast('Saved.'); load(); }).catch(function (x) { err.textContent = x.message; });
       } },
         h('div', { class: 'two' }, field('Name', h('input', { name: 'name', value: p ? p.name : '', maxlength: 40, required: true })), field('Price (₹)', h('input', { name: 'price', type: 'number', min: 1, value: p ? p.priceInr : '', required: true }))),
         field('One-line description', h('input', { name: 'tagline', value: p ? p.tagline : '', maxlength: 100 })),
         h('div', { class: 'two' }, field('Length (days)', h('input', { name: 'days', type: 'number', min: 1, max: 1095, value: p ? p.durationDays : 365, required: true })),
-          field('Covers', h('select', { name: 'scope' }, [['one-class', 'One class (student picks)'], ['all-classes', 'All classes']].map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if (p && p.scope === o[0]) op.selected = true; return op; })))),
+          field('Covers', h('select', { name: 'scope' }, [['one-class', 'One class (student picks)'], ['multi-class', 'Several classes (student picks)'], ['all-classes', 'All classes']].map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if (p && p.scope === o[0]) op.selected = true; return op; })))),
+        field('How many classes for a "several classes" plan', h('input', { name: 'classCount', type: 'number', min: 2, max: 4, value: p && p.classCount ? p.classCount : 2 })),
         field('Badge (optional)', h('input', { name: 'badge', value: p ? p.badge : '', maxlength: 20 })),
         field('What is included (one per line)', h('textarea', { name: 'features', rows: 4, style: 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);font-family:inherit' }, (p ? p.features : []).join('\n'))),
         h('label', { class: 'check' }, h('input', { name: 'active', type: 'checkbox', checked: p ? !!p.active : true }), h('span', { text: 'Shown to students and can be bought' })), err,
         h('button', { class: 'btn primary small', type: 'submit', style: 'margin-top:14px', text: isNew ? 'Add plan' : 'Save changes' }));
+      if (!isNew) {   // a switch at the top: show or hide this plan on the website straight away
+        var sw = h('input', { type: 'checkbox', checked: !!p.active, 'aria-label': 'Show this plan on the website' });
+        var state = h('span', { class: 'micro', text: p.active ? 'Shown on the website' : 'Hidden' });
+        sw.addEventListener('change', function () {
+          BL.api('/admin/plans/' + encodeURIComponent(p._id), { method: 'PATCH', body: { active: sw.checked } })
+            .then(function () { state.textContent = sw.checked ? 'Shown on the website' : 'Hidden'; f.active.checked = sw.checked; BL.toast(p.name + (sw.checked ? ' is now shown.' : ' is now hidden.')); })
+            .catch(function (x) { sw.checked = !sw.checked; BL.toast(x.message); });
+        });
+        f.insertBefore(h('div', { class: 'plan-head' }, h('b', { text: p.name }), h('label', { class: 'switch' }, state, sw, h('i'))), f.firstChild);
+      }
       return f;
     }
     function load() {

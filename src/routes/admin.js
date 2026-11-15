@@ -107,9 +107,11 @@ function cleanPlan(b, existing) {
   if (name.length < 2) return { error: 'Please give the plan a name.' };
   if (!(price >= 1 && price <= 200000)) return { error: 'Price must be between 1 and 200000 rupees.' };
   if (!(days >= 1 && days <= 1095)) return { error: 'Length must be between 1 and 1095 days.' };
-  if (!['one-class', 'all-classes'].includes(scope)) return { error: 'Scope must be one-class or all-classes.' };
+  if (!['one-class', 'multi-class', 'all-classes'].includes(scope)) return { error: 'Choose what the plan covers: one class, several classes, or all classes.' };
+  const classCount = scope === 'multi-class' ? Math.round(Number(b.classCount !== undefined ? b.classCount : (existing && existing.classCount) || 2)) : 0;
+  if (scope === 'multi-class' && !(classCount >= 2 && classCount <= 4)) return { error: 'A "several classes" plan covers 2 to 4 classes.' };
   const features = (Array.isArray(b.features) ? b.features : (existing && existing.features) || []).map((f) => text(f, 90)).filter(Boolean).slice(0, 8);
-  return { value: { name, tagline: text(b.tagline !== undefined ? b.tagline : existing && existing.tagline, 100), priceInr: price, durationDays: days, scope, badge: text(b.badge !== undefined ? b.badge : existing && existing.badge, 20), features,
+  return { value: { name, tagline: text(b.tagline !== undefined ? b.tagline : existing && existing.tagline, 100), priceInr: price, durationDays: days, scope, classCount, badge: text(b.badge !== undefined ? b.badge : existing && existing.badge, 20), features,
     active: b.active !== undefined ? !!b.active : existing ? !!existing.active : true, sort: Math.round(Number(b.sort !== undefined ? b.sort : existing ? existing.sort : 50)) || 50 } };
 }
 router.get('/plans', wrap(async (req, res) => res.json({ plans: await plans.list({ onlyActive: false }) })));

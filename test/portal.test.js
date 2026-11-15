@@ -39,7 +39,8 @@ test('status, public pages and plans', async () => {
   assert.equal((await b.call('/')).status, 200);
   assert.match((await b.call('/')).text, /Botclub Labs/);
   const p = (await b.call('/api/plans')).json.plans;
-  assert.equal(p.length, 2); assert.ok(p.every((x) => x.priceInr > 0 && x.id));
+  assert.equal(p.length, 3); assert.ok(p.every((x) => x.priceInr > 0 && x.id));
+  assert.equal(p.find((x) => x.scope === 'multi-class').classCount, 2);
   const c = (await b.call('/api/config')).json;
   assert.equal(c.paymentMode, 'demo'); assert.equal(c.totalChapters, 61);
   assert.equal(c.razorpayKeyId, '');                                  // the key id is only ever sent in razorpay mode
@@ -269,6 +270,30 @@ test('Talk to sales: a school can leave its details; the admin sees them; activi
   assert.equal((await browser().call('/api/admin/enquiries')).status, 401);                                                  // not signed in
   const cat = (await (async () => { const s2 = browser(); await s2.call('/api/auth/login', { method: 'POST', body: { email: 'student2@test.org', password: 'student-password-2' } }); return s2.call('/api/catalog'); })()).json;
   assert.ok(cat.classes.find((x) => x.cls === 8).chapters.every((x) => x.activities > 0));
+});
+
+test('"any two classes" plan: the student must pick exactly two; only those open; a plan can be hidden and shown', async () => {
+  const a = browser(); await a.call('/api/auth/login', { method: 'POST', body: { email: 'admin@test.org', password: 'a-long-admin-password' } });
+  const two = (await a.call('/api/admin/plans')).json.plans.find((x) => x.scope === 'multi-class');
+  assert.equal((await a.call('/api/admin/plans', { method: 'POST', body: { name: 'Bad', priceInr: 500, durationDays: 365, scope: 'multi-class', classCount: 7, features: [] } })).status, 400);
+  const s = browser(); await s.call('/api/auth/login', { method: 'POST', body: { email: 'student4@test.org', password: 'student-password-4' } });
+  const co = (body) => s.call('/api/billing/checkout', { method: 'POST', body: { planId: two._id, ...body } });
+  assert.equal((await co({ classes: [7] })).status, 400);                  // one class is not enough
+  assert.equal((await co({ classes: [7, 9, 10] })).status, 400);           // three is too many
+  assert.equal((await co({ cls: 7 })).status, 400);
+  const ok = await co({ classes: [9, 7, 7, 99] });                         // duplicates and junk are dropped: 7 and 9
+  assert.equal(ok.status, 201); assert.match(ok.json.description, /Classes 7, 9/);
+  assert.equal((await s.call('/api/billing/demo-pay', { method: 'POST', body: { orderId: ok.json.orderId } })).status, 200);
+  const cat = (await s.call('/api/catalog')).json, open = (c) => cat.classes.find((x) => x.cls === c).chapters.find((x) => x.chapter === 2).access;
+  const cat2 = (await s.call('/api/catalog')).json, acc = (c) => cat2.classes.find((x) => x.cls === c).chapters.find((x) => x.chapter === 2).access;
+  assert.equal(acc(7), true); assert.equal(acc(9), true); assert.equal(acc(6), false); assert.equal(open(10), false);
+  assert.ok((await s.call('/api/billing/orders')).json.orders.some((o) => o.label === 'Classes 7, 9'));
+  // hide the plan: gone from the public list and cannot be bought; show it again: back
+  assert.equal((await a.call('/api/admin/plans/' + two._id, { method: 'PATCH', body: { active: false } })).status, 200);
+  assert.ok(!(await browser().call('/api/plans')).json.plans.some((x) => x.id === two._id));
+  assert.equal((await co({ classes: [6, 8] })).status, 400);
+  assert.equal((await a.call('/api/admin/plans/' + two._id, { method: 'PATCH', body: { active: true } })).status, 200);
+  assert.ok((await browser().call('/api/plans')).json.plans.some((x) => x.id === two._id));
 });
 
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {
