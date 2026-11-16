@@ -39,16 +39,16 @@ async function ensureTrial(userId) {
 }
 
 /** give access. Buying again while still active extends the same access instead of overlapping it. */
-async function grant({ userId, source, planId, orderId = null, classes, chapters = 'all', days }) {
+async function grant({ userId, source, planId, orderId = null, classes, chapters = 'all', subject = null, days }) {
   const now = new Date();
   let startsAt = now;
-  if (days) {
-    const same = await col().find({ userId: String(userId), source: { $ne: 'trial' }, chapters: 'all', endsAt: { $gt: now } }).toArray();
-    const key = (c) => [...c].sort().join(',');
-    for (const e of same) if (key(e.classes) === key(classes) && e.endsAt > startsAt) startsAt = e.endsAt;
+  if (days) {          // the same classes (and the same chapters, for a one-subject plan) bought again start when the first one ends
+    const same = await col().find({ userId: String(userId), source: { $ne: 'trial' }, endsAt: { $gt: now } }).toArray();
+    const key = (cl, ch) => [...cl].sort().join(',') + '|' + (ch === 'all' ? 'all' : [...ch].sort().join(','));
+    for (const e of same) if (key(e.classes, e.chapters) === key(classes, chapters) && e.endsAt > startsAt) startsAt = e.endsAt;
   }
   const endsAt = days ? new Date(startsAt.getTime() + days * 864e5) : null;
-  const doc = { _id: crypto.randomUUID(), userId: String(userId), source, planId, orderId, classes: [...classes], chapters, startsAt, endsAt };
+  const doc = { _id: crypto.randomUUID(), userId: String(userId), source, planId, orderId, classes: [...classes], chapters, subject, startsAt, endsAt };
   await col().insertOne(doc);
   return doc;
 }
@@ -58,7 +58,8 @@ function summarize(ents) {
   const full = {};
   for (const e of ents) if (e.chapters === 'all') for (const c of e.classes) if (!full[c] || (e.endsAt === null) || (full[c] !== null && e.endsAt > full[c])) full[c] = e.endsAt;
   const free = [...new Set(ents.flatMap((e) => (Array.isArray(e.chapters) ? e.chapters : [])))];
-  return { fullClasses: Object.entries(full).map(([c, end]) => ({ cls: Number(c), endsAt: end })), freeChapters: free };
+  const subjects = ents.filter((e) => e.source !== 'trial' && e.subject && Array.isArray(e.chapters)).map((e) => ({ cls: e.classes[0], subject: e.subject, endsAt: e.endsAt }));
+  return { fullClasses: Object.entries(full).map(([c, end]) => ({ cls: Number(c), endsAt: end })), subjects, freeChapters: free };
 }
 
 module.exports = { active, current, allows, ensureTrial, grant, summarize };

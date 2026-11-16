@@ -39,7 +39,9 @@ test('status, public pages and plans', async () => {
   assert.equal((await b.call('/')).status, 200);
   assert.match((await b.call('/')).text, /Botclub Labs/);
   const p = (await b.call('/api/plans')).json.plans;
-  assert.equal(p.length, 3); assert.ok(p.every((x) => x.priceInr > 0 && x.id));
+  assert.equal(p.length, 4); assert.ok(p.every((x) => x.priceInr > 0 && x.id));
+  assert.deepEqual(p.filter((x) => x.track === 'senior').map((x) => [x.scope, x.priceInr]), [['subject', 1499]]);        // every Class 11/12 subject is 1499
+  assert.deepEqual(p.find((x) => x.scope === 'all-classes').classes, [6, 7, 8, 9, 10]);
   assert.equal(p.find((x) => x.scope === 'multi-class').classCount, 2);
   const c = (await b.call('/api/config')).json;
   assert.equal(c.paymentMode, 'demo'); assert.equal(c.totalChapters, 134);
@@ -314,6 +316,34 @@ test('Class 11 and 12: syllabus by subject, free first chapter, lessons served f
   assert.equal((await b.call('/learn/' + encodeURI('Class - 12/Chapter - 38/index.html'))).status, 404);
   const cat = (await b.call('/api/catalog')).json, c11 = cat.classes.find((x) => x.cls === 11);
   assert.equal(c11.chapters.length, 36); assert.equal(c11.chapters[0].group, 'Physics · Part 1'); assert.ok(c11.chapters.every((x) => x.activities > 0));
+});
+
+test('Class 11 and 12 sell one subject at a time (1499 each); the two groups of plans stay apart', async () => {
+  const a = browser(); await a.call('/api/auth/login', { method: 'POST', body: { email: 'admin@test.org', password: 'a-long-admin-password' } });
+  const plans = (await a.call('/api/admin/plans')).json.plans, sub = plans.find((x) => x.scope === 'subject'), one = plans.find((x) => x.scope === 'one-class');
+  assert.equal(sub.priceInr, 1499); assert.equal(sub.track, 'senior');
+  assert.equal((await a.call('/api/admin/plans', { method: 'POST', body: { name: 'Bad', priceInr: 500, durationDays: 365, scope: 'subject', track: 'junior', features: [] } })).status, 400);
+  const s = browser(); await s.call('/api/auth/login', { method: 'POST', body: { email: 'student5@test.org', password: 'student-password-5' } });
+  const co = (planId, body) => s.call('/api/billing/checkout', { method: 'POST', body: { planId, ...body } });
+  assert.equal((await co(sub._id, { cls: 8, subject: 'Physics' })).status, 400);              // Class 8 is not in the 11/12 group
+  assert.equal((await co(sub._id, { cls: 11, subject: 'Biology' })).status, 400);             // no such subject
+  assert.equal((await co(sub._id, { cls: 11 })).status, 400);
+  assert.equal((await co(one._id, { cls: 12 })).status, 400);                                 // a Class 6-10 plan cannot be used for Class 12
+  const ok = await co(sub._id, { cls: 11, subject: 'Physics' });
+  assert.equal(ok.status, 201); assert.match(ok.json.description, /Class 11 · Physics/); assert.equal(ok.json.amountPaise, 149900);
+  assert.equal((await s.call('/api/billing/demo-pay', { method: 'POST', body: { orderId: ok.json.orderId } })).status, 200);
+  const cat = (await s.call('/api/catalog')).json, chs = (c) => cat.classes.find((x) => x.cls === c).chapters;
+  assert.ok(chs(11).filter((x) => /^Physics/.test(x.group)).every((x) => x.access) && chs(11).filter((x) => /^Physics/.test(x.group)).length === 13);
+  assert.ok(chs(11).filter((x) => /^(Chemistry|Mathematics)/.test(x.group) && x.chapter !== 1).every((x) => !x.access));      // other subjects stay locked
+  assert.ok(chs(12).filter((x) => x.chapter !== 1).every((x) => !x.access));                    // and so does Class 12
+  const me = (await s.call('/api/me')).json; assert.deepEqual(me.access.subjects.map((x) => [x.cls, x.subject]), [[11, 'Physics']]);
+  assert.ok((await s.call('/api/billing/orders')).json.orders.some((o) => o.label === 'Class 11 · Physics'));
+  const lesson = await s.call('/learn/' + encodeURI('Class - 11/Chapter - 5/index.html')), locked = await s.call('/learn/' + encodeURI('Class - 11/Chapter - 20/index.html'));
+  assert.equal(lesson.status, 200); assert.equal(locked.status, 302);
+  // an admin can also give one subject
+  const id = me.user.id;
+  assert.equal((await a.call('/api/admin/students/' + id + '/grant', { method: 'POST', body: { classes: [12], subject: 'Chemistry', days: 30 } })).status, 201);
+  assert.ok((await s.call('/api/catalog')).json.classes.find((x) => x.cls === 12).chapters.filter((x) => /^Chemistry/.test(x.group)).every((x) => x.access));
 });
 
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {

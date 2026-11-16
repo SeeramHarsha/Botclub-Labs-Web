@@ -7,7 +7,8 @@ const db = require('../db');
 const ent = require('../entitlements');
 const plans = require('../plans');
 const { publicOrder } = require('./billing');
-const { text, wrap, CLASSES } = require('../lib');
+const catalog = require('../catalog');
+const { text, wrap, CLASSES, TRACKS } = require('../lib');
 
 const router = express.Router();
 router.use(auth.loadUser, auth.requireUser, auth.requireAdmin);
@@ -63,7 +64,13 @@ router.post('/students/:id/grant', wrap(async (req, res) => {
   const days = Math.round(Number(b.days));
   if (!classes.length) return res.status(400).json({ error: 'Choose at least one class.' });
   if (!(days >= 1 && days <= 1095)) return res.status(400).json({ error: 'Days must be between 1 and 1095.' });
-  const e = await ent.grant({ userId: u._id, source: 'admin', planId: 'admin-grant', classes, days });
+  let chapters = 'all', subject = null;
+  if (b.subject && classes.length === 1) {                      // one subject of one class
+    subject = String(b.subject).slice(0, 40); const list = catalog.subjectChapters(classes[0], subject);
+    if (!list.length) return res.status(400).json({ error: 'That class has no such subject.' });
+    chapters = list;
+  }
+  const e = await ent.grant({ userId: u._id, source: 'admin', planId: 'admin-grant', classes, chapters, subject, days });
   res.status(201).json({ ok: true, endsAt: e.endsAt });
 }));
 
@@ -107,11 +114,15 @@ function cleanPlan(b, existing) {
   if (name.length < 2) return { error: 'Please give the plan a name.' };
   if (!(price >= 1 && price <= 200000)) return { error: 'Price must be between 1 and 200000 rupees.' };
   if (!(days >= 1 && days <= 1095)) return { error: 'Length must be between 1 and 1095 days.' };
-  if (!['one-class', 'multi-class', 'all-classes'].includes(scope)) return { error: 'Choose what the plan covers: one class, several classes, or all classes.' };
+  const track = b.track !== undefined ? b.track : (existing && existing.track) || 'junior';
+  if (!TRACKS[track]) return { error: 'Choose who the plan is for: Classes 6 to 10, or Classes 11 and 12.' };
+  if (!['one-class', 'multi-class', 'subject', 'all-classes'].includes(scope)) return { error: 'Choose what the plan covers: one class, several classes, one subject, or all classes.' };
+  if (scope === 'subject' && track !== 'senior') return { error: 'A one-subject plan is for Classes 11 and 12.' };
+  if (scope === 'multi-class' && track !== 'junior') return { error: 'Classes 11 and 12: use one class, one subject, or both classes.' };
   const classCount = scope === 'multi-class' ? Math.round(Number(b.classCount !== undefined ? b.classCount : (existing && existing.classCount) || 2)) : 0;
   if (scope === 'multi-class' && !(classCount >= 2 && classCount <= 4)) return { error: 'A "several classes" plan covers 2 to 4 classes.' };
   const features = (Array.isArray(b.features) ? b.features : (existing && existing.features) || []).map((f) => text(f, 90)).filter(Boolean).slice(0, 8);
-  return { value: { name, tagline: text(b.tagline !== undefined ? b.tagline : existing && existing.tagline, 100), priceInr: price, durationDays: days, scope, classCount, badge: text(b.badge !== undefined ? b.badge : existing && existing.badge, 20), features,
+  return { value: { name, tagline: text(b.tagline !== undefined ? b.tagline : existing && existing.tagline, 100), priceInr: price, durationDays: days, scope, track, classCount, badge: text(b.badge !== undefined ? b.badge : existing && existing.badge, 20), features,
     active: b.active !== undefined ? !!b.active : existing ? !!existing.active : true, sort: Math.round(Number(b.sort !== undefined ? b.sort : existing ? existing.sort : 50)) || 50 } };
 }
 router.get('/plans', wrap(async (req, res) => res.json({ plans: await plans.list({ onlyActive: false }) })));

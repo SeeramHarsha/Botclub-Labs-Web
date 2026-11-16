@@ -136,26 +136,36 @@
     fg.appendChild(h('div', { class: 'feat' }, h('div', { class: 'ic' }, ic), h('h4', null, tokens(f[1])), h('p', null, tokens(f[2]))));
   });
 
-  // ------------------------------------------------------------------ pricing (live from the server, so prices can be changed in the admin area)
-  var box = document.getElementById('prices');
+  // ------------------------------------------------------------------ pricing: Classes 6 to 10 and Classes 11 and 12 shown separately (live from the server, so prices can be changed in the admin area)
+  var box = document.getElementById('prices'), priceTabs = document.getElementById('priceTabs');
   if (box) Promise.all([BL.api('/plans'), BL.me()]).then(function (r) {
     var plans = r[0].plans, signedIn = r[1] && r[1].user;
     var span = function (d) { return d % 365 === 0 ? 'year' : d % 30 === 0 ? (d / 30) + ' months' : d + ' days'; };
-    var cards = [h('div', { class: 'price' }, h('h3', { text: 'Free trial' }), h('div', { class: 'tg', text: 'Taste every class, no card needed' }),
-      h('div', { class: 'amt' }, '₹0', h('small', { text: ' forever' })),
-      h('ul', null, ['Chapter 1 of every class (6 to 12)', 'Every simulation in those chapters', 'Progress tracking'].map(function (t) { return h('li', { text: t }); })),
-      h('a', { class: 'btn ghost', href: signedIn ? '/app' : '/register.html', text: signedIn ? 'Open the app' : 'Start free' }))];
-    plans.forEach(function (p) {
-      cards.push(h('div', { class: 'price' + (p.badge ? ' best' : '') }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
-        h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: ' / ' + span(p.durationDays) })),
-        h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })),
-        h('a', { class: 'btn primary', href: signedIn ? '/app#/plans' : '/register.html?plan=' + encodeURIComponent(p.id), text: 'Get ' + p.name })));
-    });
-    cards.push(h('div', { class: 'price p-inst' }, h('h3', { text: 'Schools and institutes' }), h('div', { class: 'tg', text: 'Apps for your smart boards and a report for your school' }),
-      h('div', { class: 'amt' }, 'Custom', h('small', { text: ' pricing' })),
-      h('ul', null, ['Windows, Android and Linux apps', 'Usage reports by class and section', 'Set-up help for teachers'].map(function (t) { return h('li', { text: t }); })),
-      h('a', { class: 'btn ghost', href: '/sales.html', text: 'Talk to sales' })));
-    box.replaceChildren.apply(box, cards); reveal(box);
+    var GROUPS = [['junior', 'Classes 6 to 10'], ['senior', 'Classes 11 and 12']];
+    function cardsFor(tk) {
+      var free = tk === 'senior' ? ['Chapter 1 of Class 11 and of Class 12', 'Every simulation in those chapters', 'Progress tracking'] : ['Chapter 1 of every class (6 to 10)', 'Every simulation in those chapters', 'Progress tracking'];
+      var cards = [h('div', { class: 'price' }, h('h3', { text: 'Free trial' }), h('div', { class: 'tg', text: tk === 'senior' ? 'Try Class 11 and 12, no card needed' : 'Taste every class, no card needed' }),
+        h('div', { class: 'amt' }, '₹0', h('small', { text: ' forever' })),
+        h('ul', null, free.map(function (t) { return h('li', { text: t }); })),
+        h('a', { class: 'btn ghost', href: signedIn ? '/app' : '/register.html', text: signedIn ? 'Open the app' : 'Start free' }))];
+      plans.filter(function (p) { return (p.track || 'junior') === tk; }).forEach(function (p) {
+        cards.push(h('div', { class: 'price' + (p.badge ? ' best' : '') }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
+          h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: (p.scope === 'subject' ? ' per subject / ' : ' / ') + span(p.durationDays) })),
+          h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })),
+          h('a', { class: 'btn primary', href: signedIn ? '/app#/plans?track=' + tk : '/register.html?plan=' + encodeURIComponent(p.id), text: 'Get ' + p.name })));
+      });
+      cards.push(h('div', { class: 'price p-inst' }, h('h3', { text: 'Schools and institutes' }), h('div', { class: 'tg', text: 'Apps for your smart boards and a report for your school' }),
+        h('div', { class: 'amt' }, 'Custom', h('small', { text: ' pricing' })),
+        h('ul', null, ['Windows, Android and Linux apps', 'Usage reports by class and section', 'Set-up help for teachers'].map(function (t) { return h('li', { text: t }); })),
+        h('a', { class: 'btn ghost', href: '/sales.html', text: 'Talk to sales' })));
+      return cards;
+    }
+    function showGroup(tk) {
+      [].forEach.call(priceTabs.children, function (b) { b.classList.toggle('on', b.getAttribute('data-t') === tk); });
+      box.replaceChildren.apply(box, cardsFor(tk)); reveal(box);
+    }
+    GROUPS.forEach(function (g) { priceTabs.appendChild(h('button', { class: 'tab', role: 'tab', type: 'button', 'data-t': g[0], text: g[1], onclick: function () { showGroup(g[0]); } })); });
+    showGroup(signedIn && signedIn.user && signedIn.user.cls >= 11 ? 'senior' : 'junior');
   }, function () { box.replaceChildren(h('div', { class: 'empty', text: 'Plans could not be loaded. Please refresh the page.' })); });
 
   // ------------------------------------------------------------------ faq

@@ -25,11 +25,12 @@
 
   function stat(label, value, sub, color) { return h('div', { class: 'stat', style: '--c:' + (color || 'var(--cyan)') }, h('div', { class: 'l', text: label }), h('div', { class: 'v', text: value }), sub ? h('div', { class: 's', text: sub }) : null); }
   function accessLine() {
-    var full = S.me.access.fullClasses;
-    if (!full.length) return h('div', { class: 'card', style: 'margin-bottom:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap' },
+    var full = S.me.access.fullClasses, subs = S.me.access.subjects || [];
+    if (!full.length && !subs.length) return h('div', { class: 'card', style: 'margin-bottom:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap' },
       h('span', { class: 'badge blue', text: 'FREE TRIAL' }), h('div', { style: 'flex:1;min-width:220px', text: 'You can open Chapter 1 of every class. Get a plan to unlock all the chapters.' }), h('a', { class: 'btn primary small', href: '#/plans', text: 'See plans' }));
     return h('div', { class: 'card', style: 'margin-bottom:18px' }, h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;align-items:center' }, h('span', { class: 'badge green', text: 'ACTIVE' }),
-      full.map(function (f) { return h('span', { class: 'badge blue', text: 'Class ' + f.cls + ' until ' + BL.fmtDate(f.endsAt) }); })));
+      full.map(function (f) { return h('span', { class: 'badge blue', text: 'Class ' + f.cls + ' until ' + BL.fmtDate(f.endsAt) }); }),
+      subs.map(function (f) { return h('span', { class: 'badge blue', text: 'Class ' + f.cls + ' ' + f.subject + ' until ' + BL.fmtDate(f.endsAt) }); })));
   }
 
   // ------------------------------------------------------------------ home
@@ -78,44 +79,72 @@
   }
 
   // ------------------------------------------------------------------ plans + checkout
+  var GROUPS = [['junior', 'Classes 6 to 10'], ['senior', 'Classes 11 and 12']];
   function viewPlans(q) {
     var need = q.get('need'), pick = q.get('plan');
-    var defCls = need ? Number(need.split('/')[0]) : S.me.user.cls || 8;
-    var cards = S.plans.map(function (p) {
-      var sel = null, picked = [S.me.user.cls || defCls];
+    var needCls = need ? Number(need.split('/')[0]) : 0, myCls = needCls || S.me.user.cls || 8;
+    var group = q.get('track') || (myCls >= 11 ? 'senior' : 'junior');
+    var picked0 = pick && S.plans.filter(function (x) { return x.id === pick; })[0];
+    if (picked0) group = picked0.track || 'junior';
+    var body = h('div'), tabs = h('div', { class: 'tabs', style: 'justify-content:flex-start;margin-bottom:22px' }), ordersBox = h('div');
+    (S.syl ? Promise.resolve() : BL.api('/syllabus').then(function (r) { S.syl = r.classes; }, function () { S.syl = {}; })).then(function () { draw(); });
+
+    function planCard(p) {
+      var classes = p.classes || [6, 7, 8, 9, 10], defC = classes.indexOf(myCls) >= 0 ? myCls : classes[0], sel = null, picked = [defC], subjectOf = null;
+      var fieldCss = 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);margin-bottom:12px';
       if (p.scope === 'multi-class') {
-        var need = p.classCount || 2; picked = [defCls];
-        var chips = [6, 7, 8, 9, 10, 11, 12].map(function (n) {
-          var cb = h('input', { type: 'checkbox', value: n }); cb.checked = n === defCls;
+        var need2 = p.classCount || 2, chips = classes.map(function (n) {
+          var cb = h('input', { type: 'checkbox', value: n }); cb.checked = n === defC;
           cb.addEventListener('change', function () {
             picked = chips.filter(function (x) { return x.cb.checked; }).map(function (x) { return x.n; });
-            chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need; });
-            hint.textContent = picked.length + ' of ' + need + ' chosen';
+            chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need2; });
+            hint.textContent = picked.length + ' of ' + need2 + ' chosen';
           });
           return { n: n, cb: cb, el: h('label', null, cb, h('i', { text: 'Class ' + n })) };
         });
-        var hint = h('div', { class: 'micro', style: 'margin:0 0 8px', text: '1 of ' + need + ' chosen' });
-        chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need; });
-        sel = h('div', { style: 'margin-bottom:12px' }, h('div', { class: 'micro', style: 'margin-bottom:6px', text: 'Choose ' + need + ' classes' }), h('div', { class: 'chips' }, chips.map(function (x) { return x.el; })), hint);
+        var hint = h('div', { class: 'micro', style: 'margin:0 0 8px', text: '1 of ' + need2 + ' chosen' });
+        chips.forEach(function (x) { x.cb.disabled = !x.cb.checked && picked.length >= need2; });
+        sel = h('div', { style: 'margin-bottom:12px' }, h('div', { class: 'micro', style: 'margin-bottom:6px', text: 'Choose ' + need2 + ' classes' }), h('div', { class: 'chips' }, chips.map(function (x) { return x.el; })), hint);
+      } else if (p.scope === 'one-class' || p.scope === 'subject') {
+        var classSel = h('select', { 'aria-label': 'Class', style: fieldCss }, classes.map(function (n) { var o = h('option', { value: n, text: 'Class ' + n }); if (n === defC) o.selected = true; return o; }));
+        sel = h('div', null, classSel);
+        if (p.scope === 'subject') {
+          var subjBox = h('div', { class: 'chips', style: 'margin-bottom:12px' }), name = 'subj-' + p.id;
+          var fill = function () {
+            var list = ((S.syl && S.syl[classSel.value]) || { subjects: [] }).subjects.map(function (s) { return s.name; });
+            if (list.indexOf(subjectOf) < 0) subjectOf = list[0] || null;
+            subjBox.replaceChildren.apply(subjBox, list.map(function (n) {
+              var rb = h('input', { type: 'radio', name: name, value: n }); rb.checked = n === subjectOf; rb.addEventListener('change', function () { subjectOf = n; });
+              return h('label', null, rb, h('i', { text: n }));
+            }));
+          };
+          classSel.addEventListener('change', fill); fill();
+          sel.appendChild(h('div', { class: 'micro', style: 'margin-bottom:6px', text: 'Choose the subject' })); sel.appendChild(subjBox);
+        }
+        sel.classSel = classSel;
       }
-      if (p.scope === 'one-class') sel = h('select', { 'aria-label': 'Class', style: 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);margin-bottom:12px' },
-        [6, 7, 8, 9, 10, 11, 12].map(function (n) { var o = h('option', { value: n, text: 'Class ' + n }); if (n === defCls) o.selected = true; return o; }));
       var btn = h('button', { class: 'btn primary', type: 'button', text: 'Buy for ' + BL.fmtInr(p.priceInr), onclick: function () {
-        if (p.scope === 'multi-class') { var need2 = p.classCount || 2; if (picked.length !== need2) return BL.toast('Please choose exactly ' + need2 + ' classes.'); return buy(p, { classes: picked }, btn); }
-        buy(p, p.scope === 'one-class' ? { cls: Number(sel.value) } : {}, btn);
+        if (p.scope === 'multi-class') { if (picked.length !== (p.classCount || 2)) return BL.toast('Please choose exactly ' + (p.classCount || 2) + ' classes.'); return buy(p, { classes: picked }, btn); }
+        if (p.scope === 'one-class') return buy(p, { cls: Number(sel.classSel.value) }, btn);
+        if (p.scope === 'subject') { if (!subjectOf) return BL.toast('Please choose the subject.'); return buy(p, { cls: Number(sel.classSel.value), subject: subjectOf }, btn); }
+        buy(p, {}, btn);
       } });
       return h('div', { class: 'price' + (p.badge ? ' best' : ''), id: 'plan-' + p.id }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
-        h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: ' / ' + (p.durationDays % 365 === 0 ? 'year' : p.durationDays + ' days') })),
+        h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: (p.scope === 'subject' ? ' per subject / ' : ' / ') + (p.durationDays % 365 === 0 ? 'year' : p.durationDays + ' days') })),
         h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })), sel, btn);
-    });
-    var ordersBox = h('div');
+    }
+    function draw() {
+      tabs.replaceChildren.apply(tabs, GROUPS.map(function (g) { return h('button', { class: 'tab' + (g[0] === group ? ' on' : ''), type: 'button', text: g[1], onclick: function () { group = g[0]; draw(); } }); }));
+      var mine = S.plans.filter(function (p) { return (p.track || 'junior') === group; });
+      body.replaceChildren(mine.length ? h('div', { class: 'plans' }, mine.map(planCard)) : h('div', { class: 'empty', text: 'Plans for this group are coming soon.' }));
+      if (pick && document.getElementById('plan-' + pick)) { document.getElementById('plan-' + pick).scrollIntoView({ block: 'center' }); pick = null; }
+    }
     render(head('#/plans', 'Plans', 'One payment, a full year, no auto-renewal').concat([
       S.cfg.paymentMode === 'demo' ? h('div', { class: 'demo-banner', text: 'Demo mode: payments on this site are FAKE. Nobody is charged.' }) : null,
       S.cfg.paymentMode === 'off' ? h('div', { class: 'demo-banner', text: 'Online payments are not switched on yet. Please check back soon.' }) : null,
       need ? h('div', { class: 'card', style: 'margin-bottom:16px', text: 'That chapter (Class ' + need.replace('/', ', Chapter ') + ') is part of a paid plan. Choose a plan to open it.' }) : null,
-      h('div', { class: 'plans' }, cards), h('h2', { style: 'font-size:18px;margin:30px 0 12px', text: 'Your payments' }), ordersBox,
+      tabs, body, h('h2', { style: 'font-size:18px;margin:30px 0 12px', text: 'Your payments' }), ordersBox,
     ]));
-    if (pick && document.getElementById('plan-' + pick)) document.getElementById('plan-' + pick).scrollIntoView({ block: 'center' });
     BL.api('/billing/orders').then(function (r) {
       ordersBox.replaceChildren(r.orders.length ? h('div', { class: 'tw' }, h('table', { class: 'tbl' }, h('thead', null, h('tr', null, ['Date', 'Plan', 'Amount', 'Status', 'Payment id'].map(function (t) { return h('th', { text: t }); }))),
         h('tbody', null, r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.label ? ' · ' + o.label : '') }), h('td', { text: BL.fmtInr(o.amountInr) }),

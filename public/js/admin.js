@@ -54,6 +54,7 @@
     BL.api('/admin/students/' + encodeURIComponent(id)).then(function (r) {
       var s = r.student, err = h('p', { class: 'err' }), ok = h('p', { class: 'okmsg' });
       var cls = [6, 7, 8, 9, 10, 11, 12].map(function (n) { return h('label', { style: 'margin-right:12px;font-size:14px' }, h('input', { type: 'checkbox', value: n, style: 'margin-right:5px' }), 'Class ' + n); });
+      var subjSel = h('select', { 'aria-label': 'Subject', style: 'padding:8px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--text)' }, [['', 'All subjects'], ['Physics', 'Physics only'], ['Chemistry', 'Chemistry only'], ['Mathematics', 'Mathematics only']].map(function (o) { return h('option', { value: o[0], text: o[1] }); }));
       var days = h('input', { type: 'number', value: 365, min: 1, max: 1095, 'aria-label': 'Days', style: 'width:90px;padding:8px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--text)' });
       show('#/students', s.name, [
         h('div', { class: 'crumbs' }, h('a', { href: '#/students', text: '← Students' })),
@@ -65,11 +66,11 @@
             h('td', null, a.source === 'trial' ? null : h('button', { class: 'btn ghost small', type: 'button', text: 'Remove', onclick: function () { if (!confirm('Remove this access?')) return; BL.api('/admin/entitlements/' + encodeURIComponent(a.id), { method: 'DELETE' }).then(function () { student(id); }).catch(function (e) { BL.toast(e.message); }); } })));
         })) : h('div', { class: 'empty', text: 'No access records.' }),
         h('div', { class: 'card', style: 'margin:18px 0' }, h('h3', { style: 'font-size:15px;margin-bottom:10px', text: 'Give access (free, e.g. for a school or a support fix)' }),
-          h('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;gap:6px' }, cls, h('span', { class: 'micro', text: 'for' }), days, h('span', { class: 'micro', text: 'days' }),
+          h('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;gap:6px' }, cls, h('span', { class: 'micro', text: 'subject (one class of 11 or 12 only)' }), subjSel, h('span', { class: 'micro', text: 'for' }), days, h('span', { class: 'micro', text: 'days' }),
             h('button', { class: 'btn primary small', type: 'button', text: 'Give access', onclick: function () {
               err.textContent = ''; ok.textContent = '';
               var picked = cls.map(function (l) { return l.firstChild; }).filter(function (i) { return i.checked; }).map(function (i) { return Number(i.value); });
-              BL.api('/admin/students/' + encodeURIComponent(id) + '/grant', { method: 'POST', body: { classes: picked, days: Number(days.value) } }).then(function () { student(id); BL.toast('Access given.'); }).catch(function (e) { err.textContent = e.message; });
+              BL.api('/admin/students/' + encodeURIComponent(id) + '/grant', { method: 'POST', body: { classes: picked, days: Number(days.value), subject: subjSel.value || undefined } }).then(function () { student(id); BL.toast('Access given.'); }).catch(function (e) { err.textContent = e.message; });
             } })), err, ok),
         h('h2', { style: 'font-size:17px;margin:8px 0 10px', text: 'Payments' }),
         r.orders.length ? table(['Date', 'Plan', 'Amount', 'Status', 'Payment id'], r.orders.map(function (o) { return h('tr', null, h('td', { text: BL.fmtDate(o.paidAt || o.createdAt) }), h('td', { text: o.planName + (o.label ? ' · ' + o.label : '') }), h('td', { text: BL.fmtInr(o.amountInr) }), h('td', null, statusBadge(o.status)), h('td', { style: 'font-size:12px;color:var(--muted)', text: o.paymentId || '—' })); })) : h('div', { class: 'empty', text: 'No payments.' }),
@@ -102,13 +103,14 @@
       var isNew = !p, err = h('p', { class: 'err' });
       var f = h('form', { class: 'card', style: 'margin-bottom:16px', onsubmit: function (e) {
         e.preventDefault(); err.textContent = '';
-        var body = { name: f.name.value, tagline: f.tagline.value, priceInr: Number(f.price.value), durationDays: Number(f.days.value), scope: f.scope.value, classCount: Number(f.classCount.value), badge: f.badge.value, active: f.active.checked, features: f.features.value.split('\n') };
+        var body = { name: f.name.value, tagline: f.tagline.value, priceInr: Number(f.price.value), durationDays: Number(f.days.value), scope: f.scope.value, track: f.track.value, classCount: Number(f.classCount.value), badge: f.badge.value, active: f.active.checked, features: f.features.value.split('\n') };
         BL.api(isNew ? '/admin/plans' : '/admin/plans/' + encodeURIComponent(p._id), { method: isNew ? 'POST' : 'PATCH', body: body }).then(function () { BL.toast('Saved.'); load(); }).catch(function (x) { err.textContent = x.message; });
       } },
         h('div', { class: 'two' }, field('Name', h('input', { name: 'name', value: p ? p.name : '', maxlength: 40, required: true })), field('Price (₹)', h('input', { name: 'price', type: 'number', min: 1, value: p ? p.priceInr : '', required: true }))),
         field('One-line description', h('input', { name: 'tagline', value: p ? p.tagline : '', maxlength: 100 })),
         h('div', { class: 'two' }, field('Length (days)', h('input', { name: 'days', type: 'number', min: 1, max: 1095, value: p ? p.durationDays : 365, required: true })),
-          field('Covers', h('select', { name: 'scope' }, [['one-class', 'One class (student picks)'], ['multi-class', 'Several classes (student picks)'], ['all-classes', 'All classes']].map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if (p && p.scope === o[0]) op.selected = true; return op; })))),
+          field('Covers', h('select', { name: 'scope' }, [['one-class', 'One class (student picks)'], ['multi-class', 'Several classes (student picks, Classes 6 to 10)'], ['subject', 'One subject of a class (student picks, Classes 11 and 12)'], ['all-classes', 'All classes of the group']].map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if (p && p.scope === o[0]) op.selected = true; return op; })))),
+        field('Who is it for', h('select', { name: 'track' }, [['junior', 'Classes 6 to 10'], ['senior', 'Classes 11 and 12']].map(function (o) { var op = h('option', { value: o[0], text: o[1] }); if ((p && (p.track || 'junior')) === o[0]) op.selected = true; return op; }))),
         field('How many classes for a "several classes" plan', h('input', { name: 'classCount', type: 'number', min: 2, max: 4, value: p && p.classCount ? p.classCount : 2 })),
         field('Badge (optional)', h('input', { name: 'badge', value: p ? p.badge : '', maxlength: 20 })),
         field('What is included (one per line)', h('textarea', { name: 'features', rows: 4, style: 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);font-family:inherit' }, (p ? p.features : []).join('\n'))),
@@ -122,7 +124,7 @@
             .then(function () { state.textContent = sw.checked ? 'Shown on the website' : 'Hidden'; f.active.checked = sw.checked; BL.toast(p.name + (sw.checked ? ' is now shown.' : ' is now hidden.')); })
             .catch(function (x) { sw.checked = !sw.checked; BL.toast(x.message); });
         });
-        f.insertBefore(h('div', { class: 'plan-head' }, h('b', { text: p.name }), h('label', { class: 'switch' }, state, sw, h('i'))), f.firstChild);
+        f.insertBefore(h('div', { class: 'plan-head' }, h('b', { text: p.name + ' · ' + ((p.track || 'junior') === 'senior' ? 'Classes 11 and 12' : 'Classes 6 to 10') }), h('label', { class: 'switch' }, state, sw, h('i'))), f.firstChild);
       }
       return f;
     }

@@ -28,6 +28,8 @@ function load() {
 const has = (c, n) => !!load().classes[c] && load().classes[c].some((x) => x.chapter === n);
 const total = () => Object.values(load().classes).reduce((a, l) => a + l.length, 0);
 const totalActivities = () => Object.values(load().classes).reduce((a, l) => a + l.reduce((x, y) => x + y.activities, 0), 0);
+/** the chapter keys ("11/3") of one subject of a class, e.g. Physics of Class 11 */
+const subjectChapters = (c, subject) => (load().classes[c] || []).filter((x) => (x.group || '').split(' · ')[0] === subject).map((x) => `${c}/${x.chapter}`);
 const reset = () => { cache = null; };
 
-module.exports = { load, has, total, totalActivities, reset, CONTENT };
+module.exports = { load, has, total, totalActivities, subjectChapters, reset, CONTENT };

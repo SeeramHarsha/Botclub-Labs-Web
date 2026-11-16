@@ -8,7 +8,8 @@ const config = require('../config');
 const plans = require('../plans');
 const pay = require('../payments');
 const ent = require('../entitlements');
-const { cls, wrap, CLASSES } = require('../lib');
+const catalog = require('../catalog');
+const { cls, wrap, CLASSES, TRACKS } = require('../lib');
 
 const orders = () => db.get().collection('orders');
 
@@ -16,12 +17,12 @@ const orders = () => db.get().collection('orders');
 async function markPaid(orderId, paymentId) {
   const o = await orders().findOneAndUpdate({ _id: orderId, status: { $ne: 'paid' } }, { $set: { status: 'paid', paymentId: String(paymentId || ''), paidAt: new Date() } }, { returnDocument: 'after' });
   if (!o) return { already: true };
-  await ent.grant({ userId: o.userId, source: 'purchase', planId: o.planId, orderId: o._id, classes: o.grant.classes, days: o.grant.days });
+  await ent.grant({ userId: o.userId, source: 'purchase', planId: o.planId, orderId: o._id, classes: o.grant.classes, chapters: o.grant.chapters || 'all', subject: o.grant.subject || null, days: o.grant.days });
   return { granted: true, order: o };
 }
 
 const orderLabel = (o) => (o.cls ? 'Class ' + o.cls : o.grant && o.grant.classes && o.grant.classes.length < CLASSES.length ? 'Classes ' + o.grant.classes.join(', ') : '');
-const publicOrder = (o) => ({ id: o._id, planName: o.planName, cls: o.cls || null, label: orderLabel(o), amountInr: o.amountPaise / 100, status: o.status, createdAt: o.createdAt, paidAt: o.paidAt || null, paymentId: o.paymentId || '' });
+const publicOrder = (o) => ({ id: o._id, planName: o.planName, cls: o.cls || null, label: o.label !== undefined ? o.label : orderLabel(o), amountInr: o.amountPaise / 100, status: o.status, createdAt: o.createdAt, paidAt: o.paidAt || null, paymentId: o.paymentId || '' });
 
 // ---------------------------------------------------------------- Razorpay webhook (a backup way for "paid" to reach us if the browser closes early)
 const webhook = express.Router();
@@ -46,23 +47,31 @@ router.post('/checkout', checkoutLimit, wrap(async (req, res) => {
   if (config.paymentMode === 'off') return res.status(503).json({ error: 'Online payments are not switched on yet. Please contact support.' });
   const plan = await plans.get(req.body && req.body.planId);
   if (!plan || !plan.active || !(plan.priceInr > 0)) return res.status(400).json({ error: 'That plan is not available.' });
-  let classes, c = null;
-  if (plan.scope === 'one-class') { c = cls(req.body.cls); if (!c) return res.status(400).json({ error: 'Please choose which class this plan is for.' }); classes = [c]; }
-  else if (plan.scope === 'multi-class') {
-    const need = plan.classCount || 2, chosen = [...new Set((Array.isArray(req.body.classes) ? req.body.classes : []).map(Number).filter((x) => CLASSES.includes(x)))].sort((a, b) => a - b);
+  const track = plan.track || 'junior', tcl = TRACKS[track] || CLASSES;
+  let classes, c = null, label = '', chapters = 'all', subject = null;
+  if (plan.scope === 'one-class') {
+    c = cls(req.body.cls); if (!c || !tcl.includes(c)) return res.status(400).json({ error: 'Please choose which class this plan is for.' });
+    classes = [c]; label = 'Class ' + c;
+  } else if (plan.scope === 'multi-class') {
+    const need = plan.classCount || 2, chosen = [...new Set((Array.isArray(req.body.classes) ? req.body.classes : []).map(Number).filter((x) => tcl.includes(x)))].sort((a, b) => a - b);
     if (chosen.length !== need) return res.status(400).json({ error: 'Please choose exactly ' + need + ' classes for this plan.' });
-    classes = chosen;
-  }
-  else classes = [...CLASSES];
+    classes = chosen; label = 'Classes ' + chosen.join(', ');
+  } else if (plan.scope === 'subject') {                       // one subject of one class (Class 11 and 12: Physics, Chemistry or Mathematics)
+    c = cls(req.body.cls); if (!c || !tcl.includes(c)) return res.status(400).json({ error: 'Please choose the class.' });
+    subject = String(req.body.subject || '').slice(0, 40);
+    const list = catalog.subjectChapters(c, subject);
+    if (!list.length) return res.status(400).json({ error: 'Please choose the subject.' });
+    classes = [c]; chapters = list; label = 'Class ' + c + ' · ' + subject;
+  } else { classes = [...tcl]; label = track === 'senior' ? 'Classes 11 and 12' : ''; }
   const amountPaise = Math.round(plan.priceInr * 100);
   const id = crypto.randomUUID();
   let o;
   try { o = await pay.createOrder({ amountPaise, receipt: id, notes: { user: String(req.user._id), plan: plan._id } }); }
   catch (e) { return res.status(502).json({ error: e.code === 'PAYMENTS_OFF' ? 'Online payments are not switched on yet.' : 'We could not start the payment. Please try again.' }); }
   await orders().insertOne({ _id: id, userId: String(req.user._id), planId: plan._id, planName: plan.name, cls: c, amountPaise, currency: 'INR', status: 'created', provider: o.provider, providerOrderId: o.providerOrderId,
-    grant: { classes, days: plan.durationDays }, createdAt: new Date() });
+    label, grant: { classes, chapters, subject, days: plan.durationDays }, createdAt: new Date() });
   res.status(201).json({ orderId: id, provider: o.provider, providerOrderId: o.providerOrderId, amountPaise, currency: 'INR', keyId: o.provider === 'razorpay' ? config.razorpayKeyId : undefined,
-    description: `${plan.name}${c ? ' - Class ' + c : classes.length < CLASSES.length ? ' - Classes ' + classes.join(', ') : ''}`, prefill: { name: req.user.name, email: req.user.email, contact: req.user.phone || undefined } });
+    description: `${plan.name}${label ? ' - ' + label : ''}`, prefill: { name: req.user.name, email: req.user.email, contact: req.user.phone || undefined } });
 }));
 
 /** Razorpay Checkout finished in the browser: trust it only after checking the signature */

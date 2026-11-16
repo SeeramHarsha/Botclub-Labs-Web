@@ -1,5 +1,6 @@
 'use strict';
 const db = require('./db');
+const { TRACKS } = require('./lib');
 
 /**
  * The plans on sale. These are only the STARTING plans created the first time the server runs: prices are placeholders.
@@ -10,8 +11,10 @@ const DEFAULT_PLANS = [
     features: ['All chapters of the class you choose', 'Every simulation, unlimited use', 'Progress tracking and streaks', 'Works on phone, tablet and computer'], active: true, sort: 1 },
   { _id: 'two-classes-year', name: 'Two Classes', tagline: 'Any two classes you choose, for a year', priceInr: 1799, durationDays: 365, scope: 'multi-class', classCount: 2, badge: '',
     features: ['Any 2 classes you choose', 'Every chapter, every simulation', 'Progress tracking and streaks', 'Works on phone, tablet and computer'], active: true, sort: 2 },
-  { _id: 'all-year', name: 'All Classes', tagline: 'Classes 6 to 12, for a year', priceInr: 2999, durationDays: 365, scope: 'all-classes', badge: 'Best value',
-    features: ['All 7 classes (6 to 12)', 'Every chapter, every simulation', 'Switch classes any time', 'Progress tracking and streaks'], active: true, sort: 3 },
+  { _id: 'all-year', name: 'All Classes', tagline: 'Classes 6 to 10, for a year', priceInr: 2999, durationDays: 365, scope: 'all-classes', badge: 'Best value',
+    features: ['All 5 classes (6, 7, 8, 9, 10)', 'Every chapter, every simulation', 'Switch classes any time', 'Progress tracking and streaks'], active: true, sort: 3 },
+  { _id: 'subject-year', name: 'One Subject', tagline: 'Physics, Chemistry or Maths for Class 11 or 12', priceInr: 1499, durationDays: 365, scope: 'subject', track: 'senior', badge: '',
+    features: ['Every chapter of the subject you choose', 'Choose Class 11 or Class 12', 'Every simulation, unlimited use', 'Progress tracking and streaks'], active: true, sort: 1 },
 ];
 
 async function seed() {
@@ -20,6 +23,6 @@ async function seed() {
 }
 const list = async ({ onlyActive = true } = {}) => db.get().collection('plans').find(onlyActive ? { active: true } : {}).sort({ sort: 1, priceInr: 1 }).toArray();
 const get = (id) => db.get().collection('plans').findOne({ _id: String(id) });
-const pub = (p) => ({ id: p._id, name: p.name, tagline: p.tagline, priceInr: p.priceInr, durationDays: p.durationDays, scope: p.scope, classCount: p.scope === 'multi-class' ? (p.classCount || 2) : 0, badge: p.badge || '', features: p.features || [] });
+const pub = (p) => ({ id: p._id, name: p.name, tagline: p.tagline, priceInr: p.priceInr, durationDays: p.durationDays, scope: p.scope, track: p.track || 'junior', classes: TRACKS[p.track || 'junior'], classCount: p.scope === 'multi-class' ? (p.classCount || 2) : 0, badge: p.badge || '', features: p.features || [] });
 
 module.exports = { DEFAULT_PLANS, seed, list, get, pub };
