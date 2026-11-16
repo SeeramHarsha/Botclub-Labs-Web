@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 4 — Complex Numbers and Quadratic Equations | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.play.on{background:var(--f-red); border-color:var(--f-red);}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn:hover{border-color:var(--navy-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.fb{font-size:var(--fs-xs); font-weight:600; padding:5px 8px; border-radius:7px; background:#fdf4dc; color:#8a6410;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">ℂ</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 4</div>
+      <h1>Complex Numbers and Quadratic Equations</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>z (or z₁) · what you change</span>
+      <span><i style="background:var(--f-red)"></i>z₂ · imaginary part</span>
+      <span><i style="background:var(--f-green)"></i>Real part · conjugate</span>
+      <span><i style="background:var(--f-blue)"></i>Result · modulus</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">4.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 4: COMPLEX NUMBERS AND QUADRATIC EQUATIONS
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; the drawn point or vector springs toward it every frame
+   (spring-damper, ζ ≈ 0.7). Operations are shown as real motion on the
+   Argand plane — add = slide, multiply = turn + stretch, conjugate = flip,
+   iⁿ = quarter turns — and every number printed comes from the actual
+   formula, checked against the textbook's worked examples.
+   Colour code: yellow = z / z₁ (what you set) · red = z₂ / imaginary part ·
+   green = real part / conjugate-side checks · blue = result, modulus.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<1.5) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.8);
+  if(L>(head||9)*1.2) arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||9);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  if(o.halo){ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.92)'; ctx.strokeText(txt,x,y); }
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function lab(ctx,txt,x,y,color,o){ o=o||{}; o.halo=true; o.color=color; o.weight=o.weight||700; o.size=o.size||13; textAt(ctx,txt,x,y,o); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,'#fff',col,1.8); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,stroke,fill,lw,dash){ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.setLineDash(dash||[]); ctx.lineJoin='round'; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sg(v,d){ if(!isFinite(v)) return 'not defined'; d=d===undefined?2:d; const s=Number(v.toFixed(d)); return (Object.is(s,-0)||s===0?'0':String(s)).replace('-','−'); }
+function fmt(x,d){ return sg(x,d); }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+function normAng(a){ return ((a%TAU)+TAU)%TAU; }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+
+/* angle (radians) as a multiple of π, e.g. 7π/3 */
+function piStr(x){
+  if(Math.abs(x)<1e-9) return '0';
+  const r=x/PI;
+  for(const d of [1,2,3,4,6,8,12]){
+    const n=Math.round(r*d);
+    if(n!==0 && Math.abs(r*d-n)<0.004){
+      const num=Math.abs(n)===1?'π':Math.abs(n)+'π';
+      return (n<0?'−':'')+num+(d>1?'/'+d:'');
+    }
+  }
+  return sg(x,2);
+}
+/* exact fraction if one exists with a small denominator, else a decimal */
+function frac(v){
+  if(!isFinite(v)) return 'not defined';
+  if(Math.abs(v)<1e-9) return '0';
+  for(let q=1;q<=100;q++){ const p=Math.round(v*q);
+    if(Math.abs(v-p/q)<1e-6) return (p<0?'−':'')+Math.abs(p)+(q>1?'/'+q:''); }
+  return sg(v,3);
+}
+/* point on a circle: maths angle a (anticlockwise), canvas y runs down */
+function pt(cx,cy,R,a){ return [cx+R*Math.cos(a), cy-R*Math.sin(a)]; }
+/* arc between two maths angles */
+function arcA(ctx,cx,cy,r,a0,a1,col,lw,dash){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2.4; ctx.lineCap='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.stroke(); ctx.restore();
+}
+function sector(ctx,cx,cy,r,a0,a1,fill){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.restore();
+}
+/* the unit circle with axes and radian ticks */
+function unitFrame(ctx,cx,cy,R,o){
+  o=o||{};
+  const E=R*(o.ext||1.3);
+  line(ctx,cx-E,cy,cx+E,cy,COL.mid,1.4); line(ctx,cx,cy-E,cx,cy+E,COL.mid,1.4);
+  arrowHead(ctx,cx+E,cy,0,COL.mid,6); arrowHead(ctx,cx,cy-E,-PI/2,COL.mid,6);
+  if(o.fill) circ(ctx,cx,cy,R,null,o.fill,1);
+  circ(ctx,cx,cy,R,COL.ink,null,2.4);
+  if(o.ticks!==false){
+    [[0,'0'],[PI/2,'π/2'],[PI,'π'],[1.5*PI,'3π/2']].forEach(([a,s])=>{
+      const [x,y]=pt(cx,cy,R,a), [lx,ly]=pt(cx,cy,R+17,a);
+      circ(ctx,x,y,3,COL.ink,'#fff',1.4);
+      textAt(ctx,s,lx,ly+4,{align:'center',size:10.5,weight:600,color:COL.muted});
+    });
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(); let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(st,target,k,damping,dt){
+  const acc = (target-st.x)*k - st.v*damping;
+  st.v += acc*dt; st.x += st.v*dt; return st.x;
+}
+const SK=70, SD=12;                         // the house spring: ω≈8.4 rad/s, ζ≈0.72
+function follow(st,target,dt){ return springTo(st,target,SK,SD,dt); }
+function S(v){ return {x:v,v:0}; }
+
+/* ---------------------------------------------------------------------
+   0c. UI BUILDERS
+   --------------------------------------------------------------------- */
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipRow(id,label,items){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">${items.map((it,i)=>`<button class="chip-btn" data-i="${i}">${it}</button>`).join('')}</div></div>`;
+}
+function cards(list,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">${list.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}"${c?` style="color:var(${c})"`:''}>—</div></div>`).join('')}</div></div>`;
+}
+function wireChips(wrap,id,fn){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach(b=>b.onclick=()=>fn(+b.dataset.i,b)); }
+function setActive(wrap,id,i){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach((b,k)=>b.classList.toggle('active',k===i)); }
+function playBtn(id,txt){ return `<button class="toggle-btn play" id="${id}" style="padding:10px;">${txt||'▶ Spin'}</button>`; }
+function setPlay(btn,on,txtOn,txtOff){ btn.textContent=on?(txtOn||'❚❚ Pause'):(txtOff||'▶ Spin'); btn.classList.toggle('on',on); }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------
+   COMPLEX-NUMBER TOOLKIT
+   --------------------------------------------------------------------- */
+const cadd=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const csub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const cmul=(p,q)=>[p[0]*q[0]-p[1]*q[1], p[0]*q[1]+p[1]*q[0]];
+const cscl=(p,k)=>[p[0]*k,p[1]*k];
+const cconj=p=>[p[0],-p[1]];
+const cabs=p=>Math.hypot(p[0],p[1]);
+const carg=p=>Math.atan2(p[1],p[0]);
+const cdiv=(p,q)=>{ const d=q[0]*q[0]+q[1]*q[1]; return [(p[0]*q[0]+p[1]*q[1])/d,(p[1]*q[0]-p[0]*q[1])/d]; };
+const cpow=(p,n)=>{ let r=[1,0]; for(let i=0;i<n;i++) r=cmul(r,p); return r; };
+const polar=(m,a)=>[m*Math.cos(a),m*Math.sin(a)];
+const ease=u=>u<=0?0:u>=1?1:u*u*(3-2*u);
+const seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
+/* principal square root of a real number: √−p = i√p */
+const sqrtR=x=>x>=0?[Math.sqrt(x),0]:[0,Math.sqrt(-x)];
+
+function cstr(z,d){
+  d=d===undefined?2:d; const im=Math.abs(z[1]);
+  const sgn=(z[1]<0&&sg(im,d)!=='0')?' − ':' + ';
+  const ims=Math.abs(im-1)<1e-9?'i':sg(im,d)+'i';
+  return sg(z[0],d)+sgn+ims;
+}
+function cfrac(z){
+  const im=Math.abs(z[1]); const s=(z[1]<0&&frac(im)!=='0')?' − ':' + ';
+  const ims=Math.abs(im-1)<1e-9?'i':frac(im)+'i';
+  return frac(z[0])+s+ims;
+}
+function sup(n){ const m={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'}; return String(n).split('').map(c=>m[c]||c).join(''); }
+function S2(z){ return [S(z[0]),S(z[1])]; }
+function f2(st,tg,dt){ return [follow(st[0],tg[0],dt),follow(st[1],tg[1],dt)]; }
+
+/* tiny DOM helpers for the control column */
+function lbl(wrap,id,txt){ wrap.querySelector('#'+id).closest('.control-group').querySelector('label').firstChild.nodeValue=txt; }
+function cardLbl(wrap,id,txt){ wrap.querySelector('#'+id).previousElementSibling.textContent=txt; }
+function val(wrap,id,txt){ wrap.querySelector('#'+id+'V').textContent=txt; }
+function showGroup(wrap,id,on){ wrap.querySelector('#'+id).closest('.control-group').classList.toggle('hidden',!on); }
+function replayBtn(){ return `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="rp">▶ Replay</button></div></div>`; }
+
+/* ---------------------------------------------------------------------
+   THE ARGAND PLANE   (equal scale on both axes, origin at the centre)
+   --------------------------------------------------------------------- */
+function newView(){ return {ex:1,ey:1,s:1,cx:0,cy:0,rect:null,init:false}; }
+function placeView(V,rect,ex,ey){ V.rect=rect; V.s=Math.min(rect.w/2/ex, rect.h/2/ey); V.cx=rect.x+rect.w/2; V.cy=rect.y+rect.h/2; }
+function fitView(V,rect,pts,dt,minE){
+  let mx=minE||2.5, my=minE||2.5;
+  pts.forEach(p=>{ mx=Math.max(mx,Math.abs(p[0])); my=Math.max(my,Math.abs(p[1])); });
+  mx*=1.3; my*=1.3;
+  if(!V.init){ V.ex=mx; V.ey=my; V.init=true; } else { V.ex=approach(V.ex,mx,4,dt); V.ey=approach(V.ey,my,4,dt); }
+  placeView(V,rect,V.ex,V.ey);
+}
+function px(V,z){ return [V.cx+z[0]*V.s, V.cy-z[1]*V.s]; }
+function niceStep(s){ for(const k of [0.1,0.2,0.5,1,2,5,10,20,50,100,200,500,1000,2000,5000]){ if(k*s>=46) return k; } return 10000; }
+function drawPlane(ctx,V,o){
+  o=o||{}; const R=V.rect, s=V.s, st=niceStep(s);
+  ctx.save(); ctx.beginPath(); ctx.rect(R.x,R.y,R.w,R.h); ctx.clip();
+  const x0=Math.ceil((R.x-V.cx)/s/st)*st, x1=Math.floor((R.x+R.w-V.cx)/s/st)*st;
+  const y0=Math.ceil((V.cy-R.y-R.h)/s/st)*st, y1=Math.floor((V.cy-R.y)/s/st)*st;
+  for(let x=x0;x<=x1+1e-9;x+=st){ const X=V.cx+x*s; line(ctx,X,R.y,X,R.y+R.h,COL.grid,1); }
+  for(let y=y0;y<=y1+1e-9;y+=st){ const Y=V.cy-y*s; line(ctx,R.x,Y,R.x+R.w,Y,COL.grid,1); }
+  line(ctx,R.x,V.cy,R.x+R.w-4,V.cy,COL.mid,1.8); arrowHead(ctx,R.x+R.w-2,V.cy,0,COL.mid,7);
+  line(ctx,V.cx,R.y+R.h,V.cx,R.y+4,COL.mid,1.8); arrowHead(ctx,V.cx,R.y+2,-PI/2,COL.mid,7);
+  if(o.ticks!==false){
+    for(let x=x0;x<=x1+1e-9;x+=st){ if(Math.abs(x)<1e-9) continue; textAt(ctx,sg(x,2),V.cx+x*s,V.cy+15,{align:'center',size:10.5,weight:600,color:COL.mid}); }
+    for(let y=y0;y<=y1+1e-9;y+=st){ if(Math.abs(y)<1e-9) continue; textAt(ctx,sg(y,2)+'i',V.cx-7,V.cy-y*s+4,{align:'right',size:10.5,weight:600,color:COL.mid}); }
+  }
+  ctx.restore();
+  textAt(ctx,'Real axis',R.x+R.w-10,V.cy-9,{align:'right',size:11.5,weight:700,color:COL.muted});
+  textAt(ctx,'Imaginary axis',V.cx+10,R.y+16,{size:11.5,weight:700,color:COL.muted});
+}
+function zdot(ctx,V,z,col,r){ const p=px(V,z); dot(ctx,p[0],p[1],r||6,col); }
+function zvec(ctx,V,a,b,col,w,head){ const p=px(V,a), q=px(V,b); vec(ctx,p[0],p[1],q[0],q[1],col,w,head); }
+function zline(ctx,V,a,b,col,w,dash){ const p=px(V,a), q=px(V,b); line(ctx,p[0],p[1],q[0],q[1],col,w,dash); }
+function zlab(ctx,V,z,txt,col,dx,dy,o){ const p=px(V,z); lab(ctx,txt,p[0]+dx,p[1]+dy,col,o); }
+function ring(ctx,V,z,r,col,lw){ const p=px(V,z); circ(ctx,p[0],p[1],r,col,null,lw||2.4); }
+/* spring coil between two pixel points — tight when stretched */
+function coil(ctx,x1,y1,x2,y2,col,lw){
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy); if(L<3) return;
+  const ux=dx/L, uy=dy/L, nx=-uy, ny=ux, e=Math.min(16,L*0.2), amp=clamp(16/(1+L/70),3.5,11), n=18;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2.4; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x1,y1);
+  for(let i=1;i<n;i++){ const t=(i-0.5)/(n-1), s=(i%2?1:-1)*amp; ctx.lineTo(x1+ux*(e+(L-2*e)*t)+nx*s, y1+uy*(e+(L-2*e)*t)+ny*s); }
+  ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+/* z1 turned and stretched by z2, a fraction t of the way (dir −1 = divide) */
+function morphPt(z1,z2,t,dir){ const m=cabs(z2), a=carg(z2); const k=Math.pow(m,dir*t); return cmul(z1,polar(k,dir*a*t)); }
+function drawTrail(ctx,V,z1,z2,tp,dir,col){
+  const n=60; ctx.save(); ctx.strokeStyle=rgba(col,0.6); ctx.lineWidth=2.4; ctx.setLineDash([6,5]); ctx.beginPath();
+  for(let i=0;i<=n;i++){ const p=px(V,morphPt(z1,z2,tp*i/n,dir)); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+  ctx.stroke(); ctx.restore();
+}
+function planeRect(w,h){ return {x:10,y:10,w:w-20,h:h-20}; }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'4.1',  title:'No Real Root',            desc:'x² + 1 = 0 · a bowl that never touches the axis', build: buildA1 },
+  { num:'4.2',  title:'Complex Number',          desc:'a + ib on the plane · when are two equal?', build: buildA2 },
+  { num:'4.3',  title:'Add and Subtract',        desc:'Slide z₂ to the tip of z₁', build: buildA3 },
+  { num:'4.4',  title:'Multiply',                desc:'Turn and stretch · (ac − bd) + i(ad + bc)', build: buildA4 },
+  { num:'4.5',  title:'Inverse and Divide',      desc:'Flip, then pull along the ray', build: buildA5 },
+  { num:'4.6',  title:'Powers of i',             desc:'One quarter turn per power', build: buildA6 },
+  { num:'4.7',  title:'Roots of a Negative',     desc:'√−p = i√p · square them back', build: buildA7 },
+  { num:'4.8',  title:'The √a·√b Trap',          desc:'Fails when both a and b are negative', build: buildA8 },
+  { num:'4.9',  title:'Identities',              desc:'Chain the terms · land on the left side', build: buildA9 },
+  { num:'4.10', title:'Modulus and Conjugate',   desc:'Distance from O · mirror image in the real axis', build: buildA10 },
+  { num:'4.11', title:'Quotient on the Circle',  desc:'(a + ib)/(a − ib) · Misc Ex 8 and 14', build: buildA11 },
+];
+
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   4.1 NO REAL ROOT
+   x² + c = 0.  Lift the bowl y = x² + c: for c < 0 it cuts the real axis
+   at ±√(−c); at c = 0 it just touches; for c > 0 (e.g. x² + 1 = 0) it
+   floats clear and the roots leave the real axis — they are ±i√c.
+   The ball is a real bead rolling under gravity on the parabola
+   (ẍ(1+4x²) + 4xẋ² + 2gx = 0, with a little friction).
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('cc','Lift the bowl, c in  y = x² + c',-4,4,0.25,1) +
+    chipRow('qa','Equation',['x² + 1 = 0','x² − 1 = 0','x² = 0','x² − 4 = 0']) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="kick">Roll the ball</button></div></div>` +
+    cards([['r1','Equation'],['r2','Real roots'],['r3','Roots of x² + c = 0','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), cc=$('#cc');
+  const cvals=[1,-1,0,-4];
+  wireChips(wrap,'qa',i=>{ cc.value=cvals[i]; setActive(wrap,'qa',i); });
+  cc.addEventListener('input',()=>setActive(wrap,'qa',-1));
+  setActive(wrap,'qa',0);
+  let C=S(1), bx=-2.1, bv=0, roll=0, calm=0; const V2=newView();
+  $('#kick').onclick=()=>{ bx=-2.3; bv=0; calm=0; };
+
+  animLoop(dt=>{
+    const tgt=+cc.value; follow(C,tgt,dt); const c=C.x;
+    const sub=4, hh=dt/sub, G=9.8;
+    for(let i=0;i<sub;i++){
+      const acc=-(2*G*bx+4*bx*bv*bv)/(1+4*bx*bx)-0.45*bv;
+      bv+=acc*hh; bx+=bv*hh; roll+=Math.sqrt(1+4*bx*bx)*bv*hh/0.3;
+      if(Math.abs(bx)>2.5){ bx=Math.sign(bx)*2.5; bv=-bv*0.3; }
+    }
+    if(Math.abs(bx)<0.05&&Math.abs(bv)<0.25){ calm+=dt; if(calm>1){ bx=-2.1; bv=0; calm=0; } } else calm=0;
+    val(wrap,'cc',sg(tgt,2));
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const t=performance.now()/1000;
+    const L={x:w*0.03,y:h*0.04,w:w*0.57,h:h*0.92};
+    const u=Math.min(L.w/6.2,L.h/13), ox=L.x+L.w/2, oy=L.y+L.h*8/13;
+    const X=x=>ox+x*u, Y=y=>oy-y*u;
+    ctx.save(); ctx.beginPath(); ctx.rect(L.x,L.y,L.w,L.h); ctx.clip();
+    for(let k=-3;k<=3;k++) line(ctx,X(k),L.y,X(k),L.y+L.h,COL.grid,1);
+    for(let k=-5;k<=8;k++) line(ctx,L.x,Y(k),L.x+L.w,Y(k),COL.grid,1);
+    line(ctx,L.x,oy,L.x+L.w,oy,COL.mid,1.8); line(ctx,ox,L.y,ox,L.y+L.h,COL.mid,1.4);
+    // the bowl
+    ctx.beginPath(); for(let i=0;i<=128;i++){ const x=-3.2+i*0.05, a=X(x), b=Y(x*x+c); i?ctx.lineTo(a,b):ctx.moveTo(a,b); }
+    ctx.strokeStyle=COL.blue; ctx.lineWidth=4.4; ctx.lineJoin='round'; ctx.stroke();
+    // yellow lift arrow
+    if(Math.abs(c)>0.06){ vec(ctx,ox,oy,ox,Y(c)+(c>0?4:-4),COL.yellow,4.6,11); }
+    dot(ctx,ox,Y(c),6,COL.yellow);
+    // real roots
+    if(c<-0.02){
+      const r=Math.sqrt(-c);
+      [-1,1].forEach(s=>{ circ(ctx,X(s*r),oy,10+3*Math.sin(t*4),COL.green,null,2); dot(ctx,X(s*r),oy,7,COL.green); });
+    } else if(Math.abs(c)<=0.02){ circ(ctx,ox,oy,10+3*Math.sin(t*4),COL.green,null,2); dot(ctx,ox,oy,7,COL.green); }
+    // the ball
+    const m=2*bx, nl=Math.sqrt(1+m*m), BR=0.3;
+    const bpx=X(bx-m/nl*BR), bpy=Y(bx*bx+c+BR/nl), brp=BR*u;
+    circ(ctx,bpx,bpy,brp,COL.ink,'#fff',3);
+    for(let k=0;k<3;k++){ const a=roll+k*TAU/3; line(ctx,bpx,bpy,bpx+brp*Math.cos(a),bpy+brp*Math.sin(a),k?COL.mid:COL.red,k?1.6:3); }
+    ctx.restore();
+    if(c>0.02) lab(ctx,'the bowl never reaches the real axis',ox,oy+28,COL.red,{align:'center',size:13});
+    lab(ctx,'y = x² '+(c<0?'−':'+')+' '+sg(Math.abs(c),2),L.x+12,L.y+24,COL.blue,{size:16});
+
+    // where the roots of x² + c = 0 live
+    const R2={x:w*0.64,y:h*0.2,w:w*0.33,h:h*0.6};
+    placeView(V2,R2,2.3,2.3); drawPlane(ctx,V2);
+    const rr=Math.sqrt(Math.abs(c)), col=c<0?COL.green:COL.red;
+    [-1,1].forEach(s=>{ const z=c<0?[s*rr,0]:[0,s*rr]; const p=px(V2,z); circ(ctx,p[0],p[1],11+2*Math.sin(t*4),col,null,2); dot(ctx,p[0],p[1],7,col); });
+    textAt(ctx,'roots of x² + c = 0',R2.x+R2.w/2,R2.y-12,{align:'center',size:12.5,weight:700,color:COL.muted});
+
+    const sgn=tgt<0?'−':'+';
+    $('#r1').textContent=tgt===0?'x² = 0':'x² '+sgn+' '+sg(Math.abs(tgt),2)+' = 0';
+    $('#r2').textContent=tgt<0?'2':(tgt===0?'1 (double)':'none');
+    $('#r3').textContent=tgt<0?'± '+sg(Math.sqrt(-tgt),3):(tgt===0?'0':'± '+(Math.abs(Math.sqrt(tgt)-1)<1e-9?'':sg(Math.sqrt(tgt),3)+' ')+'i');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.2 COMPLEX NUMBER AND EQUALITY
+   z = a + ib is the point (a, b).  Two complex numbers are equal only if
+   the real parts match AND the imaginary parts match.
+   Example 1:  4x + i(3x − y) = 3 + i(−6)  →  x = 3/4, y = 33/4.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('md','Show',['Plot a + ib','Match two numbers']) +
+    slider('p','Real part a',-6,6,0.5,2) + slider('q','Imaginary part b',-6,6,0.5,4) +
+    chipRow('qa','Fig 4.1 points',['A  2+4i','B  −2+3i','C  i','D  2','E  −5−2i','F  1−2i']) +
+    cards([['r1','Re z','--f-green'],['r2','Im z','--f-red'],['r3','Complex number','--f-yellow',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), pp=$('#p'), qq=$('#q');
+  let mode=0, Z=S2([2,4]), burst=0, wasEq=false; const V=newView(); const T=[3,-6];
+  const pts=[[2,4],[-2,3],[0,1],[2,0],[-5,-2],[1,-2]];
+  function setMode(m){
+    mode=m; setActive(wrap,'md',m); V.init=false; wasEq=false;
+    if(m===0){
+      pp.min=-6; pp.max=6; pp.step=0.5; pp.value=2; qq.min=-6; qq.max=6; qq.step=0.5; qq.value=4;
+      lbl(wrap,'p','Real part a'); lbl(wrap,'q','Imaginary part b');
+      cardLbl(wrap,'r1','Re z'); cardLbl(wrap,'r2','Im z'); cardLbl(wrap,'r3','Complex number');
+    } else {
+      pp.min=-3; pp.max=3; pp.step=0.25; pp.value=1; qq.min=-4; qq.max=12; qq.step=0.25; qq.value=0;
+      lbl(wrap,'p','x in  4x + i(3x − y)'); lbl(wrap,'q','y in  4x + i(3x − y)');
+      cardLbl(wrap,'r1','Real parts:  4x  vs  3'); cardLbl(wrap,'r2','Imaginary parts:  3x − y  vs  −6'); cardLbl(wrap,'r3','Status');
+    }
+    showGroup(wrap,'qa',m===0);
+  }
+  wireChips(wrap,'md',i=>setMode(i));
+  wireChips(wrap,'qa',i=>{ pp.value=pts[i][0]; qq.value=pts[i][1]; setActive(wrap,'qa',i); });
+  setMode(0);
+
+  animLoop(dt=>{
+    const p=+pp.value, q=+qq.value;
+    const zt=mode===0?[p,q]:[4*p,3*p-q];
+    const z=f2(Z,zt,dt);
+    val(wrap,'p',sg(p,2)); val(wrap,'q',sg(q,2));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const t=performance.now()/1000;
+    fitView(V,planeRect(w,h),mode===0?[z]:[z,T],dt,mode===0?6.5:4);
+    drawPlane(ctx,V);
+    if(mode===0){
+      zline(ctx,V,[0,0],[z[0],0],COL.green,6);
+      zline(ctx,V,[z[0],0],z,COL.red,6);
+      zvec(ctx,V,[0,0],z,COL.yellow,4,12);
+      const P=px(V,z); circ(ctx,P[0],P[1],12+3*Math.sin(t*3.5),rgba(COL.yellow,0.7),null,2); dot(ctx,P[0],P[1],7,COL.yellow);
+      zlab(ctx,V,[z[0]/2,0],'a = '+sg(p,1),COL.green,0,z[1]>=0?22:-12,{align:'center',size:14});
+      zlab(ctx,V,[z[0],z[1]/2],'b = '+sg(q,1),COL.red,z[0]>=0?14:-14,5,{align:z[0]>=0?'left':'right',size:14});
+      zlab(ctx,V,z,'z = '+cstr([p,q],1),COL.yellow,z[0]>=0?14:-14,z[1]>=0?-14:22,{align:z[0]>=0?'left':'right',size:15});
+      $('#r1').textContent=sg(p,1); $('#r2').textContent=sg(q,1); $('#r3').textContent=cstr([p,q],1); $('#r3').style.color='var(--f-yellow)';
+    } else {
+      const A=px(V,z), B=px(V,T);
+      const eq=Math.abs(4*p-3)<1e-9&&Math.abs(3*p-q+6)<1e-9;
+      if(eq&&!wasEq) burst=1; wasEq=eq; burst=Math.max(0,burst-dt*0.9);
+      if(!eq){
+        coil(ctx,A[0],A[1],B[0],B[1],COL.mid,2.4);
+        line(ctx,A[0],A[1],B[0],A[1],COL.green,3,[7,5]);
+        line(ctx,B[0],A[1],B[0],B[1],COL.red,3,[7,5]);
+      }
+      zvec(ctx,V,[0,0],z,rgba(COL.yellow,0.45),3,10);
+      const rc=eq?COL.green:COL.red;
+      circ(ctx,B[0],B[1],13+3*Math.sin(t*4),rc,null,2.6); dot(ctx,B[0],B[1],6,rc);
+      if(burst>0) circ(ctx,B[0],B[1],13+(1-burst)*70,rgba(COL.green,burst),null,3.5);
+      dot(ctx,A[0],A[1],8,COL.yellow);
+      lab(ctx,'3 − 6i',B[0]+16,B[1]+(B[1]>A[1]?22:-12),rc,{size:14});
+      lab(ctx,'4x + i(3x − y)',A[0]+16,A[1]+(A[1]>B[1]?22:-12),COL.yellow,{size:14});
+      $('#r1').textContent=sg(4*p,2)+'  vs  3'+(Math.abs(4*p-3)<1e-9?'  ✓':'');
+      $('#r2').textContent=sg(3*p-q,2)+'  vs  −6'+(Math.abs(3*p-q+6)<1e-9?'  ✓':'');
+      $('#r3').textContent=eq?'Equal ✓   x = 3/4, y = 33/4':'Not equal yet';
+      $('#r3').style.color=eq?'var(--f-green)':'var(--f-red)';
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.3 ADD AND SUBTRACT
+   z1 + z2 = (a + c) + i(b + d).  z2 is slid, tail to tip, along z1; the
+   blue arrow from O always points at the tip of the moving copy.
+   Subtract = add the negative: z2 is first swung through 180° about O.
+   Textbook: (2+3i)+(−6+5i) = −4+8i ;  (6+3i)−(2−i) = 4+4i ;
+             (2−i)−(6+3i) = −4−4i.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('md','Operation',['z₁ + z₂','z₁ − z₂']) +
+    slider('a','z₁  real part',-6,6,0.5,2) + slider('b','z₁  imaginary part',-6,6,0.5,3) +
+    slider('c','z₂  real part',-6,6,0.5,-6) + slider('d','z₂  imaginary part',-6,6,0.5,5) +
+    chipRow('qa','Textbook',['(2+3i) + (−6+5i)','(6+3i) − (2−i)','(2−i) − (6+3i)']) +
+    replayBtn() +
+    cards([['r1','Result','--f-blue',true],['r2','Real parts','--f-green'],['r3','Imaginary parts','--f-red']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const ex=[[2,3,-6,5,0],[6,3,2,-1,1],[2,-1,6,3,1]];
+  let mode=0, ph=0, Z1=S2([2,3]), Z2=S2([-6,5]); const V=newView();
+  function setMode(m){ mode=m; ph=0; setActive(wrap,'md',m); }
+  wireChips(wrap,'md',i=>{ setMode(i); setActive(wrap,'qa',-1); });
+  wireChips(wrap,'qa',i=>{ const e=ex[i]; ['a','b','c','d'].forEach((id,k)=>$('#'+id).value=e[k]); setMode(e[4]); setActive(wrap,'qa',i); });
+  $('#rp').onclick=()=>{ ph=0; };
+  setMode(0);
+
+  animLoop(dt=>{
+    ph=(ph+dt)%6.4;
+    const t1=['a','b'].map(id=>+$('#'+id).value), t2=['c','d'].map(id=>+$('#'+id).value);
+    ['a','b','c','d'].forEach(id=>val(wrap,id,sg(+$('#'+id).value,1)));
+    const z1=f2(Z1,t1,dt), z2=f2(Z2,t2,dt), sub=mode===1;
+    const fu=sub?ease(seg(ph,0.8,2.0)):0;
+    const s0=sub?2.2:0.8, s1=sub?3.8:2.4, v=ease(seg(ph,s0,s1));
+    const wv=cmul(z2,polar(1,PI*fu)), off=cscl(z1,v), tip=cadd(off,wv);
+    const fin=cadd(z1,sub?cscl(z2,-1):z2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),[z1,z2,cscl(z2,-1),fin],dt,3);
+    drawPlane(ctx,V);
+    const O=px(V,[0,0]);
+    if(sub&&fu<1&&fu>0){ // swing arc
+      arcA(ctx,O[0],O[1],30,carg(z2),carg(z2)+PI*fu,COL.red,3);
+    }
+    if(sub||v>0.02) zline(ctx,V,[0,0],z2,rgba(COL.red,0.35),2.4,[6,5]);
+    if(v>0.02){
+      zline(ctx,V,[0,0],wv,rgba(COL.red,0.7*v),2.4,[6,5]);
+      zline(ctx,V,wv,cadd(wv,z1),rgba(COL.yellow,0.8*v),2.4,[6,5]);
+    }
+    zvec(ctx,V,[0,0],tip,COL.blue,5,14);
+    zvec(ctx,V,[0,0],z1,COL.yellow,4,12);
+    zvec(ctx,V,off,tip,COL.red,4,12);
+    zlab(ctx,V,z1,'z₁',COL.yellow,10,-10,{size:15});
+    zlab(ctx,V,tip,(sub&&fu>0.5?'−z₂':'z₂'),COL.red,10,-10,{size:15});
+    if(v>0.97){ zdot(ctx,V,tip,7,COL.blue); zlab(ctx,V,fin,'z₁ '+(sub?'−':'+')+' z₂',COL.blue,12,-12,{size:15}); }
+    zdot(ctx,V,[0,0],5,COL.ink);
+    const sg2=sub?-1:1;
+    $('#r1').textContent=cstr(cadd(t1,cscl(t2,sg2)),2);
+    $('#r2').textContent=sg(t1[0],1)+(sub?' − ':' + ')+sg(t2[0],1).replace('−','(−')+(t2[0]<0?')':'')+' = '+sg(t1[0]+sg2*t2[0],1);
+    $('#r3').textContent=sg(t1[1],1)+(sub?' − ':' + ')+sg(t2[1],1).replace('−','(−')+(t2[1]<0?')':'')+' = '+sg(t1[1]+sg2*t2[1],1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.4 MULTIPLY
+   z1·z2 = (ac − bd) + i(ad + bc).  Geometrically z1 is turned through
+   arg z2 and stretched by |z2| — so |z1z2| = |z1||z2| and the arguments
+   add.  The blue path is the real route z1 takes, t = 0 → 1.
+   Textbook: (3+5i)(2+6i) = −24+28i.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('a','z₁  real part a',-6,6,0.5,2) + slider('b','z₁  imaginary part b',-6,6,0.5,1) +
+    slider('c','z₂  real part c',-6,6,0.5,1) + slider('d','z₂  imaginary part d',-6,6,0.5,2) +
+    chipRow('qa','Try',['(3+5i)(2+6i)','(1+i)(1+i)','z × i','(2−i)(2+i)']) +
+    `<div class="control-group"><label>Progress<span class="val" id="ttV"></span></label><input type="range" id="tt" min="0" max="100" step="1" value="0"><div class="toggle-group"><button class="toggle-btn play" id="pl">❚❚ Pause</button></div></div>` +
+    cards([['r1','z₁ z₂','--f-blue',true],['r2','ac − bd  ,  ad + bc'],['r3','|z₁||z₂|  =  |z₁z₂|'],['r4','arg z₁ + arg z₂']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), tt=$('#tt');
+  const ex=[[3,5,2,6],[1,1,1,1],[2,-1,0,1],[2,-1,2,1]];
+  let auto=true, ph=0, tp=0, Z1=S2([2,1]), Z2=S2([1,2]); const V=newView();
+  wireChips(wrap,'qa',i=>{ ['a','b','c','d'].forEach((id,k)=>$('#'+id).value=ex[i][k]); ph=0; setActive(wrap,'qa',i); });
+  $('#pl').onclick=()=>{ auto=!auto; setPlay(pl,auto,'❚❚ Pause','▶ Play'); };
+  const pl=$('#pl');
+  tt.oninput=()=>{ auto=false; setPlay(pl,false,'❚❚ Pause','▶ Play'); };
+  setPlay(pl,true,'❚❚ Pause','▶ Play');
+
+  animLoop(dt=>{
+    const t1=['a','b'].map(id=>+$('#'+id).value), t2=['c','d'].map(id=>+$('#'+id).value);
+    ['a','b','c','d'].forEach(id=>val(wrap,id,sg(+$('#'+id).value,1)));
+    const z1=f2(Z1,t1,dt), z2=f2(Z2,t2,dt);
+    if(auto){ ph=(ph+dt)%7; tp=ease(seg(ph,0.8,4.2)); tt.value=Math.round(tp*100); } else tp=+tt.value/100;
+    val(wrap,'tt',Math.round(tp*100)+'%');
+    const prod=cmul(z1,z2), P=morphPt(z1,z2,tp,1);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),[z1,z2,prod],dt,3);
+    drawPlane(ctx,V);
+    const O=px(V,[0,0]);
+    circ(ctx,O[0],O[1],cabs(P)*V.s,rgba(COL.blue,0.35),null,1.6);
+    drawTrail(ctx,V,z1,z2,tp,1,COL.blue);
+    const a1=carg(z1), aP=a1+tp*carg(z2);
+    arcA(ctx,O[0],O[1],34,a1,aP,COL.blue,3.4);
+    zvec(ctx,V,[0,0],z2,rgba(COL.red,0.7),3,11);
+    zvec(ctx,V,[0,0],z1,COL.yellow,4,12);
+    zvec(ctx,V,[0,0],P,COL.blue,5,14);
+    zdot(ctx,V,P,7,COL.blue); zdot(ctx,V,[0,0],5,COL.ink);
+    zlab(ctx,V,z1,'z₁',COL.yellow,10,-10,{size:15});
+    zlab(ctx,V,z2,'z₂',COL.red,10,-10,{size:15});
+    if(tp>0.96) zlab(ctx,V,prod,'z₁z₂',COL.blue,12,-12,{size:15});
+    const pr=cmul(t1,t2);
+    $('#r1').textContent=cstr(pr,2);
+    $('#r2').textContent=sg(t1[0]*t2[0]-t1[1]*t2[1],2)+'  ,  '+sg(t1[0]*t2[1]+t1[1]*t2[0],2);
+    $('#r3').textContent=sg(cabs(t1)*cabs(t2),3)+'  =  '+sg(cabs(pr),3);
+    $('#r4').textContent=sg((carg(t1)+carg(t2))/D2R,1)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.5 INVERSE AND DIVIDE
+   z⁻¹ = z̄ / |z|²  — flip z over the real axis, then slide it along its
+   own ray until its length is 1/|z|.   z1/z2 = z1·z2⁻¹ — turn z1 BACK by
+   arg z2 and shrink it by |z2|.
+   Textbook: 1/(2−3i) = 2/13 + 3i/13 ;  (6+3i)/(2−i) = (9+12i)/5.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('md','Find',['1 ÷ z','z₁ ÷ z₂']) +
+    slider('a','z  real part',-6,6,0.5,2) + slider('b','z  imaginary part',-6,6,0.5,-3) +
+    slider('c','z₂  real part',-6,6,0.5,2) + slider('d','z₂  imaginary part',-6,6,0.5,-1) +
+    chipRow('qa','Textbook',['2 − 3i','4 − 3i','5 + 3i','−i','(6+3i) ÷ (2−i)']) +
+    replayBtn() +
+    cards([['r1','Answer','--f-blue',true],['r2','|z|²'],['r3','Check']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode=0, ph=0, Z1=S2([2,-3]), Z2=S2([2,-1]); const V=newView();
+  function setMode(m){
+    mode=m; ph=0; V.init=false; setActive(wrap,'md',m); showGroup(wrap,'c',m===1); showGroup(wrap,'d',m===1);
+    lbl(wrap,'a',m?'z₁  real part':'z  real part'); lbl(wrap,'b',m?'z₁  imaginary part':'z  imaginary part');
+    cardLbl(wrap,'r1',m?'z₁ ÷ z₂':'z⁻¹  =  z̄ ÷ |z|²'); cardLbl(wrap,'r2',m?'|z₁| ÷ |z₂|':'|z|²'); cardLbl(wrap,'r3',m?'z₂ × answer':'z × z⁻¹');
+  }
+  const ex=[[2,-3,0],[4,-3,0],[5,3,0],[0,-1,0],[6,3,1,2,-1]];
+  wireChips(wrap,'md',i=>{ setMode(i); setActive(wrap,'qa',-1); });
+  wireChips(wrap,'qa',i=>{ const e=ex[i]; setMode(e[2]); $('#a').value=e[0]; $('#b').value=e[1]; if(e[2]){ $('#c').value=e[3]; $('#d').value=e[4]; } setActive(wrap,'qa',i); });
+  $('#rp').onclick=()=>{ ph=0; };
+  setMode(0);
+
+  animLoop(dt=>{
+    ph=(ph+dt)%7;
+    const ta=[+$('#a').value,+$('#b').value], tb=[+$('#c').value,+$('#d').value];
+    ['a','b','c','d'].forEach(id=>val(wrap,id,sg(+$('#'+id).value,1)));
+    const z=f2(Z1,ta,dt), z2=f2(Z2,tb,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=planeRect(w,h), O0=[0,0];
+    if(mode===0){
+      const m2=z[0]*z[0]+z[1]*z[1];
+      if(m2<0.01){ fitView(V,R,[z],dt,2); drawPlane(ctx,V); lab(ctx,'0 has no inverse',w/2,h*0.15,COL.red,{align:'center',size:16}); zdot(ctx,V,z,7,COL.yellow);
+        $('#r1').textContent='not defined'; $('#r2').textContent='0'; $('#r3').textContent='—'; return; }
+      const flipU=ease(seg(ph,0.8,2.2)), strU=ease(seg(ph,2.5,4.5));
+      const zc=[z[0],z[1]*Math.cos(PI*flipU)], Q=cscl(zc,Math.pow(m2,-strU)), inv=cdiv([1,0],z);
+      fitView(V,R,[z,cconj(z),inv],dt,1.6);
+      drawPlane(ctx,V);
+      const O=px(V,O0); circ(ctx,O[0],O[1],V.s,COL.ink,null,2.2); ctx.save(); ctx.setLineDash([]); ctx.restore();
+      textAt(ctx,'|w| = 1',O[0]+V.s*0.72,O[1]-V.s*0.72-6,{size:11.5,weight:700,color:COL.muted});
+      const zb=cconj(z);
+      if(flipU>0.02&&flipU<0.98) zline(ctx,V,z,zc,rgba(COL.blue,0.5),2,[5,5]);
+      if(flipU>0.98){ const far=cscl(zb,Math.max(1,3/cabs(zb))); zline(ctx,V,[0,0],far,rgba(COL.blue,0.28),1.8,[7,6]); }
+      zvec(ctx,V,[0,0],z,COL.yellow,4,12);
+      zvec(ctx,V,[0,0],Q,COL.blue,5,14); zdot(ctx,V,Q,7,COL.blue); zdot(ctx,V,[0,0],5,COL.ink);
+      zlab(ctx,V,z,'z',COL.yellow,10,-10,{size:15});
+      if(flipU>0.98&&strU<0.05) zlab(ctx,V,zb,'z̄',COL.blue,10,z[1]>0?20:-10,{size:15});
+      if(strU>0.97){ zlab(ctx,V,inv,'z⁻¹',COL.blue,12,inv[1]>=0?-12:22,{size:15}); ring(ctx,V,inv,12+3*Math.sin(performance.now()/260),COL.blue,2); }
+      const iv=cdiv([1,0],ta), mm=ta[0]*ta[0]+ta[1]*ta[1];
+      $('#r1').textContent=mm<1e-9?'not defined':cfrac(iv); $('#r2').textContent=sg(mm,2);
+      $('#r3').textContent=mm<1e-9?'—':cstr(cmul(ta,iv),3)+'  ✓';
+    } else {
+      if(cabs(z2)<0.05){ fitView(V,R,[z,z2],dt,3); drawPlane(ctx,V); zvec(ctx,V,O0,z,COL.yellow,4,12); lab(ctx,'cannot divide by 0',w/2,h*0.15,COL.red,{align:'center',size:16});
+        $('#r1').textContent='not defined'; $('#r2').textContent='—'; $('#r3').textContent='—'; return; }
+      const tp=ease(seg(ph,0.8,4.2)), P=morphPt(z,z2,tp,-1), q=cdiv(z,z2);
+      fitView(V,R,[z,z2,q],dt,3);
+      drawPlane(ctx,V);
+      const O=px(V,O0);
+      circ(ctx,O[0],O[1],cabs(P)*V.s,rgba(COL.blue,0.35),null,1.6);
+      drawTrail(ctx,V,z,z2,tp,-1,COL.blue);
+      arcA(ctx,O[0],O[1],34,carg(z),carg(z)-tp*carg(z2),COL.blue,3.4);
+      zvec(ctx,V,O0,z2,rgba(COL.red,0.7),3,11);
+      zvec(ctx,V,O0,z,COL.yellow,4,12);
+      zvec(ctx,V,O0,P,COL.blue,5,14); zdot(ctx,V,P,7,COL.blue); zdot(ctx,V,O0,5,COL.ink);
+      zlab(ctx,V,z,'z₁',COL.yellow,10,-10,{size:15}); zlab(ctx,V,z2,'z₂',COL.red,10,-10,{size:15});
+      if(tp>0.96) zlab(ctx,V,q,'z₁ ÷ z₂',COL.blue,12,-12,{size:15});
+      const qt=cdiv(ta,tb);
+      $('#r1').textContent=cfrac(qt); $('#r2').textContent=sg(cabs(ta)/cabs(tb),3);
+      $('#r3').textContent=cstr(cmul(tb,qt),2)+'  ✓';
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.6 POWERS OF i
+   Each extra factor of i turns the arm a quarter turn anticlockwise (a
+   negative power turns it clockwise).  So iⁿ only ever lands on 1, i,
+   −1, −i :  i^(4k)=1, i^(4k+1)=i, i^(4k+2)=−1, i^(4k+3)=−i.
+   Textbook: i⁹ + i¹⁹ = i − i = 0 ;  i⁻³⁵ = i ;  i⁻³⁹ = i.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  const quick=[2,9,19,-35,-39];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','Power  n',-40,40,1,3) +
+    chipRow('qa','Textbook',['i²','i⁹','i¹⁹','i⁻³⁵','i⁻³⁹']) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group"><button class="toggle-btn play" id="up">↺ n + 1</button><button class="toggle-btn play" id="dn">↻ n − 1</button><button class="toggle-btn" id="stp">■ Stop</button></div></div>` +
+    slider('sp','Speed (steps per second)',0.5,4,0.5,1.5) +
+    cards([['r1','n = 4k + r'],['r2','iⁿ','--f-blue'],['r3','Rule used','--f-yellow',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nn=$('#n'), sp=$('#sp');
+  let n=3, acc=3, spin=0, A=S(3*PI/2), lastN=3, burst=0; const V=newView();
+  nn.oninput=()=>{ n=+nn.value; acc=n; spin=0; setActive(wrap,'qa',-1); };
+  wireChips(wrap,'qa',i=>{ n=quick[i]; acc=n; spin=0; nn.value=n; setActive(wrap,'qa',i); });
+  $('#up').onclick=()=>{ spin=1; acc=n; }; $('#dn').onclick=()=>{ spin=-1; acc=n; }; $('#stp').onclick=()=>{ spin=0; };
+  const names=['1','i','−1','−i'], rules=['i⁴ᵏ','i⁴ᵏ⁺¹','i⁴ᵏ⁺²','i⁴ᵏ⁺³'];
+
+  animLoop(dt=>{
+    if(spin){ acc+=spin*(+sp.value)*dt; if(Math.abs(acc)>=40){ acc=clamp(acc,-40,40); spin=0; } n=Math.round(acc); nn.value=n; }
+    if(n!==lastN){ burst=1; lastN=n; } burst=Math.max(0,burst-dt*1.6);
+    follow(A,n*PI/2,dt);
+    val(wrap,'n',n); val(wrap,'sp',sp.value);
+    const r=((n%4)+4)%4, k=(n-r)/4;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const t=performance.now()/1000;
+    const R=planeRect(w,h); const ey=1.62; placeView(V,R,ey*R.w/R.h,ey); drawPlane(ctx,V,{ticks:false});
+    const O=px(V,[0,0]), U=V.s, a=A.x;
+    circ(ctx,O[0],O[1],U,COL.ink,null,3);
+    // swept spiral
+    const steps=Math.max(2,Math.ceil(Math.abs(a)*8));
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.beginPath();
+    let lx=0,ly=0,qx=0,qy=0;
+    for(let i=0;i<=steps;i++){ const uu=a*i/steps, rad=U*(0.3+0.012*Math.abs(uu)/(PI/2)); const x=O[0]+rad*Math.cos(uu), y=O[1]-rad*Math.sin(uu); i?ctx.lineTo(x,y):ctx.moveTo(x,y); qx=lx;qy=ly;lx=x;ly=y; }
+    ctx.stroke(); ctx.restore();
+    if(Math.abs(a)>0.3) arrowHead(ctx,lx,ly,Math.atan2(ly-qy,lx-qx),COL.blue,11);
+    // four landing points
+    for(let q=0;q<4;q++){
+      const ang=q*PI/2, p=[O[0]+U*Math.cos(ang),O[1]-U*Math.sin(ang)], real=q%2===0, col=real?COL.green:COL.red;
+      const on=q===r;
+      circ(ctx,p[0],p[1],on?11:8,col,'#fff',on?4:2.6);
+      if(on){ circ(ctx,p[0],p[1],15+3*Math.sin(t*5)+burst*34,rgba(COL.blue,0.35+0.4*(1-burst)),null,2.6); }
+      const lx2=O[0]+(U+34)*Math.cos(ang), ly2=O[1]-(U+34)*Math.sin(ang);
+      textAt(ctx,names[q],lx2,ly2+(q%2?0:7),{align:'center',size:on?24:19,weight:700,color:col});
+      textAt(ctx,rules[q],lx2,ly2+(q%2?0:7)+17,{align:'center',size:11,weight:600,color:COL.muted});
+    }
+    // the arm
+    const tip=[O[0]+U*Math.cos(a),O[1]-U*Math.sin(a)];
+    vec(ctx,O[0],O[1],tip[0],tip[1],COL.yellow,5,0); dot(ctx,tip[0],tip[1],9,COL.yellow); dot(ctx,O[0],O[1],5,COL.ink);
+    lab(ctx,'i'+sup(n)+'  =  '+names[r],R.x+16,R.y+34,COL.blue,{size:24});
+    $('#r1').textContent=n+'  =  4×('+k+') + '+r;
+    $('#r2').textContent=names[r];
+    $('#r3').textContent='i'+sup(n)+' = (i⁴)'+sup(k)+' · i'+sup(r)+' = '+names[r];
+  });
+  return wrap;
+}
+
+
+/* =====================================================================
+   4.7 ROOTS OF A NEGATIVE NUMBER
+   √(−p) = i√p, and the two roots are ±i√p.  Squaring a point doubles
+   its angle and squares its length: i√p (90°) swings round to 180°, and
+   −i√p (−90°) swings round to −180° — both land on −p.
+   Textbook: (√3 i)² = −3 ;  (−√3 i)² = −3.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  const pv=[1,3,4,9];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('p','The number is  −p,  p =',0.25,9,0.25,3) +
+    chipRow('qa','Textbook',['√−1','√−3','√−4','√−9']) +
+    replayBtn() +
+    cards([['r1','Square roots of −p','--f-blue',true],['r2','(i√p)²  and  (−i√p)²'],['r3','√(−p) means']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), pp=$('#p');
+  let ph=0, P=S(3); const V=newView();
+  wireChips(wrap,'qa',i=>{ pp.value=pv[i]; ph=0; setActive(wrap,'qa',i); });
+  pp.addEventListener('input',()=>{ ph=0; setActive(wrap,'qa',-1); });
+  setActive(wrap,'qa',1);
+  $('#rp').onclick=()=>{ ph=0; };
+
+  animLoop(dt=>{
+    ph=(ph+dt)%7.2;
+    const p=+pp.value; follow(P,Math.max(0.05,p),dt); const pS=Math.max(0.05,P.x), m=Math.sqrt(pS);
+    val(wrap,'p',sg(p,2));
+    const sq=ease(seg(ph,1,4.2));
+    const Q1=polar(Math.pow(m,1+sq),(PI/2)*(1+sq)), Q2=polar(Math.pow(m,1+sq),-(PI/2)*(1+sq));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),[[0,m],[0,-m],[-pS,0]],dt,2.2);
+    drawPlane(ctx,V);
+    const O=px(V,[0,0]);
+    [[1,COL.yellow],[-1,COL.red]].forEach(([s,col])=>{
+      ctx.save(); ctx.strokeStyle=rgba(COL.blue,0.6); ctx.lineWidth=2.4; ctx.setLineDash([6,5]); ctx.beginPath();
+      for(let i=0;i<=50;i++){ const u=sq*i/50, q=polar(Math.pow(m,1+u),s*(PI/2)*(1+u)), pp2=px(V,q); i?ctx.lineTo(pp2[0],pp2[1]):ctx.moveTo(pp2[0],pp2[1]); }
+      ctx.stroke(); ctx.restore();
+    });
+    zvec(ctx,V,[0,0],[0,m],rgba(COL.yellow,0.5),3,10); zvec(ctx,V,[0,0],[0,-m],rgba(COL.red,0.5),3,10);
+    zvec(ctx,V,[0,0],Q1,COL.yellow,4.6,13); zvec(ctx,V,[0,0],Q2,COL.red,4.6,13);
+    zdot(ctx,V,Q1,8,COL.yellow); zdot(ctx,V,Q2,8,COL.red); zdot(ctx,V,[0,0],5,COL.ink);
+    zlab(ctx,V,[0,m],'i√p',COL.yellow,12,-6,{size:15});
+    zlab(ctx,V,[0,-m],'−i√p',COL.red,12,18,{size:15});
+    if(sq>0.97){ ring(ctx,V,[-pS,0],13+3*Math.sin(performance.now()/250),COL.blue,2.4); zlab(ctx,V,[-pS,0],'−p',COL.blue,0,-20,{align:'center',size:17}); }
+    arcA(ctx,O[0],O[1],30,PI/2,PI/2*(1+sq),COL.yellow,3.2);
+    arcA(ctx,O[0],O[1],40,-PI/2,-PI/2*(1+sq),COL.red,3.2);
+    const rt=Math.sqrt(p);
+    $('#r1').textContent='± '+(Math.abs(rt-1)<1e-9?'':sg(rt,3)+' ')+'i';
+    $('#r2').textContent='i²p = −'+sg(p,2)+'  ✓';
+    $('#r3').textContent=(Math.abs(rt-1)<1e-9?'':sg(rt,3)+' ')+'i  only';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.8 THE √a · √b TRAP
+   √a·√b = √(ab) holds when a, b ≥ 0 and when one is negative — but it
+   FAILS when both are negative: √−1 · √−1 = i·i = −1, yet √(−1·−1) = √1
+   = +1.  The product is rotated into the negative real axis; the root
+   of ab stays on the positive one.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  const ex=[[4,9],[-4,9],[-1,-1],[-4,-9]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('a','a',-9,9,1,-1) + slider('b','b',-9,9,1,-1) +
+    chipRow('qa','Cases',['a, b > 0','a < 0 < b','a = b = −1','both < 0']) +
+    replayBtn() +
+    cards([['r1','√a · √b','--f-blue'],['r2','√(ab)','--f-red'],['r3','Equal?',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aa=$('#a'), bb=$('#b');
+  let ph=0, A=S2([0,1]), B=S2([0,1]); const V=newView();
+  wireChips(wrap,'qa',i=>{ aa.value=ex[i][0]; bb.value=ex[i][1]; ph=0; setActive(wrap,'qa',i); });
+  [aa,bb].forEach(e=>e.addEventListener('input',()=>{ ph=0; setActive(wrap,'qa',-1); }));
+  setActive(wrap,'qa',2);
+  $('#rp').onclick=()=>{ ph=0; };
+
+  animLoop(dt=>{
+    ph=(ph+dt)%7.2;
+    const a=+aa.value, b=+bb.value;
+    val(wrap,'a',sg(a,0)); val(wrap,'b',sg(b,0));
+    const za=f2(A,sqrtR(a),dt), zb=f2(B,sqrtR(b),dt);
+    const tp=ease(seg(ph,1,4.2));
+    const Pt=morphPt(za,zb,tp,1), Rt=sqrtR(a*b), Pf=cmul(sqrtR(a),sqrtR(b));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),[za,zb,Pf,Rt],dt,3);
+    drawPlane(ctx,V);
+    const O=px(V,[0,0]), t=performance.now()/1000;
+    const same=cabs(csub(Pf,Rt))<1e-9;
+    drawTrail(ctx,V,za,zb,tp,1,COL.blue);
+    arcA(ctx,O[0],O[1],34,carg(za),carg(za)+tp*carg(zb),COL.blue,3.4);
+    zvec(ctx,V,[0,0],zb,rgba(COL.red,0.7),3,11);
+    zvec(ctx,V,[0,0],za,COL.yellow,4,12);
+    // √(ab) target
+    const rc=same?COL.green:COL.red;
+    ring(ctx,V,Rt,13+3*Math.sin(t*4),rc,2.6); zdot(ctx,V,Rt,5,rc);
+    zvec(ctx,V,[0,0],Pt,COL.blue,5,14); zdot(ctx,V,Pt,7,COL.blue); zdot(ctx,V,[0,0],5,COL.ink);
+    zlab(ctx,V,za,'√a',COL.yellow,-12,-10,{size:15,align:'right'}); zlab(ctx,V,zb,'√b',COL.red,12,-10,{size:15});
+    zlab(ctx,V,Rt,'√(ab)',rc,14,-14,{size:15});
+    if(tp>0.96){
+      zlab(ctx,V,Pf,'√a·√b',COL.blue,14,Pf[1]>=Rt[1]?-14:22,{size:15});
+      if(!same){ const pa=px(V,Pf), pb=px(V,Rt); line(ctx,pa[0],pa[1],pb[0],pb[1],COL.red,2.6,[6,5]); lab(ctx,'≠',(pa[0]+pb[0])/2,(pa[1]+pb[1])/2-10,COL.red,{align:'center',size:24}); }
+      else { ring(ctx,V,Pf,20+(performance.now()/40)%14,rgba(COL.green,0.5),2); }
+    }
+    $('#r1').textContent=cstr(Pf,2); $('#r2').textContent=cstr(Rt,2);
+    $('#r3').textContent=same?'Equal ✓':'Not equal ✗'+(a<0&&b<0?'   — both negative':'');
+    $('#r3').style.color=same?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.9 IDENTITIES
+   (z1+z2)² = z1² + 2z1z2 + z2², and the cube / difference versions.
+   Each term is a vector; laid tip to tail from O they end exactly on
+   the ring marking the left-hand side — whatever z1 and z2 you choose.
+   Textbook Example 3:  (5 − 3i)³ = −10 − 198i.
+   ===================================================================== */
+function identityTerms(k,z1,z2){
+  const z1s=cmul(z1,z1), z2s=cmul(z2,z2), z12=cmul(z1,z2);
+  if(k===0) return {lhs:cpow(cadd(z1,z2),2), terms:[z1s,cscl(z12,2),z2s], names:['z₁²','2z₁z₂','z₂²']};
+  if(k===1) return {lhs:cpow(csub(z1,z2),2), terms:[z1s,cscl(z12,-2),z2s], names:['z₁²','−2z₁z₂','z₂²']};
+  const z1c=cmul(z1s,z1), z2c=cmul(z2s,z2), a=cmul(z1s,z2), b=cmul(z1,z2s);
+  if(k===2) return {lhs:cpow(cadd(z1,z2),3), terms:[z1c,cscl(a,3),cscl(b,3),z2c], names:['z₁³','3z₁²z₂','3z₁z₂²','z₂³']};
+  if(k===3) return {lhs:cpow(csub(z1,z2),3), terms:[z1c,cscl(a,-3),cscl(b,3),cscl(z2c,-1)], names:['z₁³','−3z₁²z₂','3z₁z₂²','−z₂³']};
+  return {lhs:cmul(cadd(z1,z2),csub(z1,z2)), terms:[z1s,cscl(z2s,-1)], names:['z₁²','−z₂²']};
+}
+function buildA9(){
+  const wrap=labShell();
+  const lhsNames=['(z₁ + z₂)²','(z₁ − z₂)²','(z₁ + z₂)³','(z₁ − z₂)³','(z₁ + z₂)(z₁ − z₂)'];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('id','Identity',['(z₁+z₂)²','(z₁−z₂)²','(z₁+z₂)³','(z₁−z₂)³','z₁²−z₂²']) +
+    slider('a','z₁  real part',-6,6,0.5,1) + slider('b','z₁  imaginary part',-6,6,0.5,2) +
+    slider('c','z₂  real part',-6,6,0.5,2) + slider('d','z₂  imaginary part',-6,6,0.5,-1) +
+    `<div class="control-group"><label>Textbook</label><div class="toggle-group"><button class="toggle-btn navy" id="ex3" style="margin-top:0">Example 3:  (5 − 3i)³</button></div></div>` +
+    replayBtn() +
+    cards([['r1','Left side','--f-blue',true],['r2','Right side (all terms added)','--f-yellow',true],['r3','Same point?',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let id=0, ph=0, Z1=S2([1,2]), Z2=S2([2,-1]); const V=newView();
+  const tcol=[COL.red,COL.blue,COL.green,COL.yellow];
+  wireChips(wrap,'id',i=>{ id=i; ph=0; V.init=false; setActive(wrap,'id',i); });
+  setActive(wrap,'id',0);
+  $('#ex3').onclick=()=>{ $('#a').value=5; $('#b').value=0; $('#c').value=0; $('#d').value=3; id=3; ph=0; V.init=false; setActive(wrap,'id',3); };
+  $('#rp').onclick=()=>{ ph=0; };
+
+  animLoop(dt=>{
+    const t1=['a','b'].map(k=>+$('#'+k).value), t2=['c','d'].map(k=>+$('#'+k).value);
+    ['a','b','c','d'].forEach(k=>val(wrap,k,sg(+$('#'+k).value,1)));
+    const z1=f2(Z1,t1,dt), z2=f2(Z2,t2,dt);
+    const T=identityTerms(id,z1,z2), n=T.terms.length;
+    ph=(ph+dt)%(0.6+1.2*n+3.6);
+    const pr=clamp((ph-0.6)/1.2,0,n);
+    const sums=[[0,0]]; T.terms.forEach(tm=>sums.push(cadd(sums[sums.length-1],tm)));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),sums.concat([T.lhs]),dt,3);
+    drawPlane(ctx,V);
+    const t=performance.now()/1000;
+    const done=pr>=n-0.001, same=cabs(csub(sums[n],T.lhs))<1e-6*(1+cabs(T.lhs));
+    // left side marker
+    const Lp=px(V,T.lhs), lc=(done&&same)?COL.green:COL.ink;
+    circ(ctx,Lp[0],Lp[1],15+3*Math.sin(t*4),lc,null,3); circ(ctx,Lp[0],Lp[1],7,lc,null,2);
+    // chain of terms
+    for(let k=0;k<n;k++){
+      const f=ease(clamp(pr-k,0,1)); if(f<=0) continue;
+      const a0=sums[k], a1=cadd(a0,cscl(T.terms[k],f));
+      zvec(ctx,V,a0,a1,tcol[k],4.4,12);
+      zdot(ctx,V,a0,4.5,tcol[k]);
+      if(f>0.98&&cabs(T.terms[k])*V.s>34){ const mid=cadd(a0,cscl(T.terms[k],0.5)), tp=px(V,mid); lab(ctx,T.names[k],tp[0],tp[1]-9,tcol[k],{align:'center',size:13}); }
+    }
+    zdot(ctx,V,[0,0],5,COL.ink);
+    const tipk=Math.min(n,Math.floor(pr+1e-9)), tipf=pr-Math.floor(pr);
+    const tipPt=pr>=n?sums[n]:cadd(sums[Math.floor(pr)],cscl(T.terms[Math.floor(pr)],ease(tipf)));
+    if(pr>0) zdot(ctx,V,tipPt,6,COL.ink);
+    const lp=px(V,T.lhs);
+    lab(ctx,lhsNames[id],lp[0]+20,lp[1]+(lp[1]<h*0.2?24:-18),lc,{size:14.5});
+    if(done&&same) lab(ctx,'✓ lands on the left side',w*0.5,h*0.06+8,COL.green,{align:'center',size:15});
+    $('#r1').textContent=cstr(T.lhs,2);
+    $('#r2').textContent=cstr(sums[n],2);
+    $('#r3').textContent=same?'Yes ✓':'No';
+    $('#r3').style.color=same?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.10 MODULUS AND CONJUGATE
+   |z| = √(a² + b²) is the distance O→z (Fig 4.2).  z̄ = a − ib is the
+   mirror image of z in the real axis (Fig 4.3): the point flips over the
+   axis.  z·z̄ = |z|².   Textbook: |3+i| = √10 ; |2−5i| = √29.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  const pts=[[2,4],[-2,3],[0,1],[2,0],[-5,-2],[1,-2],[3,1],[2,-5]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('a','Real part a',-6,6,0.5,3) + slider('b','Imaginary part b',-6,6,0.5,1) +
+    chipRow('qa','Points',['A  2+4i','B  −2+3i','C  i','D  2','E  −5−2i','F  1−2i','3+i','2−5i']) +
+    replayBtn() +
+    cards([['r1','|z|','--f-blue'],['r2','z̄','--f-blue'],['r3','z · z̄  =  |z|²',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let ph=0, Z=S2([3,1]); const V=newView();
+  wireChips(wrap,'qa',i=>{ $('#a').value=pts[i][0]; $('#b').value=pts[i][1]; setActive(wrap,'qa',i); });
+  ['a','b'].forEach(k=>$('#'+k).addEventListener('input',()=>setActive(wrap,'qa',-1)));
+  $('#rp').onclick=()=>{ ph=0; };
+
+  animLoop(dt=>{
+    ph=(ph+dt)%7;
+    const ta=[+$('#a').value,+$('#b').value]; val(wrap,'a',sg(ta[0],1)); val(wrap,'b',sg(ta[1],1));
+    const z=f2(Z,ta,dt);
+    const u=ease(seg(ph,1,2.6))-ease(seg(ph,4.4,6.0));
+    const Q=[z[0],z[1]*Math.cos(PI*u)], zb=cconj(z), mod=cabs(z);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    fitView(V,planeRect(w,h),[z,zb],dt,6.5);
+    drawPlane(ctx,V);
+    const O=px(V,[0,0]), t=performance.now()/1000;
+    // modulus circle
+    circ(ctx,O[0],O[1],mod*V.s,rgba(COL.blue,0.4),null,1.8);
+    // right triangle
+    zline(ctx,V,[0,0],[z[0],0],COL.green,5); zline(ctx,V,[z[0],0],z,COL.red,5);
+    // mirror link
+    if(u>0.01&&u<0.99){ zline(ctx,V,z,Q,rgba(COL.blue,0.55),2,[5,5]); }
+    zvec(ctx,V,[0,0],Q,COL.blue,4.6,13); zdot(ctx,V,Q,7,COL.blue);
+    zvec(ctx,V,[0,0],z,COL.yellow,4.6,13);
+    const P=px(V,z); circ(ctx,P[0],P[1],12+3*Math.sin(t*3.5),rgba(COL.yellow,0.7),null,2); dot(ctx,P[0],P[1],7,COL.yellow);
+    zdot(ctx,V,[0,0],5,COL.ink);
+    zlab(ctx,V,z,'z',COL.yellow,12,z[1]>=0?-12:22,{size:16});
+    if(u>0.97) zlab(ctx,V,zb,'z̄',COL.blue,12,z[1]>=0?22:-12,{size:16});
+    const mp=px(V,cscl(z,0.5)); lab(ctx,'|z| = '+sg(Math.sqrt(ta[0]*ta[0]+ta[1]*ta[1]),2),mp[0]-(z[0]>=0?1:-1)*14,mp[1]-(z[1]>=0?1:-1)*14,COL.blue,{align:z[0]>=0?'right':'left',size:14});
+    const s=ta[0]*ta[0]+ta[1]*ta[1];
+    $('#r1').textContent='√'+sg(s,2)+' = '+sg(Math.sqrt(s),3);
+    $('#r2').textContent=cstr(cconj(ta),1);
+    $('#r3').textContent='('+cstr(ta,1)+')('+cstr(cconj(ta),1)+') = '+sg(s,2)+'  ✓';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.11 QUOTIENT ON THE UNIT CIRCLE   (Misc Ex 8 and 14)
+   w = (a + ib)/(a − ib) = z/z̄ always has |w| = 1, so x² + y² = 1 — it
+   sits on the unit circle at angle 2θ, whatever the length of z.
+   Misc Ex 14: z = 1 + i gives w = i, and wᵐ = 1 first at m = 4.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell();
+  const ex=[[1,1,4],[1.5,0.5,5],[2,1,6]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('a','Real part a',-2,2,0.1,1) + slider('b','Imaginary part b',-2,2,0.1,1) +
+    chipRow('qa','Try',['Ex 14:  z = 1 + i','z = 1.5 + 0.5i','z = 2 + i']) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="sp">▶ Spin z</button></div></div>` +
+    slider('m','Power  m  in  wᵐ',1,12,1,4) +
+    cards([['r1','x² + y²  for  w = x + iy','--f-blue'],['r2','w  =  z ÷ z̄'],['r3','wᵐ'],['r4','Least m with  wᵐ = 1','--f-green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aa=$('#a'), bb=$('#b'), mm=$('#m'), spb=$('#sp');
+  let spin=false, phi=0, rr=1, Z=S2([1,1]), H=S(0), hopT=0, burst=0; const V=newView();
+  function stopSpin(){ spin=false; setPlay(spb,false,'❚❚ Stop','▶ Spin z'); }
+  setPlay(spb,false,'❚❚ Stop','▶ Spin z');
+  spb.onclick=()=>{ if(spin){ stopSpin(); return; } rr=Math.hypot(+aa.value,+bb.value)||1; phi=Math.atan2(+bb.value,+aa.value); spin=true; setPlay(spb,true,'❚❚ Stop','▶ Spin z'); };
+  [aa,bb].forEach(e=>e.addEventListener('input',()=>{ stopSpin(); setActive(wrap,'qa',-1); hopT=0; H.x=0; H.v=0; }));
+  mm.addEventListener('input',()=>{ hopT=0; H.x=0; H.v=0; });
+  wireChips(wrap,'qa',i=>{ stopSpin(); aa.value=ex[i][0]; bb.value=ex[i][1]; mm.value=ex[i][2]; hopT=0; H.x=0; H.v=0; setActive(wrap,'qa',i); });
+  setActive(wrap,'qa',0);
+
+  animLoop(dt=>{
+    let zt;
+    if(spin){ phi+=0.7*dt; zt=[rr*Math.cos(phi),rr*Math.sin(phi)]; aa.value=zt[0].toFixed(1); bb.value=zt[1].toFixed(1); }
+    else zt=[+aa.value,+bb.value];
+    const m=+mm.value; val(wrap,'a',sg(+aa.value,1)); val(wrap,'b',sg(+bb.value,1)); val(wrap,'m',m);
+    const z=f2(Z,zt,dt), zb=cconj(z);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=planeRect(w,h);
+    fitView(V,R,[z],dt,1.6); drawPlane(ctx,V);
+    const O=px(V,[0,0]), U=V.s, t=performance.now()/1000;
+    const ok=cabs(zt)>0.05;
+    circ(ctx,O[0],O[1],U,COL.ink,null,3);
+    zvec(ctx,V,[0,0],zb,rgba(COL.blue,0.55),2.6,10);
+    zvec(ctx,V,[0,0],z,COL.yellow,4.4,12);
+    zdot(ctx,V,z,6,COL.yellow); zdot(ctx,V,[0,0],5,COL.ink);
+    zlab(ctx,V,z,'z',COL.yellow,10,-10,{size:15}); zlab(ctx,V,zb,'z̄',COL.blue,10,18,{size:15});
+    let wt=[1,0], lm='—', wm='—', fm='—', n2='—';
+    if(ok){
+      wt=cdiv(zt,cconj(zt));
+      const th=carg(z), aw=2*th;
+      arcA(ctx,O[0],O[1],U*0.32,0,th,COL.yellow,3.4);
+      arcA(ctx,O[0],O[1],U*0.5,0,aw,COL.red,3.4);
+      const wS=polar(1,aw);
+      zvec(ctx,V,[0,0],wS,rgba(COL.red,0.55),2.4,10);
+      // powers of w
+      for(let k=1;k<=m;k++){ const q=polar(1,k*aw), pq=px(V,q); circ(ctx,pq[0],pq[1],5.5,COL.blue,'#fff',2.2); }
+      // hopping marker: w^0, w^1, w^2, ...
+      hopT+=dt; const kk=Math.min(m,Math.floor(hopT/0.65)); if(hopT>0.65*m+2.4){ hopT=0; H.x=0; H.v=0; }
+      follow(H,kk*aw,dt);
+      const hp=px(V,polar(1,H.x)); dot(ctx,hp[0],hp[1],8,COL.red);
+      zlab(ctx,V,wS,'w',COL.red,12,-12,{size:16});
+      const wmv=cpow(wt,m); wm=cstr(wmv,3);
+      if(cabs(csub(wmv,[1,0]))<1e-6){ const p1=px(V,[1,0]); circ(ctx,p1[0],p1[1],12+4*Math.sin(t*5),COL.green,null,3); }
+      for(let q=1;q<=60;q++){ if(cabs(csub(cpow(wt,q),[1,0]))<1e-6){ lm=String(q); break; } } if(lm==='—') lm='none up to 60';
+      n2=sg(wt[0]*wt[0]+wt[1]*wt[1],4);
+    }
+    $('#r1').textContent=n2; $('#r2').textContent=ok?cstr(wt,3):'not defined'; $('#r3').textContent=wm; $('#r4').textContent=lm;
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

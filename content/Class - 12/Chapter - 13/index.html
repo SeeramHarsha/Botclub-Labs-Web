@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 5 — Nuclei | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚛</div>
+    <div>
+      <div class="chip">Grade 12 · Physics Part 2 · Ch 5</div>
+      <h1>Nuclei</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Neutron · Attraction</span>
+      <span><i style="background:var(--f-green)"></i>Energy released</span>
+      <span><i style="background:var(--f-red)"></i>Proton · Repulsion</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* =========================================================================
+   GRADE 12 — PART 2 — CHAPTER 5: NUCLEI
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; the drawn nuclei, particles and pointers ease, spring or are
+   integrated from real equations (Coulomb force, nuclear potential, circular
+   motion in B) every frame. Nothing is ever a static picture.
+   ========================================================================= */
+const SYM='H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U'.split(' ');
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹', SUB='₀₁₂₃₄₅₆₇₈₉';
+function sup(n){ return String(n).split('').map(c=>SUP[+c]).join(''); }
+function sub(n){ return String(n).split('').map(c=>SUB[+c]).join(''); }
+function nucl(A,Z){ return sup(A)+sub(Z)+(SYM[Z-1]||'?'); }
+function sciE(x,d){ if(!isFinite(x)||x===0) return '0'; const e=Math.floor(Math.log10(Math.abs(x))); const m=x/Math.pow(10,e); const es=(e<0?'⁻':'')+sup(Math.abs(e)); return fmt(m,d===undefined?2:d)+' × 10'+es; }
+
+/* ---------- control builders ---------- */
+function sl(id,label,min,max,step,val){ return `<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function tg(id,items,active,title){ return `<div class="control-group">${title?`<label style="margin-bottom:6px;">${title}</label>`:''}<div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn${i===active?' active':''}" data-k="${it[0]}">${it[1]}</button>`).join('')}</div></div>`; }
+function rc(items,cls){ return `<div class="control-group"><div class="result-cards ${cls||''}">${items.map(it=>`<div class="rcard${it[3]?' wide':''}"><div class="rlabel">${it[1]}</div><div class="rval" id="${it[0]}" ${it[2]?`style="color:${it[2]}"`:''}>—</div></div>`).join('')}</div></div>`; }
+function btn(id,label,cls){ return `<div class="control-group"><button class="toggle-btn ${cls||'navy'}" id="${id}" style="width:100%">${label}</button></div>`; }
+function note(t){ return `<div class="control-group"><p class="hint" style="margin-top:0">${t}</p></div>`; }
+
+/* ---------- nucleon / nucleus drawing ---------- */
+function nuc(ctx,x,y,r,isP,alpha){
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  const c=isP?COL.red:COL.blue; ctx.lineWidth=Math.max(0.8,r*0.17); ctx.strokeStyle=c; ctx.fillStyle=isP?'#fdeeea':'#e8f2fc';
+  ctx.beginPath(); ctx.arc(x,y,Math.max(0.4,r),0,6.2832); ctx.fill(); ctx.stroke();
+  if(isP&&r>6){ ctx.lineWidth=Math.max(1,r*0.14); ctx.beginPath(); ctx.moveTo(x-r*0.42,y); ctx.lineTo(x+r*0.42,y); ctx.moveTo(x,y-r*0.42); ctx.lineTo(x,y+r*0.42); ctx.stroke(); }
+  ctx.restore();
+}
+function dirOf(i,off){ const k=i+1+off*7, fz=(0.5+k*0.7548776662466927)%1, fa=(0.5+k*0.5698402909980532)%1, z=1-2*fz, s=Math.sqrt(Math.max(0,1-z*z)), a=6.2831853*fa; return [s*Math.cos(a),z,s*Math.sin(a)]; }
+/** list item: {x,y,z (R0 units), p:bool, s:scale 0..1}. u = px per unit. */
+function drawBall(ctx,cx,cy,u,list,rot,t,jit,rmax){
+  const ca=Math.cos(rot), sa=Math.sin(rot), nr=u*0.7;
+  const arr=[];
+  for(let i=0;i<list.length;i++){
+    const q=list[i]; if(q.s<0.02) continue;
+    const jx=Math.sin(t*9+i*1.31)*jit, jy=Math.cos(t*8+i*2.17)*jit, jz=Math.sin(t*7+i*0.7)*jit;
+    const x=q.x+jx, y=q.y+jy, z=q.z+jz;
+    arr.push({X:x*ca+z*sa, Y:y, Z:-x*sa+z*ca, p:q.p, s:q.s});
+  }
+  arr.sort((a,b)=>a.Z-b.Z);
+  const R=rmax||1;
+  for(const a of arr){ const depth=clamp(0.5+0.5*a.Z/R,0,1); nuc(ctx,cx+a.X*u,cy+a.Y*u,nr*a.s*(0.86+0.14*depth),a.p,0.5+0.5*depth); }
+}
+function staticList(n,zFrac){
+  const out=[]; let acc=0;
+  for(let i=0;i<n;i++){ const d=dirOf(i,0.21), r=Math.cbrt(i+0.5); acc+=zFrac; const isP=Math.floor(acc)>Math.floor(acc-zFrac);
+    out.push({x:d[0]*r,y:d[1]*r,z:d[2]*r,p:isP,s:1}); }
+  return out;
+}
+function zOfA(A){ return Math.max(1,Math.round(A/(1.98+0.0155*Math.pow(A,2/3)))); }
+function niceScale(ctx,x,y,pxPerFm,color){
+  const nice=[1,2,5,10,20,50,100,200,500,1e3,2e3,5e3,1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6,5e6]; // fm
+  let L=nice[0]; for(const n of nice){ if(n*pxPerFm<=110) L=n; }
+  const px=L*pxPerFm; if(px<6) return;
+  line(ctx,x-px/2,y,x+px/2,y,color,2.4); line(ctx,x-px/2,y-5,x-px/2,y+5,color,2); line(ctx,x+px/2,y-5,x+px/2,y+5,color,2);
+  const lab=L>=1e3?(L/1e3)+' pm':L+' fm';
+  textAt(ctx,lab,x,y-8,{align:'center',size:11,weight:700,color});
+}
+/* plotting helper: maps data → px inside a box */
+function axes(ctx,x,y,w,h,xl,yl,col){
+  line(ctx,x,y+h,x+w,y+h,col||COL.mid,1.4); line(ctx,x,y,x,y+h,col||COL.mid,1.4);
+  textAt(ctx,xl,x+w,y+h+14,{align:'right',size:10.5,weight:600,color:COL.muted});
+  textAt(ctx,yl,x+3,y-5,{size:10.5,weight:600,color:COL.muted});
+}
+function glowRing(ctx,x,y,r,col,a){ ctx.save(); ctx.globalAlpha=clamp(a,0,1); circ(ctx,x,y,r,col,null,2.4); ctx.restore(); }
+function wavy(ctx,x1,y1,x2,y2,amp,wl,ph,color,wd){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<2) return; const ux=(x2-x1)/L, uy=(y2-y1)/L;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=wd||2; ctx.beginPath();
+  for(let s=0;s<=L;s+=3){ const o=Math.sin(s/wl*6.2832-ph)*amp; const px=x1+ux*s-uy*o, py=y1+uy*s+ux*o; s?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+  ctx.stroke(); ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'5.1',  title:'Size & Density of a Nucleus', desc:'Add nucleons · R = R₀A^⅓ · zoom out to the atom', build: buildA1 },
+  { num:'5.2',  title:'Build a Nucleus',             desc:'Protons + neutrons · isotopes, isobars, isotones', build: buildA2 },
+  { num:'5.3',  title:'Isotopes & Atomic Mass',      desc:'Mass spectrometer · weighted average', build: buildA3 },
+  { num:'5.4',  title:'Closest Approach',            desc:'α-particle fired at a gold nucleus', build: buildA4 },
+  { num:'5.5',  title:'Mass Defect & Binding Energy',desc:'Assemble the nucleus · weigh what is lost', build: buildA5 },
+  { num:'5.6',  title:'Binding Energy Curve',        desc:'Split heavy · fuse light', build: buildA6 },
+  { num:'5.7',  title:'The Nuclear Force',           desc:'Potential energy of a nucleon pair', build: buildA7 },
+  { num:'5.8',  title:'Radioactive Decay',           desc:'α · β · γ emission', build: buildA8 },
+  { num:'5.9',  title:'Nuclear Fission',             desc:'Neutron + U-235 · chain reaction', build: buildA9 },
+  { num:'5.10', title:'Fusion & the Coulomb Barrier',desc:'Why fusion needs extreme heat', build: buildA10 },
+  { num:'5.11', title:'The Sun’s p–p Cycle',         desc:'Four hydrogens → helium', build: buildA11 },
+  { num:'5.12', title:'Mass into Energy',            desc:'E = mc² · chemical vs nuclear', build: buildA12 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const b = document.createElement('button');
+    b.className = 'nav-item'+(i===currentIndex?' active':'');
+    b.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    b.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(b);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   5.1 SIZE & DENSITY OF A NUCLEUS        R = R0·A^(1/3),  R0 = 1.2 fm
+   Density = A·u / (4/3 π R³) = constant.  Textbook check (Ex. 13.1):
+   Fe-56 → 2.29 × 10^17 kg m⁻³.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('A','Mass number A',1,238,1,56) +
+    `<div class="control-group"><label style="margin-bottom:4px;">Pick a nucleus</label><div class="chip-wrap" id="pre">
+      <button class="chip-btn" data-a="4">⁴He</button><button class="chip-btn" data-a="16">¹⁶O</button><button class="chip-btn active" data-a="56">⁵⁶Fe</button><button class="chip-btn" data-a="197">¹⁹⁷Au</button><button class="chip-btn" data-a="238">²³⁸U</button></div></div>` +
+    sl('Z','Zoom out to the atom',0,100,1,0) +
+    rc([['rR','Radius R',COL.blue],['rV','Volume ∝ A'],['rD','Density (kg m⁻³)',COL.green,1],['rW','vs water','']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const AR=$('#A'), ZR=$('#Z');
+  const NL=[]; for(let i=0;i<238;i++){ const d=dirOf(i,0.21), r=Math.cbrt(i+0.5); NL.push({x:d[0]*r,y:d[1]*r,z:d[2]*r,p:((i*0.4663)%1)<0.4,s:1}); }
+  const Ad={x:56,v:0}, Zd={x:0,v:0}; let t=0, rot=0;
+  const pre=wrap.querySelectorAll('#pre .chip-btn');
+  pre.forEach(b=>b.onclick=()=>{ AR.value=b.dataset.a; pre.forEach(x=>x.classList.toggle('active',x===b)); });
+  AR.addEventListener('input',()=>pre.forEach(x=>x.classList.toggle('active',x.dataset.a===AR.value)));
+  const R0=1.2, UKG=1.66054e-27;
+  const rho=A=>A*UKG/((4/3)*Math.PI*Math.pow(R0*1e-15*Math.cbrt(A),3));
+  animLoop(dt=>{
+    t+=dt; rot+=dt*0.55;
+    springTo(Ad,+AR.value,55,12,dt); springTo(Zd,+ZR.value/100,30,10,dt);
+    const A=clamp(Ad.x,1,238), n=Math.round(A), z=clamp(Zd.x,0,1);
+    $('#AV').textContent='A = '+AR.value+'  ('+nucl(+AR.value,zOfA(+AR.value))+')';
+    $('#ZV').textContent=z<0.03?'nucleus':'×'+sciE(Math.pow(10,4*z),1)+' wider';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const aw=w*0.66, cx=aw*0.5, cy=h*0.5;
+    const u0=Math.min(aw*0.42,h*0.40)/Math.cbrt(238);
+    const f=Math.pow(10,-4*z), u=u0*f, Rn=Math.cbrt(A);
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,aw,h); ctx.clip();
+    // atom outline + orbiting electrons appear as we zoom out
+    const atomR=1e4*Rn*u;
+    if(atomR<aw*3){
+      const al=smooth01(0.02,0.25,z);
+      ctx.save(); ctx.globalAlpha=al;
+      ctx.setLineDash([6,6]); circ(ctx,cx,cy,atomR,COL.mid,'rgba(47,143,224,0.04)',1.6); ctx.setLineDash([]);
+      for(let k=0;k<3;k++){ const a=t*(1.1+k*0.5)+k*2.1, rr=atomR*(0.55+0.2*k); circ(ctx,cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*0.97,5,COL.blue,'#fff',2); }
+      textAt(ctx,'atom — almost entirely empty space',cx,cy-atomR-10,{align:'center',size:12,weight:700,color:COL.muted});
+      ctx.restore();
+    }
+    if(Rn*u>1.2){
+      drawBall(ctx,cx,cy,u,NL.slice(0,n),rot,t,0.04,Rn);
+      circ(ctx,cx,cy,Rn*u+u*0.8,COL.green,null,1.6);
+      dimArrow(ctx,cx+Rn*u+u*0.8+22,cy-Rn*u,cy,COL.green);
+      textAt(ctx,'R',cx+Rn*u+u*0.8+30,cy-Rn*u*0.5+4,{size:14,weight:700,color:COL.green});
+    } else {
+      circ(ctx,cx,cy,5+Math.sin(t*5)*1.2,COL.red,'#fdeeea',2.4); line(ctx,cx-14,cy,cx-7,cy,COL.red,1.6); line(ctx,cx+7,cy,cx+14,cy,COL.red,1.6); line(ctx,cx,cy-14,cx,cy-7,COL.red,1.6); line(ctx,cx,cy+7,cx,cy+14,COL.red,1.6);
+      textAt(ctx,'nucleus',cx+16,cy-10,{size:12,weight:700,color:COL.red});
+    }
+    ctx.restore();
+    if(z>0.04&&z<0.96) textAt(ctx,'keep zooming out → the whole atom appears at the far right',aw*0.5,h*0.1,{align:'center',size:12,weight:700,color:COL.muted});
+    niceScale(ctx,aw*0.5,h-26,u/R0,COL.ink);
+    // ---- right: R–A plot and density bars ----
+    const px=w*0.70, pw=w*0.27;
+    textAt(ctx,'R  vs  A',px,h*0.045,{size:12,weight:700,color:COL.ink});
+    const ph=h*0.30, py=h*0.11;
+    axes(ctx,px,py,pw,ph,'A','R (fm)');
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath();
+    for(let a=1;a<=238;a+=3){ const X=px+pw*a/238, Y=py+ph-ph*(R0*Math.cbrt(a))/8; a>1?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+    const mx=px+pw*A/238, my=py+ph-ph*(R0*Math.cbrt(A))/8;
+    line(ctx,mx,my,mx,py+ph,COL.yellow,1.4,[4,4]); line(ctx,px,my,mx,my,COL.yellow,1.4,[4,4]); circ(ctx,mx,my,6,COL.yellow,'#fff8e6',2.4);
+    textAt(ctx,'R = 1.2 A^⅓ fm',px+pw,py+ph*0.35,{align:'right',size:11,weight:600,color:COL.blue});
+    textAt(ctx,'Density (log scale)',px,h*0.56,{size:12,weight:700,color:COL.ink});
+    const bars=[['water',3,COL.mid],['iron',3.9,COL.mid],['nucleus',Math.log10(rho(A)),COL.green]];
+    bars.forEach((b,i)=>{ const by=h*0.60+i*h*0.095, L=pw*(b[1]/18); rect(ctx,px,by,pw,16,COL.border,null,1); ctx.save(); ctx.fillStyle=b[2]; ctx.globalAlpha=0.85; ctx.fillRect(px,by,L,16); ctx.restore(); textAt(ctx,b[0],px+4,by+12,{size:10.5,weight:700,color:i===2?'#fff':COL.ink}); textAt(ctx,'10^'+fmt(b[1],1),px+pw,by-3,{align:'right',size:10,weight:600,color:COL.muted}); });
+    textAt(ctx,'same for every A',px+pw,h*0.60+3*h*0.095+6,{align:'right',size:11,weight:700,color:COL.green});
+    // results
+    const Ai=+AR.value, Rf=R0*Math.cbrt(Ai), d=rho(Ai);
+    $('#rR').textContent=fmt(Rf,2)+' fm'; $('#rV').textContent='× '+Ai; $('#rD').textContent=sciE(d,2); $('#rW').textContent=sciE(d/1000,1)+' ×';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.2 BUILD A NUCLEUS       A = Z + N,  notation  ᴬ_Z X
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('Zs','Protons  Z',1,92,1,6) + sl('Ns','Neutrons  N',0,146,1,6) +
+    `<div class="control-group"><label style="margin-bottom:4px;">Pick a nuclide</label><div class="chip-wrap" id="pre">
+      <button class="chip-btn" data-z="1" data-n="1">²H</button><button class="chip-btn" data-z="1" data-n="2">³H</button><button class="chip-btn" data-z="2" data-n="1">³He</button><button class="chip-btn active" data-z="6" data-n="6">¹²C</button><button class="chip-btn" data-z="8" data-n="8">¹⁶O</button><button class="chip-btn" data-z="79" data-n="118">¹⁹⁷Au</button><button class="chip-btn" data-z="80" data-n="118">¹⁹⁸Hg</button><button class="chip-btn" data-z="92" data-n="143">²³⁵U</button><button class="chip-btn" data-z="92" data-n="146">²³⁸U</button></div></div>` +
+    btn('pin','📌 Pin this nuclide to compare') +
+    rc([['cA','A = Z + N',COL.ink],['cX','Nuclide',COL.blue],['cRel','Compared with pinned nuclide','',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const ZR=$('#Zs'), NR=$('#Ns');
+  const pre=wrap.querySelectorAll('#pre .chip-btn');
+  pre.forEach(b=>b.onclick=()=>{ ZR.value=b.dataset.z; NR.value=b.dataset.n; });
+  const P=[],Nn=[]; for(let i=0;i<92;i++) P.push({x:0,y:0,z:0,p:true,s:0,i}); for(let i=0;i<146;i++) Nn.push({x:0,y:0,z:0,p:false,s:0,i});
+  let pinned=null, t=0, rot=0; const uS={x:40};
+  const small=[]; // pinned miniature
+  $('#pin').onclick=()=>{ pinned={Z:+ZR.value,N:+NR.value}; $('#pin').textContent='📌 Pinned '+nucl(pinned.Z+pinned.N,pinned.Z)+' — pin again to replace'; };
+  function relation(){
+    if(!pinned) return 'Pin a nuclide, then change Z or N';
+    const Z=+ZR.value,N=+NR.value,A=Z+N,pA=pinned.Z+pinned.N;
+    if(Z===pinned.Z&&N===pinned.N) return 'Same nuclide';
+    if(Z===pinned.Z) return 'Isotopes — same Z, different N';
+    if(A===pA) return 'Isobars — same A, different Z';
+    if(N===pinned.N) return 'Isotones — same N, different Z';
+    return 'No special relation';
+  }
+  function place(list,cnt,Rt,off,cap){
+    list.forEach((q,j)=>{
+      const on=j<cnt, c=Math.max(1,cnt), d=dirOf(j,off);
+      const rr=on?Rt*Math.cbrt((j+0.5)/c):Rt*2.6;
+      q.tx=d[0]*rr; q.ty=d[1]*rr; q.tz=d[2]*rr; q.ts=on?1:0;
+    });
+  }
+  function step(list,dt){ list.forEach(q=>{ q.x=approach(q.x,q.tx,6,dt); q.y=approach(q.y,q.ty,6,dt); q.z=approach(q.z,q.tz,6,dt); q.s=approach(q.s,q.ts,7,dt); }); }
+  animLoop(dt=>{
+    t+=dt; rot+=dt*0.5;
+    const Z=+ZR.value, N=+NR.value, A=Z+N, Rt=Math.cbrt(A);
+    $('#ZsV').textContent=Z; $('#NsV').textContent=N;
+    pre.forEach(b=>b.classList.toggle('active',+b.dataset.z===Z&&+b.dataset.n===N));
+    place(P,Z,Rt,0.13); place(Nn,N,Rt,0.57); step(P,dt); step(Nn,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.5, cy=h*0.52, uT=Math.min(34,Math.min(w*0.36,h*0.36)/Math.max(Math.cbrt(A)+0.7,2.4)); uS.x=approach(uS.x,uT,5,dt); const u=uS.x;
+    const live=P.concat(Nn);
+    drawBall(ctx,cx,cy,u*1.0,live,rot,t,0.05,Math.max(Rt,2));
+    // notation, bookkeeping
+    const sym=SYM[Z-1]||'?';
+    textAt(ctx,A,w*0.045,h*0.17,{size:26,weight:700,color:COL.ink,align:'left'});
+    textAt(ctx,Z,w*0.045,h*0.17+26,{size:26,weight:700,color:COL.red,align:'left'});
+    textAt(ctx,sym,w*0.045+46,h*0.17+22,{size:54,weight:700,color:COL.blue,align:'left'});
+    textAt(ctx,'A = '+A+' nucleons',w*0.045,h*0.17+62,{size:13,weight:700,color:COL.ink});
+    nuc(ctx,w*0.055,h*0.17+86,9,true); textAt(ctx,'Z = '+Z+' protons',w*0.045+18,h*0.17+91,{size:13,weight:700,color:COL.red});
+    nuc(ctx,w*0.055,h*0.17+112,9,false); textAt(ctx,'N = '+N+' neutrons',w*0.045+18,h*0.17+117,{size:13,weight:700,color:COL.blue});
+    // pinned miniature
+    if(pinned){
+      const pA=pinned.Z+pinned.N, pu=Math.min(w*0.10,h*0.12)/Math.cbrt(238)*1.6; const L=staticList(pA,pinned.Z/pA);
+      const mx=w*0.88, my=h*0.2; drawBall(ctx,mx,my,pu,L,rot,t,0.04,Math.cbrt(pA));
+      textAt(ctx,'pinned',mx,my-Math.cbrt(pA)*pu-14,{align:'center',size:11,weight:700,color:COL.muted});
+      textAt(ctx,nucl(pA,pinned.Z),mx,my+Math.cbrt(pA)*pu+24,{align:'center',size:20,weight:700,color:COL.ink});
+    }
+    const rel=relation();
+    textAt(ctx,rel,w*0.5,h-22,{align:'center',size:15,weight:700,color:/Isotopes|Isobars|Isotones/.test(rel)?COL.green:COL.muted});
+    $('#cA').textContent=A; $('#cX').textContent=nucl(A,Z); $('#cRel').textContent=rel;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3 ISOTOPES & ATOMIC MASS   Chlorine: 34.98 u (75.4 %), 36.98 u (24.6 %)
+   Weighted average = 35.47 u  (textbook).  r ∝ √m for equal KE in B.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('ab','Share of Cl-35',0,100,0.1,75.4) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn" id="nat">Natural: 75.4 %</button><button class="toggle-btn play" id="src">Source: ON</button></div></div>` +
+    rc([['m35','Cl-35 mass',COL.blue],['m37','Cl-37 mass',COL.red],['avg','Average atomic mass',COL.green,1],['cnt','Ions counted','']]) +
+    note('Ion path radius r ∝ √m. Spacing between the two landing spots is exaggerated 4× so you can see it.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), AB=$('#ab');
+  const M1=34.98, M2=36.98; let on=true, t=0, spawn=0;
+  const ions=[], marks=[0,0], dots=[[],[]]; const fr={a:{x:35.47,v:0}}; const bh=[{x:0,v:0},{x:0,v:0}]; const vis={a:{x:75.4,v:0}};
+  $('#nat').onclick=()=>{ AB.value=75.4; };
+  $('#src').onclick=()=>{ on=!on; $('#src').textContent='Source: '+(on?'ON':'OFF'); $('#src').classList.toggle('play',on); };
+  const rOf=(m,r0)=>r0*(1+4*(Math.sqrt(m/M1)-1));
+  animLoop(dt=>{
+    t+=dt; const a=+AB.value/100; $('#abV').textContent=fmt(a*100,1)+' % / '+fmt(100-a*100,1)+' %';
+    const avg=a*M1+(1-a)*M2; springTo(fr.a,avg,40,10,dt); springTo(vis.a,a*100,40,10,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const yb=h*0.44, xc=w*0.07, r0=Math.min(w*0.21,(yb-46)/1.115), r1=rOf(M1,r0), r2=rOf(M2,r0), L0=h*0.14;
+    // magnetic field region
+    const fx0=xc-14, fx1=xc+2*r2+40;
+    rect(ctx,fx0,yb-r2-34,fx1-fx0,r2+34,COL.border,'rgba(47,143,224,0.05)',1.4);
+    for(let gx=fx0+22;gx<fx1-8;gx+=34) for(let gy=yb-r2-14;gy<yb-8;gy+=34){ line(ctx,gx-4,gy-4,gx+4,gy+4,COL.mid,1.1); line(ctx,gx-4,gy+4,gx+4,gy-4,COL.mid,1.1); }
+    textAt(ctx,'B into page',fx1-6,yb-r2-34+14,{align:'right',size:11,weight:700,color:COL.muted});
+    // plate + slit + accelerator
+    line(ctx,xc-14,yb,fx1,yb,COL.ink,3.2);
+    rect(ctx,xc-5,yb+L0-4,10,10,COL.ink,'#fff',2);
+    line(ctx,xc-14,yb+L0*0.45,xc+14,yb+L0*0.45,COL.red,2.4); line(ctx,xc-14,yb+L0*0.7,xc+14,yb+L0*0.7,COL.blue,2.4);
+    textAt(ctx,'source',xc+12,yb+L0+8,{size:11,weight:700,color:COL.muted});
+    textAt(ctx,'accelerating plates',xc+20,yb+L0*0.6,{size:10.5,weight:600,color:COL.muted});
+    // ions
+    spawn-=dt; if(on&&spawn<=0){ spawn=0.16+Math.random()*0.08; ions.push({k:Math.random()<a?0:1,s:0,v:60}); }
+    for(let i=ions.length-1;i>=0;i--){
+      const q=ions[i], r=q.k?r2:r1;
+      q.v=Math.min(300,q.v+dt*500); q.s+=q.v*dt;
+      let X,Y;
+      if(q.s<L0){ X=xc; Y=yb+L0-q.s; }
+      else { const th=(q.s-L0)/r; if(th>=Math.PI){ marks[q.k]++; dots[q.k].push((Math.random()-0.5)*5); if(dots[q.k].length>60) dots[q.k].shift(); ions.splice(i,1); continue; }
+        X=xc+r-r*Math.cos(th); Y=yb-r*Math.sin(th); }
+      circ(ctx,X,Y,6,q.k?COL.red:COL.blue,'#fff',2.2);
+      textAt(ctx,q.k?'37':'35',X,Y+3.5,{align:'center',size:7.5,weight:700,color:q.k?COL.red:COL.blue});
+    }
+    // faint ideal paths
+    [[r1,COL.blue],[r2,COL.red]].forEach(([r,c])=>{ ctx.save(); ctx.strokeStyle=c; ctx.globalAlpha=0.35; ctx.setLineDash([5,6]); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(xc+r,yb,r,Math.PI,2*Math.PI); ctx.stroke(); ctx.restore(); });
+    // landing bars (hang below the plate)
+    const tot=marks[0]+marks[1]||1;
+    [0,1].forEach(k=>{
+      const r=k?r2:r1, x=xc+2*r; springTo(bh[k],marks[k]/tot*h*0.2,60,12,dt);
+      ctx.save(); ctx.fillStyle=k?COL.red:COL.blue; ctx.globalAlpha=0.85; ctx.fillRect(x-14,yb+3,28,Math.max(0,bh[k].x)); ctx.restore();
+      textAt(ctx,fmt(marks[k]/tot*100,1)+' %',x,yb+Math.max(0,bh[k].x)+18,{align:'center',size:11.5,weight:700,color:k?COL.red:COL.blue});
+      textAt(ctx,k?'Cl-37':'Cl-35',x,yb-12,{align:'center',size:11,weight:700,color:k?COL.red:COL.blue});
+    });
+    // lever: weighted average = balance point
+    const lx0=w*0.1, lx1=w*0.9, ly=h*0.80, mp=m=>lx0+(m-34.5)/3*(lx1-lx0);
+    line(ctx,lx0,ly,lx1,ly,COL.ink,3);
+    for(let m=34.5;m<=37.51;m+=0.5){ line(ctx,mp(m),ly,mp(m),ly+6,COL.ink,1.4); if(m%1===0||m%1===0.5) textAt(ctx,m.toFixed(1),mp(m),ly+44,{align:'center',size:10,weight:600,color:COL.muted}); }
+    const rA=Math.max(2,Math.sqrt(vis.a.x/100)*34), rB=Math.max(2,Math.sqrt((100-vis.a.x)/100)*34);
+    circ(ctx,mp(M1),ly-rA-1.5,rA,COL.blue,'rgba(47,143,224,0.18)',2.4); circ(ctx,mp(M2),ly-rB-1.5,rB,COL.red,'rgba(217,67,43,0.16)',2.4);
+    textAt(ctx,'34.98',mp(M1),ly-2*rA-8,{align:'center',size:11,weight:700,color:COL.blue}); textAt(ctx,'36.98',mp(M2),ly-2*rB-8,{align:'center',size:11,weight:700,color:COL.red});
+    const fxp=mp(fr.a.x); ctx.save(); ctx.fillStyle='#e4f7ec'; ctx.strokeStyle=COL.green; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(fxp,ly+3); ctx.lineTo(fxp-12,ly+30); ctx.lineTo(fxp+12,ly+30); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    textAt(ctx,'average = '+fmt(fr.a.x,2)+' u',fxp,ly+62,{align:'center',size:13,weight:700,color:COL.green});
+    $('#m35').textContent='34.98 u'; $('#m37').textContent='36.98 u'; $('#avg').textContent=fmt(avg,2)+' u'; $('#cnt').textContent=marks[0]+marks[1];
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.4 CLOSEST APPROACH — α on gold
+   Coulomb repulsion only:  F = K/r²,  K = 2·79·1.44 MeV·fm
+   Head-on:  ½mv² = K/d  →  d = K/E.   5.5 MeV → d ≈ 41 fm = 4.1×10⁻¹⁴ m
+   (textbook: about 4.0 × 10⁻¹⁴ m).  Nuclear force takes over when r ≲ R.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  const K=2*79*1.44, RT=8.9;
+  wrap.querySelector('.lab-side').innerHTML =
+    tg('md',[['one','Single α'],['beam','Beam of α']],0,'Fire') +
+    sl('E','α kinetic energy (MeV)',2,40,0.1,5.5) + sl('B','Impact parameter b (fm)',0,60,1,0) +
+    btn('fire','▶ Fire again','play') +
+    rc([['dm','Closest approach',COL.red],['d0','Head-on d = K ÷ E',COL.blue],['th','Deflection',''],['tc','Touches nucleus?','']]) +
+    note('Gold: Z = 79, R ≈ 7 fm. Needs about '+fmt(K/RT,1)+' MeV head-on to reach it.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ER=$('#E'), BR=$('#B');
+  let mode='one', parts=[], waitT=0, t=0, burst=[];
+  toggleWire(wrap.querySelectorAll('#md button'),b=>{ mode=b.dataset.k; BR.disabled=mode==='beam'; spawn(); });
+  function spawn(){
+    const E=+ER.value; parts=[]; burst=[];
+    const bs=mode==='one'?[+BR.value||0.001]:[-58,-42,-27,-13,-2,2,13,27,42,58];
+    bs.forEach(b=>{ const rs=Math.hypot(170,b); parts.push({x:-170,y:b,vx:Math.sqrt(2*Math.max(0.05,E-K/rs)),vy:0,trail:[],rmin:1e9,st:'run',b,E}); });
+    waitT=0;
+  }
+  ER.addEventListener('input',spawn); BR.addEventListener('input',spawn); $('#fire').onclick=spawn;
+  function stepP(p,dt){
+    const n=Math.ceil(dt/0.02), h=dt/n;
+    for(let i=0;i<n;i++){
+      let r=Math.hypot(p.x,p.y), a=K/(r*r*r);
+      p.vx+=0.5*a*p.x*h; p.vy+=0.5*a*p.y*h; p.x+=p.vx*h; p.y+=p.vy*h;
+      r=Math.hypot(p.x,p.y); a=K/(r*r*r);
+      p.vx+=0.5*a*p.x*h; p.vy+=0.5*a*p.y*h;
+      if(r<p.rmin) p.rmin=r;
+      if(r<RT){ p.st='hit'; burst.push({x:p.x,y:p.y,t:0}); break; }
+    }
+  }
+  spawn();
+  animLoop(dt=>{
+    t+=dt; const E=+ER.value; $('#EV').textContent=fmt(E,1)+' MeV'; $('#BV').textContent=mode==='beam'?'beam':fmt(+BR.value,0)+' fm';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const s=w*0.92/270, X=x=>w*0.04+(x+170)*s, Y=y=>h*0.5-y*s;
+    // advance
+    let active=0;
+    parts.forEach(p=>{
+      if(p.st==='run'){ stepP(p,dt*22); p.trail.push([p.x,p.y]); if(p.trail.length>900) p.trail.shift(); if(p.x>105||Math.abs(p.y)>230||(p.x<-175&&p.vx<0)) p.st='gone'; }
+      if(p.st==='run') active++;
+    });
+    if(!active){ waitT+=dt; if(waitT>1.1) spawn(); }
+    // predicted head-on distance
+    const d0=K/E;
+    ctx.save(); ctx.setLineDash([6,6]); circ(ctx,X(0),Y(0),d0*s,COL.red,null,1.4); ctx.restore();
+    dimArrow(ctx,X(-d0),Y(0)+28,Y(0)+28,COL.red); line(ctx,X(-d0),Y(0)+28,X(0),Y(0)+28,COL.red,1.6);
+    arrowHead(ctx,X(0),Y(0)+28,0,COL.red,5); arrowHead(ctx,X(-d0),Y(0)+28,Math.PI,COL.red,5);
+    textAt(ctx,'d = '+fmt(d0,1)+' fm',X(-d0/2),Y(0)+46,{align:'center',size:12,weight:700,color:COL.red});
+    // nucleus
+    const Rn=6.98*s;
+    circ(ctx,X(0),Y(0),Rn,COL.red,'#fdeeea',2.6);
+    for(let i=0;i<9;i++){ const a=i*2.4+t*0.3, rr=Rn*0.62*Math.sqrt((i+0.5)/9.5); nuc(ctx,X(0)+Math.cos(a)*rr,Y(0)+Math.sin(a)*rr,Rn*0.17,i%2===0); }
+    textAt(ctx,'Au (Z = 79)',X(0),Y(0)-Rn-8,{align:'center',size:11,weight:700,color:COL.red});
+    // trails and α particles
+    parts.forEach(p=>{
+      if(p.trail.length>1){ ctx.save(); ctx.strokeStyle=p.st==='hit'?COL.red:COL.blue; ctx.lineWidth=2; ctx.globalAlpha=0.75; ctx.beginPath(); p.trail.forEach((q,i)=>i?ctx.lineTo(X(q[0]),Y(q[1])):ctx.moveTo(X(q[0]),Y(q[1]))); ctx.stroke(); ctx.restore(); }
+      if(p.st==='run'||p.st==='hit'){ const ar=Math.max(5,1.9*s); circ(ctx,X(p.x),Y(p.y),ar,p.st==='hit'?COL.red:COL.blue,'#fff',2.4);
+        textAt(ctx,'α',X(p.x),Y(p.y)+4,{align:'center',size:Math.max(8,ar*1.1),weight:700,color:p.st==='hit'?COL.red:COL.blue}); }
+    });
+    burst=burst.filter(b=>{ b.t+=dt; if(b.t>0.9) return false; for(let k=0;k<3;k++){ const rr=(b.t*70-k*10); if(rr>0) glowRing(ctx,X(b.x),Y(b.y),rr,COL.yellow,1-b.t/0.9); } return true; });
+    // energy bars for the focus α
+    const fp=mode==='one'?parts[0]:parts.reduce((m,p)=>Math.abs(p.b)<Math.abs(m.b)?p:m,parts[0]);
+    if(fp){
+      const r=Math.max(RT*0.5,Math.hypot(fp.x,fp.y)), PE=Math.min(K/r,E*1.5), KE=0.5*(fp.vx*fp.vx+fp.vy*fp.vy);
+      const bx=w*0.04, by=h*0.08, bh=h*0.34, sc=bh/Math.max(E,K/RT*1.05);
+      rect(ctx,bx,by,16,bh,COL.border,null,1); rect(ctx,bx+26,by,16,bh,COL.border,null,1);
+      ctx.save(); ctx.fillStyle=COL.green; ctx.fillRect(bx,by+bh-KE*sc,16,KE*sc); ctx.fillStyle=COL.red; ctx.fillRect(bx+26,by+bh-PE*sc,16,PE*sc); ctx.restore();
+      line(ctx,bx-4,by+bh-E*sc,bx+46,by+bh-E*sc,COL.ink,1.4,[4,3]);
+      textAt(ctx,'KE',bx+8,by+bh+14,{align:'center',size:11,weight:700,color:COL.green}); textAt(ctx,'PE',bx+34,by+bh+14,{align:'center',size:11,weight:700,color:COL.red});
+      textAt(ctx,'KE + PE = E',bx,by-8,{size:11,weight:700,color:COL.ink});
+    }
+    // readouts
+    const done=fp&&(fp.st!=='run');
+    const rm=fp?fp.rmin:1e9;
+    $('#dm').textContent=rm<1e8?fmt(rm,1)+' fm':'—';
+    $('#d0').textContent=fmt(d0,1)+' fm = '+fmt(d0/10,1)+' ×10⁻¹⁴ m';
+    const bb=fp?Math.abs(fp.b):0;
+    $('#th').textContent=fmt(2*Math.atan(d0/(2*Math.max(bb,0.001)))*180/Math.PI,0)+'°';
+    $('#tc').textContent=E>=K/RT?'Yes — nuclear force':'No — Coulomb only';
+    $('#tc').style.color=E>=K/RT?COL.red:COL.green;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.5 MASS DEFECT & BINDING ENERGY
+   ΔM = Z·mp + (A−Z)·mn − M,   Eb = ΔM·c²,   1 u = 931.5 MeV/c²
+   Textbook check (Ex. 13.3): O-16 → ΔM = 0.13691 u → 127.5 MeV.
+   ===================================================================== */
+const NUCLIDES=[{sym:'He',A:4,Z:2,M:4.00260},{sym:'C',A:12,Z:6,M:12.0},{sym:'O',A:16,Z:8,M:15.99493},{sym:'Fe',A:56,Z:26,M:55.93494},{sym:'U',A:238,Z:92,M:238.05079}];
+const MP=1.00727, MN=1.00866, ME=0.00055;
+function massDefect(nu){ const N=nu.A-nu.Z, parts=nu.Z*MP+N*MN, Mn=nu.M-nu.Z*ME; return {parts,Mn,dM:parts-Mn,Eb:(parts-Mn)*931.5}; }
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:4px;">Nucleus</label><div class="chip-wrap" id="pre">${NUCLIDES.map((n,i)=>`<button class="chip-btn${i===2?' active':''}" data-i="${i}">${nucl(n.A,n.Z)}</button>`).join('')}</div></div>` +
+    sl('bd','Bring nucleons together',0,100,1,0) +
+    `<div class="control-group"><button class="toggle-btn play" id="auto" style="width:100%">⟳ Auto: assemble / break apart</button></div>` +
+    rc([['pm','Σ mass of parts',COL.ink],['nm','Mass of nucleus M',COL.blue],['dm','Mass defect ΔM',COL.red],['eb','Binding energy',COL.green],['rel','Energy released so far',COL.green],['ea','Eb per nucleon','']]) +
+    note('1 u = 931.5 MeV/c². Balance tilt is exaggerated so the missing mass is visible.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), BD=$('#bd');
+  let idx=2, auto=true, t=0, rot=0, dirUp=1, prevB=0, bursts=[];
+  const pre=wrap.querySelectorAll('#pre .chip-btn');
+  pre.forEach(b=>b.onclick=()=>{ idx=+b.dataset.i; pre.forEach(x=>x.classList.toggle('active',x===b)); });
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').classList.toggle('play',auto); };
+  BD.addEventListener('input',()=>{ auto=false; $('#auto').classList.remove('play'); });
+  const bs=springState(0), tilt={x:0,v:0};
+  function springState(x){ return {x,v:0}; }
+  animLoop(dt=>{
+    t+=dt; rot+=dt*0.5;
+    if(auto){ let v=+BD.value+dirUp*dt*14; if(v>=100){ v=100; dirUp=-1; } if(v<=0){ v=0; dirUp=1; } BD.value=v; }
+    springTo(bs,+BD.value/100,22,8.5,dt);
+    const nu=NUCLIDES[idx], md=massDefect(nu), A=nu.A, N=A-nu.Z, b=clamp(bs.x,0,1);
+    $('#bdV').textContent=Math.round(+BD.value)+' %';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const acx=w*0.31, acy=h*0.5, ar=Math.min(w*0.27,h*0.43);
+    ctx.save(); ctx.setLineDash([5,6]); circ(ctx,acx,acy,ar,COL.border,null,1.4); ctx.restore();
+    const u=Math.min(ar*0.55/Math.cbrt(A),32), nr=u*0.7;
+    const ca=Math.cos(rot), sa=Math.sin(rot);
+    const arr=[];
+    for(let i=0;i<A;i++){
+      const d=dirOf(i,0.21), r=Math.cbrt(i+0.5), bx=d[0]*r*u, by=d[1]*r*u, bz=d[2]*r*u;
+      const ang=i*2.4+t*(0.22+(i%5)*0.06), rho=ar*(0.35+0.58*((i*0.6180339)%1))*(0.9+0.1*Math.sin(t*0.9+i));
+      const fx=Math.cos(ang)*rho, fy=Math.sin(ang)*rho*0.92;
+      const e=smooth01((i%7)*0.045,0.62+(i%7)*0.055,b);
+      const rx=bx*ca+bz*sa, rz=-bx*sa+bz*ca;
+      const jit=e*0.8+0.1;
+      arr.push({x:lerp(fx,rx,e)+Math.sin(t*9+i*1.3)*jit,y:lerp(fy,by,e)+Math.cos(t*8+i*2.1)*jit,z:rz*e,p:i<nu.Z});
+    }
+    arr.sort((a,c)=>a.z-c.z);
+    arr.forEach(q=>nuc(ctx,acx+q.x,acy+q.y,nr,q.p,0.78+0.22*clamp(q.z/(Math.cbrt(A)*u+1),-1,1)));
+    // energy bursts when it snaps together / is torn apart
+    if(prevB<0.8&&b>=0.8) bursts.push({t:0,k:1}); if(prevB>0.55&&b<=0.55) bursts.push({t:0,k:-1}); prevB=b;
+    bursts=bursts.filter(o=>{ o.t+=dt; if(o.t>1.2) return false;
+      for(let k=0;k<3;k++){ const rr=o.k>0?(o.t*ar*1.1-k*16):(ar*1.0-o.t*ar*0.9-k*16); if(rr>2) glowRing(ctx,acx,acy,rr,o.k>0?COL.green:COL.red,1-o.t/1.2); }
+      textAt(ctx,o.k>0?('+ '+fmt(md.Eb,1)+' MeV released'):('− '+fmt(md.Eb,1)+' MeV must be supplied'),acx,acy-ar-12,{align:'center',size:14,weight:700,color:o.k>0?COL.green:COL.red,alpha:1-o.t/1.2});
+      return true; });
+    textAt(ctx,nucl(A,nu.Z)+'  =  '+nu.Z+' p  +  '+N+' n',acx,acy+ar+22,{align:'center',size:14,weight:700,color:COL.ink});
+    // balance
+    const px=w*0.77, py=h*0.30, L=Math.min(w*0.17,150);
+    const c=clamp(md.dM/A*35,0,0.32);
+    springTo(tilt,b*c,50,5.5,dt);
+    const th=tilt.x, lx=px-L*Math.cos(th), ly=py+L*Math.sin(th), rx=px+L*Math.cos(th), ry=py-L*Math.sin(th);
+    ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(px,py+4); ctx.lineTo(px-18,py+120); ctx.lineTo(px+18,py+120); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    line(ctx,px-50,py+120,px+50,py+120,COL.ink,3);
+    line(ctx,lx,ly,rx,ry,COL.ink,4); circ(ctx,px,py,6,COL.ink,'#fff',2.4);
+    [[lx,ly,'parts'],[rx,ry,'nucleus']].forEach(([ex,ey,lab],k)=>{
+      const S=80; line(ctx,ex,ey,ex-44,ey+S,COL.mid,1.4); line(ctx,ex,ey,ex+44,ey+S,COL.mid,1.4);
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(ex-48,ey+S); ctx.quadraticCurveTo(ex,ey+S+18,ex+48,ey+S); ctx.stroke(); ctx.restore();
+      if(k===0){ [[-18,0],[-6,0],[6,0],[18,0]].forEach((o,i)=>nuc(ctx,ex+o[0]*1.4,ey+S-8+(i%2)*-1,8,i%2===0)); }
+      else { const L2=staticList(14,nu.Z/A); drawBall(ctx,ex,ey+S-18,8,L2,rot,t,0.02,2.5); }
+      textAt(ctx,lab,ex,ey+S+34,{align:'center',size:12,weight:700,color:k?COL.blue:COL.ink});
+    });
+    textAt(ctx,'Z·mp + N·mn',lx,ly-10,{align:'center',size:11,weight:700,color:COL.muted}); textAt(ctx,'M',rx,ry-10,{align:'center',size:11,weight:700,color:COL.muted});
+    textAt(ctx,tilt.x>0.02?'nucleus is lighter':'equal while apart',px,py+150,{align:'center',size:12.5,weight:700,color:tilt.x>0.02?COL.red:COL.muted});
+    $('#pm').textContent=fmt(md.parts,5)+' u'; $('#nm').textContent=fmt(md.Mn,5)+' u'; $('#dm').textContent=fmt(md.dM,5)+' u';
+    $('#eb').textContent=fmt(md.Eb,1)+' MeV'; $('#rel').textContent=fmt(md.Eb*b,1)+' MeV'; $('#ea').textContent=fmt(md.Eb/A,2)+' MeV';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.6 BINDING ENERGY CURVE — measured points, monotone cubic through them
+   Split A≈240 into 2×120: gain ≈ 0.9 MeV/nucleon ⇒ ≈ 216 MeV (textbook).
+   ===================================================================== */
+const BE_PTS=[[1,0],[2,1.112],[3,2.573],[4,7.074],[6,5.33],[12,7.680],[16,7.976],[20,8.032],[24,8.261],[28,8.448],[32,8.493],[40,8.551],[56,8.790],[62,8.795],[90,8.710],[120,8.505],[138,8.393],[150,8.262],[208,7.867],[238,7.570]];
+const BE_M=(()=>{ const n=BE_PTS.length, d=[], m=[]; for(let i=0;i<n-1;i++) d.push((BE_PTS[i+1][1]-BE_PTS[i][1])/(BE_PTS[i+1][0]-BE_PTS[i][0]));
+  m[0]=d[0]; m[n-1]=d[n-2]; for(let i=1;i<n-1;i++){ m[i]=d[i-1]*d[i]<=0?0:2*d[i-1]*d[i]/(d[i-1]+d[i]); } return m; })();
+function beOf(A){
+  A=clamp(A,1,238); let i=0; while(i<BE_PTS.length-2&&A>BE_PTS[i+1][0]) i++;
+  const x0=BE_PTS[i][0],x1=BE_PTS[i+1][0],y0=BE_PTS[i][1],y1=BE_PTS[i+1][1],hh=x1-x0,s=(A-x0)/hh;
+  const h00=2*s*s*s-3*s*s+1,h10=s*s*s-2*s*s+s,h01=-2*s*s*s+3*s*s,h11=s*s*s-s*s;
+  return h00*y0+h10*hh*BE_M[i]+h01*y1+h11*hh*BE_M[i+1];
+}
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('A','Mass number A',2,238,1,238) +
+    tg('md',[['fis','Fission: split in two'],['fus','Fusion: join two']],0,'Process') +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="go">▶ Run it</button><button class="toggle-btn" id="rs">↺ Reset</button></div></div>` +
+    rc([['e0','Ebn before',COL.blue],['e1','Ebn after',COL.blue],['de','Change per nucleon',''],['tot','Total energy',COL.green]]) +
+    note('Curve peaks near A = 56 (≈ 8.8 MeV). Moving up the curve = more tightly bound = energy released.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), AR=$('#A');
+  AR.value=238; let mode='fis', t=0, rot=0, burst=0; const q={x:0,v:0}; let qT=0;
+  const named=[[4,'He-4'],[16,'O-16'],[56,'Fe-56'],[238,'U-238']];
+  toggleWire(wrap.querySelectorAll('#md button'),b=>{ mode=b.dataset.k; qT=0; });
+  $('#go').onclick=()=>{ qT=1; }; $('#rs').onclick=()=>{ qT=0; };
+  AR.addEventListener('input',()=>{ qT=0; });
+  animLoop(dt=>{
+    t+=dt; rot+=dt*0.5; springTo(q,qT,12,5.5,dt);
+    const A=+AR.value; $('#AV').textContent=A+'  ('+nucl(A,zOfA(A))+')';
+    const Af=mode==='fis'?Math.max(1,A/2):Math.min(238,2*A), Ea=beOf(A), Ef=beOf(Af);
+    const qq=clamp(q.x,0,1.04);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gx=w*0.09, gy=h*0.08, gw=w*0.86, gh=h*0.62;
+    const PX=a=>gx+gw*a/240, PY=e=>gy+gh-gh*e/10;
+    // regions
+    rect(ctx,PX(0),gy,PX(30)-PX(0),gh,null,'rgba(47,143,224,0.06)',0); rect(ctx,PX(170),gy,PX(240)-PX(170),gh,null,'rgba(217,67,43,0.06)',0); rect(ctx,PX(30),gy,PX(170)-PX(30),gh,null,'rgba(31,157,85,0.05)',0);
+    textAt(ctx,'light: fusion',PX(15),gy+14,{align:'center',size:11,weight:700,color:COL.blue}); textAt(ctx,'flat middle',PX(100),gy+14,{align:'center',size:11,weight:700,color:COL.green}); textAt(ctx,'heavy: fission',PX(205),gy+14,{align:'center',size:11,weight:700,color:COL.red});
+    axes(ctx,gx,gy,gw,gh,'Mass number A','Ebn (MeV)');
+    for(let e=0;e<=10;e+=2){ line(ctx,gx-4,PY(e),gx,PY(e),COL.mid,1.2); textAt(ctx,e,gx-8,PY(e)+4,{align:'right',size:10,weight:600,color:COL.muted}); }
+    for(let a=0;a<=240;a+=40){ line(ctx,PX(a),gy+gh,PX(a),gy+gh+4,COL.mid,1.2); textAt(ctx,a,PX(a),gy+gh+16,{align:'center',size:10,weight:600,color:COL.muted}); }
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+    for(let a=1;a<=238;a+=1){ const X=PX(a), Y=PY(beOf(a)); a>1?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+    named.forEach(([a,l])=>{ circ(ctx,PX(a),PY(beOf(a)),3.5,COL.blue,'#fff',1.6); textAt(ctx,l,PX(a),PY(beOf(a))+(a===4?-10:18),{align:'center',size:10,weight:700,color:COL.blue}); });
+    // markers
+    const Ac=lerp(A,Af,qq), Ec=beOf(Ac);
+    const sepPx=mode==='fis'?6:6*(1-smooth01(0.7,1,qq));
+    const Ypar=PY(Ea);
+    const gain=Ec-Ea, gcol=gain>=0?COL.green:COL.red;
+    if(mode==='fis'){
+      circ(ctx,PX(Ac),PY(Ec)-sepPx,7,COL.yellow,'#fff8e6',2.6); circ(ctx,PX(Ac),PY(Ec)+sepPx,7,COL.yellow,'#fff8e6',2.6);
+    } else {
+      circ(ctx,PX(Ac),PY(Ec)-sepPx,7,COL.yellow,'#fff8e6',2.6); if(sepPx>0.5) circ(ctx,PX(Ac),PY(Ec)+sepPx,7,COL.yellow,'#fff8e6',2.6);
+    }
+    circ(ctx,PX(A),Ypar,5,COL.ink,'#fff',2); line(ctx,PX(A),Ypar,PX(A),gy+gh,COL.ink,1.2,[4,4]);
+    if(qq>0.05){ line(ctx,PX(Ac)+14,Ypar,PX(Ac)+14,PY(Ec),gcol,3); arrowHead(ctx,PX(Ac)+14,PY(Ec),gain>=0?-Math.PI/2:Math.PI/2,gcol,8);
+      textAt(ctx,(gain>=0?'+':'')+fmt(gain,2)+' MeV/nucleon',PX(Ac)+22,(Ypar+PY(Ec))/2+4,{size:12,weight:700,color:gcol}); }
+    if(qq>0.9&&gain>0.02){ burst+=dt; for(let k=0;k<3;k++){ const rr=((burst*60+k*14)%42); glowRing(ctx,PX(Ac),PY(Ec),rr,COL.green,1-rr/42); } } else burst=0;
+    // nucleus picture
+    const by=h*0.84;
+    const u=Math.min(h*0.13,w*0.07)/Math.cbrt(238);
+    const baseL=staticList(A,zOfA(A)/A);
+    if(mode==='fis'){
+      const sep=smooth01(0.25,1,qq)*Math.cbrt(A)*u*1.5;
+      const arr=baseL.map(p=>({x:p.x,p:p.p,y:p.y,z:p.z,side:p.x<0?-1:1}));
+      const cx=w*0.5, cy=by-4, ca=Math.cos(rot*0.3), sa=Math.sin(rot*0.3);
+      arr.sort((a,b)=>a.z-b.z).forEach(p=>{ nuc(ctx,cx+(p.x*ca+p.z*sa)*u+p.side*sep*0.5,cy+p.y*u,u*0.7,p.p,0.85); });
+      textAt(ctx,qq>0.5?'two fragments  (A ≈ '+fmt(Af,0)+' each)':nucl(A,zOfA(A)),cx,by+Math.cbrt(A)*u+22,{align:'center',size:13,weight:700,color:COL.ink});
+    } else {
+      const cx=w*0.5, cy=by-4, R1=Math.cbrt(A)*u, sepc=lerp(R1*3.2,R1*1.02,smooth01(0,0.6,qq)), fade=smooth01(0.55,0.75,qq);
+      const l1=staticList(A,zOfA(A)/A);
+      ctx.save(); ctx.globalAlpha=1-fade;
+      l1.forEach(p=>{ nuc(ctx,cx-sepc+p.x*u,cy+p.y*u,u*0.7,p.p,0.85); nuc(ctx,cx+sepc+p.x*u,cy+p.y*u,u*0.7,p.p,0.85); }); ctx.restore();
+      if(fade>0.02){ const l2=staticList(Math.round(Af),zOfA(Af)/Math.max(1,Af)); ctx.save(); ctx.globalAlpha=fade; l2.forEach(p=>nuc(ctx,cx+p.x*u,cy+p.y*u,u*0.7,p.p,0.85)); ctx.restore(); }
+      textAt(ctx,qq>0.7?nucl(Math.round(Af),zOfA(Af))+'  (A = '+Math.round(Af)+')':'two nuclei, A = '+A+' each',cx,by+Math.cbrt(Math.max(A,Af))*u+22,{align:'center',size:13,weight:700,color:COL.ink});
+    }
+    const total=mode==='fis'?A*(Ef-Ea):2*A*(Ef-Ea);
+    $('#e0').textContent=fmt(Ea,2)+' MeV'; $('#e1').textContent=fmt(Ef,2)+' MeV'; $('#de').textContent=(Ef-Ea>=0?'+':'')+fmt(Ef-Ea,2)+' MeV'; $('#de').style.color=Ef-Ea>=0?COL.green:COL.red;
+    $('#tot').textContent=(total>=0?'+':'')+fmt(total*qq,0)+' MeV'; $('#tot').style.color=total>=0?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.7 THE NUCLEAR FORCE — potential energy of a pair of nucleons
+   Unuc(r) = D[(1 − e^{−a(r−r0)})² − 1],  r0 = 0.8 fm,  D = 40 MeV
+   p–p adds the Coulomb term  +1.44/r  (MeV·fm).  F = −dU/dr.
+   Minimum at 0.8 fm; force vanishes beyond a few fm (short range).
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  const D=40, a=2.2, r0=0.8, MU=469;
+  wrap.querySelector('.lab-side').innerHTML =
+    tg('pair',[['nn','n–n  or  p–n'],['pp','p–p  (adds Coulomb)']],0,'Pair') +
+    sl('r','Separation r (fm)',0.3,5.4,0.05,3.5) + sl('g','Friction',0,1,0.01,0.2) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="rel">▶ Release</button><button class="toggle-btn" id="hold">✋ Hold at slider</button></div></div>` +
+    rc([['u','Potential energy U',COL.ink],['f','Force',''],['k','Nature','']]) +
+    note('Attractive beyond 0.8 fm, strongly repulsive inside it, and almost zero beyond ~3 fm.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), RR=$('#r'), GR=$('#g');
+  let pp=false, free=true, t=0; const st={x:3.5,v:0};
+  const Un=r=>D*(Math.pow(1-Math.exp(-a*(r-r0)),2)-1), Uc=r=>pp?1.44/r:0, U=r=>Un(r)+Uc(r);
+    toggleWire(wrap.querySelectorAll('#pair button'),b=>{ pp=b.dataset.k==='pp'; });
+  $('#rel').onclick=()=>{ free=true; st.v=0; }; $('#hold').onclick=()=>{ free=false; };
+  RR.addEventListener('input',()=>{ free=false; });
+  animLoop(dt=>{
+    t+=dt; const g=+GR.value;
+    $('#rV').textContent=fmt(st.x,2)+' fm'; $('#gV').textContent=g<0.01?'none':fmt(g,2);
+    if(free){ let tau=dt*3.2; const n=Math.ceil(tau/0.01), hh=tau/n;
+      for(let i=0;i<n;i++){ const acc=-dUdr(st.x)/MU-g*1.1*st.v; st.v+=acc*hh; st.x+=st.v*hh; if(st.x<0.28){ st.x=0.28; st.v=Math.abs(st.v)*0.5; } if(st.x>5.4){ st.x=5.4; st.v=-Math.abs(st.v)*0.8; } }
+    } else { springTo(st,+RR.value,60,13,dt); }
+    function dUdr(r){ return 2*D*(1-Math.exp(-a*(r-r0)))*a*Math.exp(-a*(r-r0))-(pp?1.44/(r*r):0); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const r=st.x, force=-dUdr(r);
+    // ---- scene ----
+    const sx0=w*0.12, sc=w*0.76/5.6, cy=h*0.2, nr=0.4*sc;
+    line(ctx,sx0,cy+nr+14,sx0+5.6*sc,cy+nr+14,COL.border,1.4);
+    for(let k=0;k<=5;k++){ line(ctx,sx0+k*sc,cy+nr+10,sx0+k*sc,cy+nr+18,COL.mid,1.2); textAt(ctx,k+' fm',sx0+k*sc,cy+nr+32,{align:'center',size:10,weight:600,color:COL.muted}); }
+    const x1=sx0, x2=sx0+r*sc;
+    // short-range reach shading
+    ctx.save(); ctx.globalAlpha=0.08; ctx.fillStyle=COL.blue; ctx.fillRect(x1,cy-nr-24,3*sc,2*nr+24+8); ctx.restore();
+    line(ctx,x1,cy-nr-22,x1+3*sc,cy-nr-22,COL.blue,1.6); line(ctx,x1+3*sc,cy-nr-28,x1+3*sc,cy-nr-16,COL.blue,1.6);
+    textAt(ctx,'nuclear force range ≈ 3 fm',x1+1.5*sc,cy-nr-30,{align:'center',size:10.5,weight:700,color:COL.blue});
+    const ox=Math.sin(t*14)*0.6*(Math.abs(force)>1?1:0);
+    nuc(ctx,x1,cy,nr,pp); nuc(ctx,x2+ox,cy,nr,true);
+    const fl=clamp(Math.tanh(Math.abs(force)/18),0,1)*sc*1.3+6;
+    if(Math.abs(force)>0.02){ const dir=force>0?1:-1, col=force>0?COL.red:COL.blue, ax=x2+dir*(nr+4); vec(ctx,ax,cy,ax+dir*fl,cy,col,3.4);
+      const bx=x1-dir*(nr+4); vec(ctx,bx,cy,bx-dir*fl,cy,col,3.4); }
+    // ---- graph ----
+    const gx=w*0.12, gy=h*0.42, gw=w*0.82, gh=h*0.48, rMax=5.6, uTop=25, uBot=-45;
+    const PX=rr=>gx+gw*rr/rMax, PY=u=>gy+gh*(uTop-clamp(u,uBot-3,uTop+3))/(uTop-uBot);
+    axes(ctx,gx,gy,gw,gh,'r (fm)','U (MeV)');
+    line(ctx,gx,PY(0),gx+gw,PY(0),COL.mid,1.2,[5,4]);
+    for(let k=0;k<=5;k++){ line(ctx,PX(k),gy+gh,PX(k),gy+gh+4,COL.mid,1.2); }
+    [-40,-20,0,20].forEach(v=>textAt(ctx,v,gx-6,PY(v)+4,{align:'right',size:10,weight:600,color:COL.muted}));
+    const plot=(fn,col,wd,dash)=>{ ctx.save(); ctx.beginPath(); ctx.rect(gx,gy-2,gw,gh+4); ctx.clip(); ctx.strokeStyle=col; ctx.lineWidth=wd; if(dash) ctx.setLineDash(dash); ctx.beginPath(); let first=true; for(let rr=0.28;rr<=rMax;rr+=0.02){ const X=PX(rr), Y=PY(fn(rr)); first?ctx.moveTo(X,Y):ctx.lineTo(X,Y); first=false; } ctx.stroke(); ctx.restore(); };
+    if(pp){ plot(Un,COL.blue,1.8,[6,4]); plot(Uc,COL.red,1.8,[6,4]); }
+    plot(U,COL.ink,3);
+    line(ctx,PX(r0),gy+gh,PX(r0),PY(U(r0)),COL.green,1.4,[4,4]); textAt(ctx,'r₀ = 0.8 fm',PX(r0)+6,gy+gh-8,{size:11,weight:700,color:COL.green});
+    const bx=PX(r), by=PY(U(r));
+    circ(ctx,bx,by,8,COL.yellow,'#fff8e6',2.8);
+    line(ctx,bx,by,bx,gy+gh,COL.yellow,1.2,[3,3]);
+    if(pp){ textAt(ctx,'nuclear',PX(2.4),PY(Un(2.4))+16,{size:11,weight:700,color:COL.blue}); textAt(ctx,'Coulomb +1.44/r',PX(3.4),PY(1.44/3.4)-8,{size:11,weight:700,color:COL.red}); }
+    $('#u').textContent=fmt(U(r),1)+' MeV'; $('#f').textContent=fmt(Math.abs(force),1)+' MeV/fm';
+    $('#k').textContent=Math.abs(force)<0.4?'≈ none (equilibrium / out of range)':force>0?'Repulsive':'Attractive';
+    $('#k').style.color=Math.abs(force)<0.4?COL.muted:force>0?COL.red:COL.blue;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.8 RADIOACTIVE DECAY — α, β⁻, β⁺, γ
+   Daughter bookkeeping: α: A−4, Z−2 · β⁻: Z+1 · β⁺: Z−1 · γ: unchanged.
+   In B (into page) a particle moves on a circle of radius mv/qB.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  const TY={
+    a:{n:'α decay',par:[238,92],dau:[234,90],eq:()=>nucl(238,92)+'  →  '+nucl(234,90)+'  +  '+nucl(4,2),dA:'A − 4',dZ:'Z − 2'},
+    bm:{n:'β⁻ decay',par:[14,6],dau:[14,7],eq:()=>nucl(14,6)+'  →  '+nucl(14,7)+'  +  e⁻  +  ν̄',dA:'A same',dZ:'Z + 1'},
+    bp:{n:'β⁺ decay',par:[22,11],dau:[22,10],eq:()=>nucl(22,11)+'  →  '+nucl(22,10)+'  +  e⁺  +  ν',dA:'A same',dZ:'Z − 1'},
+    g:{n:'γ decay',par:[60,28],dau:[60,28],eq:()=>nucl(60,28)+'*  →  '+nucl(60,28)+'  +  γ',dA:'A same',dZ:'Z same'},
+  };
+  wrap.querySelector('.lab-side').innerHTML =
+    tg('ty',[['a','α'],['bm','β⁻'],['bp','β⁺'],['g','γ']],0,'Type of decay') +
+    sl('B','Magnetic field B',0,100,1,0) +
+    btn('go','☢ Decay now','play') +
+    rc([['rp','Parent',COL.ink],['rd','Daughter',COL.blue],['ra','Mass number',''],['rz','Atomic number','']]) +
+    note('The field bends charged emissions; γ rays go straight. Field points into the page (×).');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), BR=$('#B');
+  let ty='a', t=0, ev=null, cool=1.2, done=false; const trails=[];
+  toggleWire(wrap.querySelectorAll('#ty button'),b=>{ ty=b.dataset.k; ev=null; done=false; trails.length=0; cool=0.3; });
+  $('#go').onclick=()=>{ if(!ev) cool=0; };
+  const toy=n=>{ const L=[]; for(let i=0;i<n;i++){ const rr=Math.sqrt(i+0.5), an=i*2.399963; L.push({x:Math.cos(an)*rr,y:Math.sin(an)*rr,p:(i*0.618)%1<0.43,col:null}); } return L; };
+  let parentL=toy(30);
+  animLoop(dt=>{
+    t+=dt; const T=TY[ty], Bf=+BR.value/100; $('#BV').textContent=BR.value+' %';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ox=w*0.17, oy=h*0.5, u=Math.min(w*0.036,h*0.058), ex=w*0.36;
+    // field region
+    rect(ctx,ex,h*0.12,w*0.63,h*0.78,COL.border,Bf>0.01?'rgba(47,143,224,'+(0.03+0.05*Bf)+')':null,1.2);
+    if(Bf>0.01) for(let gx=ex+24;gx<ex+w*0.63-12;gx+=36) for(let gy=h*0.12+22;gy<h*0.9-10;gy+=36){ ctx.save(); ctx.globalAlpha=0.25+0.6*Bf; line(ctx,gx-4,gy-4,gx+4,gy+4,COL.mid,1.1); line(ctx,gx-4,gy+4,gx+4,gy-4,COL.mid,1.1); ctx.restore(); }
+    textAt(ctx,Bf>0.01?'B into page':'no field',ex+w*0.63-8,h*0.12+16,{align:'right',size:11,weight:700,color:COL.muted});
+    // event machine
+    if(!ev){ cool-=dt; if(cool<=0){ ev={t:0,dir:(Math.random()-0.5)*0.22}; done=false; } }
+    else { ev.t+=dt; if(ev.t>3.6){ ev=null; cool=1.6; } }
+    const e=ev?ev.t:0, shake=ev&&e<0.9?Math.min(1,e/0.5)*2.5:0;
+    // nucleus
+    const decayed=done||(ev&&e>=0.9); if(ev&&e>=0.9) done=true;
+    const L=parentL, n=L.length;
+    // which nucleons take part
+    const aIdx=[n-1,n-2,n-3,n-4];
+    let flipIdx=-1; if(ty==='bm') flipIdx=L.findIndex((q,i)=>!q.p&&i>n*0.5); if(ty==='bp') flipIdx=L.findIndex((q,i)=>q.p&&i>n*0.5);
+    if(ty==='g'&&ev&&e<0.9){ glowRing(ctx,ox,oy,u*Math.sqrt(n)+8+Math.sin(t*20)*3,COL.yellow,0.4+0.5*Math.sin(t*16)); }
+    L.forEach((q,i)=>{
+      let X=ox+q.x*u+Math.sin(t*38+i*2.1)*shake*0.7, Y=oy+q.y*u+Math.cos(t*35+i*1.7)*shake*0.7, isP=q.p, vis=true;
+      if(ty==='a'&&aIdx.includes(i)){
+        const k=aIdx.indexOf(i), gx=ox+u*(Math.sqrt(n)+1.2), gy=oy;
+        const gather=smooth01(0.3,0.95,e), tx=gx+(k%2?0.55:-0.55)*u*0.9, ty2=gy+(k<2?-0.55:0.55)*u*0.9;
+        X=lerp(X,tx,gather); Y=lerp(Y,ty2,gather); if(decayed) vis=false;
+      }
+      if(i===flipIdx){ const f=ev?smooth01(0.6,0.9,e):(done?1:0); isP=ty==='bm'?f>0.5:f<0.5; }
+      if(vis) nuc(ctx,X,Y,u*0.52,isP);
+    });
+    // emitted particles
+    if(ev&&e>=0.9&&!ev.spawned){ ev.spawned=true;
+            if(ty==='a') trails.push({k:'a',x:ox+u*(Math.sqrt(n)+1.2),y:oy,ph:ev.dir,v:240,om:0.55,pts:[],age:0});
+      if(ty==='bm') { trails.push({k:'e-',x:ox,y:oy,ph:ev.dir+0.15,v:360,om:-1.9,pts:[],age:0}); trails.push({k:'nu',x:ox,y:oy,ph:ev.dir-0.7,v:300,om:0,pts:[],age:0}); }
+      if(ty==='bp') { trails.push({k:'e+',x:ox,y:oy,ph:ev.dir+0.15,v:360,om:1.9,pts:[],age:0}); trails.push({k:'nu',x:ox,y:oy,ph:ev.dir-0.7,v:300,om:0,pts:[],age:0}); }
+      if(ty==='g') trails.push({k:'g',x:ox,y:oy,ph:ev.dir,v:520,om:0,pts:[],age:0});
+    }
+    // integrate particles (α is drawn by cluster above for its first part; here for beta, gamma, nu; α keeps its trail)
+    for(let i=trails.length-1;i>=0;i--){
+      const p=trails[i]; p.age+=dt;
+      { const om=p.x>ex?p.om*Bf:0; p.ph+=om*dt; p.x+=Math.cos(p.ph)*p.v*dt; p.y-=Math.sin(p.ph)*p.v*dt; p.pts.push([p.x,p.y]); if(p.pts.length>260) p.pts.shift(); }
+      const col=p.k==='a'?COL.red:p.k==='e-'?COL.blue:p.k==='e+'?COL.red:p.k==='g'?COL.yellow:COL.mid;
+      const al=clamp(1-(p.age-2.2)/1.4,0,1);
+      if(p.pts.length>1){ ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=col; ctx.lineWidth=p.k==='nu'?1.3:2.2; if(p.k==='nu') ctx.setLineDash([4,5]); ctx.beginPath(); p.pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.restore(); }
+      ctx.save(); ctx.globalAlpha=al;
+      if(p.k==='a'){ nuc(ctx,p.x-4,p.y-4,u*0.45,true); nuc(ctx,p.x+4,p.y-4,u*0.45,false); nuc(ctx,p.x-4,p.y+4,u*0.45,false); nuc(ctx,p.x+4,p.y+4,u*0.45,true); }
+      else if(p.k==='e-'){ circ(ctx,p.x,p.y,6,COL.blue,'#e8f2fc',2.2); textAt(ctx,'−',p.x,p.y+4,{align:'center',size:11,weight:700,color:COL.blue}); }
+      else if(p.k==='e+'){ circ(ctx,p.x,p.y,6,COL.red,'#fdeeea',2.2); textAt(ctx,'+',p.x,p.y+4,{align:'center',size:11,weight:700,color:COL.red}); }
+      else if(p.k==='nu'){ circ(ctx,p.x,p.y,3,COL.mid,'#fff',1.4); }
+      else if(p.k==='g'){ wavy(ctx,p.x-46,p.y,p.x,p.y,6,22,-t*30,COL.yellow,2.6); }
+      ctx.restore();
+      if(p.age>3.8||p.x>w+60||p.y<-60||p.y>h+60) trails.splice(i,1);
+    }
+    // equation + labels
+    textAt(ctx,T.eq(),w*0.5,h*0.07,{align:'center',size:17,weight:700,color:COL.ink});
+    textAt(ctx,ev?(e<0.9?'unstable — about to decay…':'emitted!'):'waiting…',ox,oy+u*Math.sqrt(n)+30,{align:'center',size:12,weight:700,color:COL.muted});
+    textAt(ctx,decayed?nucl(T.dau[0],T.dau[1])+' (daughter)':nucl(T.par[0],T.par[1])+(ty==='g'?'*':'')+' (parent)',ox,oy-u*Math.sqrt(n)-14,{align:'center',size:14,weight:700,color:decayed?COL.blue:COL.ink});
+    $('#rp').textContent=nucl(T.par[0],T.par[1])+(ty==='g'?'*':''); $('#rd').textContent=nucl(T.dau[0],T.dau[1]); $('#ra').textContent=T.dA; $('#rz').textContent=T.dZ;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.9 NUCLEAR FISSION    n + U-235 → U-236* → two fragments + neutrons
+   Eq. 13.10–13.12.  Q ≈ 200 MeV per fission (240 × 0.9 ≈ 216 MeV estimate).
+   Neighbours closer together catch more neutrons → chain reaction.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  const PAIRS={a:{f:[['Ba',144,56],['Kr',89,36]],k:3},b:{f:[['Sb',133,51],['Nb',99,41]],k:4},c:{f:[['Xe',140,54],['Sr',94,38]],k:2}};
+  wrap.querySelector('.lab-side').innerHTML =
+    tg('pr',[['a','Ba + Kr + 3n'],['b','Sb + Nb + 4n'],['c','Xe + Sr + 2n']],0,'Fission products') +
+    sl('sp','Spacing of U-235 nuclei',50,160,1,100) +
+    tg('ch',[['on','Chain: ON'],['off','Chain: OFF']],0) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="go">▶ Fire neutron</button><button class="toggle-btn" id="rs">↺ New U-235</button></div></div>` +
+    rc([['fc','Fissions',COL.ink],['nn','Neutrons released',COL.blue],['en','Energy released',COL.green,1]]) +
+    note('Each fission frees ≈ 200 MeV: the fragments are more tightly bound (Ebn ≈ 8.5 vs 7.6 MeV).');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), SP=$('#sp');
+  let pr='a', chain=true, t=0, idle=0, fissions=0, nTot=0, EMeV=0;
+  const spr={x:100,v:0};
+  let nuclei=[], neut=[], frags=[], pops=[];
+  const toy=(n)=>{ const L=[]; for(let i=0;i<n;i++){ const rr=Math.sqrt((i+0.5)/n), an=i*2.399963; L.push({x:Math.cos(an)*rr,y:Math.sin(an)*rr,p:((i*0.618)%1)<0.39}); } return L; };
+  const UL=toy(26);
+  function reset(){ nuclei=[]; for(let i=0;i<4;i++) for(let j=0;j<3;j++) nuclei.push({i,j,x:0,y:0,st:'idle',t:0,s:0,ph:Math.random()*6,ax:0}); neut=[]; frags=[]; pops=[]; fissions=0; nTot=0; EMeV=0; idle=0; }
+  reset();
+  toggleWire(wrap.querySelectorAll('#pr button'),b=>{ pr=b.dataset.k; });
+  toggleWire(wrap.querySelectorAll('#ch button'),b=>{ chain=b.dataset.k==='on'; });
+  $('#rs').onclick=reset;
+  let W=800,H=500,cy=250,ru=40;
+  function fire(){ neut.push({x:W*0.06,y:cy,vx:380,vy:0,gun:true,tr:[]}); idle=0; }
+  $('#go').onclick=fire;
+  function drawNuc(ctx,x,y,r,list,p,t,ph,ax,glow){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ax);
+    const nr=r*0.19*(1+0.0*p);
+    list.forEach((q,i)=>{
+      let X=q.x*r, Y=q.y*r; const neck=Math.exp(-(q.x*q.x)/0.14);
+      X=X*(1+0.55*p)+Math.sign(q.x||1)*r*0.5*p*p; Y=Y*(1-0.62*smooth01(0.35,1,p)*neck);
+      X+=Math.sin(t*33+i*2.1+ph)*r*0.025*(0.3+p); Y+=Math.cos(t*29+i*1.7+ph)*r*0.025*(0.3+p);
+      nuc(ctx,X,Y,nr,q.p);
+    });
+    ctx.restore();
+    if(glow>0) glowRing(ctx,x,y,r*1.15+Math.sin(t*20)*3,COL.yellow,glow);
+  }
+  function split(n){
+    const P=PAIRS[pr], A1=P.f[0][1], A2=P.f[1][1];
+    const ang=Math.random()*6.283, ux=Math.cos(ang), uy=Math.sin(ang), V=210;
+    [[P.f[0],A1,A2,1],[P.f[1],A2,A1,-1]].forEach(([f,am,ao,sg])=>{
+      const rr=ru*Math.cbrt(am/235)*1.05; frags.push({x:n.x+sg*ux*rr*0.5,y:n.y+sg*uy*rr*0.5,vx:sg*ux*V*ao/(A1+A2)*2,vy:sg*uy*V*ao/(A1+A2)*2,r:rr,sym:f[0],A:am,list:toy(Math.round(26*am/236)),age:0,ph:Math.random()*6});
+    });
+    for(let k=0;k<P.k;k++){ const a=Math.random()*6.283, sp=330+Math.random()*120; neut.push({x:n.x,y:n.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,gun:false,tr:[]}); }
+    fissions++; nTot+=P.k; EMeV+=200; pops.push({x:n.x,y:n.y,t:0});
+  }
+  animLoop(dt=>{
+    t+=dt; springTo(spr,+SP.value,40,11,dt); $('#spV').textContent=Math.round(+SP.value)+' %';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h); W=w; H=h; cy=h*0.5; ru=Math.min(h*0.075,w*0.05);
+    const base=Math.min(w*0.15,h*0.29)*spr.x/100, lx0=w*0.24;
+    nuclei.forEach(n=>{ n.x=lx0+n.i*base; n.y=cy+(n.j-1)*base*0.78; n.s=approach(n.s,1,4,dt); });
+    // equation banner
+    const P=PAIRS[pr], nsym=sup(1)+sub(0)+'n';
+    textAt(ctx,nsym+' + '+nucl(235,92)+'  →  '+nucl(236,92)+'*  →  '+nucl(P.f[0][1],P.f[0][2])+' + '+nucl(P.f[1][1],P.f[1][2])+' + '+P.k+' '+nsym,w*0.5,h*0.07,{align:'center',size:16,weight:700,color:COL.ink});
+    // gun
+    rect(ctx,w*0.015,cy-14,w*0.04,28,COL.ink,'#fff',2.4); line(ctx,w*0.055,cy,w*0.075,cy,COL.ink,3);
+    textAt(ctx,'neutron gun',w*0.035,cy+34,{align:'center',size:10.5,weight:700,color:COL.muted});
+    // nuclei
+    nuclei.forEach(n=>{
+      if(n.st==='done') return;
+      let p=0, glow=0, ax=n.ax;
+      if(n.st==='hit'){ n.t+=dt; const e=n.t; if(e<0.9) p=0.35*(e/0.9)*(0.5+0.5*Math.sin(e*22)); else p=lerp(0.35,1,smooth01(0.9,1.4,e)); glow=0.5; if(e>=1.4){ n.st='done'; split(n); return; } }
+      drawNuc(ctx,n.x,n.y,ru*n.s,UL,p,t,n.ph,ax,glow);
+      textAt(ctx,n.st==='hit'?'U-236*':'U-235',n.x,n.y+ru+16,{align:'center',size:10.5,weight:700,color:n.st==='hit'?COL.yellow:COL.muted});
+    });
+    // neutrons
+    for(let i=neut.length-1;i>=0;i--){
+      const q=neut[i]; q.x+=q.vx*dt; q.y+=q.vy*dt; q.tr.push([q.x,q.y]); if(q.tr.length>14) q.tr.shift();
+      let gone=q.x<-20||q.x>w+20||q.y<-20||q.y>h+20;
+      if(!gone&&(chain||q.gun)) for(const n of nuclei){ if(n.st!=='idle'||n.s<0.8) continue; if(Math.hypot(n.x-q.x,n.y-q.y)<ru*0.82){ n.st='hit'; n.t=0; n.ax=Math.random()*6.283; gone=true; break; } }
+      if(gone){ neut.splice(i,1); continue; }
+      if(q.tr.length>1){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.5; ctx.lineWidth=2; ctx.beginPath(); q.tr.forEach((r,j)=>j?ctx.lineTo(r[0],r[1]):ctx.moveTo(r[0],r[1])); ctx.stroke(); ctx.restore(); }
+      nuc(ctx,q.x,q.y,5.5,false);
+    }
+    // fragments
+    for(let i=frags.length-1;i>=0;i--){
+      const f=frags[i]; f.age+=dt; f.x+=f.vx*dt; f.y+=f.vy*dt; f.vx*=Math.exp(-0.45*dt); f.vy*=Math.exp(-0.45*dt);
+      const al=clamp(1-(f.age-3)/1.5,0,1); if(al<=0||f.x<-80||f.x>w+80||f.y<-80||f.y>h+80){ frags.splice(i,1); continue; }
+      ctx.save(); ctx.globalAlpha=al;
+      drawNuc(ctx,f.x,f.y,f.r,f.list,0,t,f.ph,0,0);
+      textAt(ctx,f.sym+'-'+f.A,f.x,f.y+f.r+15,{align:'center',size:11,weight:700,color:COL.ink});
+      ctx.restore();
+    }
+    pops=pops.filter(o=>{ o.t+=dt; if(o.t>1.1) return false; for(let k=0;k<3;k++){ const rr=o.t*120-k*14; if(rr>0) glowRing(ctx,o.x,o.y,rr,COL.green,1-o.t/1.1); }
+      textAt(ctx,'+200 MeV',o.x,o.y-ru-8-o.t*30,{align:'center',size:13,weight:700,color:COL.green,alpha:1-o.t/1.1}); return true; });
+    // auto-fire / auto-refill so the scene keeps living
+    const busy=neut.length>0||nuclei.some(n=>n.st==='hit')||frags.length>0;
+    if(!busy){ idle+=dt; if(idle>2.2){ if(nuclei.some(n=>n.st==='idle')) fire(); else reset(); idle=0; } } else idle=0;
+    $('#fc').textContent=fissions; $('#nn').textContent=nTot; $('#en').textContent=EMeV+' MeV  ≈ '+sciE(EMeV*1.602e-13,2)+' J';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.10 FUSION & THE COULOMB BARRIER
+   Two protons: U(r) = 1440 keV·fm / r outside contact (3.6 fm) → barrier
+   ≈ 400 keV (textbook).  Head-on turning point  d = 1440 / E.
+   Hot gas:  (3/2)kT = 400 keV → T ≈ 3 × 10⁹ K.  Maxwell tail fraction.
+   ===================================================================== */
+function erfcPos(z){ if(z<2.4){ const tt=1/(1+0.3275911*z); return tt*(0.254829592+tt*(-0.284496736+tt*(1.421413741+tt*(-1.453152027+tt*1.061405429))))*Math.exp(-z*z); }
+  const z2=z*z; return Math.exp(-z2)/(z*1.7724539)*(1-1/(2*z2)+3/(4*z2*z2)-15/(8*z2*z2*z2)); }
+function log10TailFrac(x){ // P(E > Eb) for 3-D Maxwell, x = Eb/kT
+  if(x<6){ const z=Math.sqrt(x); return Math.log10(erfcPos(z)+1.1283792*z*Math.exp(-x)); }
+  const z=Math.sqrt(x), z2=x; const s=1.1283792*z + (1/(z*1.7724539))*(1-1/(2*z2)+3/(4*z2*z2));
+  return Math.log10(s)-x*0.4342945; }
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    tg('md',[['two','Two protons'],['gas','Hot proton gas']],0,'Show') +
+    `<div id="twoC">` + sl('E','Kinetic energy of approach',50,800,5,300) + btn('fire','▶ Fire again','play') +
+      rc([['bh','Barrier height',COL.red],['ca','Closest approach',COL.blue],['res','Result','']]) + `</div>` +
+    `<div id="gasC" class="hidden">` + sl('T','Temperature (log scale)',0,100,1,33) +
+      `<div class="control-group"><div class="toggle-group"><button class="toggle-btn" id="pSun">Sun’s core</button><button class="toggle-btn" id="pNeed">Mean = barrier</button></div></div>` +
+      rc([['gT','Temperature',COL.red],['gM','Mean KE = 1.5 kT',COL.blue],['gF','Above barrier',COL.green,1]]) + `</div>` +
+    note('Protons must climb the Coulomb barrier (≈ 400 keV) to get close enough for the short-range nuclear force.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='two', t=0;
+  const KC=1440, RC=3.6;
+  const UP=r=>r>=RC?KC/r:400+(-500-400)*smooth01(RC,1.0,r);
+  // --- two-proton state
+  let pr, cool=0, flash=0;
+  function respawn(){ const E=+$('#E').value; pr={r:40,v:-Math.sqrt(2*(E-KC/40)),rmin:99,st:'run',tr:[]}; cool=0; flash=0; }
+  respawn();
+  $('#E').addEventListener('input',respawn); $('#fire').onclick=respawn;
+  // --- gas state
+  const N=70; const gas=[]; for(let i=0;i<N;i++) gas.push({x:Math.random(),y:Math.random(),a:Math.random()*6.283,g:[gauss(),gauss(),gauss()]});
+  const sT={x:33,v:0};
+  const sunS=(Math.log10(1.5e7)-6)/3.6*100, needS=(Math.log10(3.09e9)-6)/3.6*100;
+  $('#pSun').onclick=()=>{ $('#T').value=Math.round(sunS); }; $('#pNeed').onclick=()=>{ $('#T').value=Math.round(needS); };
+  toggleWire(wrap.querySelectorAll('#md button'),b=>{ mode=b.dataset.k; $('#twoC').classList.toggle('hidden',mode!=='two'); $('#gasC').classList.toggle('hidden',mode!=='gas'); });
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='two'){
+      const E=+$('#E').value; $('#EV').textContent=E+' keV';
+      if(pr.st==='run'){
+        let tau=dt*1.15; const n=Math.ceil(tau/0.0002), hh=tau/n;
+        for(let i=0;i<n;i++){ let a=KC/(pr.r*pr.r); pr.v+=0.5*a*hh; pr.r+=pr.v*hh; a=KC/(pr.r*pr.r); pr.v+=0.5*a*hh; if(pr.r<pr.rmin) pr.rmin=pr.r; if(pr.r<=RC){ pr.st='fused'; flash=0; break; } if(pr.r>41&&pr.v>0){ pr.st='bounced'; break; } }
+        pr.tr.push(pr.r); if(pr.tr.length>400) pr.tr.shift();
+      } else { cool+=dt; flash+=dt; if(cool>1.6) respawn(); }
+      // scene
+      const sx0=w*0.08, sc=w*0.82/44, cy=h*0.2, rad=1.8*sc;
+      line(ctx,sx0,cy+rad+14,sx0+42*sc,cy+rad+14,COL.border,1.4);
+      for(let k=0;k<=40;k+=10){ line(ctx,sx0+k*sc,cy+rad+10,sx0+k*sc,cy+rad+18,COL.mid,1.2); textAt(ctx,k+' fm',sx0+k*sc,cy+rad+32,{align:'center',size:10,weight:600,color:COL.muted}); }
+      const x1=sx0, x2=sx0+Math.max(pr.r,0.9)*sc;
+      if(pr.st!=='fused'){ nuc(ctx,x1,cy,rad,true); nuc(ctx,x2,cy,rad,true);
+        const F=KC/(pr.r*pr.r), L=clamp(Math.tanh(F/60),0,1)*70+6; vec(ctx,x2+rad+4,cy,x2+rad+4+L,cy,COL.red,3.2); textAt(ctx,'Coulomb repulsion',Math.min(x2+rad+10,w-130),cy-rad-8,{size:11,weight:700,color:COL.red});
+      } else {
+        const sh=1+Math.sin(flash*30)*0.05; nuc(ctx,x1-rad*0.3,cy,rad*sh,true); nuc(ctx,x1+rad*0.3,cy,rad*sh,false);
+        for(let k=0;k<3;k++){ const rr=flash*160-k*20; if(rr>0) glowRing(ctx,x1,cy,rr,COL.green,1-flash/1.6); }
+        textAt(ctx,'p + p → ²H + e⁺ + ν + 0.42 MeV',x1+rad*2,cy-rad-8+0,{size:13,weight:700,color:COL.green});
+      }
+      // graph
+      const gx=w*0.09, gy=h*0.42, gw=w*0.86, gh=h*0.45, uTop=850, uBot=-620;
+      const PX=r=>gx+gw*r/42, PY=u=>gy+gh*(uTop-u)/(uTop-uBot);
+      axes(ctx,gx,gy,gw,gh,'r (fm)','U (keV)');
+      line(ctx,gx,PY(0),gx+gw,PY(0),COL.mid,1.2,[5,4]);
+      [-400,0,400,800].forEach(v=>textAt(ctx,v,gx-6,PY(v)+4,{align:'right',size:10,weight:600,color:COL.muted}));
+      for(let k=0;k<=40;k+=10) line(ctx,PX(k),gy+gh,PX(k),gy+gh+4,COL.mid,1.2);
+      ctx.save(); ctx.beginPath(); ctx.rect(gx,gy,gw,gh); ctx.clip(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath();
+      for(let r=0.7;r<=42;r+=0.1){ const X=PX(r), Y=PY(UP(r)); r>0.7?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+      line(ctx,PX(RC),PY(400),PX(RC),gy+gh,COL.red,1.4,[4,4]);
+      ctx.save(); ctx.fillStyle='rgba(217,67,43,0.08)'; ctx.fillRect(gx,PY(400),gw,PY(0)-PY(400)); ctx.restore();
+      line(ctx,gx,PY(400),gx+gw,PY(400),COL.red,1.6,[7,4]); textAt(ctx,'barrier ≈ 400 keV',gx+gw-4,PY(400)-6,{align:'right',size:12,weight:700,color:COL.red});
+      line(ctx,gx,PY(E),gx+gw,PY(E),COL.yellow,2.4,[9,4]); textAt(ctx,'E = '+E+' keV',gx+6,PY(E)-6,{size:12,weight:700,color:COL.yellow});
+      textAt(ctx,'nuclear force region',PX(1.8),PY(-400)+0,{size:10.5,weight:700,color:COL.blue});
+      const rb=pr.st==='fused'?1.0:pr.r, ub=UP(rb), bx=PX(Math.min(42,rb)), by=PY(ub);
+      if(pr.st!=='fused'&&E>ub) line(ctx,bx,by,bx,PY(E),COL.green,2.6);
+      circ(ctx,bx,by,8,COL.yellow,'#fff8e6',2.8);
+      textAt(ctx,'KE',bx-10,(by+PY(E))/2+4,{align:'right',size:11,weight:700,color:COL.green});
+      const d=KC/E;
+      $('#bh').textContent=fmt(KC/RC,0)+' keV'; $('#ca').textContent=E>=KC/RC?'inside r = 3.6 fm':fmt(pr.rmin<90?pr.rmin:d,1)+' fm (d = 1440/E = '+fmt(d,1)+')';
+      $('#res').textContent=E>=KC/RC?'Climbs over → fuses':'Turns back — no fusion'; $('#res').style.color=E>=KC/RC?COL.green:COL.red;
+    } else {
+      const sv=+$('#T').value; springTo(sT,sv,30,10,dt); const s=sT.x/100, Tk=Math.pow(10,6+3.6*s), kT=Tk*8.617e-8; // keV
+      $('#TV').textContent=sciE(Tk,1)+' K';
+      // box
+      const bx0=w*0.05, by0=h*0.05, bw=w*0.9, bh2=h*0.42;
+      rect(ctx,bx0,by0,bw,bh2,COL.ink,'#fbfdff',2.4);
+      let nAbove=0;
+      const base=45+210*s;
+      gas.forEach((q,i)=>{
+        const E=kT*(q.g[0]*q.g[0]+q.g[1]*q.g[1]+q.g[2]*q.g[2])/2, vis=base*Math.sqrt(E/(1.5*kT))*0.9+8;
+        q.x+=Math.cos(q.a)*vis*dt/bw; q.y+=Math.sin(q.a)*vis*dt/bh2;
+        if(q.x<0.015||q.x>0.985){ q.a=Math.PI-q.a; q.x=clamp(q.x,0.015,0.985); if(Math.random()<0.5) q.g=[gauss(),gauss(),gauss()]; }
+        if(q.y<0.03||q.y>0.97){ q.a=-q.a; q.y=clamp(q.y,0.03,0.97); if(Math.random()<0.5) q.g=[gauss(),gauss(),gauss()]; }
+        const X=bx0+q.x*bw, Y=by0+q.y*bh2, hot=E>=400;
+        if(hot){ nAbove++; glowRing(ctx,X,Y,12+Math.sin(t*14+i)*2,COL.green,0.9); }
+        nuc(ctx,X,Y,6.5,true);
+        const L=clamp(vis*0.12,3,26); line(ctx,X,Y,X+Math.cos(q.a)*L,Y+Math.sin(q.a)*L,hot?COL.green:COL.mid,1.4);
+      });
+      textAt(ctx,'protons in a hot gas — green = more than 400 keV',bx0+8,by0+bh2+16,{size:11.5,weight:700,color:COL.muted});
+      // distribution on log E
+      const gx=w*0.08, gy=h*0.60, gw=w*0.86, gh=h*0.28;
+      const xl=e=>gx+gw*(Math.log10(e)+1)/5;
+      axes(ctx,gx,gy,gw,gh,'','');
+      textAt(ctx,'kinetic energy E (log scale)',gx+gw/2,gy+gh+34,{align:'center',size:11,weight:700,color:COL.muted});
+      [0.1,1,10,100,1000,10000].forEach(e=>{ line(ctx,xl(e),gy+gh,xl(e),gy+gh+4,COL.mid,1.2); textAt(ctx,e>=1000?(e/1000)+' MeV':e+' keV',xl(e),gy+gh+17,{align:'center',size:10,weight:600,color:COL.muted}); });
+      const gf=x=>1.1283792*Math.pow(x,1.5)*Math.exp(-x)/0.4626*0.92;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(xl(400),gy+gh);
+      for(let lg=Math.log10(400);lg<=4;lg+=0.02){ const e=Math.pow(10,lg); ctx.lineTo(xl(e),gy+gh-gh*gf(e/kT)); } ctx.lineTo(xl(10000),gy+gh); ctx.closePath(); ctx.fillStyle='rgba(31,157,85,0.35)'; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.8; ctx.beginPath(); for(let lg=-1;lg<=4;lg+=0.02){ const e=Math.pow(10,lg), X=xl(e), Y=gy+gh-gh*gf(e/kT); lg>-1?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+      line(ctx,xl(400),gy,xl(400),gy+gh,COL.red,2,[6,4]); textAt(ctx,'400 keV',xl(400)+5,gy+12,{size:11,weight:700,color:COL.red});
+      const mean=1.5*kT; line(ctx,xl(mean),gy+gh,xl(mean),gy+gh*0.35,COL.yellow,2.4); textAt(ctx,'mean 1.5kT',xl(mean),gy+gh*0.35-6,{align:'center',size:11,weight:700,color:COL.yellow});
+      const lf=log10TailFrac(400/kT);
+      $('#gT').textContent=sciE(Tk,1)+' K'; $('#gM').textContent=fmt(mean,mean<10?2:0)+' keV';
+      $('#gF').textContent=lf>-0.0005?'≈ all':(lf>-3?fmt(Math.pow(10,lf)*100,2)+' %':'≈ 1 in 10'+sup(Math.round(-lf)));
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.11 THE SUN’S p–p CYCLE (Eq. 13.14)
+   (i) p+p→d+e⁺+ν +0.42 · (ii) e⁺+e⁻→γ+γ +1.02 · (iii) d+p→³He+γ +5.49
+   (iv) ³He+³He→⁴He+p+p +12.86.   2(i)+2(ii)+2(iii)+(iv) = 26.7 MeV.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('tm','Step through the cycle',0,4,0.01,0) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="pl">❚❚ Pause</button><button class="toggle-btn" id="rs">↺ Restart</button></div></div>` +
+    rc([['e1','(i) ×2',COL.green],['e2','(ii) ×2',COL.green],['e3','(iii) ×2',COL.green],['e4','(iv) ×1',COL.green],['tot','Total energy released',COL.green,1]]) +
+    note('Net: 4 hydrogen nuclei → one helium-4 nucleus, 2 positrons, 2 neutrinos and 26.7 MeV.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), TM=$('#tm');
+  let play=true, t=0, hold=0; const tau={x:0,v:0}; let ev=[0,0,0,0];
+  $('#pl').onclick=()=>{ play=!play; $('#pl').textContent=play?'❚❚ Pause':'▶ Play'; $('#pl').classList.toggle('play',play); };
+  $('#rs').onclick=()=>{ TM.value=0; tau.x=0; tau.v=0; play=true; $('#pl').textContent='❚❚ Pause'; $('#pl').classList.add('play'); };
+  TM.addEventListener('input',()=>{ play=false; $('#pl').textContent='▶ Play'; $('#pl').classList.remove('play'); });
+  const ROWS=[
+    {lab:'(i)',eq:'¹H + ¹H → ²H + e⁺ + ν',en:'+0.42 MeV',mult:'× 2',E:0.42,m:2},
+    {lab:'(ii)',eq:'e⁺ + e⁻ → γ + γ',en:'+1.02 MeV',mult:'× 2',E:1.02,m:2},
+    {lab:'(iii)',eq:'²H + ¹H → ³He + γ',en:'+5.49 MeV',mult:'× 2',E:5.49,m:2},
+    {lab:'(iv)',eq:'³He + ³He → ⁴He + ¹H + ¹H',en:'+12.86 MeV',mult:'× 1',E:12.86,m:1},
+  ];
+  function group(ctx,x,y,types,r){ const pos={1:[[0,0]],2:[[-.55,0],[.55,0]],3:[[-.55,.38],[.55,.38],[0,-.55]],4:[[-.55,-.55],[.55,-.55],[-.55,.55],[.55,.55]]}[types.length]; types.forEach((k,i)=>nuc(ctx,x+pos[i][0]*r*1.7,y+pos[i][1]*r*1.7,r,k==='p')); }
+  function lepton(ctx,x,y,pos,a){ ctx.save(); ctx.globalAlpha=a; const c=pos?COL.red:COL.blue; circ(ctx,x,y,7,c,pos?'#fdeeea':'#e8f2fc',2.2); textAt(ctx,pos?'+':'−',x,y+4,{align:'center',size:12,weight:700,color:c}); ctx.restore(); }
+  function nutri(ctx,x,y,a){ ctx.save(); ctx.globalAlpha=a; ctx.setLineDash([3,3]); circ(ctx,x,y,4,COL.mid,'#fff',1.4); ctx.restore(); }
+  function photon(ctx,x,y,dx,dy,a,tt){ ctx.save(); ctx.globalAlpha=a; const L=40; wavy(ctx,x-dx*L,y-dy*L,x,y,5,18,-tt*30,COL.yellow,2.6); ctx.restore(); }
+  animLoop(dt=>{
+    t+=dt;
+    if(play){ let v=+TM.value+dt*0.34; if(v>4.35){ v=0; } TM.value=Math.min(4,v); hold=v>4?hold+dt:0; if(v>4) TM.value=4; }
+    springTo(tau,+TM.value,26,10,dt); $('#tmV').textContent=fmt(+TM.value,2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const top=h*0.04, rh=(h*0.76)/4, xm=w*0.62, r=Math.min(rh*0.17,12);
+    let tot=0;
+    ROWS.forEach((R,i)=>{
+      const u=clamp(tau.x-i,0,1), cy=top+rh*(i+0.5), appr=smooth01(0,0.5,u), post=smooth01(0.5,1,u);
+      rect(ctx,w*0.02,cy-rh*0.46,w*0.96,rh*0.92,COL.border,u>0&&u<1?'rgba(47,143,224,0.04)':null,1.2);
+      textAt(ctx,R.lab+'  '+R.mult,w*0.04,cy-4,{size:15,weight:700,color:COL.blue});
+      textAt(ctx,R.eq,w*0.04,cy+18,{size:13,weight:700,color:COL.ink});
+      const done=u>=1; const e=R.E*R.m*smooth01(0.45,0.7,u); tot+=e;
+      textAt(ctx,R.en,w*0.04,cy+36,{size:12,weight:700,color:u>0.5?COL.green:COL.mid});
+      const jt=Math.sin(t*30)*1.2*(u>0&&u<0.5?1:0.3);
+      const dist=lerp(150,16,appr*appr), dx=lerp(0,70,post);
+      // reactants / products by row
+      if(i===0){
+        if(u<0.5) { nuc(ctx,xm-dist,cy+jt,r,true); nuc(ctx,xm+dist,cy-jt,r,true); }
+        else { const f=smooth01(0.5,0.62,u); nuc(ctx,xm-8+dx*0.2,cy,r,true); nuc(ctx,xm+8+dx*0.2,cy,r,f<0.5); // neutron appears
+          lepton(ctx,xm+dx*1.3,cy-dx*0.55,true,1-post*0.55); nutri(ctx,xm+dx*1.6,cy+dx*0.5,1-post*0.55); }
+      } else if(i===1){
+        if(u<0.5){ lepton(ctx,xm-dist,cy+jt,true,1); lepton(ctx,xm+dist,cy-jt,false,1); }
+        else { photon(ctx,xm+dx*0.9,cy-dx*0.7,0.8,-0.6,1-post*0.5,t); photon(ctx,xm-dx*0.9,cy+dx*0.7,-0.8,0.6,1-post*0.5,t); }
+      } else if(i===2){
+        if(u<0.5){ group(ctx,xm-dist,cy+jt,['p','n'],r*0.82); nuc(ctx,xm+dist,cy-jt,r,true); }
+        else { group(ctx,xm+dx*0.15,cy,['p','p','n'],r*0.82); photon(ctx,xm+dx*1.4,cy-dx*0.5,0.9,-0.4,1-post*0.5,t); }
+      } else {
+        if(u<0.5){ group(ctx,xm-dist,cy+jt,['p','p','n'],r*0.78); group(ctx,xm+dist,cy-jt,['p','p','n'],r*0.78); }
+        else { group(ctx,xm,cy,['p','p','n','n'],r*0.8); nuc(ctx,xm+dx*1.3,cy-dx*0.45,r,true); nuc(ctx,xm+dx*1.3,cy+dx*0.45,r,true); }
+      }
+      if(u>0.42&&u<0.8){ const k=(u-0.42)/0.38; glowRing(ctx,xm,cy,k*54,COL.yellow,1-k); glowRing(ctx,xm,cy,k*34,COL.green,1-k); }
+      textAt(ctx,done?'✓':(u>0?'…':''),w*0.96,cy+5,{align:'right',size:18,weight:700,color:COL.green});
+      $('#e'+(i+1)).textContent=fmt(e,2)+' MeV';
+    });
+    // energy meter
+    const mx=w*0.04, my=h*0.875, mw=w*0.92, mh=18;
+    rect(ctx,mx,my,mw,mh,COL.ink,'#fff',2);
+    ctx.save(); ctx.fillStyle=COL.green; ctx.globalAlpha=0.85; ctx.fillRect(mx,my,mw*tot/26.72,mh); ctx.restore();
+    textAt(ctx,fmt(tot,2)+' MeV  of  26.7 MeV',mx+mw/2,my+13,{align:'center',size:12,weight:700,color:tot/26.72>0.5?'#fff':COL.ink});
+    textAt(ctx,'4 ¹H  →  ⁴He  +  2 e⁺  +  2 ν  +  26.7 MeV',w*0.5,h*0.97,{align:'center',size:14,weight:700,color:COL.ink});
+    $('#tot').textContent=fmt(tot,2)+' MeV';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.12 MASS INTO ENERGY        E = mc²,  c = 3 × 10⁸ m/s
+   Example 13.2: 1 g → 9 × 10¹³ J.   Burning 1 kg coal ≈ 10⁷ J,
+   fission of 1 kg uranium ≈ 10¹⁴ J (textbook values).
+   ===================================================================== */
+function buildA12(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('m','Mass  (log scale)',-6,0,0.05,-3) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="cv">⚡ Convert all to energy</button><button class="toggle-btn" id="rs">↺ New block</button></div></div>` +
+    rc([['E','E = mc²',COL.green,1],['Ec','Burning coal',COL.red],['Ef','Fission of uranium',COL.blue],['kwh','mc² in kWh','']]) +
+    note('Same mass: fission gives about 10⁷ × the energy of burning coal; complete conversion gives ~900 × more than fission.');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), MR=$('#m');
+  let conv=false, t=0, hold=0; const rem={x:1,v:0}; const bars=[{x:0,v:0},{x:0,v:0},{x:0,v:0}]; const rays=[];
+  $('#cv').onclick=()=>{ conv=true; }; $('#rs').onclick=()=>{ conv=false; hold=0; };
+  const C=3e8;
+  const mname=m=>m>=1?fmt(m,2)+' kg':m>=1e-3?fmt(m*1e3,m*1e3<10?2:0)+' g':fmt(m*1e6,m*1e6<10?2:0)+' mg';
+  animLoop(dt=>{
+    t+=dt; const m=Math.pow(10,+MR.value); $('#mV').textContent=mname(m);
+    springTo(rem,conv?0:1,conv?5:14,conv?3.2:9,dt); const f=clamp(rem.x,0,1.05);
+    if(conv&&rem.x<0.03){ hold+=dt; if(hold>2.2){ conv=false; hold=0; } }
+    const E=m*C*C, Ec=m*1e7, Ef=m*1e14;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // --- left: balance with block ---
+    const px=w*0.2, py=h*0.38, Lb=Math.min(w*0.14,120);
+    ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(px,py+4); ctx.lineTo(px-18,py+h*0.34); ctx.lineTo(px+18,py+h*0.34); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    line(ctx,px-60,py+h*0.34,px+60,py+h*0.34,COL.ink,3);
+    const tl=0.2*f*(0.4+0.6*(+MR.value+6)/6); const bx0=px-Lb*Math.cos(tl), by0=py+Lb*Math.sin(tl), bx1=px+Lb*Math.cos(tl), by1=py-Lb*Math.sin(tl);
+    line(ctx,bx0,by0,bx1,by1,COL.ink,4); circ(ctx,px,py,6,COL.ink,'#fff',2.4);
+    { const S2=h*0.17; line(ctx,bx1,by1,bx1-34,by1+S2,COL.mid,1.4); line(ctx,bx1,by1,bx1+34,by1+S2,COL.mid,1.4); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(bx1-40,by1+S2); ctx.quadraticCurveTo(bx1,by1+S2+16,bx1+40,by1+S2); ctx.stroke(); ctx.restore(); }
+    // left pan: block; right pan: reference 1 kg mark
+    const S=h*0.17, lx=px-Lb*Math.cos(0.2*f*(0.4+0.6*(+MR.value+6)/6)), ly=py+Lb*Math.sin(0.2*f*(0.4+0.6*(+MR.value+6)/6));
+    line(ctx,lx,ly,lx-34,ly+S,COL.mid,1.4); line(ctx,lx,ly,lx+34,ly+S,COL.mid,1.4);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(lx-40,ly+S); ctx.quadraticCurveTo(lx,ly+S+16,lx+40,ly+S); ctx.stroke(); ctx.restore();
+    const edge=Math.max(2,(26+16*(+MR.value+6)/6*2.2)*Math.cbrt(Math.max(f,0.0001)));
+    if(f>0.01){ ctx.save(); ctx.translate(lx,ly+S-edge/2-2); rect(ctx,-edge/2,-edge/2,edge,edge,COL.blue,'#e8f2fc',2.6); line(ctx,-edge/2,-edge/2,edge/2,edge/2,COL.blue,1); line(ctx,edge/2,-edge/2,-edge/2,edge/2,COL.blue,1); ctx.restore(); }
+    textAt(ctx,'m = '+mname(m*f),lx,ly+S+34,{align:'center',size:13,weight:700,color:COL.blue});
+    // radiation as the mass vanishes
+    if(conv&&rem.x>0.02&&Math.random()<0.5+0.4) rays.push({x:lx,y:ly+S-edge/2,a:Math.random()*6.283,t:0});
+    for(let i=rays.length-1;i>=0;i--){ const q=rays[i]; q.t+=dt; const d=q.t*220; if(q.t>1.1){ rays.splice(i,1); continue; } const al=1-q.t/1.1;
+      ctx.save(); ctx.globalAlpha=al; wavy(ctx,q.x+Math.cos(q.a)*d*0.6,q.y+Math.sin(q.a)*d*0.6,q.x+Math.cos(q.a)*d,q.y+Math.sin(q.a)*d,3,10,-t*40,COL.yellow,2); ctx.restore(); }
+    if(conv&&rem.x>0.02){ const k=(t*1.8)%1; glowRing(ctx,lx,ly+S-edge/2,k*90,COL.green,1-k); }
+    textAt(ctx,conv?'mass → energy':'a block of matter',px,py-h*0.2,{align:'center',size:13,weight:700,color:conv?COL.green:COL.muted});
+    // --- right: log bars ---
+    const bx=w*0.47, bw=w*0.49, top=h*0.14, bh2=h*0.15, gap=h*0.095;
+    textAt(ctx,'Energy from the same mass (log scale, joules)',bx,top-14,{size:13,weight:700,color:COL.ink});
+    const data=[['Burn coal',Ec,COL.red],['Fission of uranium',Ef,COL.blue],['Convert all (mc²)',E,COL.green]];
+    data.forEach((d,i)=>{
+      const y=top+i*(bh2+gap), tgt=clamp((Math.log10(d[1])+6)/26,0,1);
+      springTo(bars[i],tgt,40,11,dt);
+      rect(ctx,bx,y,bw,bh2,COL.border,'#fff',1.4);
+      ctx.save(); ctx.fillStyle=d[2]; ctx.globalAlpha=0.85; ctx.fillRect(bx,y,Math.max(2,bw*bars[i].x),bh2); ctx.restore();
+      textAt(ctx,d[0],bx+8,y+18,{size:12,weight:700,color:bars[i].x>0.3?'#fff':COL.ink});
+      textAt(ctx,sciE(d[1],2)+' J',bx+bw,y-5,{align:'right',size:12,weight:700,color:d[2]});
+    });
+    for(let e=-6;e<=20;e+=4){ const X=bx+bw*(e+6)/26; line(ctx,X,top+3*(bh2+gap)-gap+4,X,top+3*(bh2+gap)-gap+9,COL.mid,1.2); textAt(ctx,'10'+(e<0?'⁻'+sup(-e):sup(e)),X,top+3*(bh2+gap)-gap+22,{align:'center',size:9.5,weight:600,color:COL.muted}); }
+    textAt(ctx,'fission ÷ coal = 10⁷   ·   mc² ÷ fission ≈ 900',bx+bw/2,top+3*(bh2+gap)+14,{align:'center',size:12.5,weight:700,color:COL.ink});
+    $('#E').textContent=sciE(E,2)+' J'+(Math.abs(m-1e-3)<1e-6?'   (Example 13.2)':''); $('#Ec').textContent=sciE(Ec,2)+' J'; $('#Ef').textContent=sciE(Ef,2)+' J'; $('#kwh').textContent=sciE(E/3.6e6,2)+' kWh';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

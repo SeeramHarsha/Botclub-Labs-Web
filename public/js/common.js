@@ -37,7 +37,7 @@
   /** the top bar. `active` highlights a link on the landing page. */
   BL.nav = function (mount, opts) {
     opts = opts || {};
-    var links = opts.landing ? [['#how', 'How it works'], ['#labs', 'Labs'], ['#features', 'Features'], ['#pricing', 'Pricing'], ['#institutes', 'For schools'], ['#faq', 'FAQ']] : [];
+    var links = opts.landing ? [['#how', 'How it works'], ['#senior', 'Class 11 & 12'], ['#labs', 'Labs'], ['#pricing', 'Pricing'], ['#institutes', 'For schools'], ['#faq', 'FAQ']] : [];
     var linkBox = BL.h('div', { class: 'links' }, links.map(function (l) { return BL.h('a', { href: (opts.landing ? '' : '/') + l[0], text: l[1], onclick: function () { linkBox.classList.remove('open'); } }); }));
     var mobileLogin = BL.h('a', { class: 'only-m', href: '/login.html', text: 'Log in' });
     linkBox.appendChild(mobileLogin);
@@ -67,7 +67,7 @@
     var h = BL.h;
     mount.replaceWith(h('footer', null, h('div', { class: 'wrap' },
       h('div', null, h('div', { class: 'f-brand' }, h('img', { src: '/assets/logo-wide.png', alt: 'Botclub Labs' })),
-        h('p', { class: 'f-note', text: 'NCERT science as hands-on simulations for Classes 6 to 10. Learn by doing, not just reading.' })),
+        h('p', { class: 'f-note', text: 'NCERT lessons as hands-on simulations for Classes 6 to 12: science, Physics, Chemistry and Mathematics. Learn by doing, not just reading.' })),
       h('div', null, h('h4', { text: 'Explore' }), h('nav', null, h('a', { href: '/#how', text: 'How it works' }), h('a', { href: '/#pricing', text: 'Pricing' }), h('a', { href: '/#faq', text: 'FAQ' }), h('a', { href: '/register.html', text: 'Create account' }), h('a', { href: '/sales.html', text: 'Talk to sales' }))),
       h('div', null, h('h4', { text: 'Legal' }), h('nav', null, h('a', { href: '/privacy.html', text: 'Privacy Policy' }), h('a', { href: '/terms.html', text: 'Terms of Use' }), h('a', { href: '/refund.html', text: 'Refund Policy' }))),
       h('div', { class: 'f-copy' }, h('span', { text: '© ' + new Date().getFullYear() + ' Botclub Labs. All rights reserved.' }), h('span', { text: 'Made for curious students in India' })))));

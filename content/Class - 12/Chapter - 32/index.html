@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 2 — Application of Integrals | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.sl+.sl{margin-top:9px;}
+.lab-canvas-wrap{box-shadow:0 1px 6px rgba(15,38,64,0.05);}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">∫</div>
+    <div>
+      <div class="chip">Grade 12 · Part 2 · Ch 2</div>
+      <h1>Application of Integrals</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Curve · Exact value</span>
+      <span><i style="background:var(--f-green)"></i>Area counted</span>
+      <span><i style="background:var(--f-red)"></i>Below axis · Error</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">8.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — PART 2 — CHAPTER 2: APPLICATION OF INTEGRALS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; strips, curves and flaps spring toward it every frame — nothing
+   jumps. Strips rise with overshoot, quadrants fold open like pages.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   1. CHAPTER HELPERS — graph view, axes, strips, small UI builders
+   --------------------------------------------------------------------- */
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function simpson(f,a,b,n){ n=n||800; const h=(b-a)/n; let s=f(a)+f(b); for(let i=1;i<n;i++) s+=f(a+i*h)*(i%2?4:2); return s*h/3; }
+function yRange(f,a,b){ let lo=Infinity,hi=-Infinity; for(let i=0;i<=240;i++){ const y=f(a+(b-a)*i/240); if(y<lo) lo=y; if(y>hi) hi=y; } return [lo,hi]; }
+function niceStep(range,target){ const raw=range/target, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
+const SUB='₀₁₂₃₄₅₆₇₈₉';
+
+/* world box → pixels. equal=true keeps circles round. */
+function makeView(w,h,b,equal){
+  const L=54,R=22,T=22,B=38, pw=w-L-R, ph=h-T-B;
+  let sx=pw/(b.x1-b.x0), sy=ph/(b.y1-b.y0), ox=L, oy=T;
+  if(equal){ const s=Math.min(sx,sy); ox=L+(pw-(b.x1-b.x0)*s)/2; oy=T+(ph-(b.y1-b.y0)*s)/2; sx=sy=s; }
+  return {b,sx,sy,w,h, X:x=>ox+(x-b.x0)*sx, Y:y=>oy+(b.y1-y)*sy,
+    left:ox, right:ox+(b.x1-b.x0)*sx, top:oy, bottom:oy+(b.y1-b.y0)*sy};
+}
+function smoothBox(cur,tgt,rate,dt){ ['x0','x1','y0','y1'].forEach(k=>{ cur[k]=approach(cur[k],tgt[k],rate,dt); }); }
+function drawAxes(ctx,V,xl,yl){
+  const b=V.b, sx=niceStep(b.x1-b.x0,(V.right-V.left)>520?12:7), sy=niceStep(b.y1-b.y0,(V.bottom-V.top)>320?8:5);
+  ctx.save(); ctx.font='500 11px Poppins, sans-serif'; ctx.fillStyle=COL.mid;
+  for(let i=Math.ceil(b.x0/sx-1e-9); i*sx<=b.x1+1e-9; i++){ const x=i*sx, px=V.X(x); line(ctx,px,V.top,px,V.bottom,'#e8eef6',1); ctx.textAlign='center'; if(i!==0) ctx.fillText(fmt(x,2),px,V.bottom+15); }
+  for(let j=Math.ceil(b.y0/sy-1e-9); j*sy<=b.y1+1e-9; j++){ const y=j*sy, py=V.Y(y); line(ctx,V.left,py,V.right,py,'#e8eef6',1); ctx.textAlign='right'; if(j!==0) ctx.fillText(fmt(y,2),V.left-6,py+4); }
+  ctx.restore();
+  const ay=(b.y0<=0&&b.y1>=0)?V.Y(0):V.bottom, ax=(b.x0<=0&&b.x1>=0)?V.X(0):V.left;
+  line(ctx,V.left,ay,V.right,ay,COL.ink,1.8); arrowHead(ctx,V.right,ay,0,COL.ink,8);
+  line(ctx,ax,V.bottom,ax,V.top,COL.ink,1.8); arrowHead(ctx,ax,V.top,-Math.PI/2,COL.ink,8);
+  textAt(ctx,xl||'x',V.right-4,ay-8,{align:'right',size:13,weight:700});
+  textAt(ctx,yl||'y',ax+9,V.top+12,{size:13,weight:700});
+  if(b.x0<0&&b.y0<0) textAt(ctx,'O',ax-12,ay+15,{size:11,color:COL.mid});
+}
+function clipPlot(ctx,V){ ctx.beginPath(); ctx.rect(V.left,V.top,V.right-V.left,V.bottom-V.top); ctx.clip(); }
+function dimH(ctx,x1,x2,y,color){ line(ctx,x1,y,x2,y,color,1.6); arrowHead(ctx,x1,y,Math.PI,color,5); arrowHead(ctx,x2,y,0,color,5); }
+function hudBox(ctx,x,y,w,h){
+  ctx.save(); ctx.globalAlpha=0.93; ctx.fillStyle='#fff'; rrect(ctx,x,y,w,h,10); ctx.fill();
+  ctx.globalAlpha=1; ctx.strokeStyle='#dbe4f0'; ctx.lineWidth=1; ctx.stroke(); ctx.restore();
+}
+/* curve y = f(x) between x0..x1, optionally in (x,y) swapped form */
+function plotCurve(ctx,V,f,x0,x1,color,swap){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.beginPath();
+  const N=260; let started=false;
+  for(let i=0;i<=N;i++){ const u=x0+(x1-x0)*i/N, v=f(u); if(!isFinite(v)){ started=false; continue; }
+    const px=swap?V.X(v):V.X(u), py=swap?V.Y(u):V.Y(v);
+    if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py); }
+  ctx.stroke(); ctx.restore();
+}
+
+/* A row of strips. Each strip eases its centre/width and springs its height:
+   new strips pop up from zero with overshoot; moving a slider slides and
+   re-springs them. Replay() rebuilds them as a left-to-right wave. */
+function Strips(){
+  const S={arr:[],key:null};
+  S.replay=function(){ S.key=null; };
+  S.sync=function(n,key){
+    if(S.key!==key){
+      S.arr=[]; for(let i=0;i<n;i++) S.arr.push({c:null,w:null,h:{x:0,v:0},d:i*Math.min(0.035,1.1/n),fresh:false});
+      S.key=key;
+    } else if(S.arr.length!==n){
+      while(S.arr.length<n) S.arr.push({c:null,w:null,h:{x:0,v:0},d:0,fresh:false});
+      S.arr.length=n;
+    }
+  };
+  S.step=function(dt,tg){
+    const n=S.arr.length;
+    for(let i=0;i<n;i++){
+      const e=S.arr[i], t=tg(i,n);
+      if(e.c===null){ e.c=t.c; e.w=t.w; }
+      e.c=approach(e.c,t.c,16,dt); e.w=approach(e.w,t.w,16,dt);
+      if(e.d>0){ e.d-=dt; e.h.x=0; e.h.v=0; } else springTo(e.h,t.h,150,10,dt);
+    }
+  };
+  return S;
+}
+/* draw the strips as one batched path. vertical: c on x, h up from x-axis.
+   horizontal: c on y, h right from y-axis. */
+function drawStrips(ctx,V,S,horiz,fill,stroke,hi){
+  ctx.save(); ctx.beginPath();
+  const n=S.arr.length; let wpx=0;
+  S.arr.forEach(e=>{
+    if(horiz){ const ya=V.Y(e.c+e.w/2), yb=V.Y(e.c-e.w/2); wpx=yb-ya; ctx.rect(V.X(0),ya,V.X(e.h.x)-V.X(0),yb-ya); }
+    else { const xa=V.X(e.c-e.w/2), xb=V.X(e.c+e.w/2); wpx=xb-xa; ctx.rect(xa,V.Y(0),xb-xa+0.4,V.Y(e.h.x)-V.Y(0)); }
+  });
+  ctx.fillStyle=fill; ctx.fill();
+  if(wpx>3){ ctx.strokeStyle=stroke; ctx.lineWidth=wpx>8?1.4:0.8; ctx.stroke(); }
+  ctx.restore();
+  if(hi!==undefined && S.arr[hi]){
+    const e=S.arr[hi]; ctx.save(); ctx.fillStyle='rgba(217,160,23,0.38)'; ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4;
+    if(horiz){ const ya=V.Y(e.c+e.w/2), yb=V.Y(e.c-e.w/2); ctx.fillRect(V.X(0),ya,V.X(e.h.x)-V.X(0),yb-ya); ctx.strokeRect(V.X(0),ya,V.X(e.h.x)-V.X(0),yb-ya); }
+    else { const xa=V.X(e.c-e.w/2), xb=V.X(e.c+e.w/2); ctx.fillRect(xa,V.Y(0),xb-xa,V.Y(e.h.x)-V.Y(0)); ctx.strokeRect(xa,V.Y(0),xb-xa,V.Y(e.h.x)-V.Y(0)); }
+    ctx.restore();
+  }
+}
+
+/* small HTML builders for the 30% control column */
+function sl(id,label,min,max,step,val){ return `<div class="sl"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function rc(label,id,color,wide){ return `<div class="rcard${wide?' wide':''}"><div class="rlabel">${label}</div><div class="rval" id="${id}" style="${color?'color:'+color:''}">—</div></div>`; }
+function chipList(root,items,cb){
+  const box=root.querySelector('.chip-wrap'); const btns=[];
+  items.forEach((it,i)=>{ const b=document.createElement('button'); b.className='chip-btn'+(i===0?' active':''); b.textContent=it; b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(i); }; box.appendChild(b); btns.push(b); });
+  return btns;
+}
+function keepOrdered(aR,bR,gap){
+  aR.addEventListener('input',()=>{ if(+aR.value>+bR.value-gap) bR.value=Math.min(+bR.max,+aR.value+gap); if(+aR.value>+bR.value-gap) aR.value=+bR.value-gap; });
+  bR.addEventListener('input',()=>{ if(+bR.value<+aR.value+gap) aR.value=Math.max(+aR.min,+bR.value-gap); if(+bR.value<+aR.value+gap) bR.value=+aR.value+gap; });
+}
+
+/* ---------------------------------------------------------------------
+   2. NAVIGATION
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'8.1', title:'Area as Strips',        desc:'Thin strips of height y and width dx', build: buildA1 },
+  { num:'8.2', title:'Horizontal Strips',     desc:'Thin strips of width x and height dy', build: buildA2 },
+  { num:'8.3', title:'Above & Below the Axis',desc:'Negative area is counted as |A|',      build: buildA3 },
+  { num:'8.4', title:'Area of a Circle',      desc:'4 × first quadrant = πa²',            build: ()=>buildConic('circle') },
+  { num:'8.5', title:'Area of an Ellipse',    desc:'4 × first quadrant = πab',            build: ()=>buildConic('ellipse') },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   8.1 AREA AS STRIPS  (Fig 8.1)       dA = y·dx ,   A = ∫ₐᵇ y dx
+   Strips use the mid-height of each slice; exact value by Simpson's rule.
+   Textbook checks (Misc. Ex. 1): ∫₁² x² dx = 7/3 ; ∫₁⁵ x⁴ dx = 3124/5.
+   ===================================================================== */
+const A1C = [
+  { name:'y = x²',    f:x=>x*x,        a:1, b:2,       ref:'Misc 1(i) · 7/3' },
+  { name:'y = x⁴',    f:x=>x*x*x*x,    a:1, b:5,       ref:'Misc 1(ii) · 3124/5' },
+  { name:'y = sin x', f:Math.sin,      a:0, b:Math.PI, ref:'∫₀^π sin x dx = 2' },
+  { name:'y = √x',    f:Math.sqrt,     a:0, b:4,       ref:'∫₀⁴ √x dx = 16/3', lo:0 },
+];
+function buildA1(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML = `
+    <div class="control-group"><label>Curve</label><div class="chip-wrap"></div></div>
+    <div class="control-group">${sl('a','Left limit  a',0,5.9,'any',1)}${sl('b','Right limit  b',0.1,6,'any',2)}${sl('n','Strips  n',1,120,1,8)}</div>
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px;">▶ n → ∞</button><button class="toggle-btn" id="rp" style="padding:10px;">↺ Replay</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Σ y·dx','r1',COL.green)}${rc('∫ exact','r2',COL.blue)}${rc('Error','r3',COL.red)}${rc('Strips','r4','')}${rc('Textbook','r5','',1)}</div></div>`;
+  const canvas=$('canvas'), aR=$('#a'), bR=$('#b'), nR=$('#n');
+  keepOrdered(aR,bR,0.2);
+  const S=Strips(); let ci=0, t=0, play=false, tp=0, first=true; const vw={x0:0,x1:1,y0:0,y1:1};
+  const setCurve=i=>{ ci=i; aR.value=A1C[i].a; bR.value=A1C[i].b; };
+  chipList(wrap,A1C.map(c=>c.name),setCurve); setCurve(0);
+  nR.addEventListener('input',()=>{ play=false; $('#go').textContent='▶ n → ∞'; });
+  $('#go').onclick=()=>{ play=true; tp=0; $('#go').textContent='⏳ …'; };
+  $('#rp').onclick=()=>{ S.replay(); };
+  animLoop(dt=>{
+    t+=dt;
+    if(play){ tp+=dt; const k=Math.min(1,tp/8); nR.value=Math.round(2*Math.pow(60,k)); if(k>=1){ play=false; $('#go').textContent='▶ n → ∞'; } }
+    const c=A1C[ci], f=c.f, a=+aR.value, b=+bR.value, n=+nR.value, dx=(b-a)/n;
+    $('#aV').textContent=fmt(a,2); $('#bV').textContent=fmt(b,2); $('#nV').textContent=n;
+    let ymax=Math.max(0.05,yRange(f,a,b)[1]); const lo=Math.min(0,a), sp=b-lo;
+    const tgt={x0:lo-sp*0.1, x1:b+sp*0.14, y0:-ymax*0.12, y1:ymax*1.25};
+    if(first){ Object.assign(vw,tgt); first=false; } else smoothBox(vw,tgt,6,dt);
+    S.sync(n,'k'); S.step(dt,i=>({c:a+(i+0.5)*dx, w:dx, h:f(a+(i+0.5)*dx)}));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=makeView(w,h,vw,false); drawAxes(ctx,V);
+    ctx.save(); clipPlot(ctx,V);
+    const hi=Math.min(n-1,Math.floor(((t*0.35)%1)*n));
+    drawStrips(ctx,V,S,false,'rgba(31,157,85,0.30)',COL.green,hi);
+    plotCurve(ctx,V,f,Math.max(vw.x0,c.lo===undefined?-1e9:c.lo),vw.x1,COL.blue);
+    ctx.restore();
+    [a,b].forEach((v,k)=>{ line(ctx,V.X(v),V.Y(0),V.X(v),V.top,COL.yellow,2,[6,5]); textAt(ctx,k?'b = '+fmt(b,2):'a = '+fmt(a,2),V.X(v)+(k?6:-6),V.top+16,{size:12,weight:700,color:COL.yellow,align:k?'left':'right'}); });
+    // the scanning strip: y (blue) and dx (yellow) called out
+    const e=S.arr[hi];
+    if(e){ const xr=V.X(e.c+e.w/2), x1=V.X(e.c-e.w/2), yB=V.Y(0), yT=V.Y(e.h.x);
+      dimArrow(ctx,xr+10,yT,yB,COL.blue); textAt(ctx,'y',xr+17,(yT+yB)/2+4,{size:13,weight:700,color:COL.blue});
+      dimH(ctx,x1,xr,yB+14,COL.yellow); textAt(ctx,'dx',(x1+xr)/2,yB+30,{align:'center',size:12,weight:700,color:COL.yellow}); }
+    let sum=0; for(let i=0;i<n;i++) sum+=f(a+(i+0.5)*dx)*dx;
+    const ex=simpson(f,a,b);
+    hudBox(ctx,V.left+12,V.top+10,196,64);
+    textAt(ctx,'dA = y · dx',V.left+24,V.top+32,{size:13,weight:700,color:COL.yellow});
+    textAt(ctx,'A ≈ '+fmt(sum,3),V.left+24,V.top+58,{size:16,weight:700,color:COL.green});
+    $('#r1').textContent=fmt(sum,3); $('#r2').textContent=fmt(ex,3); $('#r3').textContent=fmt(Math.abs(ex-sum),3); $('#r4').textContent=n;
+    $('#r5').textContent=(Math.abs(a-c.a)<0.005&&Math.abs(b-c.b)<0.005)?c.ref:'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.2 HORIZONTAL STRIPS  (Fig 8.2)    dA = x·dy ,   A = ∫꜀ᵈ x dy
+   Textbook check (Ex. 8.1 Q4): y² = 4x, y-axis, y = 3  →  ∫₀³ y²/4 dy = 9/4.
+   ===================================================================== */
+const A2C = [
+  { name:'y² = 4x', g:y=>y*y/4,   c:0, d:3, ref:'Ex 8.1 Q4 · 9/4' },
+  { name:'x = y²',  g:y=>y*y,     c:0, d:2, ref:'∫₀² y² dy = 8/3' },
+  { name:'x = √y',  g:Math.sqrt,  c:0, d:4, ref:'∫₀⁴ √y dy = 16/3', lo:0 },
+];
+function buildA2(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML = `
+    <div class="control-group"><label>Curve  x = g(y)</label><div class="chip-wrap"></div></div>
+    <div class="control-group">${sl('a','Lower line  y = c',0,5.9,'any',0)}${sl('b','Upper line  y = d',0.1,6,'any',3)}${sl('n','Strips  n',1,120,1,8)}</div>
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px;">▶ n → ∞</button><button class="toggle-btn" id="rp" style="padding:10px;">↺ Replay</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Σ x·dy','r1',COL.green)}${rc('∫ exact','r2',COL.blue)}${rc('Error','r3',COL.red)}${rc('Strips','r4','')}${rc('Textbook','r5','',1)}</div></div>`;
+  const canvas=$('canvas'), cR=$('#a'), dR=$('#b'), nR=$('#n');
+  keepOrdered(cR,dR,0.2);
+  const S=Strips(); let ci=0, t=0, play=false, tp=0, first=true; const vw={x0:0,x1:1,y0:0,y1:1};
+  const setCurve=i=>{ ci=i; cR.value=A2C[i].c; dR.value=A2C[i].d; };
+  chipList(wrap,A2C.map(c=>c.name),setCurve); setCurve(0);
+  nR.addEventListener('input',()=>{ play=false; $('#go').textContent='▶ n → ∞'; });
+  $('#go').onclick=()=>{ play=true; tp=0; $('#go').textContent='⏳ …'; };
+  $('#rp').onclick=()=>{ S.replay(); };
+  animLoop(dt=>{
+    t+=dt;
+    if(play){ tp+=dt; const k=Math.min(1,tp/8); nR.value=Math.round(2*Math.pow(60,k)); if(k>=1){ play=false; $('#go').textContent='▶ n → ∞'; } }
+    const cu=A2C[ci], g=cu.g, c=+cR.value, d=+dR.value, n=+nR.value, dy=(d-c)/n;
+    $('#aV').textContent=fmt(c,2); $('#bV').textContent=fmt(d,2); $('#nV').textContent=n;
+    const xmax=Math.max(0.05,yRange(g,c,d)[1]), lo=Math.min(0,c), sp=d-lo;
+    const tgt={x0:-xmax*0.12, x1:xmax*1.3, y0:lo-sp*0.1, y1:d+sp*0.14};
+    if(first){ Object.assign(vw,tgt); first=false; } else smoothBox(vw,tgt,6,dt);
+    S.sync(n,'k'); S.step(dt,i=>({c:c+(i+0.5)*dy, w:dy, h:g(c+(i+0.5)*dy)}));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=makeView(w,h,vw,false); drawAxes(ctx,V);
+    ctx.save(); clipPlot(ctx,V);
+    const hi=Math.min(n-1,Math.floor(((t*0.35)%1)*n));
+    drawStrips(ctx,V,S,true,'rgba(31,157,85,0.30)',COL.green,hi);
+    plotCurve(ctx,V,g,Math.max(vw.y0,cu.lo===undefined?-1e9:cu.lo),vw.y1,COL.blue,true);
+    ctx.restore();
+    [c,d].forEach((v,k)=>{ line(ctx,V.X(0),V.Y(v),V.right,V.Y(v),COL.yellow,2,[6,5]); textAt(ctx,(k?'y = d = ':'y = c = ')+fmt(v,2),V.X(0)-8,V.Y(v)+(k?-7:16),{size:12,weight:700,color:COL.yellow,align:'right'}); });
+    const e=S.arr[hi];
+    if(e){ const yT=V.Y(e.c+e.w/2), yB=V.Y(e.c-e.w/2), xR=V.X(e.h.x), x0=V.X(0);
+      dimArrow(ctx,x0-16,yT,yB,COL.yellow); textAt(ctx,'dy',x0-22,(yT+yB)/2+4,{align:'right',size:12,weight:700,color:COL.yellow});
+      dimH(ctx,x0,xR,(yT+yB)/2,COL.blue); textAt(ctx,'x',(x0+xR)/2,(yT+yB)/2-7,{align:'center',size:13,weight:700,color:COL.blue}); }
+    let sum=0; for(let i=0;i<n;i++) sum+=g(c+(i+0.5)*dy)*dy;
+    const ex=simpson(g,c,d);
+    hudBox(ctx,V.right-212,V.bottom-96,200,64);
+    textAt(ctx,'dA = x · dy',V.right-200,V.bottom-74,{size:13,weight:700,color:COL.yellow});
+    textAt(ctx,'A ≈ '+fmt(sum,3),V.right-200,V.bottom-48,{size:16,weight:700,color:COL.green});
+    $('#r1').textContent=fmt(sum,3); $('#r2').textContent=fmt(ex,3); $('#r3').textContent=fmt(Math.abs(ex-sum),3); $('#r4').textContent=n;
+    $('#r5').textContent=(Math.abs(c-cu.c)<0.005&&Math.abs(d-cu.d)<0.005)?cu.ref:'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.3 ABOVE & BELOW THE AXIS  (Figs 8.3, 8.4)
+   ∫ f dx is signed; area = Σ |each region|  →  A = |A₁| + A₂.
+   Textbook checks:  Ex 3  y=3x+2 on [−1,1] → 13/3 ;  Ex 4  cos x on [0,2π] → 4 ;
+   Misc 2  |x+3| on [−6,0] → 9 ;  Misc 3  sin x on [0,2π] → 4 ;
+   Misc 4  x³ on [−2,1] → 17/4 ;  Misc 5  x|x| on [−1,1] → 2/3 (∫ = 0).
+   ===================================================================== */
+const A3C = [
+  { name:'3x + 2',  f:x=>3*x+2,            a:-1, b:1,           ref:'Ex 3 · 13/3' },
+  { name:'cos x',   f:Math.cos,            a:0,  b:2*Math.PI,   ref:'Ex 4 · 4' },
+  { name:'x³',      f:x=>x*x*x,            a:-2, b:1,           ref:'Misc 4 · 17/4' },
+  { name:'x |x|',   f:x=>x*Math.abs(x),    a:-1, b:1,           ref:'Misc 5 · 2/3' },
+  { name:'x + 3',   f:x=>x+3,              a:-6, b:0,           ref:'Misc 2 · 9' },
+  { name:'sin x',   f:Math.sin,            a:0,  b:2*Math.PI,   ref:'Misc 3 · 4' },
+];
+function buildA3(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML = `
+    <div class="control-group"><label>y = f(x)</label><div class="chip-wrap"></div></div>
+    <div class="control-group">${sl('a','Left limit  a',-7,6.5,'any',-1)}${sl('b','Right limit  b',-6.5,7,'any',1)}</div>
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="rp" style="padding:10px;">▶ Sweep</button></div>
+    <div class="control-group"><div class="result-cards">${rc('∫ f dx (signed)','r1',COL.blue)}${rc('Area','r2',COL.green)}${rc('Above axis','r3',COL.green)}${rc('Below axis','r4',COL.red)}${rc('Textbook','r5','',1)}</div></div>`;
+  const canvas=$('canvas'), aR=$('#a'), bR=$('#b');
+  keepOrdered(aR,bR,0.3);
+  let ci=0, t=0, p=0, first=true; const vw={x0:0,x1:1,y0:0,y1:1}, N=600;
+  const setCurve=i=>{ ci=i; aR.value=A3C[i].a; bR.value=A3C[i].b; p=0; };
+  chipList(wrap,A3C.map(c=>c.name),setCurve); setCurve(0);
+  aR.addEventListener('input',()=>{ p=0; }); bR.addEventListener('input',()=>{ p=0; });
+  $('#rp').onclick=()=>{ p=0; };
+  const barS={x:0,v:0}, barA={x:0,v:0};
+  animLoop(dt=>{
+    t+=dt; p=Math.min(1,p+dt/3.4);
+    const cu=A3C[ci], f=cu.f, a=+aR.value, b=+bR.value, span=b-a;
+    $('#aV').textContent=fmt(a,2); $('#bV').textContent=fmt(b,2);
+    const [ylo,yhi]=yRange(f,a,b), lo0=Math.min(ylo,0), hi0=Math.max(yhi,0), ys=Math.max(0.5,hi0-lo0);
+    const tgt={x0:a-span*0.08, x1:b+span*0.1, y0:lo0-ys*0.2, y1:hi0+ys*0.32};
+    if(first){ Object.assign(vw,tgt); first=false; } else smoothBox(vw,tgt,6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=makeView(w,h,vw,false); drawAxes(ctx,V);
+    const e=smooth01(0,1,p), xs=a+span*e, dxs=span/N;
+    // running totals + sign runs
+    let Ssum=0, Pos=0, Neg=0; const runs=[]; let cur=null;
+    ctx.save(); clipPlot(ctx,V);
+    const y0=V.Y(0);
+    for(let i=0;i<N;i++){
+      const xa=a+i*dxs, ym=f(xa+dxs/2), fr=clamp((xs-xa)/dxs,0,1);
+      if(Math.abs(ym)>1e-9){ const sg=ym>0?1:-1; if(!cur||cur.sg!==sg){ cur={sg,x0:xa,x1:xa+dxs,sum:0,ext:0}; runs.push(cur); } cur.x1=xa+dxs; cur.sum+=Math.abs(ym)*dxs; cur.ext=Math.max(cur.ext,Math.abs(ym)); }
+      if(fr<=0) continue;
+      ctx.fillStyle=ym>=0?'rgba(31,157,85,0.34)':'rgba(217,67,43,0.34)';
+      const px=V.X(xa), pw=V.X(xa+dxs*fr)-px+0.7; ctx.fillRect(px,y0,pw,V.Y(ym)-y0);
+      Ssum+=ym*dxs*fr; if(ym>=0) Pos+=ym*dxs*fr; else Neg-=ym*dxs*fr;
+    }
+    plotCurve(ctx,V,f,vw.x0,vw.x1,COL.blue);
+    ctx.restore();
+    // sweeping scanner
+    const fx=V.X(xs), fy=V.Y(f(xs));
+    line(ctx,fx,V.top,fx,V.bottom,COL.yellow,2.2,[5,4]); circ(ctx,fx,fy,6,COL.yellow,'#fff',2.6);
+    [a,b].forEach((v,k)=>textAt(ctx,k?'b':'a',V.X(v)+(k?5:-5),V.top+14,{size:12,weight:700,color:COL.yellow,align:k?'left':'right'}));
+    // region labels once the sweep is done
+    const la=smooth01(0.9,1,p);
+    if(la>0) runs.forEach((r,i)=>{ if(r.sum<span*0.004) return; const xm=(r.x0+r.x1)/2;
+      const yy=r.sg>0?V.Y(r.ext)-12:V.Y(-r.ext)+20; const nm='A'+(runs.length>1?SUB[i+1]:'');
+      textAt(ctx,nm+' = '+(r.sg>0?'':'−')+fmt(r.sum,2),V.X(xm),yy,{align:'center',size:12.5,weight:700,color:r.sg>0?COL.green:COL.red,alpha:la}); });
+    // balance HUD: signed total vs counted area
+    springTo(barS,Ssum,60,10,dt); springTo(barA,Pos+Neg,60,10,dt);
+    const scale=Math.max(0.5,simpson(x=>Math.abs(f(x)),a,b,600)), bw=Math.min(150,(V.right-V.left)*0.17), hx=V.right-bw-232, hy=V.top+10;
+    hudBox(ctx,hx-12,hy,bw+232,70);
+    const zx=hx+bw/2+78;
+    textAt(ctx,'∫ f dx',hx+2,hy+27,{size:12.5,weight:700,color:COL.blue});
+    textAt(ctx,'Area',hx+2,hy+55,{size:12.5,weight:700,color:COL.green});
+    line(ctx,zx,hy+10,zx,hy+62,COL.mid,1);
+    const sw=clamp(barS.x/scale,-1,1)*bw/2, aw=clamp(barA.x/scale,0,1)*bw/2;
+    ctx.fillStyle=barS.x>=0?COL.blue:COL.red; ctx.fillRect(zx,hy+14,sw,16);
+    ctx.fillStyle=COL.green; ctx.fillRect(zx,hy+42,aw,16);
+    textAt(ctx,fmt(Ssum,3),zx+bw/2+8,hy+27,{size:13,weight:700,color:barS.x>=0?COL.blue:COL.red});
+    textAt(ctx,fmt(Pos+Neg,3),zx+bw/2+8,hy+55,{size:13,weight:700,color:COL.green});
+    $('#r1').textContent=fmt(Ssum,3); $('#r2').textContent=fmt(Pos+Neg,3); $('#r3').textContent=fmt(Pos,3); $('#r4').textContent=fmt(Neg,3);
+    $('#r5').textContent=(Math.abs(a-cu.a)<0.005&&Math.abs(b-cu.b)<0.005)?cu.ref:'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4 CIRCLE (Example 1, Figs 8.5–8.6)   A = 4∫₀ᵃ √(a²−x²) dx = πa²
+   8.5 ELLIPSE (Example 2, Figs 8.7–8.8) A = 4(b/a)∫₀ᵃ √(a²−x²) dx = πab
+   The first quadrant is built from strips; three copies then fold over the
+   axes (spring-damped hinge, cos θ foreshortening) to complete the figure.
+   Textbook checks: x²/16 + y²/9 = 1 → 12π ; x²/4 + y²/9 = 1 → 6π ;
+   x² + y² = 4 in the first quadrant → π.
+   ===================================================================== */
+function buildConic(kind){
+  const ell=kind==='ellipse';
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  const presets = ell
+    ? [{n:'x²/16 + y²/9 = 1',a:4,b:3,m:3,ref:'Ex 8.1 Q1 · 12π'},{n:'x²/4 + y²/9 = 1',a:2,b:3,m:3,ref:'Ex 8.1 Q2 · 6π'}]
+    : [{n:'x² + y² = 4  (¼)',a:2,m:1,ref:'Ex 8.1 Q3 · π (¼ of 4π)'},{n:'x² + y² = a²',a:3,m:3,ref:'Example 1 · πa²'}];
+  $('.lab-side').innerHTML = `
+    <div class="control-group"><label>Equation</label><div class="chip-wrap"></div></div>
+    <div class="control-group">${sl('a',ell?'Semi-axis  a':'Radius  a',0.5,ell?7:6,0.1,ell?4:3)}${ell?sl('b','Semi-axis  b',0.5,5.5,0.1,3):''}${sl('n','Strips  n',4,80,1,24)}</div>
+    <div class="control-group"><label>Strips</label><div class="toggle-group" id="sm"><button class="toggle-btn active" data-m="v">y dx</button><button class="toggle-btn" data-m="h">x dy</button></div>
+      <label style="margin-top:9px;">Fold copies</label><div class="toggle-group" id="qm"><button class="toggle-btn active" data-q="1">¼</button><button class="toggle-btn" data-q="2">½</button><button class="toggle-btn" data-q="3">Full</button></div></div>
+    <div class="control-group"><div class="result-cards">${rc('¼ by strips','r1',COL.green)}${rc('Counted','r2',COL.green)}${rc(ell?'πab':'πa²','r3',COL.blue)}${rc('Error','r4',COL.red)}${rc('Textbook','r5','',1)}</div></div>`;
+  const canvas=$('canvas'), aR=$('#a'), bR=ell?$('#b'):null, nR=$('#n');
+  const S=Strips(); let t=0, mode='v', q=1, userTouched=false, demo=0;
+  const aD={x:0.3,v:0}, bD={x:0.3,v:0}, th2={x:0,v:0}, th3={x:0,v:0}, th4={x:0,v:0};
+  const box={x0:-3,x1:3,y0:-3,y1:3};
+  const sm=[...wrap.querySelectorAll('#sm .toggle-btn')], qm=[...wrap.querySelectorAll('#qm .toggle-btn')];
+  toggleWire(sm,b=>{ mode=b.dataset.m; });
+  const setQ=v=>{ q=v; qm.forEach(x=>x.classList.toggle('active',+x.dataset.q===v)); };
+  toggleWire(qm,b=>{ userTouched=true; q=+b.dataset.q; });
+  const chips=chipList(wrap,presets.map(p=>p.n),i=>{ const p=presets[i]; aR.value=p.a; if(ell) bR.value=p.b; setQ(p.m); userTouched=true; cur=i; });
+  let cur=0; { const p=presets[0]; aR.value=p.a; if(ell) bR.value=p.b; }
+  const arcs=[[1.5,2],[1,1.5],[0.5,1],[0,0.5]];  // Q1, Q2, Q3, Q4 in units of π (canvas angles)
+  animLoop(dt=>{
+    t+=dt; demo+=dt; if(!userTouched&&demo>1.4&&q===1) setQ(3);
+    const aT=+aR.value, bT=ell?+bR.value:aT, n=+nR.value;
+    $('#aV').textContent=fmt(aT,1); if(ell) $('#bV').textContent=fmt(bT,1); $('#nV').textContent=n;
+    springTo(aD,aT,40,6,dt); springTo(bD,bT,40,6,dt);
+    springTo(th2,q>=2?Math.PI:0,26,4.2,dt);
+    const t4=(q>=3&&th2.x>2.4)?Math.PI:0; springTo(th4,t4,26,4.2,dt); springTo(th3,t4,22,4.2,dt);
+    const horiz=mode==='h';
+    S.sync(n,mode);
+    S.step(dt,i=>{ if(!horiz){ const dx=aD.x/n, xm=(i+0.5)*dx; return {c:xm,w:dx,h:bD.x*Math.sqrt(Math.max(0,1-(xm/aD.x)*(xm/aD.x)))}; }
+                   const dy=bD.x/n, ym=(i+0.5)*dy; return {c:ym,w:dy,h:aD.x*Math.sqrt(Math.max(0,1-(ym/bD.x)*(ym/bD.x)))}; });
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const hx=Math.max(aT*1.25,2.5), hy=ell?Math.max(bT*1.3,2.5):hx;
+    smoothBox(box,{x0:-hx,x1:hx,y0:-hy,y1:hy},5,dt);
+    const V=makeView(w,h,box,true); drawAxes(ctx,V);
+    const ox=V.X(0), oy=V.Y(0), rx=aD.x*V.sx, ry=bD.x*V.sy;
+    if(ell){ ctx.save(); ctx.strokeStyle=COL.yellow; ctx.globalAlpha=0.55; ctx.setLineDash([6,5]); ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(ox,oy,rx,0,Math.PI*2); ctx.stroke(); ctx.restore(); }
+    const hi=Math.min(n-1,Math.floor(((t*0.35)%1)*n));
+    const fl=(f)=>{ ctx.save(); ctx.translate(ox,oy); f(); ctx.translate(-ox,-oy); drawStrips(ctx,V,S,horiz,'rgba(31,157,85,0.20)','rgba(31,157,85,0.7)'); ctx.restore(); };
+    const p2=clamp(th2.x/Math.PI,0,1), p3=clamp(th3.x/Math.PI,0,1), p4=clamp(th4.x/Math.PI,0,1);
+    if(p2>0.002) fl(()=>ctx.scale(Math.cos(th2.x),1));
+    if(p4>0.002) fl(()=>ctx.scale(1,Math.cos(th4.x)));
+    if(p3>0.002) fl(()=>ctx.rotate(th3.x));
+    drawStrips(ctx,V,S,horiz,'rgba(31,157,85,0.34)',COL.green,hi);
+    // outline: dashed full, solid for each folded quadrant
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.4; ctx.globalAlpha=0.35; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.ellipse(ox,oy,rx,ry,0,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    [1,p2,p3,p4].forEach((al,i)=>{ if(al<0.01) return; ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=COL.blue; ctx.lineWidth=3.4; ctx.beginPath(); ctx.ellipse(ox,oy,rx,ry,0,arcs[i][0]*Math.PI,arcs[i][1]*Math.PI); ctx.stroke(); ctx.restore(); });
+    // semi-axes, drawn over the figure
+    line(ctx,ox,oy,ox+rx,oy,COL.yellow,3.4); textAt(ctx,(ell?'a = ':'a = ')+fmt(aT,1),ox+rx/2,oy+18,{align:'center',size:12.5,weight:700,color:COL.yellow});
+    if(ell){ line(ctx,ox,oy,ox,oy-ry,COL.yellow,3.4); textAt(ctx,'b = '+fmt(bT,1),ox+8,oy-ry/2,{size:12.5,weight:700,color:COL.yellow}); }
+    // numbers
+    let quarter=0;
+    if(!horiz){ const dx=aT/n; for(let i=0;i<n;i++){ const xm=(i+0.5)*dx; quarter+=bT*Math.sqrt(Math.max(0,1-(xm/aT)*(xm/aT)))*dx; } }
+    else { const dy=bT/n; for(let i=0;i<n;i++){ const ym=(i+0.5)*dy; quarter+=aT*Math.sqrt(Math.max(0,1-(ym/bT)*(ym/bT)))*dy; } }
+    const exact=Math.PI*aT*bT, qn=1+p2+p3+p4, counted=quarter*qn, want=exact*qn/4;
+    hudBox(ctx,V.left+12,V.top+10,ell?176:190,ell?66:70);
+    textAt(ctx,'Area counted',V.left+24,V.top+30,{size:11.5,weight:600,color:COL.muted});
+    textAt(ctx,fmt(counted,2),V.left+24,V.top+58,{size:19,weight:700,color:COL.green});
+    textAt(ctx,'= '+fmt(qn,1)+' × ¼',V.left+(ell?112:124),V.top+58,{size:12,weight:700,color:COL.muted});
+    $('#r1').textContent=fmt(quarter,3); $('#r2').textContent=fmt(counted,3); $('#r3').textContent=fmt(exact,3); $('#r4').textContent=fmt(Math.abs(counted-want),3);
+    const p=presets[cur], ok=Math.abs(aT-p.a)<0.05&&(!ell||Math.abs(bT-p.b)<0.05);
+    $('#r5').textContent=ok?p.ref:'—';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

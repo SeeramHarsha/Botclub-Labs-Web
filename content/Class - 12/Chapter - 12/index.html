@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 4 — Atoms | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚛️</div>
+    <div>
+      <div class="chip">Grade 12 Physics · Part 2 · Ch 4</div>
+      <h1>Atoms</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Electron · α-particle</span>
+      <span><i style="background:var(--f-green)"></i>Allowed · Stable</span>
+      <span><i style="background:var(--f-red)"></i>Nucleus · Force</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">4.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 PHYSICS — PART 2 — CHAPTER 4: ATOMS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Nothing here is ever a still picture: electrons orbit, α-particles curve, photons travel.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+
+/* ---------------------------------------------------------------------
+   CHAPTER-4 HELPERS — hydrogen energy levels, spectrum strip, photons
+   --------------------------------------------------------------------- */
+const HC = 1239.84;                                   // h·c in eV·nm
+const En = n => -13.6/(n*n);                          // eV
+const lamNm = (ni,nf) => HC/(13.6*(1/(nf*nf)-1/(ni*ni)));
+const SERIES = {1:'Lyman', 2:'Balmer', 3:'Paschen', 4:'Brackett', 5:'Pfund'};
+const GREEK = ['α','β','γ','δ','ε','ζ'];
+
+function wl2rgb(w){
+  let r=0,g=0,b=0;
+  if(w>=380&&w<440){ r=-(w-440)/60; b=1; }
+  else if(w<490){ g=(w-440)/50; b=1; }
+  else if(w<510){ g=1; b=-(w-510)/20; }
+  else if(w<580){ r=(w-510)/70; g=1; }
+  else if(w<645){ r=1; g=-(w-645)/65; }
+  else { r=1; }
+  let f=1; if(w<420) f=0.35+0.65*(w-380)/40; else if(w>700) f=0.35+0.65*(780-w)/80;
+  f=clamp(f,0.35,1);
+  return 'rgb('+[r,g,b].map(v=>Math.round(255*Math.pow(clamp(v*f,0,1),0.8))).join(',')+')';
+}
+function lineColor(l){ if(l<380) return '#8a4dff'; if(l>760) return '#c4301c'; return wl2rgb(l); }
+/* piece-wise axis: UV (log) | visible (linear) | IR (linear) */
+function lamToF(l){
+  if(l<380) return 0.22*Math.log(Math.max(l,85)/85)/Math.log(380/85);
+  if(l<=760) return 0.22+0.52*(l-380)/380;
+  return 0.74+0.26*Math.min(1,(l-760)/(1950-760));
+}
+function fToLam(f){
+  if(f<0.22) return 85*Math.exp(f/0.22*Math.log(380/85));
+  if(f<=0.74) return 380+(f-0.22)/0.52*380;
+  return 760+(f-0.74)/0.26*1190;
+}
+function addSpecLine(arr,lam,add){
+  let L=arr.find(q=>Math.abs(q.lam-lam)<0.05);
+  if(!L){ L={lam,k:0.35}; arr.push(L); }
+  L.k=Math.min(1,L.k+(add||0.3));
+}
+function spectrumStrip(ctx,x,y,w,h,lines,mode){
+  ctx.save(); rrect(ctx,x,y,w,h,8); ctx.clip();
+  if(mode==='emit'){ ctx.fillStyle='#0f2640'; ctx.fillRect(x,y,w,h); }
+  else for(let px=0;px<w;px+=3){ const l=fToLam(px/w); ctx.fillStyle=l<380?'#dccff7':l>760?'#f6d6d0':wl2rgb(l); ctx.fillRect(x+px,y,3.6,h); }
+  lines.forEach(L=>{
+    const px=x+lamToF(L.lam)*w, col=lineColor(L.lam);
+    if(mode==='emit'){ ctx.fillStyle=col; ctx.globalAlpha=0.16*L.k; ctx.fillRect(px-6,y,12,h); ctx.globalAlpha=0.3+0.7*L.k; ctx.fillRect(px-1.5,y,3,h); ctx.globalAlpha=1; }
+    else { ctx.fillStyle='rgba(15,38,64,'+(0.55+0.45*L.k).toFixed(2)+')'; ctx.fillRect(px-1.6,y,3.2,h); }
+  });
+  ctx.restore();
+  rrect(ctx,x,y,w,h,8); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+  [0.22,0.74].forEach(f=>line(ctx,x+f*w,y,x+f*w,y+h,'rgba(129,149,171,0.8)',1.2,[4,4]));
+  textAt(ctx,'ultraviolet',x+0.11*w,y-6,{align:'center',size:11,weight:700,color:'#8a4dff'});
+  textAt(ctx,'visible',x+0.48*w,y-6,{align:'center',size:11,weight:700,color:COL.ink});
+  textAt(ctx,'infrared',x+0.87*w,y-6,{align:'center',size:11,weight:700,color:COL.red});
+  const s=lines.slice().sort((a,b)=>a.lam-b.lam); let last=-99;
+  s.forEach(L=>{ const px=x+lamToF(L.lam)*w; if(px-last>36){ textAt(ctx,Math.round(L.lam)+' nm',px,y+h+16,{align:'center',size:10.5,weight:600,color:COL.ink}); last=px; } });
+}
+function nucleus(ctx,x,y,r){ circ(ctx,x,y,r,COL.red,'#fbe3de',2); line(ctx,x-r*0.5,y,x+r*0.5,y,COL.red,1.6); line(ctx,x,y-r*0.5,x,y+r*0.5,COL.red,1.6); }
+function electron(ctx,x,y,r){ circ(ctx,x,y,r,COL.blue,'#e6f1fc',2); line(ctx,x-r*0.5,y,x+r*0.5,y,COL.blue,1.8); }
+/* travelling wave packet: head at (x,y), moving along angle ang */
+function photonPacket(ctx,x,y,ang,lam,alpha,len){
+  const lp=Math.max(4,lam*0.05); len=len||150; const col=lineColor(lam);
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.globalAlpha=alpha===undefined?1:alpha; ctx.lineJoin='round'; ctx.beginPath();
+  for(let s=0;s<=len;s+=2){ const env=Math.sin(Math.PI*s/len), py=env*10*Math.sin(2*Math.PI*s/lp); s?ctx.lineTo(-s,py):ctx.moveTo(0,py); }
+  ctx.stroke(); ctx.restore();
+}
+/* energy ladder; returns y of a given level */
+function ladder(ctx,x0,x1,yTop,yBot,opts){
+  opts=opts||{}; const Y=E=>yTop+(-E/13.6)*(yBot-yTop);
+  line(ctx,x0-6,yTop,x1+6,yTop,COL.mid,1.6,[5,4]);
+  textAt(ctx,'n = ∞   0 eV',x0-8,yTop-7,{size:11,weight:600,color:COL.muted});
+  for(let n=1;n<=6;n++){
+    const y=Y(En(n)), on=opts.on?opts.on(n):false;
+    line(ctx,x0,y,x1,y,on?COL.green:COL.ink,on?3:2.2);
+    if(n<=3) textAt(ctx,'n = '+n+'   '+fmt(En(n),2)+' eV',x0-8,y+(n===1?-6:-5),{size:11,weight:700,color:on?COL.green:COL.ink});
+    else textAt(ctx,'n='+n,Math.min(x1+8+(n-4)*34,(ctx.canvas._w||900)-34),y+4,{size:10,weight:700,color:on?COL.green:COL.muted});
+  }
+  return Y;
+}
+function playBtnLabel(btn,txt){ btn.textContent=txt; }
+
+/* =====================================================================
+   4.1 GEIGER–MARSDEN: ALPHA PARTICLES HITTING GOLD FOIL
+   Coulomb force F = (1/4πε0)(2e)(Ze)/r² integrated for every particle.
+   Nuclear model: point nucleus.  Plum pudding: uniform sphere (F ∝ r inside).
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Atom model</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="R">Nuclear</button><button class="toggle-btn" data-m="T">Plum pudding</button></div></div>
+    <div class="control-group"><label>Detector angle <span class="val" id="aV"></span></label><input type="range" id="aR" min="-160" max="160" step="1" value="30"></div>
+    <div class="control-group"><label>Beam rate <span class="val" id="rV"></span></label><input type="range" id="rR" min="2" max="40" step="1" value="12">
+      <div class="toggle-group"><button class="toggle-btn play" id="burst">▶ Fire 60</button><button class="toggle-btn" id="clr">Reset</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Fired</div><div class="rval" id="r1">0</div></div>
+      <div class="rcard"><div class="rlabel">At detector</div><div class="rval" id="r4" style="color:var(--f-yellow)">0</div></div>
+      <div class="rcard"><div class="rlabel">Straight (&lt;10°)</div><div class="rval" id="r2" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Bounced (&gt;90°)</div><div class="rval" id="r3" style="color:var(--f-red)">—</div></div></div>
+      <p class="hint">Atoms drawn far bigger than real.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR'), rR=$('#rR');
+  const V0=380, D0=2.5, KK=0.5*V0*V0*D0, S=62, RA=29, CX=420, CY=300, RD=270, RS=60;
+  let model='R', parts=[], hist=new Array(24).fill(0), tot=0, small=0, big=0, det=0, flashes=[], acc=0, queue=0, t=0;
+  const phi={x:30};
+  function reset(){ parts=[]; hist.fill(0); tot=small=big=det=0; flashes=[]; }
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ model=b.dataset.m; reset(); });
+  $('#clr').onclick=reset; $('#burst').onclick=()=>{ queue+=60; };
+  const spawn=()=>parts.push({x:100,y:CY+(Math.random()*2-1)*100,vx:V0,vy:0,age:0,inside:false,tr:[]});
+  function accel(x,y){
+    let ax=0,ay=0;
+    for(let j=-4;j<=4;j++){
+      const dx=x-CX, dy=y-(CY+j*S), r2=dx*dx+dy*dy, r=Math.sqrt(r2)||1e-3; let F;
+      if(model==='R') F=KK/Math.max(r2,4)*Math.exp(-(r*r)/(RS*RS));
+      else F= r<RA ? KK*r/(RA*RA*RA) : 0;
+      ax+=F*dx/r; ay+=F*dy/r;
+    }
+    return [ax,ay];
+  }
+  function step(p,dt){
+    let rem=dt,n=0;
+    while(rem>1e-6&&n<900){ n++;
+      let rm=1e9; for(let j=-4;j<=4;j++) rm=Math.min(rm,Math.hypot(p.x-CX,p.y-(CY+j*S)));
+      const sp=Math.hypot(p.vx,p.vy)+1, h=Math.min(rem,Math.max(2e-5,Math.min(0.01,0.04*rm/sp)));
+      let a=accel(p.x,p.y); p.vx+=a[0]*h*0.5; p.vy+=a[1]*h*0.5; p.x+=p.vx*h; p.y+=p.vy*h;
+      a=accel(p.x,p.y); p.vx+=a[0]*h*0.5; p.vy+=a[1]*h*0.5; rem-=h;
+    }
+  }
+  function finish(p){
+    const dev=Math.atan2(-p.vy,p.vx)*180/Math.PI;
+    tot++; if(Math.abs(dev)<10) small++; if(Math.abs(dev)>90) big++;
+    hist[clamp(Math.floor((dev+180)/15),0,23)]++;
+    if(Math.abs(dev-phi.x)<=4){ det++; flashes.push({a:phi.x,age:0}); }
+  }
+  animLoop(dt=>{
+    t+=dt; const rate=+rR.value; $('#rV').textContent=rate+' /s';
+    phi.x=approach(phi.x,+aR.value,9,dt); $('#aV').textContent=aR.value+'°';
+    acc+=dt*rate+(queue>0?dt*40:0); if(queue>0) queue=Math.max(0,queue-dt*40);
+    while(acc>=1){ acc-=1; spawn(); }
+    parts=parts.filter(p=>{
+      p.age+=dt; step(p,dt); p.tr.push([p.x,p.y]); if(p.tr.length>28) p.tr.shift();
+      const d=Math.hypot(p.x-CX,p.y-CY); if(d<RD) p.inside=true;
+      if((p.inside&&d>RD)||p.age>9||p.x<-60){ finish(p); return false; } return true;
+    });
+    flashes.forEach(f=>f.age+=dt); flashes=flashes.filter(f=>f.age<0.7);
+    $('#r1').textContent=tot; $('#r4').textContent=det;
+    $('#r2').textContent=tot?fmt(100*small/tot,0)+' %':'—'; $('#r3').textContent=tot?fmt(100*big/tot,1)+' %':'—';
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const s=Math.min(w/1000,h/600); ctx.save(); ctx.translate((w-1000*s)/2,(h-600*s)/2); ctx.scale(s,s);
+    // source + lead collimator
+    rect(ctx,14,CY-100,46,200,COL.ink,'#f6f9fc',2.2); textAt(ctx,'α source',37,CY+122,{align:'center',size:12,weight:700});
+    rect(ctx,60,CY-150,40,52,COL.ink,'#dbe4f0',2.2); rect(ctx,60,CY+98,40,52,COL.ink,'#dbe4f0',2.2);
+    // foil atoms
+    for(let j=-4;j<=4;j++){
+      const ay=CY+j*S;
+      if(model==='R'){
+        ctx.save(); ctx.setLineDash([3,4]); circ(ctx,CX,ay,RA,COL.mid,null,1.1); ctx.restore();
+        nucleus(ctx,CX,ay,3.2);
+        const a=t*(1.7+0.15*((j+4)%3))+j; electron(ctx,CX+Math.cos(a)*RA*0.82,ay+Math.sin(a)*RA*0.82,3);
+      } else {
+        circ(ctx,CX,ay,RA,COL.red,'#fdeeea',1.6);
+        for(let q=0;q<4;q++){ const a=q*1.57+j+Math.sin(t*3+q+j)*0.25, rr=RA*(0.42+0.18*(q%2)); electron(ctx,CX+Math.cos(a)*rr,ay+Math.sin(a)*rr,3); }
+      }
+    }
+    textAt(ctx,'gold foil',CX,14,{align:'center',size:12,weight:700});
+    // detector
+    const a=phi.x*Math.PI/180, dx=Math.cos(a), dy=-Math.sin(a);
+    ctx.save(); ctx.setLineDash([2,6]); circ(ctx,CX,CY,RD,'#c2d1e5',null,1.2); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=7; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(CX,CY,RD,-a-0.06,-a+0.06); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(CX+dx*(RD+4),CY+dy*(RD+4)); ctx.rotate(Math.atan2(dy,dx)); rect(ctx,0,-8,38,16,COL.ink,'#fff',2); circ(ctx,40,0,5,COL.ink,'#f6f9fc',2); ctx.restore();
+    textAt(ctx,'ZnS screen + microscope',CX+dx*(RD+52),CY+dy*(RD+52)+(dy>0?14:-6),{align:dx>0?'left':'right',size:11,weight:600,color:COL.green});
+    // particles
+    parts.forEach(p=>{
+      const dev=Math.abs(Math.atan2(-p.vy,p.vx)*180/Math.PI), col=dev>90?COL.red:dev>10?COL.yellow:COL.blue;
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.beginPath(); p.tr.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.restore();
+      circ(ctx,p.x,p.y,3.4,col,col,1);
+    });
+    flashes.forEach(f=>{ const fx=CX+dx*RD, fy=CY+dy*RD, r=8+f.age*40; ctx.save(); ctx.globalAlpha=1-f.age/0.7; for(let q=0;q<8;q++){ const aa=q*Math.PI/4; line(ctx,fx+Math.cos(aa)*4,fy+Math.sin(aa)*4,fx+Math.cos(aa)*r,fy+Math.sin(aa)*r,COL.yellow,2.4); } ctx.restore(); });
+    // key
+    [['straight',COL.blue],['slight bend',COL.yellow],['bounced back',COL.red]].forEach((k,i)=>{ line(ctx,748,26+i*20,780,26+i*20,k[1],3); textAt(ctx,k[0],788,30+i*20,{size:11.5,weight:600,color:COL.muted}); });
+    // histogram of scattering angles (log scale)
+    const hx=722,hy=392,hw=260,hh=170; rect(ctx,hx,hy,hw,hh,COL.border,'#fff',1.4);
+    textAt(ctx,'counts at each angle',hx+hw/2,hy+16,{align:'center',size:11.5,weight:700});
+    const mx=Math.max(1,...hist), bw=hw/24, bin=clamp(Math.floor((phi.x+180)/15),0,23);
+    hist.forEach((c,i)=>{ const bh=Math.log10(1+c)/Math.log10(1+mx)*(hh-52); if(bh>0.5) rect(ctx,hx+i*bw+1,hy+hh-24-bh,bw-2,bh,i===bin?COL.yellow:COL.blue,i===bin?COL.yellow:COL.blue,0); });
+    line(ctx,hx+6,hy+hh-24,hx+hw-6,hy+hh-24,COL.ink,1.6);
+    [-180,-90,0,90,180].forEach(v=>{ const px=hx+(v+180)/360*hw; line(ctx,px,hy+hh-24,px,hy+hh-19,COL.ink,1.4); textAt(ctx,v+'°',px,hy+hh-6,{align:'center',size:10,weight:600,color:COL.muted}); });
+    ctx.restore();
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.2 IMPACT PARAMETER AND DISTANCE OF CLOSEST APPROACH
+   Head-on: K = (1/4πε0)(2e)(Ze)/d  →  d = 2Ze²/(4πε0 K) = 2·Z·1.44 MeV·fm / K
+   Check (Example 12.2): Z = 79, K = 7.7 MeV → d ≈ 29.6 fm ≈ 3.0×10⁻¹⁴ m.
+   Orbit shape: tan(θ/2) = d/2b ;  r_min = (d/2)(1+√(1+(2b/d)²))
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Target nucleus</label>
+      <div class="toggle-group" id="zB"><button class="toggle-btn active" data-z="79" data-a="197">Gold</button><button class="toggle-btn" data-z="29" data-a="63">Copper</button><button class="toggle-btn" data-z="13" data-a="27">Aluminium</button></div></div>
+    <div class="control-group"><label>α energy K <span class="val" id="kV"></span></label><input type="range" id="kR" min="1" max="10" step="0.1" value="7.7"></div>
+    <div class="control-group"><label>Impact parameter b <span class="val" id="bV"></span></label><input type="range" id="bR" min="0" max="120" step="1" value="25">
+      <button class="toggle-btn navy" id="again">↻ Fire again</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Head-on d</div><div class="rval" id="r1" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Closest r</div><div class="rval" id="r2" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Bend θ (sim)</div><div class="rval" id="r3" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">θ = 2tan⁻¹(d/2b)</div><div class="rval" id="r4">—</div></div></div>
+      <p class="hint" id="nH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), kR=$('#kR'), bR=$('#bR');
+  let Z=79, A=197, P=null, trail=[], minR=1e9, minPt=null, done=false, hold=0, lastKey='', fired=0, E0=1;
+  toggleWire(wrap.querySelectorAll('#zB button'),b=>{ Z=+b.dataset.z; A=+b.dataset.a; P=null; });
+  $('#again').onclick=()=>{ P=null; };
+  const V0=300;
+  animLoop(dt=>{
+    const K=+kR.value, b=+bR.value; $('#kV').textContent=fmt(K,1)+' MeV'; $('#bV').textContent=b+' fm';
+    const dfm=2*Z*1.44/K, Rn=1.04*Math.cbrt(A);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/300,h/290), cx=w*0.56, cy=h*0.5, dpx=dfm*sc, kk=0.5*V0*V0*dpx;
+    const key=[Z,K,b,sc.toFixed(2)].join('|'); if(key!==lastKey){ lastKey=key; P=null; }
+    if(!P){ P={x:-30,y:cy-b*sc,vx:V0,vy:0}; trail=[]; minR=1e9; minPt=null; done=false; hold=0; E0=0.5*V0*V0; }
+    if(!done){
+      let rem=dt,n=0;
+      while(rem>1e-6&&n<900){ n++;
+        const r=Math.max(Math.hypot(P.x-cx,P.y-cy),0.5), sp=Math.hypot(P.vx,P.vy)+1, hh=Math.min(rem,Math.max(2e-5,Math.min(0.01,0.03*r/sp)));
+        const acc=()=>{ const dx=P.x-cx, dy=P.y-cy, r2=Math.max(dx*dx+dy*dy,0.25), rr=Math.sqrt(r2); return [kk/r2*dx/rr,kk/r2*dy/rr]; };
+        let a=acc(); P.vx+=a[0]*hh/2; P.vy+=a[1]*hh/2; P.x+=P.vx*hh; P.y+=P.vy*hh; a=acc(); P.vx+=a[0]*hh/2; P.vy+=a[1]*hh/2; rem-=hh;
+        { const rc=Math.hypot(P.x-cx,P.y-cy); if(rc<minR){ minR=rc; minPt=[P.x,P.y]; } }
+      }
+      trail.push([P.x,P.y]); if(trail.length>1400) trail.shift();
+      if(P.x>w+40||P.x<-60||P.y<-40||P.y>h+40) done=true;
+    } else { hold+=dt; if(hold>1.8) P=null; }
+    if(!P) return;
+    const dist=Math.hypot(P.x-cx,P.y-cy), spd=Math.hypot(P.vx,P.vy);
+    // axis + impact-parameter line
+    line(ctx,0,cy,w,cy,'#dbe4f0',1.4,[6,6]);
+    line(ctx,0,cy-b*sc,cx+60,cy-b*sc,COL.yellow,1.8,[7,5]);
+    if(b>0){ dimArrow(ctx,cx-48,cy-b*sc,cy,COL.yellow); textAt(ctx,'b',cx-60,cy-b*sc/2+4,{align:'right',size:14,weight:700,color:COL.yellow}); }
+    // head-on distance circle
+    ctx.save(); ctx.setLineDash([4,5]); circ(ctx,cx,cy,dpx,COL.green,null,1.6); ctx.restore();
+    textAt(ctx,'d',cx+dpx*0.72+4,cy+dpx*0.72+12,{size:13,weight:700,color:COL.green});
+    // nucleus to scale
+    circ(ctx,cx,cy,Math.max(5,Rn*sc),COL.red,'#fbe3de',2.4); line(ctx,cx-4,cy,cx+4,cy,COL.red,2); line(ctx,cx,cy-4,cx,cy+4,COL.red,2);
+    textAt(ctx,'nucleus (true size)',cx,cy+Math.max(5,Rn*sc)+16,{align:'center',size:11,weight:600,color:COL.red});
+    // trajectory
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.beginPath(); trail.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.restore();
+    // closest approach marker
+    if(minPt&&done||(minPt&&dist>minR*1.08)){ line(ctx,cx,cy,minPt[0],minPt[1],COL.green,2.2); circ(ctx,minPt[0],minPt[1],4,COL.green,COL.green,1); textAt(ctx,"r min",(cx+minPt[0])/2+8,(cy+minPt[1])/2-6,{size:11.5,weight:700,color:COL.green}); }
+    // alpha particle + vectors
+    circ(ctx,P.x,P.y,5,COL.blue,'#e6f1fc',2.4);
+    const ux=(P.x-cx)/(dist||1), uy=(P.y-cy)/(dist||1), F=clamp(70*Math.pow(dpx/Math.max(dist,1),2),0,120);
+    if(F>3) vec(ctx,P.x,P.y,P.x+ux*F,P.y+uy*F,COL.red,3);
+    const vl=60*spd/V0; if(vl>3) vec(ctx,P.x,P.y,P.x+P.vx/spd*vl,P.y+P.vy/spd*vl,COL.blue,2.6);
+    textAt(ctx,'force',P.x+ux*F+(ux>=0?6:-6),P.y+uy*F+4,{size:11,weight:700,color:COL.red,align:ux>=0?'left':'right'});
+    // energy bar: K + U = constant
+    const Kf=clamp(0.5*spd*spd/E0,0,1), bx=16, by=16, bw=180;
+    textAt(ctx,'K + U  =  constant',bx,by+10,{size:11.5,weight:700});
+    rect(ctx,bx,by+16,bw,16,COL.ink,'#fff',1.6); ctx.fillStyle=COL.blue; ctx.fillRect(bx,by+16,bw*Kf,16); ctx.fillStyle=COL.red; ctx.fillRect(bx+bw*Kf,by+16,bw*(1-Kf),16);
+    textAt(ctx,'K',bx+6,by+29,{size:11,weight:700,color:'#fff'}); textAt(ctx,'U',bx+bw-6,by+29,{size:11,weight:700,color:'#fff',align:'right'});
+    // outcome
+    const th=Math.atan2(Math.abs(P.vy),P.vx)*180/Math.PI;
+    const thF=b===0?180:2*Math.atan(dfm/(2*b))*180/Math.PI, rminF=dfm/2*(1+Math.sqrt(1+Math.pow(2*b/dfm,2)));
+    if(done){
+      const ang=Math.atan2(-Math.abs(P.vy),P.vx)*(P.vy>0?-1:1);
+      line(ctx,cx,cy,cx+Math.cos(Math.atan2(P.vy,P.vx))*160,cy+Math.sin(Math.atan2(P.vy,P.vx))*160,COL.green,1.8,[3,5]);
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(cx,cy,56,Math.min(0,Math.atan2(P.vy,P.vx)),Math.max(0,Math.atan2(P.vy,P.vx))); ctx.stroke(); ctx.restore();
+      textAt(ctx,'θ = '+fmt(th,0)+'°',cx+70*Math.cos(Math.atan2(P.vy,P.vx)/2),cy+70*Math.sin(Math.atan2(P.vy,P.vx)/2)+4,{size:13,weight:700,color:COL.green});
+    }
+    $('#r1').textContent=fmt(dfm,1)+' fm'; $('#r2').textContent=minR<1e8?fmt(minR/sc,1)+' fm':'—';
+    $('#r3').textContent=done?fmt(th,0)+'°':'…'; $('#r4').textContent=fmt(thF,0)+'°';
+    $('#nH').textContent='Nucleus radius ≈ '+fmt(Rn,1)+' fm — '+(rminF>Rn+1.7?'α never touches it.':'α reaches the nucleus!');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.3 WHY THE PLANETARY ATOM COLLAPSES
+   Larmor radiation: r(t) = r0 (1 − t/T)^(1/3),  T = r0³ / (4 re² c)
+   Check (Example 12.4): r = 0.529 Å → f = v/2πr = 6.6×10¹⁵ Hz,  T ≈ 16 ps
+   Real time is compressed ≈ 5×10¹¹ times so the collapse takes 9 s on screen.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Atom model</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="C">Classical</button><button class="toggle-btn" data-m="B">Bohr</button></div></div>
+    <div class="control-group"><label>Start radius r₀ <span class="val" id="rV"></span></label><input type="range" id="rR" min="0.3" max="1" step="0.01" value="0.53">
+      <button class="toggle-btn navy" id="rel">↺ Release electron</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Radius r</div><div class="rval" id="r1" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">f emitted</div><div class="rval" id="r2" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Energy E</div><div class="rval" id="r3" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Collapse in</div><div class="rval" id="r4">—</div></div></div>
+      <p class="hint">f in 10¹⁵ Hz · screen time slowed ≈ 5×10¹¹</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), rR=$('#rR');
+  let mode='C', tau=0, phi=0, revs=0, rings=[], hold=0, t=0;
+  const restart=()=>{ tau=0; phi=0; revs=0; rings=[]; hold=0; };
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ mode=b.dataset.m; rR.disabled=mode==='B'; restart(); });
+  $('#rel').onclick=restart; rR.oninput=restart;
+  const A0=0.529, FREF=6.58;
+  animLoop(dt=>{
+    t+=dt; const r0=mode==='B'?A0:+rR.value; $('#rV').textContent=fmt(r0,2)+' Å';
+    if(mode==='C'){ if(tau<1) tau=Math.min(1,tau+dt/9); else { hold+=dt; if(hold>2.6) restart(); } }
+    const r=mode==='C'?r0*Math.cbrt(Math.max(0,1-tau)):r0, rr=Math.max(r,0.03);
+    const fNow=FREF*Math.pow(A0/rr,1.5);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.3, cy=h*0.5, Rmax=Math.min(h*0.42,w*0.26);
+    const Rpx=Math.max(r*Rmax,mode==='C'&&tau>=1?0:13);
+    const om=Math.min(2*Math.PI*0.8*Math.pow(A0/rr,1.5),2*Math.PI*7)*(mode==='B'?1:1);
+    if(!(mode==='C'&&tau>=1)) phi+=om*dt;
+    if(mode==='C'&&tau<1&&Math.floor(phi/(2*Math.PI))>revs){ revs=Math.floor(phi/(2*Math.PI)); rings.push({r:Rpx,age:0,f:fNow}); }
+    rings.forEach(q=>{ q.age+=dt; q.r+=230*dt; }); rings=rings.filter(q=>q.age<1.9);
+    // emitted waves
+    rings.forEach(q=>{ ctx.save(); ctx.globalAlpha=Math.max(0,1-q.age/1.9)*0.9; ctx.strokeStyle=mixCol(COL.red,'#7a3ce0',clamp((q.f-6.6)/30,0,1)); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,q.r,0,Math.PI*2); ctx.stroke(); ctx.restore(); });
+    // orbit + atom
+    ctx.save(); ctx.setLineDash([4,5]); circ(ctx,cx,cy,Math.max(Rpx,1),mode==='B'?COL.green:COL.mid,null,mode==='B'?2.6:1.2); ctx.restore();
+    nucleus(ctx,cx,cy,9);
+    const ex=cx+Math.cos(phi)*Rpx, ey=cy+Math.sin(phi)*Rpx, collapsed=mode==='C'&&tau>=1;
+    if(collapsed){ const fa=Math.max(0,1-hold/0.8); circ(ctx,cx,cy,12+hold*60,COL.red,null,2); ctx.save(); ctx.globalAlpha=fa; circ(ctx,cx,cy,18,COL.yellow,'#fff6d8',2); ctx.restore(); textAt(ctx,'Atom collapsed ✗',cx,cy+Rmax+30,{align:'center',size:16,weight:700,color:COL.red}); }
+    else { // electron + vectors
+      electron(ctx,ex,ey,8);
+      const tx=-Math.sin(phi), ty=Math.cos(phi); vec(ctx,ex,ey,ex+tx*46,ey+ty*46,COL.blue,2.6); vec(ctx,ex,ey,ex-Math.cos(phi)*34,ey-Math.sin(phi)*34,COL.red,2.4);
+      if(mode==='B') textAt(ctx,'stationary orbit — no radiation',cx,cy+Rmax+30,{align:'center',size:14,weight:700,color:COL.green});
+      else textAt(ctx,'radiates → loses energy → spirals in',cx,cy+Rmax+30,{align:'center',size:14,weight:700,color:COL.red});
+    }
+    // graph f(t)
+    const gx=w*0.58, gy=h*0.1, gw=w*0.38, gh=h*0.38, FM=40;
+    textAt(ctx,'frequency of emitted light',gx,gy-12,{size:12,weight:700});
+    line(ctx,gx,gy,gx,gy+gh,COL.ink,1.8); line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.ink,1.8);
+    [0,10,20,30,40].forEach(v=>{ const y=gy+gh-v/FM*gh; line(ctx,gx-4,y,gx,y,COL.ink,1.4); textAt(ctx,v+'',gx-8,y+4,{align:'right',size:10,weight:600,color:COL.muted}); });
+    textAt(ctx,'time →',gx+gw,gy+gh+16,{align:'right',size:11,weight:600,color:COL.muted});
+    if(mode==='C'){
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.beginPath();
+      for(let i=0;i<=120;i++){ const u=i/120*tau, rU=Math.max(r0*Math.cbrt(Math.max(0,1-u)),0.03), f=FREF*Math.pow(A0/rU,1.5), yy=gy+gh-Math.min(f,FM)/FM*gh; const xx=gx+u*gw; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); if(f>=FM) break; }
+      ctx.stroke(); ctx.restore();
+      circ(ctx,gx+tau*gw,gy+gh-Math.min(fNow,FM)/FM*gh,5,COL.red,'#fff',2.2);
+    } else { line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.green,3.4); textAt(ctx,'no emission',gx+gw/2,gy+gh-10,{align:'center',size:12,weight:700,color:COL.green}); }
+    // spectrum smear
+    const sx=gx, sy=h*0.66, sw=gw, sh=26;
+    textAt(ctx,mode==='C'?'light seen: a smear of every colour':'light seen: none (atom is stable)',sx,sy-10,{size:12,weight:700});
+    rect(ctx,sx,sy,sw,sh,COL.ink,'#f6f9fc',1.8);
+    if(mode==='C'){ const fr=clamp(Math.log(Math.max(fNow,6.58)/6.58)/Math.log(FM/6.58),0,1)*sw+2; ctx.save(); ctx.beginPath(); ctx.rect(sx,sy,fr,sh); ctx.clip(); const g=ctx.createLinearGradient(sx,0,sx+sw,0); g.addColorStop(0,'#d9432b'); g.addColorStop(0.25,'#d9a017'); g.addColorStop(0.5,'#1f9d55'); g.addColorStop(0.75,'#2f8fe0'); g.addColorStop(1,'#7a3ce0'); ctx.fillStyle=g; ctx.fillRect(sx,sy,sw,sh); ctx.restore(); }
+    textAt(ctx,'real atoms show sharp lines only',sx,sy+sh+18,{size:11,weight:600,color:COL.muted});
+    // readouts
+    $('#r1').textContent=collapsed?'≈ 0':fmt(r,2)+' Å'; $('#r2').textContent=mode==='B'?'none':collapsed?'∞':fmt(fNow,1);
+    $('#r3').textContent=collapsed?'−∞':fmt(-13.6*A0/rr,1)+' eV';
+    const Tps=Math.pow(r0*1e-10,3)/(4*Math.pow(2.818e-15,2)*2.998e8)*1e12;
+    $('#r4').textContent=mode==='B'?'never':fmt(Tps,0)+' ps';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.4 BOHR ORBITS AND ENERGY LEVELS
+   rₙ = n²·a₀ (a₀ = 0.529 Å)   vₙ = 2.19×10⁶/n m/s   Eₙ = −13.6/n² eV   L = n·h/2π
+   Check (Example 12.3): n = 1 → r = 5.3×10⁻¹¹ m, v = 2.2×10⁶ m/s.
+   Orbit spin is shown time-compressed (ω ∝ n^−1.5); readouts are exact.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Orbit number n <span class="val" id="nV"></span></label><input type="range" id="nR" min="1" max="6" step="1" value="1">
+      <button class="toggle-btn navy" id="ion">⚡ Knock the electron out</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Radius rₙ</div><div class="rval" id="r1" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Speed vₙ</div><div class="rval" id="r2" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Energy Eₙ</div><div class="rval" id="r3">—</div></div>
+      <div class="rcard"><div class="rlabel">Ang. momentum</div><div class="rval" id="r4">—</div></div></div>
+      <p class="hint" id="kuH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nR=$('#nR');
+  const nEl={x:1,v:0}; let goal=1, z=7, ang=0, ion=0, photons=[], t=0, pend=null;
+  nR.oninput=()=>{
+    const n=+nR.value; if(ion>0||pend) { nR.value=goal; return; }
+    if(n>goal){ photons.push({x:-20,dir:1,lam:lamNm(n,goal),age:0,mode:'in'}); pend={n,t:0.55}; }
+    else if(n<goal){ photons.push({x:0,dir:1,lam:lamNm(goal,n),age:0,mode:'out'}); goal=n; }
+  };
+  $('#ion').onclick=()=>{ if(ion<=0&&!pend) ion=2.6; };
+  animLoop(dt=>{
+    t+=dt; if(pend){ pend.t-=dt; if(pend.t<=0){ goal=pend.n; pend=null; } }
+    if(ion>0) ion-=dt;
+    springTo(nEl,ion>0?22:goal,26,2*Math.sqrt(26),dt);
+    const nEff=clamp(nEl.x,0.9,30), n=goal;
+    $('#nV').textContent=nR.value;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.31, cy=h*0.5, Rv=Math.min(w*0.25,h*0.42);
+    z=approach(z,Rv/(n*n),4.5,dt);
+    ang+=dt*2*Math.PI*0.9/Math.pow(nEff,1.5);
+    // orbits
+    for(let m=1;m<=6;m++){ const R=z*m*m, on=m===n; ctx.save(); if(!on) ctx.setLineDash([3,6]); circ(ctx,cx,cy,R,on?COL.green:'#c2d1e5',null,on?3:1.2); ctx.restore();
+      if(cy-R>16) textAt(ctx,'n='+m,cx,cy-R-5,{align:'center',size:11,weight:700,color:on?COL.green:COL.mid}); }
+    nucleus(ctx,cx,cy,Math.min(6,Math.max(3,z*0.5)));
+    const R=z*nEff*nEff, ex=cx+Math.cos(ang)*R, ey=cy+Math.sin(ang)*R;
+    if(ion<=0||R<w){
+      electron(ctx,ex,ey,7);
+      if(ion<=0){ const tl=Math.max(14,58/nEff), fl=Math.max(12,62/(nEff*nEff));
+        vec(ctx,ex,ey,ex-Math.sin(ang)*tl,ey+Math.cos(ang)*tl,COL.blue,2.6); vec(ctx,ex,ey,ex-Math.cos(ang)*fl,ey-Math.sin(ang)*fl,COL.red,2.4);
+        textAt(ctx,'v',ex-Math.sin(ang)*(tl+8),ey+Math.cos(ang)*(tl+8),{size:12,weight:700,color:COL.blue,align:'center'});
+        textAt(ctx,'F',ex-Math.cos(ang)*(fl+9),ey-Math.sin(ang)*(fl+9)+4,{size:12,weight:700,color:COL.red,align:'center'}); }
+    }
+    // photons
+    photons.forEach(p=>{ p.age+=dt; const sp=380; p.x+=sp*dt; });
+    photons=photons.filter(p=>p.x<w+160);
+    photons.forEach(p=>{ if(p.mode==='in'){ const hx=Math.min(p.x,cx); if(p.x-150<cx) { ctx.save(); ctx.beginPath(); ctx.rect(0,0,cx,h); ctx.clip(); photonPacket(ctx,p.x,cy,0,p.lam,1); ctx.restore(); } }
+      else { photonPacket(ctx,cx+p.x,cy,0,p.lam,Math.max(0,1-p.x/(w*0.55))); } });
+    photons=photons.filter(p=>!(p.mode==='in'&&p.x-150>cx));
+    // energy ladder
+    const lx0=w*0.64, lx1=w*0.84, yT=h*0.14, yB=h*0.86;
+    textAt(ctx,'energy levels',lx0-8,yT-28,{size:12,weight:700});
+    const Y=ladder(ctx,lx0,lx1,yT,yB,{on:m=>m===n});
+    const Em=-13.6/(nEff*nEff), my=Y(Math.min(Em,0));
+    circ(ctx,(lx0+lx1)/2,my,7,COL.blue,'#e6f1fc',2.4);
+    if(ion>0){ vec(ctx,(lx0+lx1)/2,Y(En(n)),(lx0+lx1)/2,yT+8,COL.yellow,3); textAt(ctx,'+'+fmt(13.6/(n*n),2)+' eV → free',(lx0+lx1)/2+12,(yT+Y(En(n)))/2,{size:11.5,weight:700,color:COL.yellow}); }
+    // readouts
+    $('#r1').textContent=fmt(0.529*n*n,2)+' Å'; $('#r2').textContent=fmt(2.19/n,2)+'×10⁶ m/s';
+    $('#r3').textContent=fmt(-13.6/(n*n),2)+' eV'; $('#r4').textContent=n+' h/2π';
+    $('#kuH').textContent='K = +'+fmt(13.6/(n*n),2)+' eV · U = −'+fmt(27.2/(n*n),2)+' eV · free it with '+fmt(13.6/(n*n),2)+' eV';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.5 PHOTON EMISSION AND ABSORPTION — HYDROGEN LINE SPECTRUM
+   hν = E_i − E_f = 13.6(1/n_f² − 1/n_i²) eV,   λ = 1239.84 / ΔE  (nm)
+   Check: 3→2 gives 656 nm (Hα red);  1→4 absorbs 12.75 eV, 97.3 nm, 3.08×10¹⁵ Hz
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Light</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="emit">Emission</button><button class="toggle-btn" data-m="abs">Absorption</button></div></div>
+    <div class="control-group"><label>Upper level nᵢ <span class="val" id="iV"></span></label><input type="range" id="iR" min="2" max="6" step="1" value="3">
+      <label style="margin-top:8px;">Lower level n_f <span class="val" id="fV"></span></label><input type="range" id="fR" min="1" max="5" step="1" value="2">
+      <div class="toggle-group" id="sB"><button class="toggle-btn small" data-f="1">Lyman</button><button class="toggle-btn small" data-f="2">Balmer</button><button class="toggle-btn small" data-f="3">Paschen</button></div></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="fire">⚡ Fire</button><button class="toggle-btn" id="all">All lines</button><button class="toggle-btn" id="clr">Clear</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Photon energy</div><div class="rval" id="r1" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Wavelength</div><div class="rval" id="r2">—</div></div>
+      <div class="rcard"><div class="rlabel">Frequency</div><div class="rval" id="r3">—</div></div>
+      <div class="rcard"><div class="rlabel">Line</div><div class="rval" id="r4" style="color:var(--f-green)">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), iR=$('#iR'), fR=$('#fR');
+  let mode='emit', photons=[], lines={emit:[],abs:[]}, queue=[], qT=0, decay=null, lastTr=null, t=0, absQ=[];
+  const el={x:3,v:0}; let elT=3;
+  function sync(){ let ni=+iR.value, nf=+fR.value; fR.max=ni-1; if(nf>ni-1){ nf=ni-1; fR.value=nf; } return [ni,nf]; }
+  function idleTarget(){ const [ni,nf]=sync(); elT=mode==='emit'?ni:nf; }
+  iR.oninput=idleTarget; fR.oninput=idleTarget;
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ mode=b.dataset.m; photons=[]; queue=[]; decay=null; absQ=[]; idleTarget(); });
+  wrap.querySelectorAll('#sB button').forEach(b=>b.onclick=()=>{ let nf=+b.dataset.f; if(+iR.value<=nf) iR.value=nf+1; sync(); fR.value=nf; idleTarget(); });
+  $('#clr').onclick=()=>{ lines={emit:[],abs:[]}; };
+  $('#all').onclick=()=>{ if(mode!=='emit') return; queue=[]; for(let ni=2;ni<=6;ni++) for(let nf=1;nf<ni;nf++) queue.push([ni,nf]); qT=0; };
+  function emit(ni,nf){ const lam=lamNm(ni,nf); elT=nf; lastTr={ni,nf,age:0,lam};
+    photons.push({x:0,y:0,ang:0,sp:420,lam,kind:'out',alpha:1,done:()=>addSpecLine(lines.emit,lam,0.3)}); }
+  $('#fire').onclick=()=>{
+    const [ni,nf]=sync();
+    if(mode==='emit'){ el.x=ni; el.v=0; emit(ni,nf); }
+    else { const lam=lamNm(ni,nf); elT=nf; lastTr={ni,nf,age:0,lam};
+      photons.push({x:null,y:0,ang:Math.PI,sp:420,lam:lam>760?lam/1.35:lam*1.35,kind:'decoy',alpha:1});
+      absQ.push({t:0.75,lam,ni,nf}); }
+  };
+  animLoop(dt=>{
+    t+=dt; const [ni,nf]=sync(); $('#iV').textContent=ni; $('#fV').textContent=nf;
+    if(queue.length){ qT-=dt; if(qT<=0){ const [a,b]=queue.shift(); el.x=a; el.v=0; emit(a,b); qT=0.55; } }
+    absQ.forEach(q=>{ q.t-=dt; });
+    absQ=absQ.filter(q=>{ if(q.t<=0){ photons.push({x:null,y:0,ang:Math.PI,sp:420,lam:q.lam,kind:'abs',alpha:1,ni:q.ni,nf:q.nf}); return false; } return true; });
+    if(decay){ decay.t-=dt; if(decay.t<=0){ elT=decay.nf; const a=(Math.random()<0.5?-1:1)*(0.9+Math.random()*0.8); photons.push({x:0,y:0,ang:a,sp:200,lam:decay.lam,kind:'scatter',alpha:0.45}); decay=null; } }
+    springTo(el,elT,32,2*Math.sqrt(32),dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.52, cy=h*0.33, Ha=Math.min(h*0.3,w*0.2);
+    const Rn=n=>Ha*(0.12+0.88*(n-1)/5);
+    // atom
+    for(let n=1;n<=6;n++){ ctx.save(); ctx.setLineDash([3,6]); circ(ctx,cx,cy,Rn(n),'#c2d1e5',null,1.1); ctx.restore(); }
+    nucleus(ctx,cx,cy,7);
+    const nE=clamp(el.x,1,6), R=Rn(nE); const ang=t*2*Math.PI*0.8/Math.pow(nE,1.5);
+    electron(ctx,cx+Math.cos(ang)*R,cy+Math.sin(ang)*R,7);
+    textAt(ctx,'orbit sizes not to scale',cx,cy+Ha+22,{align:'center',size:10.5,weight:600,color:COL.mid});
+    // lamp
+    if(mode==='abs'){ const lx=w-64; rect(ctx,lx,cy-22,40,44,COL.ink,'#fff',2.2); circ(ctx,lx+20,cy,9,COL.yellow,'#fff6d8',2.2); for(let q=0;q<5;q++){ const a=-0.6+q*0.3; line(ctx,lx,cy,lx-16,cy+Math.sin(a)*18,COL.yellow,1.6); } textAt(ctx,'white light',lx+20,cy+40,{align:'center',size:11,weight:700}); }
+    // photons
+    photons.forEach(p=>{
+      if(p.x===null){ p.x=w+20; }
+      const dir=Math.cos(p.ang)>=0?1:-1;
+      if(p.kind==='out'){ p.x+=p.sp*dt; }
+      else if(p.kind==='scatter'){ p.x+=Math.cos(p.ang)*p.sp*dt; p.y+=Math.sin(p.ang)*p.sp*dt; p.alpha-=dt*0.35; }
+      else { p.x-=p.sp*dt; }
+      if(p.kind==='abs'&&!p.hit&&p.x<=cx){ p.hit=true; elT=p.ni; lastTr={ni:p.ni,nf:p.nf,age:0,lam:p.lam}; addSpecLine(lines.abs,p.lam,0.3); decay={t:1.9,nf:p.nf,lam:p.lam}; }
+    });
+    photons=photons.filter(p=>{
+      if(p.kind==='out'){ if(p.x-150>w-cx){ if(p.done) p.done(); return false; } return true; }
+      if(p.kind==='scatter') return p.alpha>0;
+      if(p.kind==='abs') return p.x+150>cx; return p.x>-170;
+    });
+    photons.forEach(p=>{
+      ctx.save();
+      if(p.kind==='abs'){ ctx.beginPath(); ctx.rect(cx,0,w,h); ctx.clip(); }
+      if(p.kind==='out'){ photonPacket(ctx,cx+p.x,cy,0,p.lam,1); }
+      else if(p.kind==='scatter'){ photonPacket(ctx,cx+p.x,cy+p.y,p.ang,p.lam,Math.max(0,p.alpha),90); }
+      else { photonPacket(ctx,p.x,cy,Math.PI,p.lam,1); }
+      ctx.restore();
+    });
+    if(lastTr) lastTr.age+=dt;
+    // ladder
+    const lx0=w*0.1, lx1=w*0.24, yT=h*0.08, yB=h*0.58;
+    const Y=ladder(ctx,lx0,lx1,yT,yB,{on:n=>lastTr&&(n===lastTr.ni||n===lastTr.nf)&&lastTr.age<2.2});
+    if(lastTr&&lastTr.age<2.2){ const xm=(lx0+lx1)/2+6, up=mode==='abs'; ctx.save(); ctx.globalAlpha=1-lastTr.age/2.2;
+      if(up) vec(ctx,xm,Y(En(lastTr.nf)),xm,Y(En(lastTr.ni))+2,lineColor(lastTr.lam),3.2); else vec(ctx,xm,Y(En(lastTr.ni)),xm,Y(En(lastTr.nf))-2,lineColor(lastTr.lam),3.2); ctx.restore(); }
+    circ(ctx,(lx0+lx1)/2-14,Y(Math.min(-13.6/(nE*nE),0)),6,COL.blue,'#e6f1fc',2.2);
+    // spectrum
+    const sx=w*0.06, sw=w*0.88, sh=Math.max(38,h*0.1), sy=h*0.76;
+    textAt(ctx,mode==='emit'?'emission spectrum — bright lines':'absorption spectrum — dark lines',sx,sy-24,{size:12.5,weight:700});
+    spectrumStrip(ctx,sx,sy,sw,sh,lines[mode],mode);
+    // readouts
+    const dE=13.6*(1/(nf*nf)-1/(ni*ni)), lam=HC/dE;
+    $('#r3').textContent=fmt(dE*0.2418,3)+'×10¹⁵ Hz';
+    $('#r4').textContent=SERIES[nf]+' '+(GREEK[ni-nf-1]||'');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.6 DE BROGLIE STANDING WAVES ON A BOHR ORBIT
+   2π rₙ = nλ  ⇒  m v rₙ = n h/2π.   For a Coulomb orbit 2πr/λ = √(r/a₀).
+   Many laps of the wave add up: amplitude = |sin(Nπn)/(N sin πn)| (N = 8)
+   — it survives only when n is a whole number.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Orbit radius r <span class="val" id="rV"></span></label><input type="range" id="nR" min="1" max="5.5" step="0.01" value="2">
+      <div class="toggle-group" id="cB"><button class="toggle-btn small" data-n="1">n=1</button><button class="toggle-btn small" data-n="2">n=2</button><button class="toggle-btn small" data-n="3">n=3</button><button class="toggle-btn small" data-n="4">n=4</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Waves in orbit</div><div class="rval" id="r1" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Wavelength λ</div><div class="rval" id="r2">—</div></div>
+      <div class="rcard"><div class="rlabel">Wave survives</div><div class="rval" id="r3">—</div></div>
+      <div class="rcard"><div class="rlabel">Orbit allowed?</div><div class="rval" id="r4">—</div></div></div>
+      <p class="hint">2πr = nλ  →  L = n h/2π</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nR=$('#nR');
+  const cur={x:2,v:0}; let ang=0, t=0;
+  wrap.querySelectorAll('#cB button').forEach(b=>b.onclick=()=>{ nR.value=b.dataset.n; });
+  animLoop(dt=>{
+    t+=dt; springTo(cur,+nR.value,60,2*Math.sqrt(60),dt);
+    const n=clamp(cur.x,1,5.5), N=8;
+    const amp=Math.abs(Math.sin(N*Math.PI*n)/(N*Math.sin(Math.PI*n)+1e-9)), A=n%1<1e-6?1:Math.min(1,amp);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.38, cy=h*0.46, base=Math.min(h*0.36,w*0.26), R=base*(0.5+0.5*(n*n-1)/(5.5*5.5-1)), wa=Math.min(30,R*0.28);
+    circ(ctx,cx,cy,R,'#dbe4f0',null,1.2); nucleus(ctx,cx,cy,8);
+    // one lap of the wave: seam is visible when n isn't whole
+    const ph=t*5;
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.55; ctx.lineWidth=1.6; ctx.beginPath();
+    for(let i=0;i<=360;i++){ const th=i/360*2*Math.PI, rr=R+wa*0.55*Math.sin(n*th-ph); const x=cx+Math.cos(th)*rr, y=cy+Math.sin(th)*rr; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke(); ctx.restore();
+    // N laps added → surviving wave
+    const ok=Math.abs(n-Math.round(n))<0.03;
+    ctx.save(); ctx.strokeStyle=ok?COL.green:COL.red; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.beginPath();
+    for(let i=0;i<=360;i++){
+      const th=i/360*2*Math.PI; let sRe=0; for(let j=0;j<N;j++) sRe+=Math.sin(n*th+2*Math.PI*j*n);
+      const rr=R+wa*(sRe/N)*Math.cos(t*4); const x=cx+Math.cos(th)*rr, y=cy+Math.sin(th)*rr; i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.stroke(); ctx.restore();
+    // electron riding the orbit
+    ang+=dt*2*Math.PI*0.35/Math.pow(n,1.5); electron(ctx,cx+Math.cos(ang)*R,cy+Math.sin(ang)*R,6.5);
+    // seam marker
+    line(ctx,cx+R-wa-6,cy,cx+R+wa+6,cy,COL.yellow,1.6,[3,3]);
+    textAt(ctx,'start / finish',cx+R+wa+10,cy+4,{size:11,weight:600,color:COL.yellow});
+    // unrolled string: first lap laid out straight
+    const ux=w*0.06, uw=w*0.88, uy=h*0.88, ua=h*0.055;
+    textAt(ctx,'one trip round the orbit, unrolled',ux,uy-ua-14,{size:12,weight:700});
+    line(ctx,ux,uy,ux+uw,uy,'#dbe4f0',1.2);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath(); for(let i=0;i<=300;i++){ const x=ux+i/300*uw, y=uy-ua*Math.sin(2*Math.PI*n*i/300); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore();
+    const endY=uy-ua*Math.sin(2*Math.PI*n);
+    circ(ctx,ux,uy,4.5,COL.green,'#fff',2); circ(ctx,ux+uw,endY,4.5,ok?COL.green:COL.red,'#fff',2);
+    if(!ok) { line(ctx,ux+uw+10,uy,ux+uw+10,endY,COL.red,2.4); textAt(ctx,'gap',ux+uw+14,(uy+endY)/2+4,{size:11,weight:700,color:COL.red}); }
+    // survival meter
+    const mx=w*0.8, my=h*0.1, mw=22, mh=h*0.52;
+    textAt(ctx,'wave left',mx+mw/2,my-18,{align:'center',size:11.5,weight:700});
+    rect(ctx,mx,my,mw,mh,COL.ink,'#fff',2); const am=ok?1:A; ctx.fillStyle=ok?COL.green:COL.red; ctx.fillRect(mx,my+mh*(1-am),mw,mh*am);
+    textAt(ctx,fmt(am*100,0)+'%',mx+mw/2,my+mh+18,{align:'center',size:12,weight:700,color:ok?COL.green:COL.red});
+    // readouts
+    $('#rV').textContent=fmt(0.529*n*n,2)+' Å'; $('#r1').textContent=fmt(n,2); $('#r2').textContent=fmt(0.332*n,2)+' nm';
+    $('#r3').textContent=fmt(am*100,0)+' %'; $('#r4').textContent=ok?'Yes · n = '+Math.round(n):'No';
+    $('#r4').style.color=ok?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.7 BOMBARDING HYDROGEN WITH ELECTRONS  (Exercise 12.7: 12.5 eV)
+   An electron of energy E can lift an atom to level n only if
+   13.6(1 − 1/n²) ≤ E.  The excited atom then falls back, emitting lines.
+   12.5 eV → n = 3 → Lyman 102.6 & 121.6 nm, Balmer 656.3 nm.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Electron energy <span class="val" id="eV"></span></label><input type="range" id="eR" min="0" max="13.5" step="0.05" value="12.5">
+      <div class="toggle-group" id="pB"><button class="toggle-btn small" data-e="9">9 eV</button><button class="toggle-btn small" data-e="10.3">10.3</button><button class="toggle-btn small" data-e="12.5">12.5</button><button class="toggle-btn small" data-e="13.3">13.3</button></div>
+      <button class="toggle-btn navy" id="clr">Clear spectrum</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Highest level</div><div class="rval" id="r1" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Possible lines</div><div class="rval" id="r2">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Needed to reach n = 2</div><div class="rval" id="r3" style="color:var(--f-red)">10.2 eV</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), eR=$('#eR');
+  let atoms=[], els=[], rings=[], lines=[], acc=0, t=0, built=false;
+  wrap.querySelectorAll('#pB button').forEach(b=>b.onclick=()=>{ eR.value=b.dataset.e; });
+  $('#clr').onclick=()=>{ lines=[]; };
+  for(let r=0;r<3;r++) for(let c=0;c<5;c++) atoms.push({u:(c+0.8)/5.4+(r%2)*0.05,v:(r+0.6)/3.3,n:1,rn:{x:1,v:0},tm:0,ph:Math.random()*6.28});
+  const nmaxOf=E=>{ let m=1; for(let n=2;n<=6;n++) if(13.6*(1-1/(n*n))<=E+1e-9) m=n; return m; };
+  animLoop(dt=>{
+    t+=dt; const Eb=+eR.value, nmax=nmaxOf(Eb); $('#eV').textContent=fmt(Eb,2)+' eV';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tx=w*0.3, tw=w*0.67, ty=h*0.06, th=h*0.52;
+    // spawn electrons
+    acc+=dt*4; while(acc>=1){ acc-=1; const a=(Math.random()-0.5)*0.16; els.push({x:tx-6,y:ty+14+Math.random()*(th-28),vx:300*Math.cos(a),vy:300*Math.sin(a),E:Eb,hit:new Set(),sp:1}); }
+    // electrons
+    els=els.filter(e=>{
+      e.x+=e.vx*dt; e.y+=e.vy*dt;
+      if(e.y<ty+4){ e.y=ty+4; e.vy=Math.abs(e.vy); } if(e.y>ty+th-4){ e.y=ty+th-4; e.vy=-Math.abs(e.vy); }
+      atoms.forEach((A,i)=>{
+        const ax=tx+A.u*tw, ay=ty+A.v*th;
+        if(!e.hit.has(i)&&Math.hypot(e.x-ax,e.y-ay)<22){
+          e.hit.add(i); const sp=Math.hypot(e.vx,e.vy);
+          if(A.n===1&&e.E>=10.2-1e-9){
+            const cand=[]; for(let m=2;m<=nmaxOf(e.E);m++) cand.push([m,1/Math.pow(m,3)]);
+            let tot=cand.reduce((s,c)=>s+c[1],0), r=Math.random()*tot, m=cand[0][0]; for(const c of cand){ r-=c[1]; if(r<=0){ m=c[0]; break; } }
+            A.n=m; A.tm=0.8+Math.random()*0.5; e.E-=13.6*(1-1/(m*m));
+            const na=Math.atan2(e.vy,e.vx)+(Math.random()-0.5)*1.2, ns=Math.max(70,300*Math.sqrt(Math.max(e.E,0.05)/Math.max(Eb,0.1)));
+            e.vx=Math.cos(na)*ns; e.vy=Math.sin(na)*ns; e.sp=0.5;
+          } else { const na=Math.random()*Math.PI*2; e.vx=Math.cos(na)*sp; e.vy=Math.sin(na)*sp; e.bounce=0.35; }
+        }
+      });
+      return e.x<tx+tw&&e.x>tx-30;
+    });
+    // atoms decay
+    atoms.forEach(A=>{
+      if(A.n>1){ A.tm-=dt; if(A.tm<=0){ const nf=1+Math.floor(Math.random()*(A.n-1)), lam=lamNm(A.n,nf);
+        rings.push({x:tx+A.u*tw,y:ty+A.v*th,r:10,age:0,lam}); addSpecLine(lines,lam,0.18); A.n=nf; A.tm=0.7+Math.random()*0.4; } }
+      springTo(A.rn,A.n,36,2*Math.sqrt(36),dt);
+    });
+    rings.forEach(q=>{ q.age+=dt; q.r+=90*dt; }); rings=rings.filter(q=>q.age<0.9);
+    // tube + gun
+    rect(ctx,tx,ty,tw,th,COL.ink,'#f9fbfd',2.4); rect(ctx,tx-34,ty+th/2-22,34,44,COL.ink,'#dbe4f0',2.2);
+    textAt(ctx,'e⁻ gun',tx-17,ty+th/2+40,{align:'center',size:11,weight:700}); textAt(ctx,'hydrogen gas',tx+tw-6,ty+th+16,{align:'right',size:11,weight:600,color:COL.muted});
+    // atoms
+    atoms.forEach(A=>{
+      const ax=tx+A.u*tw, ay=ty+A.v*th, R=7+4.6*(A.rn.x-1), ex=ax+Math.cos(t*(3/Math.pow(Math.max(A.rn.x,1),1.5))+A.ph)*R, ey=ay+Math.sin(t*(3/Math.pow(Math.max(A.rn.x,1),1.5))+A.ph)*R;
+      if(A.n>1) { ctx.save(); ctx.globalAlpha=0.25; circ(ctx,ax,ay,R+8,COL.yellow,'#fff3c4',1); ctx.restore(); }
+      ctx.save(); ctx.setLineDash([3,4]); circ(ctx,ax,ay,R,A.n>1?COL.yellow:COL.mid,null,1.3); ctx.restore();
+      nucleus(ctx,ax,ay,3.6); electron(ctx,ex,ey,2.8);
+    });
+    rings.forEach(q=>{ ctx.save(); ctx.globalAlpha=1-q.age/0.9; circ(ctx,q.x,q.y,q.r,lineColor(q.lam),null,2.6); ctx.restore(); });
+    els.forEach(e=>{ const a=Math.atan2(e.vy,e.vx); line(ctx,e.x,e.y,e.x-Math.cos(a)*16,e.y-Math.sin(a)*16,COL.blue,2); circ(ctx,e.x,e.y,4,COL.blue,'#e6f1fc',2); });
+    // ladder with reach line
+    const lx0=w*0.1, lx1=w*0.2, yT=h*0.08, yB=h*0.58;
+    const Y=ladder(ctx,lx0,lx1,yT,yB,{on:n=>n>1&&13.6*(1-1/(n*n))<=Eb+1e-9});
+    const yb=Y(Math.min(-13.6+Eb,0)); line(ctx,lx0-14,yb,lx1+14,yb,COL.yellow,2.6,[6,4]);
+    textAt(ctx,'beam reaches here',lx0-14,yb-6+(yb<yT+16?20:0),{size:10.5,weight:700,color:COL.yellow});
+    for(let n=1;n<=6;n++){ const c=atoms.filter(A=>A.n===n).length; for(let q=0;q<c;q++) circ(ctx,lx1+10+q*7,Y(En(n))-5,2.6,COL.blue,COL.blue,1); }
+    // spectrum
+    const sx=w*0.06, sw=w*0.88, sh=Math.max(38,h*0.1), sy=h*0.76;
+    textAt(ctx,'light from the gas — lines appear as atoms relax',sx,sy-24,{size:12.5,weight:700});
+    spectrumStrip(ctx,sx,sy,sw,sh,lines,'emit');
+    $('#r1').textContent=nmax>1?'n = '+nmax:'none'; $('#r2').textContent=nmax>1?(nmax*(nmax-1)/2)+'':'0';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'4.1', title:'Gold-Foil Scattering', desc:'Fire α-particles · count where they land', build: buildA1 },
+  { num:'4.2', title:'Closest Approach', desc:'Aim the α · find d and the bend angle', build: buildA2 },
+  { num:'4.3', title:'The Collapsing Atom', desc:'Why the planetary atom cannot be stable', build: buildA3 },
+  { num:'4.4', title:'Bohr Orbits', desc:'Pick n · radius, speed and energy', build: buildA4 },
+  { num:'4.5', title:'Spectral Lines', desc:'Photons in and out · build the spectrum', build: buildA5 },
+  { num:'4.6', title:'de Broglie Waves', desc:'The orbit must hold a whole number of waves', build: buildA6 },
+  { num:'4.7', title:'Electron Bombardment', desc:'Choose the energy · see which lines glow', build: buildA7 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 3 — Dual Nature of Radiation and Matter | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:40px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:170px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:360px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚛</div>
+    <div>
+      <div class="chip">Grade 12 · Part 2 · Ch 3</div>
+      <h1>Dual Nature of Radiation and Matter</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>Light · what you change</span>
+      <span><i style="background:var(--f-blue)"></i>Electrons · measured</span>
+      <span><i style="background:var(--f-green)"></i>Accelerating · collected</span>
+      <span><i style="background:var(--f-red)"></i>Retarding · work function</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">11.3</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — PART 2 — CHAPTER 3: DUAL NATURE OF RADIATION AND MATTER
+   Every activity runs a continuous animation loop. Sliders/buttons only set
+   a TARGET; the drawn world eases, springs or integrates toward it every
+   frame. Electrons are integrated with the real equation of motion in the
+   tube's uniform field (accelerate, decelerate, turn back); needles are
+   spring-dampers; photons arrive one at a time.
+   Verified against the textbook's worked examples (see bottom of file).
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#dde5ee'};
+const H_EV = 4.135667e-15;      // Planck constant, eV s
+const H_J  = 6.626e-34;         // Planck constant, J s
+const E_CH = 1.602e-19;         // electron charge, C
+const METALS = [
+  {id:'Cs', name:'Caesium', phi:2.14, col:COL.red},
+  {id:'Na', name:'Sodium',  phi:2.75, col:COL.yellow},
+  {id:'Zn', name:'Zinc',    phi:4.30, col:COL.green},
+  {id:'Cu', name:'Copper',  phi:4.70, col:COL.blue}
+];
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function sci(x,d){
+  if(!x) return '0'; d=d===undefined?2:d;
+  let e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e);
+  if(Number(m.toFixed(d))>=10){ m/=10; e++; }
+  const sup={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  return m.toFixed(d)+'×10'+String(e).split('').map(c=>sup[c]).join('');
+}
+function panelBox(ctx,x,y,w,h){ ctx.save(); rrect(ctx,x,y,w,h,10); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle='#dbe4f0'; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore(); }
+/* wavelength (nm) → drawable colour; IR dull brown, UV violet */
+function lightCol(nu){ // nu in 1e14 Hz
+  const l=3000/nu;
+  if(l>750) return '#a05a4a'; if(l<380) return '#7b3ff2';
+  let r,g,b;
+  if(l<440){r=(440-l)/60;g=0;b=1;} else if(l<490){r=0;g=(l-440)/50;b=1;} else if(l<510){r=0;g=1;b=(510-l)/20;}
+  else if(l<580){r=(l-510)/70;g=1;b=0;} else if(l<645){r=1;g=(645-l)/65;b=0;} else {r=1;g=0;b=0;}
+  const k=0.86; return 'rgb('+Math.round(r*255*k)+','+Math.round(g*205*k)+','+Math.round(b*255*k)+')';
+}
+const bandName = nu => { const l=3000/nu; return l<380?'Ultraviolet':l>750?'Infrared':'Visible'; };
+
+/* graph frame: returns mapping functions */
+function plotFrame(ctx,x,y,w,h,o){
+  const L=40,B=30,T=22,R=14, px=x+L, py=y+T, pw=w-L-R, ph=h-T-B; panelBox(ctx,x,y,w,h);
+  const X=v=>px+(v-o.x0)/(o.x1-o.x0)*pw, Y=v=>py+ph-(v-o.y0)/(o.y1-o.y0)*ph;
+  ctx.save();
+  (o.yt||[]).forEach(v=>{ line(ctx,px,Y(v),px+pw,Y(v),COL.grid,1); textAt(ctx,fmt(v,o.yd||0),px-6,Y(v)+4,{size:10,color:COL.muted,align:'right'}); });
+  (o.xt||[]).forEach(v=>{ line(ctx,X(v),py,X(v),py+ph,COL.grid,1); textAt(ctx,fmt(v,o.xd||0),X(v),py+ph+14,{size:10,color:COL.muted,align:'center'}); });
+  const ax=(o.x0<0&&o.x1>0)?X(0):px, ay=(o.y0<0&&o.y1>0)?Y(0):py+ph;
+  line(ctx,px,ay,px+pw,ay,COL.ink,1.6); line(ctx,ax,py,ax,py+ph,COL.ink,1.6);
+  textAt(ctx,o.xl,px+pw,py+ph+27,{size:11,weight:600,color:COL.ink,align:'right'});
+  textAt(ctx,o.yl,x+10,y+15,{size:11,weight:600,color:COL.ink});
+  ctx.restore();
+  return {X,Y,px,py,pw,ph};
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){ const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now; tick(dt); raf = requestAnimationFrame(frame); }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+const approach = (cur,tgt,rate,dt)=> cur + (tgt-cur)*(1-Math.exp(-rate*dt));
+function springTo(st,target,k,damping,dt){ st.v += ((target-st.x)*k - st.v*damping)*dt; st.x += st.v*dt; return st.x; }
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); }); }
+
+/* ---------------------------------------------------------------------
+   0c. PHOTOELECTRIC TUBE — shared by 11.3, 11.4.1, 11.4.2, 11.4.3
+   Physics inside the tube (energies in eV, lengths in gap units d=1):
+     electron leaves C with K0 at angle θ;  normal KE  Kn = K0 cos²θ
+     uniform field:  x'' = C0²·V/2   (V>0 accelerates toward A)
+   → with V<0 an electron reaches A only if Kn > |V|; otherwise it
+     decelerates, stops and falls back to C. At V = −Kmax the current is 0.
+   --------------------------------------------------------------------- */
+const C0 = 1.1, LAT = 0.12;
+const SAMP = (()=>{ const R=rng(11), a=[]; for(let i=0;i<360;i++) a.push([Math.pow(R(),0.8), 0.94*Math.sqrt(R()), R()-0.5, R()<0.5?-1:1]); return a; })();
+function collected(Kmax,V,s,Hu){
+  const K0=Kmax*s[0], sn=s[1], Kn=K0*(1-sn*sn);
+  const vx0=C0*Math.sqrt(Kn), a=C0*C0*V/2, disc=vx0*vx0+2*a;
+  if(disc<=0) return false;
+  const sq=Math.sqrt(disc), T=Math.abs(a)<1e-9? 1/Math.max(vx0,1e-6) : (sq-vx0)/a;
+  if(!(T>0)) return false;
+  const y=s[2]*Hu + s[3]*LAT*C0*Math.sqrt(K0)*sn*T;
+  return Math.abs(y)<=Hu;
+}
+const FCACHE={};
+function fTable(Kmax,Hu){
+  const key=Math.round(Kmax*200)+'_'+Math.round(Hu*1000);
+  if(FCACHE[key]) return FCACHE[key];
+  if(Object.keys(FCACHE).length>60) for(const k in FCACHE) delete FCACHE[k];
+  const t=[]; for(let i=0;i<=120;i++){ const V=-6+i*0.1; let n=0; if(Kmax>0) for(const s of SAMP) if(collected(Kmax,V,s,Hu)) n++; t.push(n/SAMP.length); }
+  return FCACHE[key]=t;
+}
+function fOf(tab,V){ const i=(clamp(V,-6,6)+6)/0.1, i0=Math.floor(i), i1=Math.min(120,i0+1); return lerp(tab[i0],tab[i1],i-i0); }
+
+function newTube(){ return {ph:[],el:[],flash:[],dots:[],acc:0,nI:{x:0,v:0},nV:{x:0,v:0},bat:1,dist:200,t:0}; }
+function tubeLayout(w,h){
+  const L={tx:w*0.05, tw:w*0.90, ty:h*0.22, th:h*0.32};
+  L.cy=L.ty+L.th/2; L.Cx=L.tx+L.tw*0.12; L.Ax=L.tx+L.tw*0.88; L.d=L.Ax-L.Cx;
+  L.H=L.th*0.40; L.Hu=L.H/L.d; L.hu=L.th/2/L.d;
+  L.yw=h*0.64; L.rm=Math.min(h*0.046,30);
+  L.xb=L.Cx+L.d*0.18; L.xa=L.Cx+L.d*0.40; L.yv=h*0.82;
+  L.n1=L.Cx+L.d*0.05; L.n2=L.xa+L.rm+14; L.xv=(L.n1+L.n2)/2;
+  const an=1.0; L.u={x:Math.cos(an),y:-Math.sin(an)}; L.n={x:Math.sin(an),y:Math.cos(an)};
+  L.bw=L.H*0.26;
+  L.panel={x:w*0.52,y:h*0.685,w:w*0.465,h:h*0.30};
+  return L;
+}
+function drawDial(ctx,x,y,r,frac,label,tickLabels){
+  circ(ctx,x,y,r,COL.ink,'#fff',2.4);
+  const piv={x:x,y:y+r*0.5};
+  for(let i=0;i<=6;i++){ const a=-Math.PI/2+(i/6-0.5)*1.9; line(ctx,piv.x+Math.cos(a)*r*0.72,piv.y+Math.sin(a)*r*0.72,piv.x+Math.cos(a)*r*0.86,piv.y+Math.sin(a)*r*0.86,COL.muted,1.2); }
+  const a=-Math.PI/2+(clamp(frac,-0.05,1.05)-0.5)*1.9;
+  line(ctx,piv.x,piv.y,piv.x+Math.cos(a)*r*0.82,piv.y+Math.sin(a)*r*0.82,COL.blue,2.4);
+  circ(ctx,piv.x,piv.y,2.6,COL.ink,COL.ink,1);
+  textAt(ctx,label,x,y+r*0.9,{size:Math.max(10,r*0.42),weight:700,align:'center',color:COL.ink});
+  if(tickLabels){ textAt(ctx,tickLabels[0],x-r*0.78,y-r*0.12,{size:8,color:COL.muted,align:'center'}); textAt(ctx,tickLabels[1],x+r*0.78,y-r*0.12,{size:8,color:COL.muted,align:'center'}); }
+}
+function drawPacket(ctx,x,y,dx,dy,len,lam,amp,col,alpha){
+  const nx=-dy, ny=dx; ctx.save(); ctx.globalAlpha=alpha===undefined?1:alpha; ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath();
+  for(let s=0;s<=len;s+=2){ const env=Math.sin(Math.PI*s/len), o=amp*env*Math.sin(2*Math.PI*s/lam); const px=x+dx*s+nx*o, py=y+dy*s+ny*o; if(s===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+  ctx.stroke(); ctx.restore();
+}
+function drawLamp(ctx,x,y,ang,col,t){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+  ctx.lineWidth=2.4; ctx.strokeStyle=COL.ink; ctx.fillStyle='#f6f9fc';
+  rrect(ctx,-34,-15,40,30,6); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(6,-15); ctx.lineTo(24,-24); ctx.lineTo(24,24); ctx.lineTo(6,15); ctx.closePath(); ctx.fill(); ctx.stroke();
+  circ(ctx,2,0,6,col,col,1.5);
+  for(let i=0;i<5;i++){ const a=(i-2)*0.34, f=0.6+0.4*Math.sin(t*9+i*1.7); line(ctx,28,0,28+Math.cos(a)*14*f,Math.sin(a)*14*f,col,2); }
+  ctx.restore();
+}
+
+/* One frame of the tube. P: {nu, phi, I(0..1), V, dist, metalCol, metalName} */
+function tubeScene(T,ctx,w,h,dt,P){
+  const L=tubeLayout(w,h); T.t+=dt;
+  const E=H_EV*P.nu*1e14, Kmax=Math.max(0,E-P.phi), emits=Kmax>0;
+  const tab=fTable(Kmax,L.Hu), fr=fOf(tab,P.V), Isat=emits?60*P.I:0, Icur=Isat*fr;
+  const lc=lightCol(P.nu), S0={x:L.Cx,y:L.cy}, u=L.u, n=L.n;
+  T.dist=approach(T.dist,P.dist,5,dt);
+  /* ---- glass tube ---- */
+  ctx.save(); rrect(ctx,L.tx,L.ty,L.tw,L.th,24); ctx.fillStyle='#f4f9fe'; ctx.fill(); ctx.lineWidth=2.6; ctx.strokeStyle=COL.ink; ctx.stroke(); ctx.restore();
+  textAt(ctx,'evacuated tube',L.tx+L.tw/2,L.ty+L.th-8,{size:10,color:COL.mid,align:'center'});
+  /* window */
+  const wx=L.Cx+(L.cy-L.ty)*u.x/-u.y, wl=L.bw*1.9+8;
+  line(ctx,wx-wl,L.ty,wx+wl,L.ty,'#9fdcf2',6); line(ctx,wx-wl,L.ty,wx+wl,L.ty,COL.ink,1.4);
+  textAt(ctx,'W',wx+wl+10,L.ty-6,{size:11,weight:700,color:COL.muted});
+  /* beam + lamp */
+  const M={x:S0.x+u.x*T.dist,y:S0.y+u.y*T.dist};
+  ctx.save(); ctx.fillStyle=lc; ctx.globalAlpha=0.07+0.10*P.I; ctx.beginPath();
+  ctx.moveTo(M.x+n.x*L.bw,M.y+n.y*L.bw); ctx.lineTo(M.x-n.x*L.bw,M.y-n.y*L.bw);
+  ctx.lineTo(S0.x-n.x*L.bw*1.9*0 + 0, S0.y-L.bw*1.89); ctx.lineTo(S0.x,S0.y+L.bw*1.89); ctx.closePath(); ctx.fill(); ctx.restore();
+  line(ctx,M.x+n.x*L.bw,M.y+n.y*L.bw,S0.x,S0.y+L.bw*1.89,lc,1.2,[5,5]); line(ctx,M.x-n.x*L.bw,M.y-n.y*L.bw,S0.x,S0.y-L.bw*1.89,lc,1.2,[5,5]);
+  const lamp={x:S0.x+u.x*(T.dist+36),y:S0.y+u.y*(T.dist+36)};
+  drawLamp(ctx,lamp.x,lamp.y,Math.atan2(-u.y,-u.x),lc,T.t);
+  textAt(ctx,'S',lamp.x+30,lamp.y-18,{size:11,weight:700,color:COL.muted});
+  /* ---- field arrows (force on electrons) ---- */
+  const fa=clamp(Math.abs(P.V)/4,0,1);
+  if(fa>0.02){ const col=P.V>0?COL.green:COL.red;
+    for(let i=-1;i<=1;i+=2){ const yy=L.cy+i*L.H*0.82, x0=P.V>0?L.Cx+L.d*0.3:L.Cx+L.d*0.7, x1=P.V>0?L.Cx+L.d*0.7:L.Cx+L.d*0.3;
+      ctx.save(); ctx.globalAlpha=0.25+0.55*fa; vec(ctx,x0,yy,x1,yy,col,2.4); ctx.restore(); } }
+  /* ---- plates ---- */
+  const sgn=P.V>=0?1:-1;
+  line(ctx,L.Cx,L.cy-L.H,L.Cx,L.cy+L.H,P.metalCol,8);
+  line(ctx,L.Ax,L.cy-L.H,L.Ax,L.cy+L.H,COL.muted,8);
+  textAt(ctx,'C',L.Cx-18,L.cy-L.H-6,{size:13,weight:700,color:P.metalCol,align:'center'});
+  textAt(ctx,'A',L.Ax+18,L.cy-L.H-6,{size:13,weight:700,color:COL.muted,align:'center'});
+  textAt(ctx,'emitter · '+P.metalName,L.Cx,L.ty+L.th+16,{size:10,color:COL.muted,align:'center'});
+  textAt(ctx,'collector',L.Ax,L.ty+L.th+16,{size:10,color:COL.muted,align:'center'});
+  const sc=Math.min(1,0.4+Math.abs(P.V));
+  textAt(ctx,sgn>0?'−':'+',L.Cx+16,L.cy+L.H+4,{size:16,weight:700,color:sgn>0?COL.blue:COL.red,align:'center',alpha:Math.abs(P.V)<0.05?0.3:1});
+  textAt(ctx,sgn>0?'+':'−',L.Ax-16,L.cy+L.H+4,{size:16,weight:700,color:sgn>0?COL.green:COL.red,align:'center',alpha:Math.abs(P.V)<0.05?0.3:1});
+  /* ---- photons: arrive one at a time ---- */
+  const rate=1.5+15*P.I; T.acc+=rate*dt;
+  const lamP=clamp(3000/P.nu/20,12,60), vph=300;
+  while(T.acc>=1){ T.acc-=1; const q=(Math.random()*2-1)*L.bw; const sp={x:M.x+n.x*q,y:M.y+n.y*q};
+    T.ph.push({x:sp.x,y:sp.y,dx:-u.x,dy:-u.y,refl:false,life:0}); }
+  T.ph=T.ph.filter(p=>{
+    p.x+=p.dx*vph*dt; p.y+=p.dy*vph*dt; p.life+=dt;
+    if(!p.refl && p.x<=L.Cx){
+      if(emits){
+        const yu=clamp((p.y-L.cy)/L.d,-L.Hu*0.55,L.Hu*0.55), K0=Kmax*Math.pow(Math.random(),0.8), sn=0.94*Math.sqrt(Math.random()), co=Math.sqrt(1-sn*sn), sg=Math.random()<0.5?-1:1;
+        T.el.push({x:0.012,y:yu,vx:C0*Math.sqrt(K0)*co,vy:sg*LAT*C0*Math.sqrt(K0)*sn,tr:[],dead:0,age:0});
+        T.flash.push({x:L.Cx,y:p.y,t:0,col:lc,kind:'ring'});
+      } else { T.flash.push({x:L.Cx,y:p.y,t:0,col:COL.red,kind:'x'}); T.ph.push({x:L.Cx,y:p.y,dx:u.x*0.98,dy:-u.y*0.98,refl:true,life:0}); }
+      return false;
+    }
+    if(p.refl && p.life>0.6) return false;
+    if(p.y<-40||p.y>h+40) return false;
+    return true;
+  });
+  T.ph.forEach(p=>{ const a=p.refl?clamp(1-p.life/0.6,0,1)*0.9:1; drawPacket(ctx,p.x,p.y,p.dx,p.dy,p.refl?lamP*1.1:lamP*2.2,lamP,p.refl?2.5:3.5,p.refl?COL.red:lc,a); });
+  /* ---- electrons: real integration ---- */
+  const acc=C0*C0*P.V/2;
+  const wirePath=[{x:L.Ax,y:L.cy+L.H},{x:L.Ax,y:L.yw},{x:L.Cx,y:L.yw},{x:L.Cx,y:L.cy+L.H}];
+  T.el=T.el.filter(e=>{
+    if(e.dead>0){ e.dead-=dt; return e.dead>0; }
+    e.age+=dt; const sub=2;
+    for(let k=0;k<sub;k++){ const d2=dt/sub; e.vx+=acc*d2; e.x+=e.vx*d2; e.y+=e.vy*d2; }
+    e.tr.push([L.Cx+e.x*L.d,L.cy+e.y*L.d]); if(e.tr.length>12) e.tr.shift();
+    if(e.x<=0 && e.vx<0){ e.dead=0.25; e.x=0; T.flash.push({x:L.Cx,y:L.cy+e.y*L.d,t:0,col:COL.red,kind:'ring'}); return true; }
+    if(e.x>=1){ e.dead=0.2; if(Math.abs(e.y)<=L.Hu){ T.dots.push({s:0}); T.flash.push({x:L.Ax,y:L.cy+e.y*L.d,t:0,col:COL.green,kind:'ring'}); } return true; }
+    if(Math.abs(e.y)>L.hu-0.01){ e.dead=0.2; return true; }
+    return true;
+  });
+  T.el.forEach(e=>{
+    const fade=e.dead>0?clamp(e.dead/0.25,0,1):1;
+    if(e.tr.length>1){ ctx.save(); ctx.globalAlpha=0.5*fade; ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.beginPath(); e.tr.forEach((p,i)=>{ if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); }); ctx.stroke(); ctx.restore(); }
+    const X=L.Cx+e.x*L.d, Y=L.cy+e.y*L.d; ctx.save(); ctx.globalAlpha=fade;
+    circ(ctx,X,Y,6,COL.blue,'#fff',2); line(ctx,X-3,Y,X+3,Y,COL.blue,1.8); ctx.restore();
+  });
+  T.flash=T.flash.filter(f=>{ f.t+=dt; if(f.t>0.45) return false; const k=f.t/0.45;
+    ctx.save(); ctx.globalAlpha=1-k; if(f.kind==='ring') circ(ctx,f.x,f.y,6+16*k,f.col,null,2); else { line(ctx,f.x-7,f.y-7,f.x+7,f.y+7,f.col,2.4); line(ctx,f.x-7,f.y+7,f.x+7,f.y-7,f.col,2.4); } ctx.restore(); return true; });
+  /* ---- external circuit ---- */
+  T.bat=approach(T.bat,sgn,7,dt);
+  const wc=COL.ink;
+  line(ctx,L.Ax,L.cy+L.H,L.Ax,L.yw,wc,2.2);
+  line(ctx,L.Ax,L.yw,L.xa+L.rm,L.yw,wc,2.2); line(ctx,L.xa-L.rm,L.yw,L.xb+10,L.yw,wc,2.2);
+  line(ctx,L.xb-10,L.yw,L.Cx,L.yw,wc,2.2); line(ctx,L.Cx,L.yw,L.Cx,L.cy+L.H,wc,2.2);
+  line(ctx,L.n1,L.yw,L.n1,L.yv,wc,1.8); line(ctx,L.n1,L.yv,L.xv-L.rm,L.yv,wc,1.8);
+  line(ctx,L.xv+L.rm,L.yv,L.n2,L.yv,wc,1.8); line(ctx,L.n2,L.yv,L.n2,L.yw,wc,1.8);
+  circ(ctx,L.n1,L.yw,3,wc,wc,1); circ(ctx,L.n2,L.yw,3,wc,wc,1);
+  /* wire electrons: one per collected electron, flowing A → meter → battery → C */
+  const total=(L.yw-(L.cy+L.H))*2+(L.Ax-L.Cx);
+  T.dots=T.dots.filter(d=>{ d.s+=dt*230; if(d.s>=total) return false;
+    let s=d.s, X,Y; const l1=L.yw-(L.cy+L.H), l2=L.Ax-L.Cx;
+    if(s<l1){X=L.Ax;Y=L.cy+L.H+s;} else if(s<l1+l2){X=L.Ax-(s-l1);Y=L.yw;} else {X=L.Cx;Y=L.yw-(s-l1-l2);}
+    circ(ctx,X,Y,3.4,COL.blue,COL.blue,1); return true; });
+  /* battery */
+  const bs=T.bat;
+  ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(L.xb-9,L.yw-16,18,32); ctx.restore();
+  line(ctx,L.xb+6*bs,L.yw-17,L.xb+6*bs,L.yw+17,wc,2.6); line(ctx,L.xb-6*bs,L.yw-9,L.xb-6*bs,L.yw+9,wc,5);
+  textAt(ctx,'+',L.xb+22*bs,L.yw-10,{size:15,weight:700,color:COL.green,align:'center'}); textAt(ctx,'−',L.xb-22*bs,L.yw-10,{size:15,weight:700,color:COL.red,align:'center'});
+  textAt(ctx,'battery',L.xb,L.yw+34,{size:10,color:COL.muted,align:'center'});
+  /* meters: spring-damper needles */
+  springTo(T.nI,clamp(Icur/60,0,1),160,15,dt); springTo(T.nV,(clamp(P.V,-6,6)+6)/12,160,15,dt);
+  drawDial(ctx,L.xa,L.yw,L.rm,T.nI.x,'μA'); drawDial(ctx,L.xv,L.yv,L.rm,T.nV.x,'V');
+  textAt(ctx,fmt(Icur,1)+' μA',L.xa,L.yw-L.rm-8,{size:12,weight:700,color:COL.blue,align:'center'});
+  textAt(ctx,(P.V>=0?'+':'−')+fmt(Math.abs(P.V),2)+' V',L.xv,L.yv-L.rm-8,{size:12,weight:700,color:P.V>=0?COL.green:COL.red,align:'center'});
+  return {L,E,Kmax,fr,Isat,Icur,emits,tab,lc};
+}
+
+/* ---------------------------------------------------------------------
+   UI helpers
+   --------------------------------------------------------------------- */
+function labShell(){ const wrap=document.createElement('div'); wrap.className='lab-view'; wrap.innerHTML=`<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`; return wrap; }
+const slider=(id,label,min,max,step,val)=>`<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+const metalChips=(act)=>`<div class="control-group"><label style="margin-bottom:2px;">Emitter metal</label><div class="toggle-group" id="mB">${METALS.map(m=>`<button class="toggle-btn ${m.id===act?'active':''}" data-m="${m.id}">${m.id}</button>`).join('')}</div><div class="hint" id="mH"></div></div>`;
+const card=(id,label,color,wide)=>`<div class="rcard ${wide?'wide':''}"><div class="rlabel">${label}</div><div class="rval" id="${id}" style="color:${color||'var(--text-1)'}">—</div></div>`;
+function setText(root,id,txt){ const e=root.querySelector(id); if(e && e.textContent!==txt) e.textContent=txt; }
+function setFb(root,id,cls,txt){ const e=root.querySelector(id); if(!e) return; if(e.className!=='fb '+cls) e.className='fb '+cls; if(e.textContent!==txt) e.textContent=txt; }
+const nuLabel=nu=>fmt(nu,1)+' ×10¹⁴ Hz · '+bandName(nu);
+
+/* =====================================================================
+   11.3  PHOTOELECTRIC EMISSION — threshold frequency
+   Einstein: Kmax = hν − φ0 ; emission only if ν > ν0 = φ0/h
+   Textbook check (Ex 11.2a): Cs, φ0 = 2.14 eV → ν0 = 5.16×10¹⁴ Hz.
+   ===================================================================== */
+function ledger(ctx,box,st,E,phi,dt){
+  panelBox(ctx,box.x,box.y,box.w,box.h);
+  const x0=box.x+86, bw=box.w-86-18, sc=bw/5.2, rows=[box.y+box.h*0.22,box.y+box.h*0.52,box.y+box.h*0.82], bh=Math.min(20,box.h*0.14);
+  st.E=approach(st.E,E,7,dt); st.phi=approach(st.phi,phi,7,dt);
+  const K=Math.max(0,st.E-st.phi), esc=Math.min(st.E,st.phi);
+  textAt(ctx,'photon  hν',box.x+10,rows[0]+4,{size:11,weight:600,color:COL.muted});
+  textAt(ctx,'work fn  φ₀',box.x+10,rows[1]+4,{size:11,weight:600,color:COL.muted});
+  textAt(ctx,'K max',box.x+10,rows[2]+4,{size:11,weight:600,color:COL.muted});
+  ctx.save();
+  if(st.E>=st.phi){ ctx.fillStyle=COL.red; ctx.fillRect(x0,rows[0]-bh/2,esc*sc,bh); ctx.fillStyle=COL.blue; ctx.fillRect(x0+esc*sc,rows[0]-bh/2,K*sc,bh); }
+  else { ctx.fillStyle=COL.yellow; ctx.fillRect(x0,rows[0]-bh/2,st.E*sc,bh); }
+  ctx.fillStyle=COL.red; ctx.fillRect(x0,rows[1]-bh/2,st.phi*sc,bh);
+  ctx.fillStyle=COL.blue; ctx.fillRect(x0,rows[2]-bh/2,K*sc,bh);
+  ctx.restore();
+  line(ctx,x0+st.phi*sc,rows[0]-bh,x0+st.phi*sc,rows[2]+bh,COL.red,1.6,[4,4]);
+  textAt(ctx,fmt(E,2)+' eV',x0+st.E*sc+6,rows[0]+4,{size:11,weight:700,color:COL.ink});
+  textAt(ctx,fmt(phi,2)+' eV',x0+st.phi*sc+6,rows[1]+4,{size:11,weight:700,color:COL.ink});
+  textAt(ctx,E>phi?fmt(E-phi,2)+' eV':'0',x0+K*sc+6,rows[2]+4,{size:11,weight:700,color:COL.ink});
+  if(E<=phi) textAt(ctx,'short by '+fmt(phi-E,2)+' eV',x0+st.E*sc+6,rows[0]-bh*0.9,{size:10,weight:600,color:COL.red});
+}
+function buildA1(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = metalChips('Cs')+slider('nu','Light frequency ν',2.5,12,0.05,4.5)+slider('ii','Intensity',0.05,1,0.01,0.6)+
+    `<div class="control-group"><div class="result-cards">${card('rE','Photon hν','var(--f-yellow)')}${card('rP','Work function φ₀','var(--f-red)')}${card('rK','K max','var(--f-blue)')}${card('rT','Threshold ν₀')}</div><div class="fb ok" id="fb"></div><p class="hint">K max = hν − φ₀</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let metal=METALS[0]; const S={nu:4.5,I:0.6,E:0,phi:2.14}; const T=newTube();
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ metal=METALS.find(m=>m.id===b.dataset.m); });
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    S.nu=approach(S.nu,+$('#nu').value,7,dt); S.I=approach(S.I,+$('#ii').value,7,dt);
+    $('#nuV').textContent=nuLabel(+$('#nu').value); $('#iiV').textContent=Math.round(+$('#ii').value*100)+' %';
+    const r=tubeScene(T,ctx,w,h,dt,{nu:S.nu,phi:metal.phi,I:S.I,V:3,metalCol:metal.col,metalName:metal.name,dist:140+(1-S.I)*60});
+    ledger(ctx,r.L.panel,S,r.E,metal.phi,dt);
+    setText(wrap,'#rE',fmt(r.E,2)+' eV'); setText(wrap,'#rP',fmt(metal.phi,2)+' eV'); setText(wrap,'#rK',fmt(r.Kmax,2)+' eV'); setText(wrap,'#rT',fmt(metal.phi/H_EV/1e14,2)+' ×10¹⁴ Hz');
+    setFb(wrap,'#fb',r.emits?'ok':'bad',r.emits?'ν > ν₀ — electrons emitted':'ν < ν₀ — no emission, however bright');
+    $('#mH').textContent='φ₀ = '+metal.phi+' eV';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.4.1  INTENSITY AND PHOTOCURRENT
+   Intensity ∝ 1/distance² (lamp moves); photons/s ∝ intensity; I ∝ intensity
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = slider('nu','Light frequency ν',5.5,12,0.05,7.5)+slider('ds','Lamp distance',30,100,1,60)+
+    `<div class="control-group"><div class="result-cards">${card('rI','Intensity','var(--f-yellow)')}${card('rC','Photocurrent','var(--f-blue)')}${card('rR','I ÷ intensity')}${card('rN','Photon flux')}</div><p class="hint">Intensity ∝ 1 / distance² · I ∝ intensity</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const T=newTube(), S={nu:7.5,ds:60,trail:[]}, Cs=METALS[0];
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    S.nu=approach(S.nu,+$('#nu').value,7,dt); S.ds=approach(S.ds,+$('#ds').value,5,dt);
+    $('#nuV').textContent=nuLabel(+$('#nu').value); $('#dsV').textContent=Math.round(+$('#ds').value)+' cm';
+    const Irel=Math.pow(30/S.ds,2);
+    const r=tubeScene(T,ctx,w,h,dt,{nu:S.nu,phi:Cs.phi,I:Irel,V:4,metalCol:Cs.col,metalName:Cs.name,dist:130+(S.ds-30)/70*150});
+    const g=plotFrame(ctx,r.L.panel.x,r.L.panel.y,r.L.panel.w,r.L.panel.h,{x0:0,x1:1,y0:0,y1:60,xt:[0,0.25,0.5,0.75,1],yt:[0,20,40,60],xl:'Intensity →',yl:'Photocurrent (μA)',xd:2});
+    line(ctx,g.X(0),g.Y(0),g.X(1),g.Y(60*fOf(r.tab,4)),COL.blue,2.2,[2,0]);
+    const Ic=r.Icur;
+    line(ctx,g.X(Irel),g.Y(0),g.X(Irel),g.Y(Ic),COL.yellow,1.4,[4,4]); line(ctx,g.px,g.Y(Ic),g.X(Irel),g.Y(Ic),COL.blue,1.4,[4,4]);
+    circ(ctx,g.X(Irel),g.Y(Ic),6,COL.ink,COL.blue,2);
+    setText(wrap,'#rI',fmt(Irel,2)+' ×'); setText(wrap,'#rC',fmt(Ic,1)+' μA'); setText(wrap,'#rR',Irel>0?fmt(Ic/Irel,1)+' μA':'—');
+    setText(wrap,'#rN',fmt(Irel*100,0)+' % of max');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.4.2  EFFECT OF COLLECTOR POTENTIAL — saturation and stopping potential
+   Kmax = e·V0 ; V0 independent of intensity; saturation ∝ intensity
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = slider('vv','Collector potential V (A rel. to C)',-4,6,0.05,3)+
+    `<div class="control-group"><button class="toggle-btn navy" id="sw" style="margin-top:0">▶ Sweep voltage</button></div>`+
+    `<div class="control-group"><label style="margin-bottom:2px;">Intensity</label><div class="toggle-group" id="iB"><button class="toggle-btn" data-i="0.35">I₁</button><button class="toggle-btn active" data-i="0.65">I₂</button><button class="toggle-btn" data-i="1">I₃</button></div></div>`+
+    slider('nu','Light frequency ν',5.5,12,0.05,7.5)+
+    `<div class="control-group"><div class="result-cards">${card('rV','Potential','var(--f-green)')}${card('rC','Photocurrent','var(--f-blue)')}${card('rS','Saturation I')}${card('rK','Stopping V₀','var(--f-red)')}</div><div class="fb ok" id="fb"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const T=newTube(), Cs=METALS[0], S={nu:7.5,V:3,I:0.65,sweep:0};
+  toggleWire(wrap.querySelectorAll('#iB button'),b=>{ S.I=+b.dataset.i; });
+  $('#sw').onclick=()=>{ S.sweep=1; $('#sw').disabled=true; };
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const vR=$('#vv');
+    S.nu=approach(S.nu,+$('#nu').value,7,dt);
+    const Kmax0=Math.max(0,H_EV*S.nu*1e14-Cs.phi);
+    if(S.sweep===1){ const tgt=-Kmax0-0.45; vR.value=Math.max(+vR.min,+vR.value-1.0*dt); if(+vR.value<=Math.max(tgt,+vR.min)+0.01) S.sweep=2; }
+    else if(S.sweep===2){ vR.value=Math.min(+vR.max,+vR.value+1.8*dt); if(+vR.value>=+vR.max-0.01){ S.sweep=0; $('#sw').disabled=false; } }
+    S.V=approach(S.V,+vR.value,9,dt);
+    $('#vvV').textContent=(+vR.value>=0?'+':'−')+fmt(Math.abs(+vR.value),2)+' V'; $('#nuV').textContent=nuLabel(+$('#nu').value);
+    const r=tubeScene(T,ctx,w,h,dt,{nu:S.nu,phi:Cs.phi,I:S.I,V:S.V,metalCol:Cs.col,metalName:Cs.name,dist:130+(1-S.I)*90});
+    const g=plotFrame(ctx,r.L.panel.x,r.L.panel.y,r.L.panel.w,r.L.panel.h,{x0:-4,x1:6,y0:0,y1:60,xt:[-4,-2,0,2,4,6],yt:[0,20,40,60],xl:'V (volt) →',yl:'Photocurrent (μA)'});
+    [[0.35,COL.yellow,'I₁'],[0.65,COL.blue,'I₂'],[1,COL.red,'I₃']].forEach(c=>{
+      ctx.save(); ctx.strokeStyle=c[1]; ctx.lineWidth=Math.abs(c[0]-S.I)<0.01?3:1.6; ctx.globalAlpha=Math.abs(c[0]-S.I)<0.01?1:0.55; ctx.beginPath();
+      for(let v=-4;v<=6.001;v+=0.1){ const y=60*c[0]*fOf(r.tab,v); if(v===-4) ctx.moveTo(g.X(v),g.Y(y)); else ctx.lineTo(g.X(v),g.Y(y)); } ctx.stroke(); ctx.restore();
+      textAt(ctx,c[2],g.X(6)-4,g.Y(60*c[0]*fOf(r.tab,6))-5,{size:11,weight:700,color:c[1],align:'right'}); });
+    if(r.Kmax>0){ line(ctx,g.X(-r.Kmax),g.Y(0),g.X(-r.Kmax),g.Y(60),COL.red,1.4,[5,4]); textAt(ctx,'−V₀',g.X(-r.Kmax)-3,g.py+11,{size:11,weight:700,color:COL.red,align:'right'}); }
+    circ(ctx,g.X(S.V),g.Y(r.Icur),6,COL.ink,COL.green,2);
+    setText(wrap,'#rV',(S.V>=0?'+':'−')+fmt(Math.abs(S.V),2)+' V'); setText(wrap,'#rC',fmt(r.Icur,1)+' μA'); setText(wrap,'#rS',fmt(r.Isat,1)+' μA'); setText(wrap,'#rK',r.Kmax>0?'−'+fmt(r.Kmax,2)+' V':'—');
+    const fb=r.Icur<0.4?['bad','Current stopped — V ≤ −V₀']:(r.fr>0.96?['ok','Saturation — every electron collected']:(S.V<0?['warn','Retarding: only the fastest reach A']:['ok','Accelerating: more electrons collected']));
+    setFb(wrap,'#fb',fb[0],fb[1]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.4.3  FREQUENCY AND STOPPING POTENTIAL — Millikan's measurement
+   V0 = (h/e)ν − φ0/e : straight line, slope h/e, same for every metal
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = metalChips('Cs')+slider('nu','Light frequency ν',3,12,0.05,6)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="ms" style="flex:2">⏵ Measure V₀</button><button class="toggle-btn" id="cl">Clear</button></div></div>`+
+    `<div class="control-group"><div class="result-cards">${card('rV','Stopping V₀','var(--f-red)')}${card('rN','Points')}${card('rH','h from slope','var(--f-blue)')}${card('rF','ν₀ (intercept)')}</div><div class="fb warn" id="fb"></div><p class="hint">V₀ = (h/e)ν − φ₀/e</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let metal=METALS[0]; const T=newTube(), S={nu:6,V:0,state:0,hold:0,pts:[]};
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ metal=METALS.find(m=>m.id===b.dataset.m); S.state=0; });
+  $('#ms').onclick=()=>{ if(H_EV*S.nu*1e14>metal.phi){ S.state=1; } else S.state=-1; };
+  $('#cl').onclick=()=>{ S.pts=[]; S.state=0; };
+  $('#nu').addEventListener('input',()=>{ S.state=0; });
+  function fit(){ const p=S.pts.filter(q=>q.m===metal.id); if(p.length<2) return null;
+    const n=p.length, sx=p.reduce((a,q)=>a+q.nu,0), sy=p.reduce((a,q)=>a+q.v,0), sxx=p.reduce((a,q)=>a+q.nu*q.nu,0), sxy=p.reduce((a,q)=>a+q.nu*q.v,0);
+    const m=(n*sxy-sx*sy)/(n*sxx-sx*sx), c=(sy-m*sx)/n; return {m,c}; }
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    S.nu=approach(S.nu,+$('#nu').value,7,dt);
+    $('#nuV').textContent=nuLabel(+$('#nu').value);
+    const Kmax=Math.max(0,H_EV*S.nu*1e14-metal.phi); let tgtV=0;
+    if(S.state===1){ tgtV=-Kmax; S.V=Math.max(tgtV,S.V-0.7*dt);
+      if(S.V<=tgtV+1e-3){ S.state=2; S.hold=1.1; const nuv=+$('#nu').value; const q=S.pts.find(p=>p.m===metal.id&&Math.abs(p.nu-nuv)<0.04); const val=Math.max(0,H_EV*nuv*1e14-metal.phi); if(q) q.v=val; else S.pts.push({m:metal.id,nu:nuv,v:val,col:metal.col}); } }
+    else if(S.state===2){ S.hold-=dt; S.V=-Kmax; if(S.hold<=0){ S.state=3; } }
+    else { S.V=approach(S.V,0,5,dt); if(S.state===3&&Math.abs(S.V)<0.02) S.state=0; }
+    const r=tubeScene(T,ctx,w,h,dt,{nu:S.nu,phi:metal.phi,I:0.7,V:S.V,metalCol:metal.col,metalName:metal.name,dist:160});
+    const g=plotFrame(ctx,r.L.panel.x,r.L.panel.y,r.L.panel.w,r.L.panel.h,{x0:3,x1:12,y0:0,y1:3.2,xt:[3,4,5,6,7,8,9,10,11,12],yt:[0,1,2,3],xl:'ν (×10¹⁴ Hz) →',yl:'V₀ (volt)'});
+    METALS.forEach(m=>{ const n0=m.phi/H_EV/1e14; if(n0<12){ ctx.save(); ctx.globalAlpha=m===metal?1:0.35; line(ctx,g.X(n0),g.Y(0),g.X(12),g.Y((12-n0)*H_EV*1e14),m.col,m===metal?2.6:1.4,m===metal?[]:[5,4]); ctx.restore(); textAt(ctx,m.id,g.X(n0)+3,g.Y(0)-5,{size:10,weight:700,color:m.col,alpha:m===metal?1:0.6}); } });
+    S.pts.forEach(p=>{ circ(ctx,g.X(p.nu),g.Y(p.v),5.5,COL.ink,p.col,1.6); });
+    circ(ctx,g.X(S.nu),g.Y(Kmax),9,COL.ink,null,1.6);
+    const f=fit();
+    setText(wrap,'#rV',S.state>=1? fmt(-S.V,2)+' V' : (Kmax>0?'—':'no emission'));
+    setText(wrap,'#rN',String(S.pts.filter(p=>p.m===metal.id).length));
+    setText(wrap,'#rH',f?sci(f.m*1e-14*E_CH,3)+' J s':'need 2 points');
+    setText(wrap,'#rF',f?fmt(-f.c/f.m,2)+' ×10¹⁴ Hz':'—');
+    setFb(wrap,'#fb',S.state===-1||(Kmax<=0&&S.state===0)?'bad':'warn',S.state===-1||Kmax<=0?'ν below ν₀ — nothing to stop':(S.state===1?'Making A more negative…':(S.state===2?'Current is zero — V₀ found':'Pick ν, press Measure V₀')));
+    if(S.state===-1&&Kmax>0) S.state=0;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.5–11.6  WAVE PICTURE vs PHOTON PICTURE
+   Wave: energy soaks in continuously → no threshold, hours of delay, K grows with I
+   Photon: one quantum hν per electron → threshold, instant, K = hν − φ0
+   Time scale: 1 s on screen = 900 s of real time in the wave picture.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = `<div class="control-group"><label style="margin-bottom:2px;">Theory</label><div class="toggle-group" id="mdB"><button class="toggle-btn active" data-md="wave">Wave picture</button><button class="toggle-btn" data-md="photon">Photon picture</button></div></div>`+
+    slider('nu','Light frequency ν (Cs: ν₀ = 5.16)',2.5,9,0.05,4)+slider('ii','Intensity',0.3,1,0.01,0.7)+
+    `<div class="control-group"><div class="result-cards">${card('rM','Emission','var(--f-blue)')}${card('rD','Delay')}${card('rK','Kinetic energy','var(--f-blue)')}${card('rE','Photon hν','var(--f-yellow)')}</div><div class="fb bad" id="fb"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const PHI=2.14, SIMR=900;
+  let mode='wave', S=null;
+  function fresh(){ S={key:'',el:[],ph:[],out:[],gauge:0,clock:0,first:null,acc:0,jolt:{},flash:[],t:0,hl:0,emitted:0}; }
+  fresh();
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.md; const nu=S.nu; fresh(); });
+  function seed(w,h){
+    S.key=w+'x'+h; S.el=[]; const x0=w*0.10, x1=w*0.92, yS=h*0.50, sp=Math.min(50,(x1-x0)/13), n=Math.floor((x1-x0-20)/sp);
+    S.lat={x0:x0,x1:x1,yS:yS,sp:sp,n:n,yB:h*0.90};
+    for(let i=0;i<n;i++){ S.el.push({hx:x0+20+sp*(i+0.5),hy:yS+10,E:0,kf:0.85+Math.random()*0.3,top:true,ph:Math.random()*6,glow:0,gone:false}); }
+    for(let r=0;r<2;r++) for(let i=0;i<n-1;i++) S.el.push({hx:x0+20+sp*(i+1),hy:yS+34+sp*(r+0.5),E:0,kf:1,top:false,ph:Math.random()*6,glow:0,gone:false});
+  }
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(S.key!==w+'x'+h) seed(w,h);
+    S.t+=dt; S.nuS=approach(S.nuS===undefined?+$('#nu').value:S.nuS,+$('#nu').value,7,dt); S.IS=approach(S.IS===undefined?+$('#ii').value:S.IS,+$('#ii').value,7,dt);
+    const nu=S.nuS, I=S.IS, E=H_EV*nu*1e14, lc=lightCol(nu), lam=clamp(3000/nu/16,16,50), L=S.lat;
+    $('#nuV').textContent=nuLabel(+$('#nu').value); $('#iiV').textContent=Math.round(+$('#ii').value*100)+' %';
+    const tops=S.el.filter(e=>e.top&&!e.gone);
+    /* ---- light ---- */
+    if(mode==='wave'){
+      const sp=60, off=(S.t*sp)%lam;
+      for(let y=h*0.05+off; y<L.yS-12; y+=lam){ const k=(y-h*0.05)/(L.yS-h*0.05);
+        ctx.save(); ctx.strokeStyle=lc; ctx.globalAlpha=(0.18+0.6*I)*(0.35+0.65*k); ctx.lineWidth=1+3*I; ctx.beginPath();
+        for(let x=L.x0;x<=L.x1;x+=6){ const yy=y+Math.sin(x*0.04+S.t*2)*2.5*I; if(x===L.x0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy); } ctx.stroke(); ctx.restore(); }
+      vec(ctx,w*0.5,h*0.03,w*0.5,h*0.12,lc,3);
+    } else {
+      S.acc+=(1.2+7*I)*dt;
+      while(S.acc>=1 && tops.length){ S.acc-=1; const tg=tops[Math.floor(Math.random()*tops.length)]; S.ph.push({x:tg.hx,y:h*0.04,tg,refl:false,life:0}); }
+      S.ph=S.ph.filter(p=>{ if(!p.refl){ p.y+=320*dt; if(p.y>=p.tg.hy-8 && !p.tg.gone){
+            S.gauge=E; S.flash.push({x:p.tg.hx,y:p.tg.hy,t:0,col:lc});
+            if(E>=PHI){ eject(p.tg,Math.max(0,E-PHI)); S.first=S.first===null?0:S.first; }
+            else { S.jolt[S.el.indexOf(p.tg)]=1; S.ph.push({x:p.x,y:p.y,vx:130,refl:true,life:0}); }
+            return false; } }
+          else { p.life+=dt; p.y-=200*dt; p.x+=p.vx*dt; if(p.life>0.8) return false; }
+          return p.y<h; });
+      S.ph.forEach(p=>{ drawPacket(ctx,p.x,p.y,0,p.refl?-1:1,lam*2,lam,5,p.refl?COL.red:lc,p.refl?clamp(1-p.life/0.8,0,1):1); });
+    }
+    function eject(e,K){ e.gone=true; S.emitted++; S.out.push({x:e.hx,y:e.hy,K:K,age:0,tr:[]}); setTimeout(()=>{ e.gone=false; e.E=0; e.glow=0; },1400); if(S.first===null||S.first===0) S.first=S.clock; }
+    /* ---- metal slab ---- */
+    ctx.save(); rrect(ctx,L.x0,L.yS-2,L.x1-L.x0,L.yB-L.yS,10); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.lineWidth=2.4; ctx.strokeStyle=COL.ink; ctx.stroke(); ctx.restore();
+    textAt(ctx,'caesium surface',L.x0+12,L.yB-10,{size:10,color:COL.mid});
+    for(let r=0;r<3;r++) for(let i=0;i<L.n;i++){ const x=L.x0+20+L.sp*(i+0.5), y=L.yS+34+L.sp*r; circ(ctx,x,y,9,COL.red,'#fff',1.8); line(ctx,x-4,y,x+4,y,COL.red,1.6); line(ctx,x,y-4,x,y+4,COL.red,1.6); }
+    /* ---- electrons ---- */
+    const wave=mode==='wave';
+    S.el.forEach((e,idx)=>{
+      if(e.gone) return;
+      if(wave && e.top){ e.E+=PHI/6*I*e.kf*dt; e.glow=clamp(e.E/PHI,0,1); if(e.E>=PHI){ eject(e,2.0*I); return; } }
+      if(!wave){ e.glow=approach(e.glow,0,3,dt); if(S.jolt[idx]){ S.jolt[idx]=approach(S.jolt[idx],0,4,dt); e.glow=Math.max(e.glow,S.jolt[idx]); } }
+      const amp=1.4+e.glow*(wave?6:5);
+      const X=e.hx+amp*Math.sin(S.t*(4+e.glow*14)+e.ph), Y=e.hy+amp*Math.cos(S.t*(5+e.glow*12)+e.ph*1.3);
+      if(e.glow>0.02){ circ(ctx,X,Y,7+9*e.glow,null,null,1); ctx.save(); ctx.globalAlpha=0.35*e.glow; circ(ctx,X,Y,7+10*e.glow,lc,lc,1); ctx.restore(); }
+      circ(ctx,X,Y,6,COL.blue,'#fff',2); line(ctx,X-3,Y,X+3,Y,COL.blue,1.8);
+    });
+    S.flash=S.flash.filter(f=>{ f.t+=dt; if(f.t>0.4) return false; ctx.save(); ctx.globalAlpha=1-f.t/0.4; circ(ctx,f.x,f.y,8+16*f.t/0.4,f.col,null,2); ctx.restore(); return true; });
+    S.out=S.out.filter(o=>{ o.age+=dt; const v=50+130*Math.sqrt(o.K); o.y-=v*dt; o.x+=Math.sin(o.age*3)*8*dt; o.tr.push([o.x,o.y]); if(o.tr.length>24) o.tr.shift();
+      ctx.save(); ctx.globalAlpha=clamp(o.y/(h*0.35),0,1); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.beginPath(); o.tr.forEach((p,i)=>{ i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }); ctx.stroke();
+      circ(ctx,o.x,o.y,6,COL.blue,'#fff',2); line(ctx,o.x-3,o.y,o.x+3,o.y,COL.blue,1.8);
+      if(o.K>0.02){ vec(ctx,o.x+12,o.y,o.x+12,o.y-8-o.K*22,COL.green,2.2); } ctx.restore();
+      return o.y>-10; });
+    /* ---- energy gauge for a surface electron ---- */
+    const gx=w*0.04, gTop=h*0.12, gBot=L.yS+20, gS=4.2, gh=gBot-gTop;
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.6; ctx.strokeRect(gx,gTop,14,gh); ctx.restore();
+    const hlE=tops[Math.min(tops.length-1,Math.floor(tops.length/2))];
+    if(wave) S.gauge=hlE?hlE.E:0; else S.gauge=approach(S.gauge,0,3,dt);
+    const gv=clamp(S.gauge/gS,0,1)*gh; ctx.fillStyle=(S.gauge>=PHI)?COL.green:(wave?COL.blue:COL.yellow); ctx.fillRect(gx+1,gBot-gv,12,gv);
+    const py=gBot-PHI/gS*gh; line(ctx,gx-6,py,gx+24,py,COL.red,2,[4,3]); textAt(ctx,'φ₀',gx+27,py+4,{size:11,weight:700,color:COL.red});
+    textAt(ctx,'energy of',gx-2,gTop-16,{size:10,color:COL.muted}); textAt(ctx,'one electron',gx-2,gTop-4,{size:10,color:COL.muted});
+    /* ---- verdict pills ---- */
+    const pills=[['Threshold ν₀',!wave],['Instant emission',!wave],['K independent of I',!wave]];
+    pills.forEach((p,i)=>{ const px=w*0.50+i*(Math.min(150,w*0.17)+8)-Math.min(150,w*0.17)*1.5-8, pw=Math.min(150,w*0.17), py2=h*0.915;
+      ctx.save(); rrect(ctx,px,py2,pw,24,12); ctx.fillStyle=p[1]?'#e4f7ec':'#fdece7'; ctx.fill(); ctx.strokeStyle=p[1]?COL.green:COL.red; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+      textAt(ctx,(p[1]?'✓ ':'✗ ')+p[0],px+pw/2,py2+16,{size:10.5,weight:700,color:p[1]?COL.green:COL.red,align:'center'}); });
+    textAt(ctx,wave?'Wave: energy spreads over the whole wavefront':'Photon: one quantum hν goes to one electron',w*0.5,h*0.035,{size:12,weight:700,color:COL.muted,align:'center'});
+    /* ---- readouts ---- */
+    S.clock+=dt*SIMR; if(!wave) S.clock=0;
+    const mm=Math.floor(S.clock/60), hh=Math.floor(mm/60);
+    const emit=wave?S.emitted>0:(E>=PHI);
+    setText(wrap,'#rE',fmt(E,2)+' eV');
+    if(wave){ setText(wrap,'#rM',S.emitted>0?'Yes — even at this ν':'Building up…'); setText(wrap,'#rD',S.emitted>0&&S.first?Math.floor(S.first/3600)+' h '+Math.floor((S.first%3600)/60)+' min':hh+' h '+(mm%60)+' min'); setText(wrap,'#rK','∝ intensity');
+      setFb(wrap,'#fb','bad','Contradicts experiment: no threshold, hours of delay'); }
+    else { setText(wrap,'#rM',E>=PHI?'Yes — at once':'None'); setText(wrap,'#rD',E>=PHI?'< 10⁻⁹ s':'—'); setText(wrap,'#rK',E>=PHI?fmt(E-PHI,2)+' eV':'0');
+      setFb(wrap,'#fb',E>=PHI?'ok':'warn',E>=PHI?'hν > φ₀: one photon frees one electron':'hν < φ₀: photon cannot free an electron'); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.8  WAVE NATURE OF MATTER — de Broglie wavelength
+   λ = h / (m v).   Textbook check (Ex 11.3): electron 5.4×10⁶ m/s → 0.135 nm;
+   ball 0.150 kg at 30 m/s → 1.47×10⁻³⁴ m.
+   ===================================================================== */
+const PARTICLES=[
+  {id:'e',name:'Electron',m:9.109e-31,lv:6.732,r:6},
+  {id:'p',name:'Proton',m:1.673e-27,lv:5,r:7},
+  {id:'d',name:'Dust grain',m:1e-9,lv:0.342,r:9},
+  {id:'b',name:'Ball 150 g',m:0.150,lv:1.477,r:13},
+  {id:'u',name:'Bullet 40 g',m:0.040,lv:3,r:8}
+];
+function buildA6(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = `<div class="control-group"><label style="margin-bottom:2px;">Particle</label><div class="toggle-group" id="pB">${PARTICLES.map(p=>`<button class="toggle-btn ${p.id==='e'?'active':''}" data-p="${p.id}" style="min-width:44%">${p.name}</button>`).join('')}</div></div>`+
+    slider('lv','Speed v',0,7.6,0.01,6.732)+
+    `<div class="control-group"><div class="result-cards">${card('rM','Mass m')}${card('rP','Momentum p','var(--f-yellow)')}${card('rL','Wavelength λ','var(--f-blue)',true)}${card('rR','λ ÷ atom spacing')}${card('rS','λ ÷ proton size')}</div><div class="fb ok" id="fb"></div><p class="hint">λ = h / p = h / mv</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let part=PARTICLES[0]; const S={lv:6.732,pts:[],acc:0,hist:new Array(80).fill(0),key:'',t:0};
+  const PXNM=160, A_NM=0.25;
+  toggleWire(wrap.querySelectorAll('#pB button'),b=>{ part=PARTICLES.find(p=>p.id===b.dataset.p); $('#lv').value=part.lv; S.hist.fill(0); S.pts=[]; });
+  $('#lv').addEventListener('input',()=>{ S.hist.fill(0); });
+  animLoop(dt=>{
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h); S.t+=dt;
+    S.lv=approach(S.lv,+$('#lv').value,8,dt);
+    const v=Math.pow(10,S.lv), m=part.m, p=m*v, lam=H_J/p, lamNm=lam*1e9, lamPx=lamNm*PXNM, ratio=lamNm/A_NM;
+    $('#lvV').textContent=sci(Math.pow(10,+$('#lv').value),2)+' m/s';
+    const gx=w*0.08, gy=h*0.44, lx=w*0.60, sx=w*0.90, sy0=h*0.12, sy1=h*0.88;
+    /* gun */
+    ctx.save(); rrect(ctx,gx-46,gy-22,40,44,6); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    textAt(ctx,'source',gx-26,gy+38,{size:10,color:COL.muted,align:'center'});
+    line(ctx,gx-6,gy,lx,gy,COL.grid,1.4,[3,5]);
+    /* lattice of atoms (crystal planes) */
+    const aPx=A_NM*PXNM, nAt=Math.floor((sy1-sy0)/aPx*0.78);
+    for(let i=-Math.floor(nAt/2);i<=Math.floor(nAt/2);i++) circ(ctx,lx,gy+i*aPx,Math.min(9,aPx*0.28),COL.red,'#fff',1.8);
+    textAt(ctx,'crystal',lx,sy0-4,{size:10,color:COL.muted,align:'center'});
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; const ya=gy+aPx*3; line(ctx,lx+18,ya,lx+18,ya+aPx,COL.mid,1.2); arrowHead(ctx,lx+18,ya,-Math.PI/2,COL.mid,5); arrowHead(ctx,lx+18,ya+aPx,Math.PI/2,COL.mid,5); ctx.restore();
+    textAt(ctx,'a = 0.25 nm',lx+26,ya+aPx/2+4,{size:10,color:COL.muted});
+    /* screen */
+    line(ctx,sx,sy0,sx,sy1,COL.ink,3);
+    textAt(ctx,'screen',sx,sy0-4,{size:10,color:COL.muted,align:'center'});
+    /* allowed diffraction orders sinθ = nλ/a */
+    const orders=[0]; if(ratio<1&&ratio>0.004){ for(let n=1;n*ratio<0.999;n++){ orders.push(n,-n); } }
+    const angs=orders.map(n=>Math.asin(clamp(n*ratio,-1,1)));
+    if(orders.length>1) angs.forEach((a,i)=>{ if(orders[i]!==0) { const L=(sx-lx); line(ctx,lx,gy,sx,gy+Math.tan(a)*L,COL.green,1.2,[4,5]); } });
+    /* spawn particles */
+    const spd=120+34*S.lv, gap=1.2;
+    S.acc+=dt; if(S.acc>=gap){ S.acc=0; const wt=orders.map(n=>n===0?1.0:0.8/(1+0.5*Math.abs(n))); let tot=wt.reduce((a,b)=>a+b,0), r=Math.random()*tot, k=0; while(k<wt.length-1&&r>wt[k]){ r-=wt[k]; k++; }
+      S.pts.push({x:gx,y:gy,ang:0,out:angs[k],crossed:false}); }
+    S.pts=S.pts.filter(q=>{
+      q.x+=Math.cos(q.ang)*spd*dt; q.y+=Math.sin(q.ang)*spd*dt;
+      if(!q.crossed && q.x>=lx){ q.crossed=true; q.ang=q.out; }
+      if(q.x>=sx){ const bi=clamp(Math.floor((q.y-sy0)/(sy1-sy0)*80),0,79); for(let d=-3;d<=3;d++){ const j=bi+d; if(j>=0&&j<80) S.hist[j]+=Math.exp(-d*d/3); } return false; }
+      return q.y>-20&&q.y<h+20; });
+    /* histogram on screen */
+    const mx=Math.max(8,...S.hist), hw=w*0.07;
+    ctx.save(); ctx.fillStyle=COL.blue; ctx.globalAlpha=0.75; for(let j=0;j<80;j++){ const hh=S.hist[j]/mx*hw; const yy=sy0+(j+0.5)/80*(sy1-sy0); ctx.fillRect(sx-hh,yy-(sy1-sy0)/160,hh,(sy1-sy0)/80); } ctx.restore();
+    for(let j=0;j<80;j++) S.hist[j]*=Math.exp(-0.04*dt);
+    /* particles with their matter-wave packet */
+    S.pts.forEach(q=>{
+      ctx.save(); ctx.translate(q.x,q.y); ctx.rotate(q.ang);
+      if(lamPx>=3){ const sig=clamp(lamPx*2.2,60,190); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.beginPath();
+        for(let s=-sig*1.6;s<=sig*0.3;s+=2){ const env=Math.exp(-Math.pow((s+sig*0.4)/sig,2)), yy=-17*env*Math.cos(2*Math.PI*s/lamPx); if(s===-sig*1.6) ctx.moveTo(s,yy); else ctx.lineTo(s,yy); } ctx.stroke(); }
+      else { ctx.strokeStyle=COL.mid; ctx.lineWidth=2.4; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(-120,0); ctx.lineTo(0,0); ctx.stroke(); }
+      ctx.restore();
+      circ(ctx,q.x,q.y,part.r,COL.ink,part.id==='e'||part.id==='p'?COL.blue:'#e3ecf7',2.2);
+    });
+    /* wavelength tape (one wavelength drawn to scale) */
+    const ty=h*0.80, tx=w*0.12;
+    textAt(ctx,'λ drawn to scale  (1 nm = '+PXNM+' px)',tx,ty-18,{size:11,weight:600,color:COL.muted});
+    if(lamPx>=4){ const L2=Math.min(lamPx,w*0.5); line(ctx,tx,ty,tx+L2,ty,COL.blue,3); line(ctx,tx,ty-6,tx,ty+6,COL.blue,2); line(ctx,tx+L2,ty-6,tx+L2,ty+6,COL.blue,2); textAt(ctx,'λ = '+(lamNm>=1?fmt(lamNm,2)+' nm':fmt(lamNm,3)+' nm')+(lamPx>w*0.5?'  (longer than shown)':''),tx+L2+10,ty+4,{size:12,weight:700,color:COL.blue}); }
+    else { circ(ctx,tx,ty,1.5,COL.blue,COL.blue,1); textAt(ctx,'λ = '+sci(lam,2)+' m — far too small to draw',tx+10,ty+4,{size:12,weight:700,color:COL.blue}); }
+    line(ctx,tx,ty+26,tx+PXNM,ty+26,COL.ink,2.4); line(ctx,tx,ty+21,tx,ty+31,COL.ink,2); line(ctx,tx+PXNM,ty+21,tx+PXNM,ty+31,COL.ink,2); textAt(ctx,'1 nm',tx+PXNM+8,ty+30,{size:11,color:COL.muted});
+    /* readouts */
+    setText(wrap,'#rM',sci(m,2)+' kg'); setText(wrap,'#rP',sci(p,2)+' kg m/s'); setText(wrap,'#rL',sci(lam,3)+' m'+(lamNm>=0.001&&lamNm<1000?'  ('+fmt(lamNm,3)+' nm)':''));
+    setText(wrap,'#rR',ratio>=0.01&&ratio<1000?fmt(ratio,2):sci(ratio,1)); setText(wrap,'#rS',sci(lam/1e-15,1));
+    setFb(wrap,'#fb',ratio>=0.02&&ratio<30?'ok':'bad',ratio>=0.02&&ratio<30?(orders.length>1?'λ ≲ atom spacing — the crystal diffracts it':'λ comparable to atoms — wave effects measurable'):(ratio<0.02?'λ ≪ atom: wave nature unobservable':'λ ≫ atom'));
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY LIST + SHELL
+   --------------------------------------------------------------------- */
+const activities = [
+  {num:'11.3',   title:'Photoelectric Emission', desc:'Light must carry enough energy per photon — below ν₀ nothing is emitted.', build:buildA1},
+  {num:'11.4.1', title:'Intensity & Photocurrent', desc:'Move the lamp: more photons per second, more electrons per second.', build:buildA2},
+  {num:'11.4.2', title:'Collector Potential', desc:'Accelerate to saturation; retard until the current stops at −V₀.', build:buildA3},
+  {num:'11.4.3', title:'Frequency & Stopping Potential', desc:'Measure V₀ at several ν — a straight line with slope h/e.', build:buildA4},
+  {num:'11.5–6', title:'Wave vs Photon Picture', desc:'Only the photon picture explains threshold, instant emission and K max.', build:buildA5},
+  {num:'11.8',   title:'de Broglie Matter Waves', desc:'λ = h/mv — electrons diffract, a cricket ball never will.', build:buildA6}
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button'); btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); }; nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

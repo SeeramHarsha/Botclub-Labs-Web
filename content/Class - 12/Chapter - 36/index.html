@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 6 — Linear Programming | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:11px; }
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📐</div>
+    <div>
+      <div class="chip">Grade 12 · Part 2 · Ch 6</div>
+      <h1>Linear Programming</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change · Z line</span>
+      <span><i style="background:var(--f-blue)"></i>Feasible region · Tables</span>
+      <span><i style="background:var(--f-green)"></i>Optimum · Chairs</span>
+      <span><i style="background:var(--f-red)"></i>Limits · Infeasible</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">6.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 · PART 2 · CHAPTER 6 — LINEAR PROGRAMMING
+   Every activity runs a continuous animation loop: sliders and buttons only
+   set a TARGET. Walls close in on the feasible region with a spring, the
+   objective line (the "Z line") slides, rotates and settles on a vertex with
+   a spring-damper, items drop into the warehouse under gravity and bounce.
+   One shared graphical engine (buildLP) draws every region; the vertices,
+   the optimum, unboundedness and infeasibility are all computed live from
+   the constraints — nothing is hard-coded.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS + ANIMATION HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function pill(ctx,txt,cx,cy,col,bg,size){
+  ctx.save(); ctx.font='700 '+(size||12)+'px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  ctx.save(); rrect(ctx,cx-tw/2-7,cy-11,tw+14,22,7); ctx.fillStyle=bg||'rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,cx,cy+4.2,{align:'center',size:size||12,weight:700,color:COL.ink});
+}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function money(n){ return '₹ '+Math.round(n).toLocaleString('en-IN'); }
+
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper: natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt; state.x += state.v*dt; return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   1. LINEAR-PROGRAMMING GEOMETRY
+   Region = quadrant x,y ≥ 0 clipped by every half-plane (Sutherland–Hodgman).
+   A huge starting box lets us detect unbounded regions exactly: if the
+   clipped polygon still touches the huge box, the region is unbounded.
+   --------------------------------------------------------------------- */
+const BIG = 1e4;
+function clipHalf(poly,a,b,c,ge){          // keep a·x + b·y ≤ c  (or ≥ c when ge)
+  const out=[], n=poly.length; if(!n) return out;
+  const f=p=>(ge?-1:1)*(a*p[0]+b*p[1]-c), EPS=1e-9;
+  for(let i=0;i<n;i++){
+    const P=poly[i], Q=poly[(i+1)%n], fp=f(P), fq=f(Q), pin=fp<=EPS, qin=fq<=EPS;
+    if(pin) out.push(P);
+    if(pin!==qin){ const t=fp/(fp-fq); out.push([P[0]+(Q[0]-P[0])*t, P[1]+(Q[1]-P[1])*t]); }
+  }
+  return out;
+}
+function dedupe(poly,eps){
+  const o=[]; poly.forEach(p=>{ if(!o.some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<eps)) o.push(p); }); return o;
+}
+/** Line a·x + b·y = Z clipped against a convex CCW polygon → [P,Q] or null. */
+function chord(poly,a,b,Z){
+  if(poly.length<3) return null;
+  const n=Math.hypot(a,b); if(n<1e-12) return null;
+  const dx=b/n, dy=-a/n, P0=Math.abs(b)>=Math.abs(a)?[0,Z/b]:[Z/a,0];
+  let t0=-1e7, t1=1e7;
+  for(let i=0;i<poly.length;i++){
+    const A=poly[i], B=poly[(i+1)%poly.length], ex=B[0]-A[0], ey=B[1]-A[1], len=Math.hypot(ex,ey)||1;
+    const f0=ex*(P0[1]-A[1])-ey*(P0[0]-A[0]), fd=ex*dy-ey*dx;
+    if(Math.abs(fd)<1e-6*len){ if(f0/len<-1e-3) return null; }
+    else { const tt=-f0/fd; if(fd>0) t0=Math.max(t0,tt); else t1=Math.min(t1,tt); }
+  }
+  if(t0>t1+1e-9) return null;
+  return [[P0[0]+dx*t0,P0[1]+dy*t0],[P0[0]+dx*t1,P0[1]+dy*t1]];
+}
+const C=(a,b,c,ge,label,lf)=>({a,b,c,ge:!!ge,label,lf:lf||0.85});
+
+/* ---------------------------------------------------------------------
+   2. THE PROBLEMS (all taken from the chapter)
+   --------------------------------------------------------------------- */
+const P_FURN = { names:{x:'x  (tables)',y:'y  (chairs)'}, zPre:'₹ ', zForm:'Z = 250x + 75y', view:{xmax:30,ymax:75},
+  cons:[C(5,1,100,0,'5x + y ≤ 100',0.88), C(1,1,60,0,'x + y ≤ 60',0.2)], obj:{a:250,b:75}, mode:'max' };
+const P_EX1 = { zForm:'Z = 4x + y', view:{xmax:56,ymax:62},
+  cons:[C(1,1,50,0,'x + y ≤ 50',0.8), C(3,1,90,0,'3x + y ≤ 90',0.62)], obj:{a:4,b:1}, mode:'max' };
+const P_EX2 = { zForm:'Z = 200x + 500y', view:{xmax:12,ymax:8},
+  cons:[C(1,2,10,1,'x + 2y ≥ 10',0.86), C(3,4,24,0,'3x + 4y ≤ 24',0.86)], obj:{a:200,b:500}, mode:'min' };
+const P_EX3 = { zForm:'Z = 3x + 9y', view:{xmax:30,ymax:26},
+  cons:[C(1,3,60,0,'x + 3y ≤ 60',0.7), C(1,1,10,1,'x + y ≥ 10',0.55), C(1,-1,0,0,'x ≤ y',0.9)], obj:{a:3,b:9}, mode:'max' };
+const P_EX4 = { zForm:'Z = −50x + 20y', view:{xmax:12,ymax:14},
+  cons:[C(2,-1,-5,1,'2x − y ≥ −5',0.78), C(3,1,3,1,'3x + y ≥ 3',0.5), C(2,-3,12,0,'2x − 3y ≤ 12',0.82)], obj:{a:-50,b:20}, mode:'min' };
+const P_EX5 = { zForm:'Z = 3x + 2y', view:{xmax:10,ymax:9},
+  cons:[C(1,1,8,1,'x + y ≥ 8',0.8), C(3,5,15,0,'3x + 5y ≤ 15',0.55)], obj:{a:3,b:2}, mode:'min' };
+const EXER = [
+  { n:1, zForm:'Z = 3x + 4y',  cons:[C(1,1,4,0,'x + y ≤ 4')], obj:{a:3,b:4}, mode:'max' },
+  { n:2, zForm:'Z = −3x + 4y', cons:[C(1,2,8,0,'x + 2y ≤ 8',0.8), C(3,2,12,0,'3x + 2y ≤ 12',0.7)], obj:{a:-3,b:4}, mode:'min' },
+  { n:3, zForm:'Z = 5x + 3y',  cons:[C(3,5,15,0,'3x + 5y ≤ 15',0.8), C(5,2,10,0,'5x + 2y ≤ 10',0.7)], obj:{a:5,b:3}, mode:'max' },
+  { n:4, zForm:'Z = 3x + 5y',  cons:[C(1,3,3,1,'x + 3y ≥ 3',0.8), C(1,1,2,1,'x + y ≥ 2',0.7)], obj:{a:3,b:5}, mode:'min' },
+  { n:5, zForm:'Z = 3x + 2y',  cons:[C(1,2,10,0,'x + 2y ≤ 10',0.8), C(3,1,15,0,'3x + y ≤ 15',0.6)], obj:{a:3,b:2}, mode:'max' },
+  { n:6, zForm:'Z = x + 2y',   cons:[C(2,1,3,1,'2x + y ≥ 3',0.75), C(1,2,6,1,'x + 2y ≥ 6',0.8)], obj:{a:1,b:2}, mode:'min' },
+  { n:7, zForm:'Z = 5x + 10y', cons:[C(1,2,120,0,'x + 2y ≤ 120',0.8), C(1,1,60,1,'x + y ≥ 60',0.7), C(1,-2,0,1,'x − 2y ≥ 0',0.8)], obj:{a:5,b:10}, mode:'min' },
+  { n:8, zForm:'Z = x + 2y',   cons:[C(1,2,100,1,'x + 2y ≥ 100',0.8), C(2,-1,0,0,'2x − y ≤ 0',0.5), C(2,1,200,0,'2x + y ≤ 200',0.9)], obj:{a:1,b:2}, mode:'min' },
+  { n:9, zForm:'Z = −x + 2y',  cons:[C(1,0,3,1,'x ≥ 3',0.6), C(1,1,5,1,'x + y ≥ 5',0.8), C(1,2,6,1,'x + 2y ≥ 6',0.85)], obj:{a:-1,b:2}, mode:'max' },
+  { n:10,zForm:'Z = x + y',    cons:[C(1,-1,-1,0,'x − y ≤ −1',0.8), C(-1,1,0,0,'−x + y ≤ 0',0.45)], obj:{a:1,b:1}, mode:'max' },
+];
+
+/* ---------------------------------------------------------------------
+   3. THE SHARED ENGINE — buildLP(cfg)
+   cfg: prob · noObj · showHalf · test · extra (html) · setup(api,$)
+   --------------------------------------------------------------------- */
+function buildLP(cfg){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  const hasObjUI=!cfg.noObj;
+  side.innerHTML =
+    (cfg.extra||'') +
+    (cfg.modeToggle===false||cfg.noObj ? '' : `<div class="control-group"><label>Goal</label><div class="toggle-group" id="mdB"><button class="toggle-btn" data-m="max">Maximise</button><button class="toggle-btn" data-m="min">Minimise</button></div></div>`) +
+    (hasObjUI ? `<div class="control-group"><label><span id="zName">Z</span><span class="val" id="zV"></span></label>
+        <input type="range" id="zR" min="0" max="1" step="any" value="0">
+        <button class="toggle-btn navy" id="swB">▶ Sweep</button>
+        <div class="chip-wrap" id="vch"></div></div>` : '') +
+    `<div class="control-group"><div class="result-cards">
+        <div class="rcard"><div class="rlabel" id="bL">Result</div><div class="rval" id="bV" style="color:var(--f-green)">—</div></div>
+        <div class="rcard"><div class="rlabel">At</div><div class="rval" id="bA">—</div></div></div>
+        <div class="fb" id="fb"></div></div>
+     <div class="control-group"><table class="log" id="tb"></table></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let t=0;
+
+  const S={ cons:[], obj:null, mode:'max', V:null, names:{x:'x',y:'y'}, zPre:'', zForm:'',
+            Zt:0, Zd:{x:0,v:0}, od:null, lock:false, sw:null, autoAt:null, ghosts:[], gT:0,
+            halfCheck:false, tp:{x:10,y:50,t0:-9}, Zlo:0, Zhi:1 };
+  let AN=null, lastSig='';
+
+  /* ---------- polygon builders ---------- */
+  function buildPoly(getC){
+    let poly=[[0,0],[BIG,0],[BIG,BIG],[0,BIG]];
+    S.cons.forEach(k=>{ if(k.on) poly=clipHalf(poly,k.a,k.b,getC(k),k.ge); });
+    return dedupe(poly,1e-7);
+  }
+  function viewClip(poly){
+    poly=clipHalf(poly,1,0,S.V.x1,false); poly=clipHalf(poly,0,1,S.V.y1,false); return dedupe(poly,1e-7);
+  }
+  function viewRect(){ const V=S.V; return [[V.x0,V.y0],[V.x1,V.y0],[V.x1,V.y1],[V.x0,V.y1]]; }
+
+  /* ---------- analysis (on target constraints) ---------- */
+  function analyse(){
+    const poly=buildPoly(k=>k.c);
+    const R={empty:false,G:[],opt:[],hasOpt:false,noOpt:false,best:null,bestG:null,ext:null,unb:false,poly};
+    if(!poly.length){ R.empty=true; return R; }
+    let G=poly.filter(p=>p[0]<BIG/2&&p[1]<BIG/2);
+    R.unb=G.length<poly.length;
+    if(G.length){
+      let s=0; G.forEach((p,i)=>{ const q=G[s]; if(p[0]<q[0]-1e-9||(Math.abs(p[0]-q[0])<1e-9&&p[1]<q[1])) s=i; });
+      G=G.slice(s).concat(G.slice(0,s));
+      let ci=0; G.forEach(p=>{ p.name=(Math.abs(p[0])<1e-9&&Math.abs(p[1])<1e-9)?'O':String.fromCharCode(65+ci++); });
+    }
+    R.G=G;
+    const o=S.obj;
+    if(o && (o.a||o.b) && G.length){
+      const Z=p=>o.a*p[0]+o.b*p[1], sg=S.mode==='max'?1:-1;
+      const bestG=Math.max(...G.map(p=>sg*Z(p))), bestAll=Math.max(...poly.map(p=>sg*Z(p)));
+      R.noOpt = R.unb && bestAll>bestG+1e-6*Math.max(1,Math.abs(bestAll));
+      R.bestG=sg*bestG;
+      if(!R.noOpt){ R.best=sg*bestG; R.hasOpt=true; R.opt=G.filter(p=>sg*Z(p)>=bestG-1e-5*(1+Math.abs(bestG))); }
+      const pv=S.V?viewClip(poly):G; R.ext = pv.length? sg*Math.max(...pv.map(p=>sg*Z(p))) : R.bestG;
+    }
+    return R;
+  }
+
+  /* ---------- load a problem ---------- */
+  function load(p){
+    S.cons=p.cons.map((k,i)=>({a:k.a,b:k.b,c:k.c,ge:k.ge,label:k.label,lf:k.lf,on:true,sp:{x:0,v:0},delay:0.3+0.4*i,far:0}));
+    S.obj=(p.obj&&!cfg.noObj)?{a:p.obj.a,b:p.obj.b}:null;
+    S.mode=p.mode||'max'; S.names=p.names||{x:'x',y:'y'}; S.zPre=p.zPre||''; S.zForm=p.zForm||'';
+    AN=analyse();
+    let vw=p.view;
+    if(!vw){
+      const pts=[[0,0]], cs=S.cons;
+      cs.forEach(k=>{ if(k.a) pts.push([k.c/k.a,0]); if(k.b) pts.push([0,k.c/k.b]); });
+      for(let i=0;i<cs.length;i++) for(let j=i+1;j<cs.length;j++){
+        const A=cs[i],B=cs[j],det=A.a*B.b-B.a*A.b;
+        if(Math.abs(det)>1e-9) pts.push([(A.c*B.b-B.c*A.b)/det,(A.a*B.c-B.a*A.c)/det]);
+      }
+      const ok=pts.filter(q=>isFinite(q[0])&&isFinite(q[1])&&q[0]>=-1e-9&&q[1]>=-1e-9);
+      const f=AN.unb?1.6:1.25;
+      vw={xmax:Math.max(6,Math.max(...ok.map(q=>q[0]))*f), ymax:Math.max(6,Math.max(...ok.map(q=>q[1]))*f)};
+    }
+    S.V={x0:-0.05*vw.xmax,x1:vw.xmax,y0:-0.07*vw.ymax,y1:vw.ymax};
+    S.cons.forEach(k=>{
+      const cs=[[S.V.x0,S.V.y0],[S.V.x1,S.V.y0],[S.V.x0,S.V.y1],[S.V.x1,S.V.y1]].map(q=>k.a*q[0]+k.b*q[1]);
+      k.far = k.ge ? Math.min(...cs)-1 : Math.max(...cs)+1;
+      k.sp.x=k.far; k.sp.v=0;
+    });
+    t=0; S.sw=null; S.lock=false; S.ghosts=[]; lastSig='';
+    S.tp={x:cfg.test?10:0,y:cfg.test?50:0,t0:-9};
+    S.TX={x:S.tp.x,v:0}; S.TY={x:S.V.y1,v:0};
+    if(S.obj){
+      S.od={a:{x:S.obj.a,v:0},b:{x:S.obj.b,v:0}};
+      refreshRange();
+      S.Zt=S.mode==='max'?S.Zlo:S.Zhi; S.Zd.x=S.Zt; S.Zd.v=0;
+      S.autoAt=0.3+0.4*S.cons.length+1.1;
+    }
+    syncModeButtons();
+    AN=analyse();
+  }
+  function refreshRange(){
+    const o=S.obj, V=S.V, q=[[V.x0,V.y0],[V.x1,V.y0],[V.x0,V.y1],[V.x1,V.y1]].map(c=>o.a*c[0]+o.b*c[1]);
+    S.Zlo=Math.min(...q); S.Zhi=Math.max(...q);
+    if(!(S.Zhi>S.Zlo)){ S.Zhi=S.Zlo+1; }
+    const zR=$('#zR'); if(zR){ zR.min=S.Zlo; zR.max=S.Zhi; }
+  }
+  function syncModeButtons(){ wrap.querySelectorAll('#mdB button').forEach(b=>b.classList.toggle('active',b.dataset.m===S.mode)); }
+
+  /* ---------- sweep: slide the Z line from one side, across the region, to rest ---------- */
+  function startSweep(){
+    if(!S.obj||AN.empty||(!S.obj.a&&!S.obj.b)) return;
+    refreshRange();
+    const from=S.mode==='max'?S.Zlo:S.Zhi, to=AN.hasOpt?AN.best:AN.ext;
+    S.sw={t:-0.7,dur:4.6,from,to}; S.lock=false; S.Zt=from;
+  }
+  /** called whenever the objective or the constraints change under the user's hand */
+  function onChange(){
+    AN=analyse();
+    if(S.obj){ refreshRange(); }
+    if(!S.obj||AN.empty) return;
+    if(AN.hasOpt){ S.sw=null; S.lock=true; } else startSweep();
+  }
+  const api={S,load,startSweep,onChange,getAN:()=>AN,now:()=>t};
+  window.__lp=api;
+
+  /* ---------- standard side-panel wiring ---------- */
+  if(hasObjUI){
+    const zR=$('#zR');
+    zR.oninput=()=>{ S.lock=false; S.sw=null; S.autoAt=null; S.Zt=parseFloat(zR.value); };
+    $('#swB').onclick=()=>{ S.autoAt=null; startSweep(); };
+    wrap.querySelectorAll('#mdB button').forEach(b=>b.onclick=()=>{ S.mode=b.dataset.m; syncModeButtons(); S.autoAt=null; onChange(); });
+  }
+  load(cfg.prob);
+  if(cfg.setup) cfg.setup(api,$);
+
+  /* ---------- UI refresh (only when the geometry changes) ---------- */
+  function setFb(cls,msg){ const f=$('#fb'); f.className='fb '+cls; f.textContent=msg; }
+  function uiSync(){
+    const o=S.obj, mx=S.mode==='max';
+    const chips=$('#vch');
+    if(chips){
+      chips.innerHTML=AN.G.map((p,i)=>`<button class="chip-btn" data-i="${i}">${p.name}</button>`).join('');
+      chips.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const p=AN.G[+b.dataset.i]; S.lock=false; S.sw=null; S.autoAt=null; S.Zt=o.a*p[0]+o.b*p[1]; });
+    }
+    const zn=$('#zName'); if(zn) zn.textContent=S.zForm;
+    $('#tb').innerHTML=`<tr><th>Pt</th><th>(x, y)</th>${o?'<th>Z</th>':''}</tr>`+
+      AN.G.map(p=>{ const z=o?o.a*p[0]+o.b*p[1]:0, isO=o&&AN.hasOpt&&AN.opt.includes(p);
+        return `<tr><td>${p.name}</td><td>(${fmt(p[0])}, ${fmt(p[1])})</td>${o?`<td class="${isO?'r-ok':''}">${S.zPre.trim()?'':''}${fmt(z)}</td>`:''}</tr>`; }).join('');
+    if(!o){
+      $('#bL').textContent='Corners'; $('#bV').textContent=AN.empty?'none':String(AN.G.length);
+      $('#bA').textContent=AN.G.map(p=>p.name).join(' ')||'—';
+      if(!cfg.test) setFb(AN.empty?'bad':'ok',AN.empty?'No feasible region':(AN.unb?'Unbounded region':'Bounded region'));
+      return;
+    }
+    $('#bL').textContent=(mx?'Max':'Min')+' Z';
+    if(AN.empty){ $('#bV').textContent='—'; $('#bA').textContent='—'; setFb('bad','No point satisfies every constraint'); }
+    else if(!o.a&&!o.b){ $('#bV').textContent='0'; $('#bA').textContent='all'; setFb('warn','Z = 0 everywhere'); }
+    else if(AN.noOpt){ $('#bV').textContent='none'; $('#bA').textContent='—'; setFb('warn',mx?'Z grows without limit — no maximum':'Z falls without limit — no minimum'); }
+    else {
+      $('#bV').textContent=S.zPre+fmt(AN.best);
+      const nm=AN.opt.map(p=>p.name).join(' & ');
+      $('#bA').textContent=nm;
+      setFb('ok',AN.opt.length>1?`Same Z at ${nm} — and every point between`:`${mx?'Max':'Min'} Z = ${fmt(AN.best)} at ${nm} (${fmt(AN.opt[0][0])}, ${fmt(AN.opt[0][1])})`);
+    }
+  }
+
+  /* ---------- the loop ---------- */
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=S.V, PL=62, PR=w-26, PT=30, PB=h-46, PW=PR-PL, PH=PB-PT;
+    const X=x=>PL+(x-V.x0)/(V.x1-V.x0)*PW, Y=y=>PB-(y-V.y0)/(V.y1-V.y0)*PH;
+
+    /* --- walls close in (spring) --- */
+    let settled=true;
+    S.cons.forEach(k=>{
+      const tg=(t<k.delay)?k.far:(k.on?k.c:k.far);
+      springTo(k.sp,tg,24,7.5,dt);
+      if(Math.abs(k.sp.x-tg)>0.012*(Math.abs(k.far-tg)+1)||t<k.delay) settled=false;
+    });
+    AN=analyse();
+    const sig=JSON.stringify([AN.G.map(p=>[fmt(p[0],4),fmt(p[1],4)]),AN.empty,AN.noOpt,S.mode,S.obj&&[S.obj.a,S.obj.b]]);
+    if(sig!==lastSig){ lastSig=sig; uiSync(); }
+
+    /* --- objective: rotation springs, sweep, lock-on to the optimum --- */
+    const o=S.obj, zOn=o&&(o.a||o.b);
+    if(o){
+      springTo(S.od.a,o.a,40,11,dt); springTo(S.od.b,o.b,40,11,dt);
+      if(S.autoAt!=null && t>=S.autoAt){ S.autoAt=null; startSweep(); }
+      if(S.sw){
+        S.sw.t+=dt; const u=clamp(S.sw.t/S.sw.dur,0,1), e=u*u*(3-2*u);
+        S.Zt=lerp(S.sw.from,S.sw.to,e);
+        if(u>=1){ S.sw=null; if(AN.hasOpt) S.lock=true; }
+      } else if(S.lock && AN.hasOpt){ const P=AN.opt[0]; S.Zt=S.od.a.x*P[0]+S.od.b.x*P[1]; }
+      springTo(S.Zd,S.Zt,60,9,dt);
+      const zR=$('#zR'); if(zR && Math.abs(parseFloat(zR.value)-S.Zt)>1e-9) zR.value=S.Zt;
+      $('#zV').textContent=S.zPre+fmt(S.Zd.x,1);
+      const sb=$('#swB'); if(sb) sb.disabled=AN.empty;
+      S.gT+=dt; if(S.gT>0.045){ S.gT=0; S.ghosts.push({a:S.od.a.x,b:S.od.b.x,Z:S.Zd.x}); if(S.ghosts.length>7) S.ghosts.shift(); }
+    }
+
+    /* --- displayed (animating) region --- */
+    let dp=[[0,0],[BIG,0],[BIG,BIG],[0,BIG]];
+    S.cons.forEach(k=>{ dp=clipHalf(dp,k.a,k.b,k.sp.x,k.ge); });
+    const dpv=viewClip(dedupe(dp,1e-7));
+
+    /* ================= DRAW ================= */
+    // grid + ticks
+    const nice=r=>{ const raw=r/7, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; };
+    const sx=nice(V.x1), sy=nice(V.y1);
+    ctx.save(); ctx.lineWidth=1;
+    for(let x=0;x<=V.x1+1e-9;x+=sx){ line(ctx,X(x),PT,X(x),PB,'#e9eff7',1); textAt(ctx,fmt(x,1),X(x),Y(0)+16,{align:'center',size:10.5,weight:600,color:COL.mid}); }
+    for(let y=0;y<=V.y1+1e-9;y+=sy){ line(ctx,PL,Y(y),PR,Y(y),'#e9eff7',1); textAt(ctx,fmt(y,1),X(0)-8,Y(y)+4,{align:'right',size:10.5,weight:600,color:COL.mid}); }
+    ctx.restore();
+
+    ctx.save(); ctx.beginPath(); ctx.rect(PL,PT,PW,PH); ctx.clip();
+    // half-planes (feasible side of each wall)
+    if(cfg.showHalf){
+      S.cons.forEach(k=>{
+        const hp=clipHalf(viewRect(),k.a,k.b,k.sp.x,k.ge);
+        if(hp.length>2){ ctx.beginPath(); hp.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.10)'; ctx.fill(); }
+      });
+    }
+    // feasible region
+    if(dpv.length>2){
+      ctx.beginPath(); dpv.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.closePath();
+      ctx.fillStyle='rgba(47,143,224,0.26)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.stroke();
+    } else if(dpv.length===2){ line(ctx,X(dpv[0][0]),Y(dpv[0][1]),X(dpv[1][0]),Y(dpv[1][1]),COL.blue,4); }
+    else if(dpv.length===1){ circ(ctx,X(dpv[0][0]),Y(dpv[0][1]),5,COL.blue,COL.blue,1); }
+    // test half-plane (Ex 4 check:  Z beyond the best corner value)
+    if(S.halfCheck && o && zOn && AN.bestG!=null){
+      const mx=S.mode==='max', d=1e-4*(1+Math.abs(AN.bestG));
+      const c=mx?AN.bestG+d:AN.bestG-d;
+      const hp=clipHalf(viewRect(),o.a,o.b,c,mx);
+      if(hp.length>2){ ctx.beginPath(); hp.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.closePath(); ctx.fillStyle='rgba(217,67,43,0.11)'; ctx.fill(); }
+      const ov=viewClip(clipHalf(dedupe(dp,1e-7),o.a,o.b,c,mx));
+      if(ov.length>2){ ctx.beginPath(); ov.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.closePath(); ctx.fillStyle='rgba(217,67,43,0.42)'; ctx.fill(); }
+      const ch=chord(viewRect(),o.a,o.b,AN.bestG);
+      if(ch) line(ctx,X(ch[0][0]),Y(ch[0][1]),X(ch[1][0]),Y(ch[1][1]),COL.red,2,[7,5]);
+    }
+    // walls
+    const vr=viewRect(), labels=[];
+    S.cons.forEach(k=>{
+      const ch=chord(vr,k.a,k.b,k.sp.x); if(!ch) return;
+      line(ctx,X(ch[0][0]),Y(ch[0][1]),X(ch[1][0]),Y(ch[1][1]),COL.red,2.6);
+      if(k.on && t>=k.delay+0.2){ const f=k.lf; labels.push([k.label,lerp(X(ch[0][0]),X(ch[1][0]),f),lerp(Y(ch[0][1]),Y(ch[1][1]),f)]); }
+    });
+    // axes
+    line(ctx,PL,Y(0),PR,Y(0),COL.ink,2.2); line(ctx,X(0),PT,X(0),PB,COL.ink,2.2);
+
+    // --- the Z line (yellow rod) ---
+    let ch=null, atOpt=false;
+    if(zOn){
+      const oa=S.od.a.x, ob=S.od.b.x;
+      const frame=AN.empty?0.35:1;
+      S.ghosts.forEach((g,i)=>{
+        const gc=chord(vr,g.a,g.b,g.Z); if(!gc) return;
+        line(ctx,X(gc[0][0]),Y(gc[0][1]),X(gc[1][0]),Y(gc[1][1]),'rgba(217,160,23,'+(0.05+0.035*i)*frame+')',3);
+      });
+      const lc=chord(vr,oa,ob,S.Zd.x);
+      if(lc){
+        line(ctx,X(lc[0][0]),Y(lc[0][1]),X(lc[1][0]),Y(lc[1][1]),'rgba(217,160,23,'+0.28*frame+')',10);
+        line(ctx,X(lc[0][0]),Y(lc[0][1]),X(lc[1][0]),Y(lc[1][1]),COL.yellow,3.6);
+        circ(ctx,X(lc[0][0]),Y(lc[0][1]),5,COL.yellow,'#fff',2.2); circ(ctx,X(lc[1][0]),Y(lc[1][1]),5,COL.yellow,'#fff',2.2);
+        // push direction (increasing Z for max, decreasing for min)
+        const mxp=(X(lc[0][0])+X(lc[1][0]))/2, myp=(Y(lc[0][1])+Y(lc[1][1]))/2;
+        const nx=X(lc[0][0])-X(lc[1][0]), ny=Y(lc[0][1])-Y(lc[1][1]);
+        let px_=-ny, py_=nx; const pl=Math.hypot(px_,py_)||1; px_/=pl; py_/=pl;
+        const probe=oa*(V.x1-V.x0)*0+0; // direction test in data space:
+        const dxs=(X(1)-X(0)), dys=(Y(1)-Y(0)); // data→screen scale
+        const gx=oa*dxs, gy=ob*dys;            // screen direction of increasing Z (gradient mapped)
+        let sgn=(px_*gx+py_*gy)>=0?1:-1; if(S.mode==='min') sgn=-sgn;
+        vec(ctx,mxp,myp,mxp+px_*sgn*30,myp+py_*sgn*30,COL.yellow,2.4);
+        const up=Y(lc[0][1])<Y(lc[1][1])?lc[0]:lc[1];   // the end nearer the top of the plot
+        pill(ctx,S.zPre+fmt(S.Zd.x,1),clamp(X(up[0])+(X(up[0])>PL+PW*0.5?-52:52),PL+46,PR-46),clamp(Y(up[1])+16,PT+14,PB-14),COL.yellow,'#fff8e6',11.5);
+      }
+      ch=AN.empty?null:chord(dpv,oa,ob,S.Zd.x);
+      if(ch){ line(ctx,X(ch[0][0]),Y(ch[0][1]),X(ch[1][0]),Y(ch[1][1]),COL.green,6.5); }
+      atOpt = AN.hasOpt && settled && Math.abs(S.Zd.x-AN.best)<0.012*(S.Zhi-S.Zlo);
+    }
+
+    // --- vertices ---
+    if(settled){
+      AN.G.forEach(p=>{
+        const isO=o&&AN.hasOpt&&AN.opt.includes(p);
+        circ(ctx,X(p[0]),Y(p[1]),isO?7:5.5,isO?COL.green:COL.blue,isO?'#dff3e6':'#fff',2.6);
+      });
+    }
+    // pulse + roll along an optimal edge
+    if(atOpt){
+      AN.opt.forEach(p=>{
+        for(let j=0;j<2;j++){ const f=((t*0.8+j*0.5)%1); ctx.save(); ctx.globalAlpha=1-f; circ(ctx,X(p[0]),Y(p[1]),8+f*24,COL.green,null,2.4); ctx.restore(); }
+      });
+      if(AN.opt.length>=2){
+        const A=AN.opt[0], B=AN.opt[AN.opt.length-1];
+        line(ctx,X(A[0]),Y(A[1]),X(B[0]),Y(B[1]),COL.green,7);
+        const u=0.5+0.5*Math.sin(t*1.8), bx=lerp(A[0],B[0],u), by=lerp(A[1],B[1],u);
+        circ(ctx,X(bx),Y(by),8,COL.ink,'#fff',2.6);
+        pill(ctx,'Z = '+S.zPre+fmt(o.a*bx+o.b*by,1),X(bx),Y(by)-24,COL.green,'#e4f7ec',11);
+      }
+    }
+    // vertex labels
+    if(settled) AN.G.forEach(p=>{
+      const isO=o&&AN.hasOpt&&AN.opt.includes(p);
+      let ox=10, oy=-10;
+      const cx=AN.G.reduce((s,q)=>s+q[0],0)/AN.G.length, cy=AN.G.reduce((s,q)=>s+q[1],0)/AN.G.length;
+      const vx=X(p[0])-X(cx), vy=Y(p[1])-Y(cy), vl=Math.hypot(vx,vy)||1; ox=vx/vl*20; oy=vy/vl*20;
+      if(Math.abs(ox)<6) ox=12;
+      const lab=p.name+' ('+fmt(p[0],1)+', '+fmt(p[1],1)+')';
+      ctx.save(); ctx.font='700 11px Poppins, sans-serif'; const tw=ctx.measureText(lab).width; ctx.restore();
+      const lx=clamp(X(p[0])+ox-(ox<0?tw:0),PL+2,PR-tw-2), ly=clamp(Y(p[1])+oy,PT+12,PB-4);
+      textAt(ctx,lab,lx,ly,{size:11,weight:700,color:isO?COL.green:COL.ink});
+    });
+    // wall labels
+    labels.forEach(l=>pill(ctx,l[0],clamp(l[1],PL+55,PR-55),clamp(l[2]-14,PT+14,PB-12),COL.red,'rgba(255,255,255,0.95)',11));
+
+    // --- test point (a ball dropped onto the graph) ---
+    let tpFeasible=false;
+    if(cfg.test){
+      springTo(S.TX,S.tp.x,40,11,dt); springTo(S.TY,S.tp.y,55,5.2,dt);
+      tpFeasible=S.cons.every(k=>!k.on||(k.ge?k.a*S.tp.x+k.b*S.tp.y>=k.c-1e-9:k.a*S.tp.x+k.b*S.tp.y<=k.c+1e-9));
+      const shake=tpFeasible?0:Math.max(0,7*Math.exp(-(t-S.tp.t0)*4))*Math.sin(t*55);
+      const bx=X(S.TX.x)+shake, by=Y(S.TY.x);
+      line(ctx,bx,by,bx,Y(0),COL.yellow,1.6,[4,4]); line(ctx,bx,by,X(0),by,COL.yellow,1.6,[4,4]);
+      circ(ctx,bx,by,10,tpFeasible?COL.green:COL.red,tpFeasible?'#dff3e6':'#fdece7',3);
+      textAt(ctx,tpFeasible?'✓':'✗',bx,by+4.5,{align:'center',size:12,weight:700,color:tpFeasible?COL.green:COL.red});
+      pill(ctx,'('+S.tp.x+', '+S.tp.y+')',clamp(bx+46,PL+40,PR-40),clamp(by-20,PT+12,PB-10),tpFeasible?COL.green:COL.red,'#fff',11);
+    }
+    ctx.restore();
+
+    // --- canvas messages ---
+    textAt(ctx,S.names.x,PR,Y(0)+34,{align:'right',size:12,weight:700,color:COL.muted});
+    textAt(ctx,S.names.y,X(0)+8,PT-10,{size:12,weight:700,color:COL.muted});
+    if(o&&zOn) textAt(ctx,S.zForm,PR,PT-10,{size:12.5,weight:700,color:COL.yellow,align:'right'});
+    if(AN.empty && settled) pill(ctx,'No common region',(PL+PR)/2,(PT+PB)/2,COL.red,'#fdece7',14);
+    if(S.halfCheck && o && AN.bestG!=null && settled){
+      pill(ctx,AN.noOpt?'Overlap with the red half-plane ⇒ no '+(S.mode==='max'?'maximum':'minimum'):'No overlap ⇒ '+fmt(AN.bestG)+' is the '+(S.mode==='max'?'maximum':'minimum'),
+        (PL+PR)/2,PT+22,AN.noOpt?COL.red:COL.green,AN.noOpt?'#fdece7':'#e4f7ec',12);
+    } else if(AN.noOpt && S.sw==null && settled && Math.abs(S.Zd.x-AN.ext)<0.02*(S.Zhi-S.Zlo)){
+      pill(ctx,'The line never leaves the region →',(PL+PR)/2,PT+22,COL.red,'#fdece7',12);
+    }
+    if(cfg.onFrame) cfg.onFrame(api,{ctx,w,h,X,Y,tpFeasible});
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   6.1  THE FURNITURE DEALER   (warehouse + two filling tanks)
+   Money: 2500x + 500y ≤ 50 000   Space: x + y ≤ 60   Profit Z = 250x + 75y
+   Textbook check: (20,0)→5000 · (0,60)→4500 · (10,50)→6250 · (25,40) infeasible.
+   --------------------------------------------------------------------- */
+function icoTable(ctx,x,y,s,col,al){
+  ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=col; ctx.lineWidth=Math.max(1.5,s*0.07); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath(); ctx.moveTo(x-s*0.38,y-s*0.1); ctx.lineTo(x+s*0.38,y-s*0.1);
+  ctx.moveTo(x-s*0.28,y-s*0.1); ctx.lineTo(x-s*0.28,y+s*0.34); ctx.moveTo(x+s*0.28,y-s*0.1); ctx.lineTo(x+s*0.28,y+s*0.34); ctx.stroke(); ctx.restore();
+}
+function icoChair(ctx,x,y,s,col,al){
+  ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=col; ctx.lineWidth=Math.max(1.5,s*0.07); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath(); ctx.moveTo(x-s*0.2,y-s*0.38); ctx.lineTo(x-s*0.2,y+0.02*s); ctx.lineTo(x+s*0.2,y+0.02*s);
+  ctx.moveTo(x-s*0.2,y+0.02*s); ctx.lineTo(x-s*0.2,y+s*0.34); ctx.moveTo(x+s*0.2,y+0.02*s); ctx.lineTo(x+s*0.2,y+s*0.34); ctx.stroke(); ctx.restore();
+}
+function drawTank(ctx,cx,top,bot,tw,lvl,limFrac,vel,t,title,valTxt,limTxt,over){
+  const x=cx-tw/2, H=bot-top, yLim=bot-H*limFrac, ys=bot-H*clamp(lvl,0,1);
+  const amp=1.4+Math.min(9,Math.abs(vel)*55);
+  const wave=xx=>ys+Math.sin(xx*0.09+t*3.2)*amp*0.6+Math.sin(xx*0.05-t*2.1)*amp*0.4;
+  const path=()=>{ ctx.beginPath(); ctx.moveTo(x,bot); for(let xx=0;xx<=tw;xx+=4) ctx.lineTo(x+xx,wave(xx)); ctx.lineTo(x+tw,bot); ctx.closePath(); };
+  ctx.save(); ctx.beginPath(); ctx.rect(x,top-4,tw,H+4); ctx.clip();
+  path(); ctx.fillStyle='rgba(47,143,224,0.38)'; ctx.fill();
+  ctx.save(); ctx.beginPath(); ctx.rect(x,top-4,tw,yLim-top+4); ctx.clip(); path(); ctx.fillStyle='rgba(217,67,43,0.55)'; ctx.fill(); ctx.restore();
+  ctx.beginPath(); for(let xx=0;xx<=tw;xx+=4){ const yy=wave(xx); xx?ctx.lineTo(x+xx,yy):ctx.moveTo(x+xx,yy); } ctx.strokeStyle=over?COL.red:COL.blue; ctx.lineWidth=2.4; ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x,top-4); ctx.lineTo(x,bot); ctx.lineTo(x+tw,bot); ctx.lineTo(x+tw,top-4); ctx.stroke(); ctx.restore();
+  line(ctx,x-9,yLim,x+tw+9,yLim,COL.red,2.4,[7,4]);
+  textAt(ctx,limTxt,x-12,yLim-6,{align:'right',size:11,weight:700,color:COL.red});
+  textAt(ctx,title,cx,bot+20,{align:'center',size:12.5,weight:700});
+  pill(ctx,valTxt,cx,top-22,over?COL.red:COL.blue,over?'#fdece7':'#fff',12);
+}
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label>Tables  x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0" max="25" step="1" value="10"></div>
+    <div class="control-group"><label>Chairs  y <span class="val" id="yV"></span></label><input type="range" id="yR" min="0" max="80" step="1" value="50"></div>
+    <div class="control-group"><label style="margin-bottom:2px">Try</label><div class="chip-wrap" id="pre">
+      <button class="chip-btn" data-x="20" data-y="0">Tables only</button><button class="chip-btn" data-x="0" data-y="60">Chairs only</button>
+      <button class="chip-btn" data-x="10" data-y="50">10 + 50</button><button class="chip-btn" data-x="25" data-y="40">25 + 40</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Money  ≤ 50 000</div><div class="rval" id="r1" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">Pieces  ≤ 60</div><div class="rval" id="r2" style="color:var(--f-blue)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Profit  Z = 250x + 75y</div><div class="rval" id="r3" style="color:var(--f-green)"></div></div></div>
+      <div class="fb" id="fb"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xR=$('#xR'), yR=$('#yR');
+  let t=0, xd=10, yd=50, tabs=[], chairs=[];
+  const L1={x:0,v:0}, L2={x:0,v:0}, PD={x:0,v:0};
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{ xR.value=b.dataset.x; yR.value=b.dataset.y; });
+  const items={t:[],c:[]};
+
+  animLoop(dt=>{
+    t+=dt;
+    const xT=+xR.value, yT=+yR.value;
+    xd=approach(xd,xT,6,dt); yd=approach(yd,yT,6,dt);
+    const nT=Math.round(xd), nC=Math.round(yd);
+    $('#xV').textContent=xT; $('#yV').textContent=yT;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sceneW=w*0.62, floorY=h-58, cols=12;
+    const cs=Math.min((sceneW-36)/cols,(floorY-44)/11), x0=18;
+    const slotXY=i=>({x:x0+((i%cols)+0.5)*cs, y:floorY-(Math.floor(i/cols)+0.5)*cs});
+
+    // keep item lists in step with the sliders (spawn above → fall; remove → fly up)
+    const sync=(arr,n,kind)=>{
+      let live=arr.filter(it=>!it.gone);
+      while(live.length<n){ const it={kind,px:0,py:-60,vy:0,fall:true,al:1,gone:false,k:Math.random()}; arr.push(it); live.push(it); it.px=-1; }
+      while(live.length>n){ const it=live.pop(); it.gone=true; it.vy=-380; }
+      return live;
+    };
+    const tl=sync(items.t,nT,'t'), cl=sync(items.c,nC,'c');
+    const all=tl.concat(cl);
+    all.forEach((it,i)=>{
+      const s=slotXY(i); it.tx=s.x; it.ty=s.y;
+      if(it.px<0) it.px=it.tx+(it.k-0.5)*20;
+      if(it.fall){ it.vy+=1700*dt; it.py+=it.vy*dt; it.px=approach(it.px,it.tx,10,dt);
+        if(it.py>=it.ty){ it.py=it.ty; it.vy=-it.vy*0.38; if(Math.abs(it.vy)<70){ it.fall=false; it.vy=0; } } }
+      else { it.px=approach(it.px,it.tx,12,dt); it.py=approach(it.py,it.ty,12,dt); }
+    });
+    [items.t,items.c].forEach(arr=>arr.forEach(it=>{ if(it.gone){ it.py+=it.vy*dt; it.al-=dt*3.2; } }));
+    items.t=items.t.filter(it=>!it.gone||it.al>0); items.c=items.c.filter(it=>!it.gone||it.al>0);
+
+    // rack
+    const rackTop=floorY-5*cs;
+    line(ctx,x0-6,floorY,x0+cols*cs+6,floorY,COL.ink,3);
+    for(let r=0;r<=5;r++) line(ctx,x0,floorY-r*cs,x0+cols*cs,floorY-r*cs,r===0?COL.ink:'#c2d1e5',r===0?2.4:1.3);
+    for(let c=0;c<=cols;c+=cols) line(ctx,x0+c*cs,floorY,x0+c*cs,rackTop,COL.ink,2.4);
+    line(ctx,x0-8,rackTop,x0+cols*cs+8,rackTop,COL.red,2.4,[7,4]);
+    textAt(ctx,'60 pieces',x0+cols*cs-2,rackTop-6,{align:'right',size:11,weight:700,color:COL.red});
+    all.concat(items.t.filter(i=>i.gone),items.c.filter(i=>i.gone)).forEach(it=>{});
+    const drawIt=(it,idx)=>{ const over=idx>=60, col=over?COL.red:(it.kind==='t'?COL.blue:COL.green);
+      (it.kind==='t'?icoTable:icoChair)(ctx,it.px,it.py,cs*0.82,col,Math.max(0,it.al)); };
+    all.forEach((it,i)=>drawIt(it,i));
+    items.t.concat(items.c).filter(i=>i.gone).forEach(it=>drawIt(it,0));
+    // counts
+    textAt(ctx,'x = '+nT+' tables',x0,floorY+24,{size:13,weight:700,color:COL.blue});
+    textAt(ctx,'y = '+nC+' chairs',x0+sceneW*0.5,floorY+24,{size:13,weight:700,color:COL.green});
+
+    // tanks
+    const used=2500*nT+500*nC, cnt=nT+nC, MAXF=2.1;
+    springTo(L1,clamp(used/50000/MAXF,0,1),34,6,dt); springTo(L2,clamp(cnt/60/MAXF,0,1),34,6,dt);
+    const tw=Math.min(w*0.1,86), tTop=h*0.2, tBot=floorY, lf=1/MAXF;
+    drawTank(ctx,w*0.72,tTop,tBot,tw,L1.x,lf,L1.v,t,'Money',money(used),'50 000',used>50000);
+    drawTank(ctx,w*0.9,tTop,tBot,tw,L2.x,lf,L2.v,t,'Space',cnt+' pcs','60',cnt>60);
+    const profit=250*nT+75*nC; springTo(PD,profit,28,8,dt);
+    textAt(ctx,'Profit',w*0.81,h*0.065,{align:'center',size:11,weight:700,color:COL.muted});
+    textAt(ctx,money(PD.x),w*0.81,h*0.065+26,{align:'center',size:22,weight:700,color:COL.green});
+
+    const ok=used<=50000&&cnt<=60;
+    $('#r1').textContent=money(used); $('#r2').textContent=cnt; $('#r3').textContent=money(profit);
+    $('#r1').style.color=used>50000?'var(--f-red)':'var(--f-blue)'; $('#r2').style.color=cnt>60?'var(--f-red)':'var(--f-blue)';
+    const fb=$('#fb'); fb.className='fb '+(ok?'ok':'bad'); fb.textContent=ok?'Feasible ✓':(used>50000&&cnt>60?'Over money and space ✗':used>50000?'Over the money limit ✗':'Over the space limit ✗');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   6.2  THE FEASIBLE REGION   (walls close in · drop a test point)
+   --------------------------------------------------------------------- */
+function buildA2(){
+  return buildLP({
+    prob:Object.assign({},P_FURN,{obj:null}), noObj:true, showHalf:true, test:true,
+    extra:`<div class="control-group"><label>Walls</label><div class="chip-wrap" id="cB"></div></div>
+      <div class="control-group"><label>x  tables <span class="val" id="txV"></span></label><input type="range" id="txR" min="0" max="30" step="1" value="10">
+        <label style="margin-top:8px">y  chairs <span class="val" id="tyV"></span></label><input type="range" id="tyR" min="0" max="75" step="1" value="50">
+        <div class="chip-wrap" id="tpre"><button class="chip-btn" data-x="10" data-y="50">(10, 50)</button><button class="chip-btn" data-x="20" data-y="0">(20, 0)</button><button class="chip-btn" data-x="0" data-y="60">(0, 60)</button><button class="chip-btn" data-x="25" data-y="40">(25, 40)</button></div>
+        <div class="fb" id="tpF"></div></div>`,
+    setup(api,$){
+      const S=api.S;
+      $('#cB').innerHTML=S.cons.map((k,i)=>`<button class="chip-btn active" data-i="${i}">${k.label}</button>`).join('');
+      $('#cB').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const k=S.cons[+b.dataset.i]; k.on=!k.on; b.classList.toggle('active',k.on); api.onChange(); });
+      const txR=$('#txR'), tyR=$('#tyR');
+      const set=()=>{ S.tp.x=+txR.value; S.tp.y=+tyR.value; S.tp.t0=api.now(); $('#txV').textContent=S.tp.x; $('#tyV').textContent=S.tp.y; };
+      txR.oninput=set; tyR.oninput=set; set();
+      wrap_pre($('#tpre'),txR,tyR,set);
+    },
+    onFrame(api,fr){
+      const S=api.S, ok=fr.tpFeasible, f=document.querySelector('#tpF');
+      if(f){ f.className='fb '+(ok?'ok':'bad'); f.textContent=ok?'Feasible solution ✓':'Infeasible — outside the region ✗'; }
+    }
+  });
+}
+function wrap_pre(box,a,b,set){ box.querySelectorAll('button').forEach(x=>x.onclick=()=>{ a.value=x.dataset.x; b.value=x.dataset.y; set(); }); }
+
+/* ---------------------------------------------------------------------
+   6.3  CORNER POINT METHOD   (furniture dealer, Z = 250x + 75y)
+   --------------------------------------------------------------------- */
+function buildA3(){ return buildLP({ prob:P_FURN, showHalf:false }); }
+
+/* ---------------------------------------------------------------------
+   6.4  TILT THE OBJECTIVE   (Example 1:  Z = ax + by,  x+y ≤ 50, 3x+y ≤ 90)
+   --------------------------------------------------------------------- */
+function buildA4(){
+  return buildLP({
+    prob:P_EX1,
+    extra:`<div class="control-group"><label>a  (coefficient of x) <span class="val" id="aV"></span></label><input type="range" id="aR" min="-6" max="10" step="0.5" value="4">
+      <label style="margin-top:8px">b  (coefficient of y) <span class="val" id="bV2"></span></label><input type="range" id="bR" min="-6" max="10" step="0.5" value="1"></div>`,
+    setup(api,$){
+      const S=api.S, aR=$('#aR'), bR=$('#bR');
+      const upd=()=>{ S.obj.a=+aR.value; S.obj.b=+bR.value; S.autoAt=null; S.zForm='Z = '+fmt(S.obj.a,1)+'x + '+fmt(S.obj.b,1)+'y'; $('#aV').textContent=fmt(S.obj.a,1); $('#bV2').textContent=fmt(S.obj.b,1); api.onChange(); };
+      aR.oninput=upd; bR.oninput=upd;
+      $('#aV').textContent='4'; $('#bV2').textContent='1';
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   6.5  MINIMISE   (Example 2:  Z = 200x + 500y,  x+2y ≥ 10, 3x+4y ≤ 24)
+   --------------------------------------------------------------------- */
+function buildA5(){ return buildLP({ prob:P_EX2, showHalf:false }); }
+
+/* ---------------------------------------------------------------------
+   6.6  MANY OPTIMAL POINTS   (Example 3:  Z = 3x + b·y — tie at b = 9)
+   --------------------------------------------------------------------- */
+function buildA6(){
+  return buildLP({
+    prob:P_EX3,
+    extra:`<div class="control-group"><label>b  in  Z = 3x + b·y <span class="val" id="bV3">9</span></label><input type="range" id="bR3" min="3" max="15" step="0.5" value="9"></div>`,
+    setup(api,$){
+      const S=api.S, bR=$('#bR3');
+      bR.oninput=()=>{ S.obj.b=+bR.value; S.autoAt=null; S.zForm='Z = 3x + '+fmt(S.obj.b,1)+'y'; $('#bV3').textContent=fmt(S.obj.b,1); api.onChange(); };
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   6.7  UNBOUNDED REGION   (Example 4:  Z = −50x + 20y)
+   --------------------------------------------------------------------- */
+function buildA7(){
+  return buildLP({
+    prob:P_EX4,
+    extra:`<div class="control-group"><label>Test half-plane</label><div class="toggle-group"><button class="toggle-btn" id="hpB">Show  Z beyond the best corner</button></div></div>`,
+    setup(api,$){
+      const S=api.S, b=$('#hpB');
+      b.onclick=()=>{ S.halfCheck=!S.halfCheck; b.classList.toggle('active',S.halfCheck); };
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   6.8  NO FEASIBLE REGION   (Example 5:  x + y ≥ k  against  3x + 5y ≤ 15)
+   --------------------------------------------------------------------- */
+function buildA8(){
+  return buildLP({
+    prob:P_EX5, showHalf:true,
+    extra:`<div class="control-group"><label>Wall  x + y ≥ k <span class="val" id="kV">8</span></label><input type="range" id="kR" min="2" max="10" step="0.1" value="8"></div>`,
+    setup(api,$){
+      const S=api.S, kR=$('#kR');
+      kR.oninput=()=>{ const k=+kR.value; S.cons[0].c=k; S.cons[0].label='x + y ≥ '+fmt(k,1); $('#kV').textContent=fmt(k,1); S.autoAt=null; api.onChange(); };
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   6.9  EXERCISE 12.1   (all ten problems on the same engine)
+   --------------------------------------------------------------------- */
+function buildA9(){
+  let api;
+  const w=buildLP({
+    prob:EXER[0], showHalf:false,
+    extra:`<div class="control-group"><label>Exercise 12.1</label><div class="chip-wrap" id="exB">${EXER.map((e,i)=>`<button class="chip-btn${i===0?' active':''}" data-i="${i}">Q${e.n}</button>`).join('')}</div></div>`,
+    setup(a,$){
+      api=a;
+      const bs=$('#exB').querySelectorAll('button');
+      bs.forEach(b=>b.onclick=()=>{ bs.forEach(x=>x.classList.remove('active')); b.classList.add('active'); api.load(EXER[+b.dataset.i]); });
+    }
+  });
+  return w;
+}
+
+/* ---------------------------------------------------------------------
+   7. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'6.1', title:'The Furniture Dealer',  desc:'Fill the warehouse · watch money and space run out', build: buildA1 },
+  { num:'6.2', title:'The Feasible Region',   desc:'Walls close in · drop a point', build: buildA2 },
+  { num:'6.3', title:'Corner Point Method',   desc:'Slide the profit line to the last corner', build: buildA3 },
+  { num:'6.4', title:'Tilt the Objective',    desc:'Example 1 · turn the Z line, the corner changes', build: buildA4 },
+  { num:'6.5', title:'Minimising Cost',       desc:'Example 2 · slide the line down', build: buildA5 },
+  { num:'6.6', title:'Many Optimal Points',   desc:'Example 3 · line parallel to an edge', build: buildA6 },
+  { num:'6.7', title:'Unbounded Region',      desc:'Example 4 · the line never leaves', build: buildA7 },
+  { num:'6.8', title:'No Feasible Region',    desc:'Example 5 · two walls that never meet', build: buildA8 },
+  { num:'6.9', title:'Exercise 12.1',         desc:'All ten problems · one engine', build: buildA9 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

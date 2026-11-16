@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 3 — Classification of Elements and Periodicity | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.control-group select{width:100%; margin-top:6px; padding:7px 8px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+.control-group sup,.rval sup{font-size:.7em; line-height:0;} .control-group sub,.rval sub{font-size:.7em; line-height:0;}
+.sw{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚛️</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 3</div>
+      <h1>Classification of Elements &amp; Periodicity</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Electrons · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Metal · Result</span>
+      <span><i style="background:var(--f-red)"></i>Nucleus · Pull · Energy</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">3.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 3: CLASSIFICATION OF ELEMENTS & PERIODICITY IN PROPERTIES
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Atoms are always alive — electrons orbit, flames flicker,
+   grains fall and bounce — never a single static frame with a label changed.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', violet:'#7b4fc4', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', pale:'#dbe4f0'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<2) return;
+  const a=Math.atan2(y2-y1,x2-x1), hs=Math.min(7+(width||2.6),L*0.6);
+  line(ctx,x1,y1,x2-Math.cos(a)*hs*0.6,y2-Math.sin(a)*hs*0.6,color,width||2.6); arrowHead(ctx,x2,y2,a,color,hs);
+}
+function dimArrow(ctx,x1,y1,x2,y2,color){
+  line(ctx,x1,y1,x2,y2,color,1.6); const a=Math.atan2(y2-y1,x2-x1);
+  arrowHead(ctx,x1,y1,a+Math.PI,color,6); arrowHead(ctx,x2,y2,a,color,6);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, system-ui, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0&&stroke){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw,dash){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.setLineDash(dash||[]); ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function easeOutCubic(u){ u=clamp(u,0,1); return 1-Math.pow(1-u,3); }
+function easeInOut(u){ u=clamp(u,0,1); return u<0.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2; }
+function easeOutBack(u){ u=clamp(u,0,1); const c1=1.9,c3=c1+1; return 1+c3*Math.pow(u-1,3)+c1*Math.pow(u-1,2); }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. state = {x,v}. */
+function springTo(state,target,k,damping,dt){
+  const n=Math.max(1,Math.ceil(dt/0.008)), h=dt/n;
+  for(let i=0;i<n;i++){ const acc=(target-state.x)*k - state.v*damping; state.v+=acc*h; state.x+=state.v*h; }
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHEMISTRY DATA + ATOM DRAWING
+   --------------------------------------------------------------------- */
+const SYM='H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og'.split(' ');
+const Z_OF = {}; SYM.forEach((s,i)=>Z_OF[s]=i+1);
+/* sub-shells in Aufbau (Madelung) order: [name, n, number of orbitals] */
+const SUBS=[['1s',1,1],['2s',2,1],['2p',2,3],['3s',3,1],['3p',3,3],['4s',4,1],['3d',3,5],['4p',4,3],['5s',5,1],['4d',4,5],['5p',5,3],['6s',6,1],['4f',4,7],['5d',5,5],['6p',6,3],['7s',7,1],['5f',5,7],['6d',6,5],['7p',7,3]];
+const SUB_IDX={}; SUBS.forEach((s,i)=>SUB_IDX[s[0]]=i);
+/* ground-state exceptions to the simple filling order */
+const EXC={24:{'4s':1,'3d':5},29:{'4s':1,'3d':10},41:{'5s':1,'4d':4},42:{'5s':1,'4d':5},44:{'5s':1,'4d':7},45:{'5s':1,'4d':8},46:{'5s':0,'4d':10},47:{'5s':1,'4d':10},
+  57:{'4f':0,'5d':1},58:{'4f':1,'5d':1},64:{'4f':7,'5d':1},78:{'6s':1,'5d':9},79:{'6s':1,'5d':10},
+  89:{'5f':0,'6d':1},90:{'5f':0,'6d':2},91:{'5f':2,'6d':1},92:{'5f':3,'6d':1},93:{'5f':4,'6d':1},96:{'5f':7,'6d':1}};
+const _cfgCache={};
+function config(Z){
+  if(_cfgCache[Z]) return _cfgCache[Z];
+  const c=SUBS.map(()=>0); let left=Z;
+  for(let i=0;i<SUBS.length&&left>0;i++){ const cap=2*SUBS[i][2]; const k=Math.min(cap,left); c[i]=k; left-=k; }
+  const ex=EXC[Z]; if(ex) for(const k in ex) c[SUB_IDX[k]]=ex[k];
+  return (_cfgCache[Z]=c);
+}
+function shellCounts(e){ // electrons per principal shell n = 1..N
+  const c=config(e), sh=[];
+  c.forEach((k,i)=>{ if(k){ const n=SUBS[i][1]; sh[n-1]=(sh[n-1]||0)+k; } });
+  for(let i=0;i<sh.length;i++) if(!sh[i]) sh[i]=0;
+  return sh;
+}
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function supNum(n){ return String(n).split('').map(d=>SUP[+d]).join(''); }
+const NOBLE=[[2,0],[10,2],[18,4],[36,7],[54,10],[86,14]]; // Z, last sub-shell index
+function cfgParts(Z){
+  const c=config(Z); let start=0, core='';
+  for(const [nz,idx] of NOBLE){ if(nz<Z){ start=idx+1; core='['+SYM[nz-1]+']'; } }
+  const L='spdf', parts=[]; for(let i=start;i<SUBS.length;i++) if(c[i]) parts.push({n:SUBS[i][1],l:L.indexOf(SUBS[i][0][1]),nm:SUBS[i][0],k:c[i]});
+  parts.sort((a,b)=>a.n-b.n||a.l-b.l);
+  return {core,parts};
+}
+function cfgStr(Z){ const p=cfgParts(Z); return (p.core?p.core+' ':'')+p.parts.map(q=>q.nm+supNum(q.k)).join(' '); }
+function cfgHtml(Z){ const p=cfgParts(Z); return (p.core?p.core+' ':'')+p.parts.map(q=>q.nm+'<sup>'+q.k+'</sup>').join(' '); }
+/* position in the long-form periodic table */
+function periodOf(Z){ const L=[2,10,18,36,54,86,118]; for(let i=0;i<7;i++) if(Z<=L[i]) return i+1; return 7; }
+function tablePos(Z){
+  const p=periodOf(Z), starts=[0,2,10,18,36,54,86], i=Z-1-starts[p-1];
+  if(p===1) return {p,col:i===0?1:18,row:1,block:i===0?'s':'p'};
+  if(p<=3) return {p,col:i<2?i+1:i+11,row:p,block:i<2?'s':'p'};
+  if(p<=5) return {p,col:i+1,row:p,block:i<2?'s':(i<12?'d':'p')};
+  if(i<2) return {p,col:i+1,row:p,block:'s'};
+  if(i===2) return {p,col:3,row:p,block:'d'};
+  if(i<=16) return {p,col:4+(i-3),row:p===6?8.5:9.5,block:'f',f:true,fi:i-3};
+  const col=i-13; return {p,col,row:p,block:col<=12?'d':'p'};
+}
+const BLK={s:COL.blue,p:COL.green,d:COL.yellow,f:COL.red};
+
+function shellOmega(i){ return (i%2?-1:1)*(2.3/(1+0.55*i)); }
+function drawNucleus(ctx,cx,cy,Z,rad,t){
+  circ(ctx,cx,cy,rad,COL.red,'#fff4f1',2.4);
+  if(Z<=30){ const pr=Math.max(1.6,rad*0.7/Math.sqrt(Z)); for(let i=0;i<Z;i++){ const rr=Math.sqrt((i+0.5)/Z)*(rad-pr-1), a=i*2.399963+t*0.35; circ(ctx,cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,pr*0.82,COL.red,COL.red,0.6); } }
+  else textAt(ctx,'+'+Z,cx,cy+4,{align:'center',size:Math.max(10,rad*0.7),weight:700,color:COL.red});
+}
+/** Line-diagram Bohr atom. sh: electrons per shell, rad: px radius per shell.
+    o: {nucR, skip (omit that many electrons from the outermost shell), outerCol, ringAlpha[], er} */
+function drawAtom(ctx,cx,cy,Z,sh,rad,t,o){
+  o=o||{}; const er=o.er||3.3;
+  for(let i=0;i<sh.length;i++){
+    const r=rad[i]; if(!(r>0)) continue;
+    const last=i===sh.length-1, al=o.ringAlpha&&o.ringAlpha[i]!==undefined?o.ringAlpha[i]:1;
+    ctx.save(); ctx.globalAlpha=al; circ(ctx,cx,cy,r,last&&o.outerCol?o.outerCol:'#b9c8dc',null,last?1.8:1.3,last?null:[3,4]);
+    let c=sh[i]-((last&&o.skip)||0); const w=shellOmega(i);
+    for(let k=0;k<c;k++){ const a=t*w+k*Math.PI*2/Math.max(1,sh[i])+i*0.9; circ(ctx,cx+Math.cos(a)*r,cy+Math.sin(a)*r,er,COL.blue,'#cfe5fb',1.6); }
+    ctx.restore();
+  }
+  drawNucleus(ctx,cx,cy,Z,o.nucR||14,t);
+}
+/** Bar chart. o:{x,y,w,h,vals,labels,cur(float),max,col,hi,fmt,every} */
+function barChart(ctx,o){
+  const n=o.vals.length, bw=o.w/n, base=o.y+o.h, ci=Math.round(o.cur===undefined?-1:o.cur);
+  line(ctx,o.x,base,o.x+o.w,base,COL.mid,1.4);
+  for(let i=0;i<n;i++){
+    const hh=Math.max(1,o.h*clamp(o.vals[i]/o.max,0,1)), on=i===ci, c=on?(o.hi||COL.yellow):(o.col||COL.blue);
+    rect(ctx,o.x+i*bw+bw*0.14,base-hh,bw*0.72,hh,c,on?mixCol(c,'#ffffff',0.72):mixCol(c,'#ffffff',0.88),on?2.2:1.2);
+    if(o.labels&&(!o.every||i%o.every===0)) textAt(ctx,o.labels[i],o.x+(i+0.5)*bw,base+13,{align:'center',size:Math.min(11,Math.max(8,bw*0.5)),weight:on?700:500,color:on?COL.ink:COL.muted});
+  }
+  if(o.cur!==undefined&&o.cur>=0){
+    const mx=o.x+(o.cur+0.5)*bw, hv=o.vals[ci], my=base-o.h*clamp(hv/o.max,0,1)-8;
+    arrowHead(ctx,mx,my+2,Math.PI/2,o.hi||COL.yellow,8);
+    textAt(ctx,(o.fmt?o.fmt(hv):hv),mx,my-6,{align:'center',size:11,weight:700,color:COL.ink});
+  }
+  if(o.title) textAt(ctx,o.title,o.x,o.y-8,{size:11,weight:700,color:COL.muted});
+}
+
+/* ---------------------------------------------------------------------
+   0d. SIDE-PANEL HTML SNIPPETS
+   --------------------------------------------------------------------- */
+function slider(id,label,min,max,step,val){ return `<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function togg(id,label,items){ return `<div class="control-group">${label?`<label style="margin-bottom:6px;">${label}</label>`:''}<div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn${it[2]?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')}</div></div>`; }
+function cards(list,cls){ return `<div class="control-group"><div class="result-cards ${cls||''}">${list.map(c=>`<div class="rcard${c[3]?' wide':''}"><div class="rlabel">${c[0]}</div><div class="rval" id="${c[1]}"${c[2]?` style="color:var(--f-${c[2]})"`:''}>—</div></div>`).join('')}</div></div>`; }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'3.1',  title:'Fill the Orbitals',      desc:'Add electrons · find the block',        build: buildA1 },
+  { num:'3.2',  title:'Atomic Radius',          desc:'Across a period · down a group',        build: buildA2 },
+  { num:'3.3',  title:'Atom → Ion',             desc:'Lose or gain electrons · watch the size', build: buildA3 },
+  { num:'3.4',  title:'Isoelectronic Squeeze',  desc:'Same 10 electrons · rising nuclear charge', build: buildA4 },
+  { num:'3.5',  title:'Ionization Enthalpy',    desc:'Pull an electron out',                  build: buildA5 },
+  { num:'3.6',  title:'Electron Gain Enthalpy', desc:'Fire an electron at the atom',          build: buildA6 },
+  { num:'3.7',  title:'Electronegativity Tug',  desc:'Who holds the shared pair?',            build: buildA7 },
+  { num:'3.8',  title:'Valence & Formulas',     desc:'Transfer or share · build the formula', build: buildA8 },
+  { num:'3.9',  title:'Metal or Non-metal?',    desc:'Hammer it · light the bulb',            build: buildA9 },
+  { num:'3.10', title:'Oxides in Water',        desc:'Basic · amphoteric · neutral · acidic', build: buildA10 },
+  { num:'3.11', title:'Alkali Metals in Water', desc:'Reactivity rises down Group 1',         build: buildA11 },
+  { num:'3.12', title:'Halogen Displacement',   desc:'Reactivity falls down Group 17',        build: buildA12 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+/* =====================================================================
+   3.1 FILL THE ORBITALS
+   Aufbau order 1s 2s 2p 3s 3p 4s 3d 4p 5s 4d 5p 6s 4f 5d 6p 7s 5f 6d 7p.
+   Hund's rule: one electron per box before pairing.
+   Textbook check (Problem 3.2): period 5 = 5s(1)+4d(5)+5p(3) = 9 orbitals
+   → 18 electrons → 18 elements.   Block = sub-shell that received the last e⁻.
+   ===================================================================== */
+const PERIOD_ROWS=[[0],[1,2],[3,4],[5,6,7],[8,9,10],[11,12,13,14],[15,16,17,18]];
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('zR','Atomic number Z',1,118,1,11)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn" id="mB">− 1 e⁻</button><button class="toggle-btn" id="pB">+ 1 e⁻</button></div>
+     <div class="toggle-group" style="margin-top:6px"><button class="toggle-btn play" id="playB">▶ Build up</button><button class="toggle-btn" id="rstB">Reset</button></div></div>`+
+    cards([['Element','c1','blue'],['Block','c2'],['Period','c3'],['Group','c4'],['Configuration','c5','',1]]);
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), zR=$('#zR');
+  let cur=11, dropT=0, dir=0, dur=0.1, t=0, playing=false, acc=0, land={x:0,y:0,t:-9}, pop={};
+  $('#mB').onclick=()=>{ zR.value=Math.max(1,+zR.value-1); };
+  $('#pB').onclick=()=>{ zR.value=Math.min(118,+zR.value+1); };
+  $('#rstB').onclick=()=>{ playing=false; $('#playB').textContent='▶ Build up'; zR.value=1; };
+  $('#playB').onclick=()=>{ playing=!playing; $('#playB').textContent=playing?'❚❚ Pause':'▶ Build up'; if(playing&&+zR.value>=118) zR.value=1; };
+
+  function slotOf(a,b){ for(let i=0;i<SUBS.length;i++) if(b[i]>a[i]) return {i,j:b[i]-1}; return null; }
+  animLoop((dt)=>{
+    t+=dt;
+    const Zt=+zR.value; $('#zRV').textContent=Zt+'  '+SYM[Zt-1];
+    if(playing && cur===Zt){ acc+=dt; if(acc>0.32){ acc=0; if(Zt<118) zR.value=Zt+1; else { playing=false; $('#playB').textContent='▶ Build up'; } } }
+    if(cur!==Zt){
+      dir=Zt>cur?1:-1; dur=clamp(1.3/Math.abs(Zt-cur),0.03,0.3); dropT+=dt;
+      if(dropT>=dur){
+        const s=slotOf(dir>0?config(cur):config(cur+dir),dir>0?config(cur+1):config(cur));
+        cur+=dir; dropT=0; pop[cur]=t; if(dir>0&&s) land={i:s.i,j:s.j,t};
+      }
+    } else { dropT=0; dir=0; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+
+    /* ---------- orbital ladder (energy rises upward) ---------- */
+    const lx=w*0.03, lw=w*0.38, top=h*0.06, rows=19, rowH=(h*0.9)/rows, bs=Math.min(rowH*0.8,24);
+    const rowY=i=>top+(rows-1-i+0.5)*rowH, boxX=(i,b)=>lx+44+b*(bs+3);
+    PERIOD_ROWS.forEach((r,k)=>{
+      const y0=rowY(r[r.length-1])-rowH/2, y1=rowY(r[0])+rowH/2;
+      rect(ctx,lx,y0,lw,y1-y0,null,k%2?'#f4f8fc':'#fbfdff',0);
+      textAt(ctx,'Period '+(k+1),lx+lw-6,(y0+y1)/2+4,{align:'right',size:11,weight:700,color:COL.mid});
+    });
+    line(ctx,lx-6,top+rows*rowH,lx-6,top,COL.mid,1.4); arrowHead(ctx,lx-6,top-2,-Math.PI/2,COL.mid,7);
+    textAt(ctx,'energy',lx-10,top+10,{align:'right',size:10,color:COL.mid});
+    const cfgNow=config(cur), cfgNext=dir>0?config(cur+1):cfgNow, cfgPrev=dir<0?config(cur-1):cfgNow;
+    const live=dir>0?cfgNow:(dir<0?cfgPrev:cfgNow);
+    const hot=slotOf(config(Math.max(1,cur-1)),config(cur));
+    const eArrow=(x,y,up,al)=>{ ctx.save(); ctx.globalAlpha=al===undefined?1:al; const d=bs*0.3; if(up) vec(ctx,x,y+d,x,y-d,COL.blue,1.9); else vec(ctx,x,y-d,x,y+d,COL.blue,1.9); ctx.restore(); };
+    const slotXY=(i,j)=>{ const b=SUBS[i][2], box=j<b?j:j-b, up=j<b; return {x:boxX(i,box)+bs/2+(up?-bs*0.17:bs*0.17), y:rowY(i), up}; };
+    SUBS.forEach((s,i)=>{
+      const y=rowY(i), blk=BLK[s[0][1]];
+      if(hot&&hot.i===i&&cur===Zt) rect(ctx,lx+2,y-rowH/2+1,lw-4,rowH-2,null,'rgba(217,160,23,0.16)',0);
+      textAt(ctx,s[0],lx+6,y+4,{size:12,weight:700,color:blk});
+      for(let b=0;b<s[2];b++){
+        rect(ctx,boxX(i,b),y-bs/2,bs,bs,blk,'#fff',1.3);
+        const cnt=live[i];
+        if(cnt>b) eArrow(slotXY(i,b).x,y,true);
+        if(cnt>s[2]+b) eArrow(slotXY(i,s[2]+b).x,y,false);
+      }
+      if(live[i]) textAt(ctx,String(live[i]),boxX(i,s[2])+4,y+4,{size:11,weight:700,color:COL.ink});
+    });
+    // the electron on its way in (or out)
+    if(dir!==0){
+      const a=dir>0?config(cur):config(cur-1), b=dir>0?config(cur+1):config(cur), s=slotOf(a,b);
+      if(s){ const p=slotXY(s.i,s.j), u=dir>0?dropT/dur:1-dropT/dur, e=u*u;
+        const x=lerp(p.x+bs*3.2,p.x,easeOutCubic(u)), y=lerp(top-14,p.y,e);
+        ctx.save(); ctx.globalAlpha=0.35; line(ctx,x,y-14,x,y-4,COL.blue,2); ctx.restore();
+        eArrow(x,y,p.up); circ(ctx,x,y,bs*0.7,COL.yellow,null,1.4); }
+    }
+    if(t-land.t<0.5&&land.i!==undefined){ const p=slotXY(land.i,land.j), u=(t-land.t)/0.5; circ(ctx,p.x,p.y,bs*0.5+u*bs*1.1,COL.yellow,null,2); ctx.globalAlpha=1; }
+
+    /* ---------- periodic table ---------- */
+    const tx=w*0.45, tw=w*0.53, cw=tw/18, ch=Math.min(cw*1.1,(h*0.6)/9.2), ty=h*0.33;
+    const cellRect=Z=>{ const p=tablePos(Z); return {x:tx+(p.col-1)*cw, y:ty+(p.row-1)*ch+(p.row>8?ch*0.3:0), p}; };
+    for(let Z=1;Z<=118;Z++){
+      const c=cellRect(Z), on=Z<=cur, isCur=Z===cur, blk=BLK[c.p.block];
+      const age=t-(pop[Z]||-9), sc=isCur?1+0.28*Math.max(0,1-age*3)*Math.cos(age*18):1;
+      ctx.save(); ctx.translate(c.x+cw/2,c.y+ch/2); ctx.scale(sc,sc);
+      rect(ctx,-cw/2+1,-ch/2+1,cw-2,ch-2,on?blk:'#dbe4f0',on?mixCol(blk,'#ffffff',0.85):'#ffffff',on?1.3:1);
+      if(cw>17) textAt(ctx,SYM[Z-1],0,4,{align:'center',size:Math.min(11,cw*0.5),weight:on?700:500,color:on?COL.ink:COL.mid});
+      ctx.restore();
+    }
+    { const c=cellRect(cur), pulse=1+0.12*Math.sin(t*5); rect(ctx,c.x-1,c.y-1,cw+2*pulse-pulse,ch+2*pulse-pulse,COL.yellow,null,3); }
+    textAt(ctx,'f-block',tx+cw*2.2,ty+7.65*ch,{align:'center',size:10,weight:700,color:COL.red});
+
+    /* ---------- big tile ---------- */
+    const tile=Math.min(tw*0.26,h*0.2), tp=tablePos(cur||1), bc=BLK[tp.block];
+    rect(ctx,tx,h*0.05,tile,tile,bc,mixCol(bc,'#ffffff',0.88),3);
+    textAt(ctx,String(cur),tx+7,h*0.05+16,{size:12,weight:700,color:COL.muted});
+    textAt(ctx,SYM[cur-1],tx+tile/2,h*0.05+tile*0.68,{align:'center',size:tile*0.46,weight:700,color:COL.ink});
+    textAt(ctx,cfgStr(cur),tx+tile+14,h*0.05+tile*0.42,{size:Math.min(17,w*0.017),weight:700,color:COL.ink});
+    [['s',COL.blue],['p',COL.green],['d',COL.yellow],['f',COL.red]].forEach(([b,c],k)=>{
+      const x=tx+tile+14+k*(cw*2.4); rect(ctx,x,h*0.05+tile*0.62,cw*0.8,cw*0.8,c,mixCol(c,'#ffffff',0.8),1.6);
+      textAt(ctx,b,x+cw*0.4,h*0.05+tile*0.62+cw*0.62,{align:'center',size:11,weight:700,color:COL.ink});
+      if(tp.block===b) rect(ctx,x-3,h*0.05+tile*0.62-3,cw*0.8+6,cw*0.8+6,COL.yellow,null,2.2);
+    });
+
+    const Z=cur; $('#c1').textContent=SYM[Z-1]+'  ('+Z+')'; $('#c2').innerHTML=`<span style="color:${BLK[tp.block]}">${tp.block}-block</span>`;
+    $('#c3').textContent=tp.p; $('#c4').textContent=tp.f?'f-series':tp.col; $('#c5').innerHTML=cfgHtml(Z);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.2 ATOMIC RADIUS   (Table 3.6)
+   Period: nuclear charge rises, shell stays → atom shrinks.
+   Group: a new shell is added each step → atom grows.
+   Z_eff by Slater's rules: Z − [0.35(v−1) + 0.85·(n−1 shell) + 1.0·(deeper)]
+   ===================================================================== */
+const RAD_SER={
+  p2:{lab:'Period 2',  els:[['Li',3,152],['Be',4,111],['B',5,88],['C',6,77],['N',7,74],['O',8,66],['F',9,64]]},
+  p3:{lab:'Period 3',  els:[['Na',11,186],['Mg',12,160],['Al',13,143],['Si',14,117],['P',15,110],['S',16,104],['Cl',17,99]]},
+  g1:{lab:'Group 1',   els:[['Li',3,152],['Na',11,186],['K',19,231],['Rb',37,244],['Cs',55,262]]},
+  g17:{lab:'Group 17',  els:[['F',9,64],['Cl',17,99],['Br',35,114],['I',53,133],['At',85,140]]},
+};
+function slaterZeff(Z){
+  const sh=shellCounts(Z), N=sh.length, v=sh[N-1]; let S=0.35*(v-1);
+  if(N>=2) S+=0.85*sh[N-2]; for(let i=0;i<N-2;i++) S+=sh[i];
+  return Z-S;
+}
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togg('serB','Compare',[['p2','Period 2',1],['p3','Period 3'],['g1','Group 1'],['g17','Group 17']])+
+    `<div class="control-group"><label>Element <span class="val" id="eRV"></span></label><input type="range" id="eR" min="0" max="6" step="1" value="0">
+      <div class="toggle-group" style="margin-top:8px"><button class="toggle-btn play" id="swB">▶ Sweep</button></div></div>`+
+    cards([['Radius','c1','blue'],['Nuclear pull Z<sub>eff</sub>','c2','red'],['Shells n','c3'],['Nuclear charge','c4']],'');
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), eR=$('#eR');
+  let ser='p2', t=0, sweep=false, acc=0, dirS=1;
+  const R={x:152,v:0}, NF={x:2,v:0}, ZE={x:1.3,v:0}, IDX={x:0,v:0};
+  let shShow=shellCounts(3);
+  toggleWire(wrap.querySelectorAll('#serB button'),b=>{ ser=b.dataset.v; eR.max=RAD_SER[ser].els.length-1; eR.value=0; });
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').textContent=sweep?'❚❚ Stop':'▶ Sweep'; acc=0; };
+  animLoop((dt)=>{
+    t+=dt;
+    const S=RAD_SER[ser], n=S.els.length;
+    if(sweep){ acc+=dt; if(acc>1.4){ acc=0; let i=+eR.value+dirS; if(i>=n){ i=0; } eR.value=i; } }
+    const i=clamp(+eR.value,0,n-1), el=S.els[i], Z=el[1];
+    $('#eRV').textContent=el[0];
+    springTo(R,el[2],70,10,dt); const sh=shellCounts(Z), N=sh.length;
+    springTo(NF,N,60,11,dt); springTo(ZE,slaterZeff(Z),70,10,dt); springTo(IDX,i,60,10,dt);
+    if(Math.abs(NF.x-N)<0.2||N>shShow.length) shShow=sh;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+
+    /* ---------- the big atom (one common scale for every series) ---------- */
+    const cx=w*0.31, cy=h*0.5, k=Math.min(w*0.29,h*0.43)/270, rpx=R.x*k;
+    const rings=shShow.map((c,j)=>{ const nn=j+1; return rpx*Math.pow(nn/Math.max(1,NF.x),1.25); });
+    const alph=shShow.map((c,j)=>clamp(NF.x-j,0,1));
+    // electron cloud (soft) + ghost of the first atom in the series
+    circ(ctx,cx,cy,S.els[0][2]*k,COL.yellow,null,1.6,[6,5]);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,rpx,0,Math.PI*2); ctx.fillStyle='rgba(47,143,224,0.07)'; ctx.fill(); ctx.restore();
+    drawAtom(ctx,cx,cy,Z,shShow,rings.map((r,j)=>Math.min(r,rpx*1.001)),t,{ringAlpha:alph,nucR:Math.max(11,Math.min(20,8+Math.sqrt(Z)*2)),outerCol:COL.blue});
+    // nuclear pull (red) — three arrows tug the outer electron inward
+    for(let a=0;a<3;a++){ const ang=t*0.6+a*2.094, r1=rpx, L=clamp(ZE.x*6.5,8,60)*Math.min(1,rpx/60);
+      vec(ctx,cx+Math.cos(ang)*r1,cy+Math.sin(ang)*r1,cx+Math.cos(ang)*(r1-L),cy+Math.sin(ang)*(r1-L),COL.red,1.2+ZE.x*0.42); }
+    // radius dimension
+    const da=-0.62; dimArrow(ctx,cx,cy,cx+Math.cos(da)*rpx,cy+Math.sin(da)*rpx,COL.yellow);
+    textAt(ctx,Math.round(R.x)+' pm',cx+Math.cos(da)*rpx*0.55+8,cy+Math.sin(da)*rpx*0.55-8,{size:14,weight:700,color:COL.yellow});
+    textAt(ctx,el[0],cx,h*0.08,{align:'center',size:24,weight:700});
+
+    /* ---------- bar chart of the whole series ---------- */
+    const bx=w*0.62, bw=w*0.35;
+    barChart(ctx,{x:bx,y:h*0.12,w:bw,h:h*0.3,vals:S.els.map(e=>e[2]),labels:S.els.map(e=>e[0]),cur:IDX.x,max:280,col:COL.blue,hi:COL.yellow,fmt:v=>v+' pm',title:'Atomic radius / pm'});
+    /* ---------- the whole series drawn to a common scale ---------- */
+    const cwid=bw/n, kS=Math.min(cwid*0.46,h*0.12)/270, sy=h*0.72;
+    textAt(ctx,'Same scale',bx,sy-h*0.12,{size:11,weight:700,color:COL.muted});
+    S.els.forEach((e,j)=>{ const x=bx+(j+0.5)*cwid, on=j===i; circ(ctx,x,sy,e[2]*kS,on?COL.yellow:COL.blue,on?'rgba(217,160,23,0.14)':'rgba(47,143,224,0.07)',on?2.6:1.5);
+      circ(ctx,x,sy,2.6,COL.red,COL.red,1); textAt(ctx,e[0],x,sy+h*0.12+4,{align:'center',size:11,weight:on?700:500,color:on?COL.ink:COL.muted}); });
+    // the direction of travel
+    const hor=ser[0]==='p';
+    textAt(ctx,hor?'nuclear charge ↑  ·  same shell':'new shell each step  ·  more shielding',bx+bw/2,h*0.93,{align:'center',size:11.5,weight:600,color:COL.muted});
+
+    $('#c1').textContent=Math.round(R.x)+' pm'; $('#c2').textContent=fmt(ZE.x,1); $('#c3').textContent=N; $('#c4').textContent='+'+Z;
+  });
+  return wrap;
+}
+/* =====================================================================
+   3.3 ATOM → ION
+   Cation: fewer electrons, same nuclear charge → pull per electron rises → smaller.
+   Anion : extra electron repulsion → bigger.
+   Textbook: F 64 → F⁻ 136 pm ;  Na 186 → Na⁺ 95 pm.
+   ===================================================================== */
+const IONS={
+  Li:{Z:3, q:1, ra:152,ri:76},  Na:{Z:11,q:1, ra:186,ri:95},  K:{Z:19,q:1, ra:231,ri:138},
+  Mg:{Z:12,q:2, ra:160,ri:72},  Al:{Z:13,q:3, ra:143,ri:54},
+  N:{Z:7, q:-3,ra:74, ri:171},  O:{Z:8, q:-2,ra:66, ri:140},  F:{Z:9, q:-1,ra:64, ri:136}, Cl:{Z:17,q:-1,ra:99,ri:181},
+};
+const ION_KEYS=Object.keys(IONS);
+function ionLabel(sym,q){ if(!q) return sym; const m=Math.abs(q), s=q>0?'⁺':'⁻'; return sym+(m>1?supNum(m):'')+s; }
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togg('elB','Element',ION_KEYS.map((k,i)=>[k,k,i===1]))+
+    togg('mdB','Electrons',[['atom','Atom',1],['ion','Remove / add e⁻']])+
+    cards([['Species','c1','blue'],['Radius','c2','blue'],['p⁺ : e⁻','c3','red'],['Size change','c4']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let el='Na', mode='atom', e=11, t=0, evT=0, incoming=null;
+  const R={x:186,v:0}, parts=[];
+  function reset(){ const d=IONS[el]; e=d.Z; R.x=d.ra; R.v=0; incoming=null; parts.length=0; mode='atom';
+    wrap.querySelectorAll('#mdB button').forEach((b,i)=>b.classList.toggle('active',i===0)); }
+  toggleWire(wrap.querySelectorAll('#elB button'),b=>{ el=b.dataset.v; reset(); });
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.v; evT=0; });
+  animLoop((dt)=>{
+    t+=dt;
+    const d=IONS[el], target=mode==='ion'?d.Z-d.q:d.Z;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cat=d.q>0, N0=shellCounts(d.Z).length, N1=cat?N0-1:N0;
+    const cx=w*0.31, cy=h*0.5, k=Math.min(w*0.29,h*0.43)/245;
+    // electron events: one at a time
+    if(!incoming && e!==target){ evT+=dt;
+      if(evT>0.4){ evT=0;
+        if(e>target){ const ang=Math.random()*6.28; parts.push({type:'out',a:ang,r0:R.x*k,t:0}); e--; }
+        else incoming={a:Math.random()*6.28,u:0};
+      }
+    }
+    if(incoming){ incoming.u+=dt/0.95; if(incoming.u>=1){ incoming=null; e++; } }
+    const s=clamp(Math.abs(e-d.Z)/Math.abs(d.q),0,1);
+    springTo(R,lerp(d.ra,d.ri,s),55,8,dt);
+    const rpx=R.x*k, sh=shellCounts(e);
+    // shell geometry
+    const shellsDrawn=cat?N0:N0, rings=[], alph=[];
+    for(let n=1;n<=shellsDrawn;n++){
+      const ra=d.ra*k*Math.pow(n/N0,1.3), ri=d.ri*k*Math.pow(n/N1,1.3);
+      if(n===N0){ rings.push(rpx); alph.push(cat?1-smooth01(0.5,1,s):1); }
+      else { rings.push(lerp(ra,ri,s)); alph.push(1); }
+    }
+    const shShow=[]; for(let n=0;n<N0;n++) shShow.push(sh[n]||0);
+    // reference ghost (the neutral atom) + soft cloud
+    circ(ctx,cx,cy,d.ra*k,COL.yellow,null,1.6,[6,5]);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,rpx,0,Math.PI*2); ctx.fillStyle=cat?'rgba(217,67,43,0.07)':(e>d.Z?'rgba(47,143,224,0.1)':'rgba(47,143,224,0.06)'); ctx.fill(); ctx.restore();
+    drawAtom(ctx,cx,cy,d.Z,shShow,rings,t,{ringAlpha:alph,nucR:11+Math.sqrt(d.Z)*1.6,outerCol:cat&&s>0.5?COL.red:COL.blue});
+    // pull arrows (red): proportional to protons per electron
+    const ratio=d.Z/Math.max(1,e);
+    for(let a=0;a<4;a++){ const ang=t*0.5+a*Math.PI/2+0.4, L=(10+ratio*16)*Math.min(1,rpx/70);
+      vec(ctx,cx+Math.cos(ang)*rpx,cy+Math.sin(ang)*rpx,cx+Math.cos(ang)*(rpx-L),cy+Math.sin(ang)*(rpx-L),COL.red,1+ratio*1.5); }
+    // particles: electrons leaving / arriving
+    for(let i=parts.length-1;i>=0;i--){ const p=parts[i]; p.t+=dt; if(p.t>1.2){ parts.splice(i,1); continue; }
+      const rr=p.r0+170*p.t+240*p.t*p.t, a=p.a+p.t*1.4, x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr, al=1-p.t/1.2;
+      ctx.save(); ctx.globalAlpha=al; for(let q=1;q<5;q++){ const rq=rr-q*9, aq=a-q*0.07; circ(ctx,cx+Math.cos(aq)*rq,cy+Math.sin(aq)*rq,2.6-q*0.4,null,'rgba(47,143,224,0.4)',0); }
+      circ(ctx,x,y,4,COL.blue,'#cfe5fb',1.8); ctx.restore(); }
+    if(incoming){ const u=incoming.u, far=Math.max(w,h)*0.45, rr=lerp(far,rpx,u*u), a=incoming.a+(1-u)*1.6, x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr;
+      ctx.save(); for(let q=1;q<6;q++){ const uq=Math.max(0,u-q*0.03), rq=lerp(far,rpx,uq*uq), aq=incoming.a+(1-uq)*1.6; circ(ctx,cx+Math.cos(aq)*rq,cy+Math.sin(aq)*rq,3-q*0.4,null,'rgba(47,143,224,'+(0.4-q*0.06)+')',0); } ctx.restore();
+      circ(ctx,x,y,4.4,COL.blue,'#cfe5fb',1.8); }
+    const dr=-0.6; dimArrow(ctx,cx,cy,cx+Math.cos(dr)*rpx,cy+Math.sin(dr)*rpx,COL.yellow);
+    textAt(ctx,Math.round(R.x)+' pm',cx+Math.cos(dr)*rpx*0.5+8,cy+Math.sin(dr)*rpx*0.5-8,{size:14,weight:700,color:COL.yellow});
+    const q=d.Z-e;
+    textAt(ctx,ionLabel(el,q),cx,h*0.08,{align:'center',size:24,weight:700,color:q>0?COL.red:(q<0?COL.blue:COL.ink)});
+
+    /* ---------- atom vs ion bars for every element ---------- */
+    const bx=w*0.62, bw=w*0.35, by=h*0.14, bh=h*0.5, gw=bw/ION_KEYS.length;
+    textAt(ctx,'Atom vs ion / pm',bx,by-10,{size:11,weight:700,color:COL.muted});
+    line(ctx,bx,by+bh,bx+bw,by+bh,COL.mid,1.4);
+    ION_KEYS.forEach((key,j)=>{ const dd=IONS[key], on=key===el, x=bx+j*gw;
+      const ha=bh*dd.ra/260, hi=bh*dd.ri/260, ic=dd.q>0?COL.red:COL.blue;
+      rect(ctx,x+gw*0.1,by+bh-ha,gw*0.38,ha,on?COL.yellow:COL.mid,mixCol(on?COL.yellow:COL.mid,'#ffffff',0.8),on?2:1.2);
+      rect(ctx,x+gw*0.5,by+bh-hi,gw*0.38,hi,ic,mixCol(ic,'#ffffff',0.8),on?2.4:1.2);
+      textAt(ctx,key,x+gw*0.5,by+bh+14,{align:'center',size:10.5,weight:on?700:500,color:on?COL.ink:COL.muted});
+    });
+    rect(ctx,bx,by+bh+30,10,10,COL.mid,'#eef2f8',1.2); textAt(ctx,'atom',bx+15,by+bh+39,{size:11,color:COL.muted});
+    rect(ctx,bx+62,by+bh+30,10,10,COL.red,'#fbe3de',1.2); textAt(ctx,'cation',bx+77,by+bh+39,{size:11,color:COL.muted});
+    rect(ctx,bx+130,by+bh+30,10,10,COL.blue,'#dcebfb',1.2); textAt(ctx,'anion',bx+145,by+bh+39,{size:11,color:COL.muted});
+
+    $('#c1').textContent=ionLabel(el,q); $('#c2').textContent=Math.round(R.x)+' pm'; $('#c3').textContent=d.Z+' : '+e;
+    $('#c4').innerHTML=q===0?'—':'× '+fmt(R.x/d.ra,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.4 ISOELECTRONIC SQUEEZE
+   N³⁻ O²⁻ F⁻ Na⁺ Mg²⁺ Al³⁺ all hold 10 electrons; only Z changes (7 → 13).
+   Larger positive nuclear charge → smaller radius.   (Problem 3.5 / Ex. 3.8)
+   ===================================================================== */
+const ISO=[['N³⁻',7,171],['O²⁻',8,140],['F⁻',9,136],['Na⁺',11,95],['Mg²⁺',12,72],['Al³⁺',13,54]];
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Species <span class="val" id="iV"></span></label><input type="range" id="iR" min="0" max="5" step="1" value="0">
+      <div class="toggle-group" style="margin-top:8px"><button class="toggle-btn play" id="swB">▶ Squeeze</button></div></div>`+
+    cards([['Radius','c1','blue'],['Protons','c2','red'],['Electrons','c3','blue'],['Pull p⁺/e⁻','c4','red']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), iR=$('#iR');
+  let t=0, sweep=false, acc=0;
+  const R={x:171,v:0}, ZS={x:7,v:0};
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').textContent=sweep?'❚❚ Stop':'▶ Squeeze'; acc=0; };
+  animLoop((dt)=>{
+    t+=dt;
+    if(sweep){ acc+=dt; if(acc>1.3){ acc=0; iR.value=(+iR.value+1)%6; } }
+    const i=+iR.value, sp=ISO[i]; $('#iV').textContent=sp[0];
+    springTo(R,sp[2],60,9,dt); springTo(ZS,sp[1],70,10,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.31, cy=h*0.5, k=Math.min(w*0.29,h*0.43)/185, rpx=R.x*k, Z=sp[1];
+    circ(ctx,cx,cy,ISO[0][2]*k,COL.yellow,null,1.6,[6,5]);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,rpx,0,Math.PI*2); ctx.fillStyle='rgba(47,143,224,0.08)'; ctx.fill(); ctx.restore();
+    drawAtom(ctx,cx,cy,Z,[2,8],[rpx*0.4,rpx],t,{nucR:10+ZS.x*1.25,outerCol:COL.blue,er:3.6});
+    const pull=ZS.x/10;
+    for(let a=0;a<6;a++){ const ang=t*0.5+a*Math.PI/3, L=(8+pull*22)*Math.min(1,rpx/60);
+      vec(ctx,cx+Math.cos(ang)*rpx,cy+Math.sin(ang)*rpx,cx+Math.cos(ang)*(rpx-L),cy+Math.sin(ang)*(rpx-L),COL.red,1+pull*2.2); }
+    const dr=-0.6; dimArrow(ctx,cx,cy,cx+Math.cos(dr)*rpx,cy+Math.sin(dr)*rpx,COL.yellow);
+    textAt(ctx,Math.round(R.x)+' pm',cx+Math.cos(dr)*rpx*0.5+8,cy+Math.sin(dr)*rpx*0.5-8,{size:14,weight:700,color:COL.yellow});
+    textAt(ctx,sp[0],cx,h*0.08,{align:'center',size:24,weight:700});
+
+    const bx=w*0.62, bw=w*0.35, n=ISO.length;
+    barChart(ctx,{x:bx,y:h*0.12,w:bw,h:h*0.3,vals:ISO.map(s=>s[2]),labels:ISO.map(s=>s[0]),cur:i,max:185,col:COL.blue,hi:COL.yellow,fmt:v=>v+' pm',title:'Ionic radius / pm  (all 10 e⁻)'});
+    const cwid=bw/n, kS=Math.min(cwid*0.46,h*0.12)/185, sy=h*0.72;
+    ISO.forEach((s,j)=>{ const x=bx+(j+0.5)*cwid, on=j===i; circ(ctx,x,sy,s[2]*kS,on?COL.yellow:COL.blue,on?'rgba(217,160,23,0.14)':'rgba(47,143,224,0.07)',on?2.6:1.5);
+      circ(ctx,x,sy,1.8+s[1]*0.28,COL.red,COL.red,1); textAt(ctx,'+'+s[1],x,sy+h*0.12+4,{align:'center',size:11,weight:on?700:500,color:on?COL.red:COL.muted}); });
+    textAt(ctx,'nuclear charge ↑  →  size ↓',bx+bw/2,h*0.93,{align:'center',size:11.5,weight:600,color:COL.muted});
+    $('#c1').textContent=Math.round(R.x)+' pm'; $('#c2').textContent='+'+Z; $('#c3').textContent='10'; $('#c4').textContent=fmt(Z/10,1);
+  });
+  return wrap;
+}
+/* =====================================================================
+   3.5 IONIZATION ENTHALPY     X(g) + iH → X⁺(g) + e⁻
+   The valence electron sits in a well of depth iH. Below that energy it is only
+   excited into a wider orbit; at E ≥ iH it escapes with KE = E − iH.
+   Data (kJ/mol): textbook values where printed (Li 520, Na 496, Mg 737, Al 577,
+   B 801, Si 786 …), standard tables for the rest.
+   ===================================================================== */
+const IE={1:[1312],2:[2372,5251],3:[520,7298,11815],4:[900,1757,14849,21007],5:[801,2427,3660,25026],6:[1086,2353,4621,6223],7:[1402,2856,4578,7475],
+  8:[1314,3388,5300,7469],9:[1681,3374,6050,8408],10:[2081,3952,6122,9371],11:[496,4562,6910,9543],12:[737,1451,7733,10543],13:[577,1817,2745,11578],
+  14:[786,1577,3232,4356],15:[1012,1907,2914,4964],16:[1000,2252,3357,4556],17:[1251,2298,3822,5159],18:[1521,2666,3931,5771],19:[419,3051,4411,5877],20:[590,1145,4912,6491]};
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('zR','Element',1,20,1,11)+
+    togg('nB','Electron to remove',[['1','1st',1],['2','2nd'],['3','3rd'],['4','4th']])+
+    slider('eR','Energy supplied',0,160,1,0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="puB">▶ Ramp up energy</button><button class="toggle-btn" id="rsB">Reset</button></div></div>`+
+    cards([['Process','c0','',1],['Threshold iH','c1','red'],['Energy E','c2'],['Electron KE','c3','blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), zR=$('#zR'), eR=$('#eR'), nBtn=[...wrap.querySelectorAll('#nB button')];
+  let nth=1, t=0, pulse=-1, free=false, aE=Math.PI*0.15, rE=0;
+  const sp={x:0,v:0}, EF={x:0,v:0}, ZH={x:11,v:0};
+  nBtn.forEach(b=>b.onclick=()=>{ nth=+b.dataset.v; nBtn.forEach(x=>x.classList.toggle('active',x===b)); });
+  eR.addEventListener('input',()=>{ pulse=-1; $('#puB').textContent='▶ Ramp up energy'; });
+  $('#rsB').onclick=()=>{ pulse=-1; eR.value=0; $('#puB').textContent='▶ Ramp up energy'; };
+  $('#puB').onclick=()=>{ pulse=pulse<0?0:-1; $('#puB').textContent=pulse<0?'▶ Ramp up energy':'❚❚ Stop'; };
+  animLoop((dt)=>{
+    t+=dt;
+    const Z=+zR.value; $('#zRV').textContent=SYM[Z-1];
+    nBtn.forEach((b,i)=>{ const dis=(i+1)>Z; b.disabled=dis; if(dis&&nth===i+1){ nth=1; nBtn.forEach((x,j)=>x.classList.toggle('active',j===0)); } });
+    const iHs=IE[Z], iH=iHs[Math.min(nth,iHs.length)-1], removed=nth-1, ePresent=Z-removed;
+    if(pulse>=0){ pulse+=dt; const u=pulse/6, f=u<0.78?(u/0.78)*1.38:(u<0.92?1.38:1.38*(1-(u-0.92)/0.08)); eR.value=Math.round(clamp(f,0,1.6)*100); if(u>1){ pulse=0; } }
+    const frac=eR.value/100, E=frac*iH; $('#eRV').textContent=Math.round(E)+' kJ/mol';
+    springTo(EF,frac,60,10,dt); springTo(ZH,Z,50,9,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+
+    /* ---------- atom + the electron being pulled ---------- */
+    const cx=w*0.3, cy=h*0.5, sh=shellCounts(ePresent), N=sh.length, unit=Math.min(h*0.46,w*0.27)/Math.pow(4,1.12);
+    const rings=sh.map((c,i)=>unit*Math.pow(i+1,1.12));
+    const r0=rings[N-1], exc=clamp(frac/(iH?1:1),0,1);
+    const rBound=r0*(1+0.85*Math.pow(clamp(EF.x,0,1),2.2));
+    if(frac>=1){ if(!free){ free=true; rE=sp.x||r0; } const vr=70+420*Math.sqrt(Math.max(0,frac-1)); rE=Math.min(rE+vr*dt,Math.max(w,h)*1.3); }
+    else if(free){ rE-=300*dt; if(rE<=rBound){ free=false; sp.x=rE; sp.v=-40; } }
+    else { if(!sp.x) sp.x=r0; springTo(sp,rBound,80,9,dt); rE=sp.x; }
+    const om=(rE>0?(2.3/(1+0.55*(N-1)))*Math.pow(r0/Math.max(rE,1),1.5):0);
+    aE+=om*dt*(N%2?1:-1)*(free?0.4:1);
+    // shells (valence ring dashed at its ground radius)
+    drawAtom(ctx,cx,cy,Z,sh,rings,t,{skip:1,nucR:10+Math.sqrt(Z)*1.8,outerCol:COL.blue});
+    // wide orbit trail while excited
+    if(!free&&rE>r0*1.05) circ(ctx,cx,cy,rE,'rgba(47,143,224,0.35)',null,1.2,[3,5]);
+    // energy beam (yellow wave) arrives from the left
+    const ex=cx+Math.cos(aE)*rE, ey=cy+Math.sin(aE)*rE;
+    if(frac>0.02){
+      const x0=w*0.02, x1=Math.max(x0+40,ex-7), amp=3+EF.x*11;
+      ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.beginPath();
+      for(let s=0;s<=90;s++){ const u=s/90, x=lerp(x0,x1,u), y=ey+Math.sin(u*(x1-x0)*0.11-t*14)*amp*(0.3+u*0.7); s?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore();
+      arrowHead(ctx,x1+4,ey,0,COL.yellow,9);
+    }
+    // the electron itself
+    const gone=free&&(ex<-10||ex>w+10||ey<-10||ey>h+10);
+    if(!gone){ if(free) for(let q=1;q<7;q++){ const rq=Math.max(r0,rE-q*10); circ(ctx,cx+Math.cos(aE-0.03*q)*rq,cy+Math.sin(aE-0.03*q)*rq,3.6-q*0.4,null,'rgba(47,143,224,'+(0.45-q*0.06)+')',0); }
+      circ(ctx,ex,ey,5,COL.blue,'#cfe5fb',2); if(free) circ(ctx,ex,ey,9,COL.blue,null,1); }
+    const q=removed+(free?1:0);
+    textAt(ctx,ionLabel(SYM[Z-1],q),cx,cy+h*0.46,{align:'center',size:22,weight:700,color:q>0?COL.red:COL.ink});
+
+    /* ---------- energy gauge ---------- */
+    const gx=w*0.58, gt=h*0.1, gb=h*0.9, gH=gb-gt, top=1.6, yOf=f=>gb-gH*f/top;
+    rrect(ctx,gx-11,gt,22,gH,8); ctx.save(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+    ctx.save(); rrect(ctx,gx-11,gt,22,gH,8); ctx.clip();
+    ctx.fillStyle='rgba(217,160,23,0.9)'; ctx.fillRect(gx-11,yOf(Math.min(EF.x,1)),22,gb-yOf(Math.min(EF.x,1)));
+    if(EF.x>1){ ctx.fillStyle='rgba(47,143,224,0.9)'; ctx.fillRect(gx-11,yOf(EF.x),22,yOf(1)-yOf(EF.x)); }
+    ctx.restore();
+    line(ctx,gx-22,yOf(1),gx+22,yOf(1),COL.red,3);
+    textAt(ctx,'iH '+iH,gx+28,yOf(1)+4,{size:12,weight:700,color:COL.red});
+    textAt(ctx,'E '+Math.round(EF.x*iH),gx-28,yOf(Math.min(EF.x,1.6))+4,{align:'right',size:12,weight:700,color:COL.yellow});
+    if(EF.x>1.02) textAt(ctx,'KE',gx+28,(yOf(EF.x)+yOf(1))/2+4,{size:12,weight:700,color:COL.blue});
+    textAt(ctx,'kJ/mol',gx,gt-8,{align:'center',size:10.5,weight:700,color:COL.muted});
+
+    /* ---------- charts: iH vs Z, and successive iH of this atom ---------- */
+    const cx2=w*0.71, cw2=w*0.27;
+    const all=Array.from({length:20},(_,i)=>IE[i+1][0]);
+    barChart(ctx,{x:cx2,y:h*0.12,w:cw2,h:h*0.3,vals:all,labels:Array.from({length:20},(_,i)=>SYM[i]),cur:ZH.x-1,max:2400,col:COL.blue,hi:COL.yellow,every:2,title:'1st iH vs Z'});
+    const sv=IE[Z], big=Math.max(...sv);
+    barChart(ctx,{x:cx2,y:h*0.58,w:cw2*Math.min(1,sv.length/4),h:h*0.28,vals:sv,labels:sv.map((v,i)=>['1st','2nd','3rd','4th'][i]),cur:Math.min(nth,sv.length)-1,max:big*1.05,col:COL.red,hi:COL.yellow,title:'Successive iH of '+SYM[Z-1]});
+
+    $('#c0').innerHTML=ionLabel(SYM[Z-1],removed)+'(g) → '+ionLabel(SYM[Z-1],removed+1)+'(g) + e⁻';
+    $('#c1').textContent=iH; $('#c2').textContent=Math.round(E); $('#c3').textContent=Math.round(Math.max(0,E-iH));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.6 ELECTRON GAIN ENTHALPY  (Table 3.7)
+   The incoming electron rolls over a potential-energy curve V(x):
+   a WELL for negative ΔegH (energy is released, then the electron is trapped),
+   a BARRIER for positive ΔegH (noble gases — the electron must climb or is repelled).
+   ===================================================================== */
+const EGE=[
+  ['Group 1',[['H',-73],['Li',-60],['Na',-53],['K',-48],['Rb',-47],['Cs',-46]]],
+  ['Group 16',[['O',-141],['S',-200],['Se',-195],['Te',-190],['Po',-174]]],
+  ['Group 17',[['F',-328],['Cl',-349],['Br',-325],['I',-295],['At',-270]]],
+  ['Group 18',[['He',48],['Ne',116],['Ar',96],['Kr',96],['Xe',77],['Rn',68]]],
+];
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Atom</label><select id="elS">${EGE.map(g=>`<optgroup label="${g[0]}">${g[1].map(e=>`<option value="${e[0]}"${e[0]==='Cl'?' selected':''}>${e[0]}  (${e[1]>0?'+':'−'}${Math.abs(e[1])})</option>`).join('')}</optgroup>`).join('')}</select></div>`+
+    slider('eR','Electron energy',0,200,5,40)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="fireB">● Fire e⁻</button><button class="toggle-btn active" id="autoB">Repeat</button></div></div>`+
+    cards([['ΔegH','c1','red'],['Released','c2','red'],['Result','c3','blue',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), eR=$('#eR'), sel=$('#elS');
+  let t=0, auto=true, phase='idle', idleT=0, doneT=0, result='', rel=0, relAcc=0, bound=false;
+  const B={x:-1.35,v:0}, photons=[], trail=[], slotP={x:0,v:0};
+  const M=450, WD=0.46, XS=-1.38;
+  function info(sym){ for(const g of EGE) for(const e of g[1]) if(e[0]===sym) return {sym,dH:e[1],Z:Z_OF[sym]}; }
+  function fire(){ const E=+eR.value; B.x=XS; B.v=Math.max(0.06,Math.sqrt(2*E/M)); phase='run'; rel=0; relAcc=0; bound=false; result=''; photons.length=0; trail.length=0; slotP.x=0; }
+  $('#fireB').onclick=fire;
+  $('#autoB').onclick=()=>{ auto=!auto; $('#autoB').classList.toggle('active',auto); };
+  sel.onchange=()=>{ phase='idle'; idleT=0; B.x=XS; B.v=0; result=''; rel=0; bound=false; };
+  eR.addEventListener('input',()=>{ if(phase!=='run'){ idleT=Math.max(idleT,0.9); } });
+  animLoop((dt)=>{
+    t+=dt;
+    const a=info(sel.value), dH=a.dH, E=+eR.value; $('#eRV').textContent=E+' kJ/mol';
+    const neutral=shellCounts(a.Z), N=neutral.length, noble=dH>0;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.5, sx=w*0.3, cy=h*0.3, Rv=Math.min(h*0.2,w*0.12), xs=x=>cx+x*sx;
+    const slotR=noble?Rv*1.3:Rv, xc=dH<0?-slotR/sx:0;
+    const g=x=>Math.exp(-Math.pow((x-xc)/WD,2)), Vf=x=>dH*g(x);
+    /* --- physics (sub-stepped) --- */
+    if(phase==='idle'){ idleT+=dt; if(idleT>1.1&&(auto||false)) fire(); }
+    else if(phase==='run'){
+      const n=Math.ceil(dt/0.004), hh=dt/n;
+      for(let i=0;i<n;i++){
+        const u=B.x-xc, gg=g(B.x), F=-dH*gg*(-2*u/(WD*WD)), gam=dH<0?3.4*gg:0;
+        const KE0=0.5*M*B.v*B.v+Vf(B.x);
+        B.v+=(F/M-gam*B.v)*hh; B.x+=B.v*hh;
+        const KE1=0.5*M*B.v*B.v+Vf(B.x); if(dH<0&&KE1<KE0){ rel+=KE0-KE1; relAcc+=KE0-KE1; }
+      }
+      if(relAcc>22){ relAcc=0; photons.push({x:B.x,t:0,ang:-1.1+Math.random()*0.6}); }
+      if(dH<0&&Math.abs(B.x-xc)<0.035&&Math.abs(B.v)<0.06){ B.x=xc; B.v=0; bound=true; phase='done'; result='stable anion'; doneT=0; }
+      else if(B.x>1.5){ phase='done'; result='passes through — no anion'; doneT=0; }
+      else if(B.x<XS-0.05&&B.v<0){ phase='done'; result='repelled — no anion'; doneT=0; }
+    } else if(phase==='done'){ doneT+=dt; if(auto&&doneT>2.4) fire(); }
+    /* --- atom picture --- */
+    const sh=neutral.slice(); const outer=sh[N-1]; sh[N-1]=0;
+    const rings=sh.map((c,i)=>Rv*Math.pow((i+1)/N,1.1));
+    drawAtom(ctx,cx,cy,a.Z,sh,rings,t,{nucR:9+Math.sqrt(a.Z)*1.5,outerCol:COL.blue});
+    const ca=Math.PI-0.55, ve=outer;
+    for(let k=0;k<ve;k++){ const ang=-ca+(k+0.5)*(2*ca/Math.max(ve,1))+0.07*Math.sin(t*2.1+k*1.7); circ(ctx,cx+Math.cos(ang)*Rv,cy+Math.sin(ang)*Rv,3.3,COL.blue,'#cfe5fb',1.6); }
+    if(noble) circ(ctx,cx,cy,Rv*1.3,COL.mid,null,1.3,[4,5]);
+    // vacancy slot (yellow dashed) where the electron should land
+    const slotX=cx+xc*sx;
+    if(dH<0||noble){ const sxp=noble?cx-Rv*1.3:cx-Rv; circ(ctx,sxp,cy,7+1.2*Math.sin(t*4),COL.yellow,bound?'rgba(217,160,23,0.15)':null,2,[3,3]); }
+    /* --- incoming electron on the atom picture --- */
+    const exs=xs(B.x), onSlot=bound;
+    for(let q=1;q<8;q++){ const tx=B.x-B.v*0.04*q; if(!bound) circ(ctx,xs(tx),cy,3.8-q*0.4,null,'rgba(47,143,224,'+(0.35-q*0.04)+')',0); }
+    circ(ctx,exs,cy,5.2,COL.blue,'#cfe5fb',2.2);
+    if(bound){ circ(ctx,exs,cy,10+3*Math.sin(t*6),COL.green,null,2); textAt(ctx,ionLabel(a.sym,-1),cx,cy+Rv+h*0.09,{align:'center',size:20,weight:700,color:COL.blue}); }
+    else textAt(ctx,a.sym,cx,cy+Rv+h*0.09,{align:'center',size:20,weight:700});
+    vec(ctx,w*0.03,cy-Rv*1.5,w*0.1,cy-Rv*1.5,COL.yellow,2); textAt(ctx,'e⁻ launched',w*0.03,cy-Rv*1.5-8,{size:11,weight:700,color:COL.yellow});
+    /* --- potential energy plot --- */
+    const y0=h*0.7, es=h*0.2/350;
+    line(ctx,w*0.04,y0,w*0.96,y0,COL.mid,1.2,[5,5]); textAt(ctx,'0',w*0.045,y0-6,{size:10,color:COL.mid});
+    vec(ctx,w*0.05,h*0.97,w*0.05,h*0.55,COL.mid,1.4); textAt(ctx,'energy',w*0.052,h*0.565,{size:10.5,weight:700,color:COL.muted});
+    ctx.save(); ctx.strokeStyle=dH<0?COL.red:COL.green; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+    for(let i=0;i<=120;i++){ const x=-1.55+3.1*i/120, y=y0-Vf(x)*es; i?ctx.lineTo(xs(x),y):ctx.moveTo(xs(x),y); } ctx.stroke(); ctx.restore();
+    dimArrow(ctx,xs(xc)+sx*0.62,y0,xs(xc)+sx*0.62,y0-dH*es,dH<0?COL.red:COL.green);
+    textAt(ctx,(dH>0?'+':'−')+Math.abs(dH),xs(xc)+sx*0.66,y0-dH*es/2+4,{size:13,weight:700,color:dH<0?COL.red:COL.green});
+    // ball riding the curve + link to the atom picture
+    const by=y0-Vf(B.x)*es-7; line(ctx,exs,cy+8,exs,by-6,'rgba(47,143,224,0.28)',1.3,[3,4]);
+    circ(ctx,exs,by,7,COL.blue,'#cfe5fb',2.4);
+    // energy released as photons (red waves flying up)
+    for(let i=photons.length-1;i>=0;i--){ const p=photons[i]; p.t+=dt; if(p.t>1.3){ photons.splice(i,1); continue; }
+      const px=xs(p.x), py=y0-Vf(p.x)*es, al=1-p.t/1.3; ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=COL.red; ctx.lineWidth=2.2; ctx.beginPath();
+      for(let s=0;s<=24;s++){ const u=s/24, L=60*p.t+20, d=-L*u*0.0+ s*3, X=px+Math.cos(p.ang)*(p.t*110+s*3)+Math.sin(p.ang)*Math.sin(s*1.1-p.t*20)*4, Y=py+Math.sin(p.ang)*(p.t*110+s*3)+Math.cos(p.ang)*Math.sin(s*1.1-p.t*20)*4;
+        s?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore(); }
+    if(phase==='done') textAt(ctx,result,w*0.5,h*0.965,{align:'center',size:13,weight:700,color:bound?COL.green:COL.red});
+    $('#c1').textContent=(dH>0?'+':'−')+Math.abs(dH)+' kJ/mol'; $('#c2').textContent=Math.round(rel)+' kJ/mol';
+    $('#c3').textContent=phase==='run'?'…':(result||'—');
+  });
+  return wrap;
+}
+/* =====================================================================
+   3.7 ELECTRONEGATIVITY TUG   (Pauling scale, Table 3.8)
+   The shared pair is pulled by both nuclei; it settles nearer the atom with the
+   larger χ. Share of the pair on B:  f = 1 − e^(−Δχ/1.1)  (0 = equal, → 1 = transferred).
+   ===================================================================== */
+const EN={H:2.1,Li:1.0,Be:1.5,B:2.0,C:2.5,N:3.0,O:3.5,F:4.0,Na:0.9,Mg:1.2,Al:1.5,Si:1.8,P:2.1,S:2.5,Cl:3.0,K:0.8,Br:2.8,Rb:0.8,I:2.5,Cs:0.7,At:2.2};
+const EN_ORDER=['H','Li','Be','B','C','N','O','F','Na','Mg','Al','Si','P','S','Cl','K','Br','Rb','I','Cs','At'];
+function buildA7(){
+  const wrap=labShell(), opts=EN_ORDER.map(s=>s);
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label><span class="sw" style="background:var(--f-yellow)"></span>Atom A</label><select id="aS">${opts.map(s=>`<option${s==='Na'?' selected':''}>${s}</option>`).join('')}</select>
+     <label style="margin-top:10px;"><span class="sw" style="background:var(--f-yellow)"></span>Atom B</label><select id="bS">${opts.map(s=>`<option${s==='Cl'?' selected':''}>${s}</option>`).join('')}</select>
+     <div class="toggle-group" style="margin-top:8px"><button class="toggle-btn navy" id="swB" style="margin-top:0">⇄ Swap A and B</button></div></div>`+
+    cards([['χ A','c1','red'],['χ B','c2','red'],['Δχ','c3'],['Bond','c4','blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aS=$('#aS'), bS=$('#bS');
+  let t=0; const F={x:0,v:0}; // signed share offset: −1 = on A, +1 = on B
+  $('#swB').onclick=()=>{ const a=aS.value; aS.value=bS.value; bS.value=a; };
+  animLoop((dt)=>{
+    t+=dt;
+    const A=aS.value, B=bS.value, xa=EN[A], xb=EN[B], d=xb-xa, ad=Math.abs(d);
+    const share=1-Math.exp(-ad/1.1), tgt=Math.sign(d)*share;
+    springTo(F,tgt,34,4.2,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ra=Math.min(h*0.2,w*0.13), cy=h*0.45, cxA=w*0.5-ra*0.82, cxB=w*0.5+ra*0.82;
+    // bond-centre reference + shift of the pair
+    const xm=w*0.5, xc=xm+F.x*ra*1.05;
+    // atoms (outline rings sized by period, nuclei with chi in red)
+    [[A,cxA,xa,-1],[B,cxB,xb,1]].forEach(([sy,x,chi,side])=>{
+      const pull=(side*F.x)>0?F.x*side:0;
+      circ(ctx,x,cy,ra,COL.blue,'rgba(47,143,224,0.04)',2);
+      circ(ctx,x,cy,ra*0.34,COL.red,'#fff4f1',2.4);
+      textAt(ctx,sy,x,cy+5,{align:'center',size:Math.max(12,ra*0.26),weight:700,color:COL.ink});
+      textAt(ctx,sy,x,cy+ra+h*0.07,{align:'center',size:18,weight:700,color:COL.ink});
+    });
+    // shared-pair cloud: contours + two electrons running a figure-8 around the pair centre
+    const squeeze=1-0.28*Math.abs(F.x);
+    for(let k=3;k>=1;k--){ ctx.save(); ctx.beginPath(); ctx.ellipse(xc,cy,ra*0.88*squeeze*k/3+ra*0.2,ra*0.5*k/3+ra*0.1,0,0,Math.PI*2); ctx.fillStyle='rgba(47,143,224,'+(0.05+0.03*(4-k))+')'; ctx.fill(); ctx.strokeStyle='rgba(47,143,224,0.35)'; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); }
+    for(let e=0;e<2;e++){ const th=t*3.4+e*Math.PI, ex=xc+Math.sin(th)*ra*0.92*squeeze, ey=cy+Math.sin(2*th)*ra*0.34;
+      for(let q=1;q<6;q++){ const tq=th-q*0.12; circ(ctx,xc+Math.sin(tq)*ra*0.92*squeeze,cy+Math.sin(2*tq)*ra*0.34,3.4-q*0.5,null,'rgba(47,143,224,'+(0.4-q*0.06)+')',0); }
+      circ(ctx,ex,ey,5,COL.blue,'#cfe5fb',2); }
+    // tug-of-war: red arrows from the pair toward each nucleus, length ∝ χ
+    const ay=cy-ra-h*0.07, kk=ra*0.42;
+    vec(ctx,xc,ay,xc-xa*kk,ay,COL.red,3+xa*0.5); vec(ctx,xc,ay,xc+xb*kk,ay,COL.red,3+xb*0.5);
+    circ(ctx,xc,ay,6,COL.yellow,'#fff8e6',2.4);
+    textAt(ctx,'χ '+xa,xc-xa*kk-6,ay-12,{align:'right',size:13,weight:700,color:COL.red});
+    textAt(ctx,'χ '+xb,xc+xb*kk+6,ay-12,{size:13,weight:700,color:COL.red});
+    // bond midpoint + displacement
+    line(ctx,xm,cy-ra*0.95,xm,cy+ra*0.95,COL.yellow,1.4,[5,5]);
+    if(Math.abs(F.x)>0.03){ dimArrow(ctx,xm,cy+ra*1.12,xc,cy+ra*1.12,COL.yellow); }
+    // partial charges
+    const lessX=d>=0?cxA:cxB, moreX=d>=0?cxB:cxA, al=clamp(Math.abs(F.x)*1.4,0,1);
+    textAt(ctx,share>0.78?'+':'δ+',lessX,cy-ra*0.52,{align:'center',size:17,weight:700,color:COL.red,alpha:al});
+    textAt(ctx,share>0.78?'−':'δ−',moreX,cy-ra*0.52,{align:'center',size:17,weight:700,color:COL.blue,alpha:al});
+
+    /* ---------- all χ values, with A and B marked ---------- */
+    const bx=w*0.08, bw=w*0.84, by=h*0.8, bh=h*0.12, n=EN_ORDER.length, gw=bw/n;
+    line(ctx,bx,by+bh,bx+bw,by+bh,COL.mid,1.3);
+    EN_ORDER.forEach((s,i)=>{ const hh=bh*EN[s]/4.2, on=s===A||s===B, x=bx+i*gw;
+      rect(ctx,x+gw*0.15,by+bh-hh,gw*0.7,hh,on?COL.yellow:COL.blue,on?'rgba(217,160,23,0.25)':'rgba(47,143,224,0.1)',on?2.2:1);
+      textAt(ctx,s,x+gw*0.5,by+bh+13,{align:'center',size:Math.min(11,gw*0.5),weight:on?700:500,color:on?COL.ink:COL.mid});
+      if(on) textAt(ctx,s===A&&s===B?'A B':(s===A?'A':'B'),x+gw*0.5,by+bh-hh-5,{align:'center',size:11,weight:700,color:COL.yellow}); });
+    textAt(ctx,'Pauling χ',bx,by-8,{size:11,weight:700,color:COL.muted});
+
+    const kind=ad<0.4?'Non-polar covalent':(ad<1.7?'Polar covalent':'Ionic');
+    $('#c1').textContent=xa; $('#c2').textContent=xb; $('#c3').textContent=fmt(ad,1); $('#c4').textContent=kind;
+    textAt(ctx,kind,w*0.5,h*0.1,{align:'center',size:17,weight:700,color:ad<0.4?COL.green:(ad<1.7?COL.yellow:COL.red)});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.8 VALENCE & FORMULAS
+   Valence = outer electrons, or 8 − outer electrons.   Metal + non-metal: electrons
+   TRANSFER; otherwise they are SHARED.   Formula by criss-cross:  Aᵥᴮ Bᵥᴬ.
+   Textbook check (Problem 3.8):  Si + Br → SiBr₄ ;  Al + S → Al₂S₃.
+   ===================================================================== */
+const VAL={Li:[1,'m',1],Na:[1,'m',1],K:[1,'m',1],Mg:[2,'m',2],Ca:[2,'m',2],Al:[3,'m',3],B:[3,'x',3],C:[4,'n',4],Si:[4,'x',4],
+  N:[3,'n',5],P:[3,'n',5],O:[2,'n',6],S:[2,'n',6],F:[1,'n',7],Cl:[1,'n',7],Br:[1,'n',7],I:[1,'n',7],H:[1,'n',1]};
+const VAL_KEYS=Object.keys(VAL);
+const SUBD='₀₁₂₃₄₅₆₇₈₉';
+function subNum(n){ return n>1?String(n).split('').map(d=>SUBD[+d]).join(''):''; }
+function formulaOf(A,B,nA,nB,ionic){
+  let first=A,second=B,n1=nA,n2=nB;
+  const swap=()=>{ [first,second]=[second,first]; [n1,n2]=[n2,n1]; };
+  if(ionic){ if(VAL[B][1]==='m') swap(); }
+  else if(A!==B){
+    if(A==='H'||B==='H'){ const o=A==='H'?B:A, hFirst=['O','S','F','Cl','Br','I'].includes(o); if(hFirst!==(first==='H')) swap(); }
+    else if(EN[first]>EN[second]) swap();
+  }
+  return first+subNum(n1)+second+subNum(n2);
+}
+function plan(A,B){
+  const vA=VAL[A][0], vB=VAL[B][0];
+  if(A===B) return {nA:1,nB:1,vA,vB,ionic:false,T:vA,formula:A+'₂',same:true,ok:true};
+  const mA=VAL[A][1]==='m', mB=VAL[B][1]==='m';
+  if(mA&&mB) return {ok:false};
+  const g=gcd(vA,vB), nA=vB/g, nB=vA/g, ionic=(mA!==mB);
+  return {nA,nB,vA,vB,ionic,T:nA*vA,formula:formulaOf(A,B,nA,nB,ionic),ok:true};
+}
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label><span class="sw" style="background:var(--f-yellow)"></span>Element A</label><select id="aS">${VAL_KEYS.map(s=>`<option${s==='Al'?' selected':''}>${s}</option>`).join('')}</select>
+     <label style="margin-top:10px;"><span class="sw" style="background:var(--f-yellow)"></span>Element B</label><select id="bS">${VAL_KEYS.map(s=>`<option${s==='S'?' selected':''}>${s}</option>`).join('')}</select>
+     <div class="toggle-group" style="margin-top:8px"><button class="toggle-btn play" id="goB">↻ React again</button></div></div>`+
+    cards([['Valence A','c1','blue'],['Valence B','c2','blue'],['Bonding','c3'],['Formula','c4','green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aS=$('#aS'), bS=$('#bS');
+  let t=0, T=0, key='', P=null, atoms=[], flights=[], bonds=[], tGlide=0, tEnd=0, ra=26;
+  $('#goB').onclick=()=>{ key=''; };
+  function setup(w,h){
+    const A=aS.value, B=bS.value; P=plan(A,B); atoms=[]; flights=[]; bonds=[]; T=0;
+    if(!P.ok) return;
+    ra=clamp(Math.min(w*0.07,h*0.1),18,42);
+    const cx=w*0.5, cy=h*0.46, sp=ra*2.45;
+    const mk=(sym,kind,i,n)=>{
+      const out=VAL[sym][2], slots=sym==='H'?2:8, own=Array.from({length:slots},(_,k)=>k<out?1:0);
+      const y0=h*0.46+(i-(n-1)/2)*ra*2.6, x0=kind==='A'?w*0.16:w*0.84;
+      return {sym,kind,slots,own,x:{x:x0,v:0},y:{x:y0,v:0},tx:x0,ty:y0,ion:0,give:0,got:0,fx:0,fy:0};
+    };
+    for(let i=0;i<P.nA;i++) atoms.push(mk(A,'A',i,P.nA));
+    for(let i=0;i<P.nB;i++) atoms.push(mk(B,'B',i,P.nB));
+    const As=atoms.filter(a=>a.kind==='A'), Bs=atoms.filter(a=>a.kind==='B');
+    // final positions
+    if(Math.min(P.nA,P.nB)===1&&!P.ionic){
+      const ctr=P.nA===1?As[0]:Bs[0], oth=P.nA===1?Bs:As; ctr.fx=cx; ctr.fy=cy;
+      oth.forEach((o,i)=>{ const ang=oth.length===1?0:(oth.length===2?i*Math.PI:i*2*Math.PI/oth.length+Math.PI/4); o.fx=cx+Math.cos(ang)*ra*2.25; o.fy=cy+Math.sin(ang)*ra*2.25; });
+      if(oth.length===1){ ctr.fx=cx-ra*1.1; oth[0].fx=cx+ra*1.1; }
+    } else {
+      const big=As.length>=Bs.length?As:Bs, small=big===As?Bs:As, m=big.length, k=small.length;
+      big.forEach((o,i)=>{ o.fx=cx+(i-(m-1)/2)*sp; o.fy=cy+(k>0&&m>1||k>1?ra*1.2:0); });
+      small.forEach((o,j)=>{ o.fx=cx+(j+0.5-k/2)*m*sp/k; o.fy=cy-(m>1||k>1?ra*1.2:0); });
+      if(m===1&&k===1){ big[0].fx=cx-ra*1.2; big[0].fy=cy; small[0].fx=cx+ra*1.2; small[0].fy=cy; }
+    }
+    if(P.ionic){
+      // electrons leave the metal, land in the non-metal's vacancies
+      const metal=VAL[A][1]==='m'?'A':'B', M=atoms.filter(a=>VAL[a.sym][1]==='m'), NM=atoms.filter(a=>VAL[a.sym][1]!=='m');
+      const src=[], dst=[];
+      M.forEach(a=>{ for(let k=0;k<VAL[a.sym][0];k++) src.push([a,k]); });
+      NM.forEach(a=>{ const out=VAL[a.sym][2]; for(let k=out;k<a.slots;k++) dst.push([a,k]); });
+      for(let i=0;i<src.length;i++) flights.push({from:src[i][0],fs:src[i][1],to:dst[i][0],ts:dst[i][1],t0:0.5+i*0.3,dur:0.9,state:0});
+      tGlide=0.5+src.length*0.3+0.6; tEnd=tGlide+5.2;
+    } else {
+      tGlide=0.5;
+      const aE=[], bE=[]; As.forEach(a=>{ for(let k=0;k<P.vA;k++) aE.push(a); }); Bs.forEach(b=>{ for(let k=0;k<P.vB;k++) bE.push(b); });
+      const cnt={};
+      for(let i=0;i<aE.length;i++){ const a=aE[i], b=bE[i], id=atoms.indexOf(a)+'-'+atoms.indexOf(b); cnt[id]=(cnt[id]||0)+1;
+        bonds.push({a,b,as:VAL[a.sym][2]-1-a.give,bs:VAL[b.sym][2]-1-b.give,idx:cnt[id],t0:tGlide+1.9+i*0.28,dur:0.8,state:0}); a.give++; b.give++; }
+      tEnd=tGlide+1.9+bonds.length*0.28+0.8+4.2;
+    }
+    atoms.forEach(a=>{ a.give=0; });
+    key=A+'|'+B;
+  }
+  const slotAng=(a,k,tm)=>{ const n=a.slots; return k*Math.PI*2/n+tm*0.35; };
+  const slotXY=(a,k,tm,R)=>({x:a.x.x+Math.cos(slotAng(a,k,tm))*R,y:a.y.x+Math.sin(slotAng(a,k,tm))*R});
+  animLoop((dt)=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(key!==aS.value+'|'+bS.value) setup(w,h);
+    if(!P.ok){ textAt(ctx,'Two metals — no electron transfer or sharing here',w*0.5,h*0.5,{align:'center',size:15,weight:600,color:COL.muted});
+      $('#c1').textContent=VAL[aS.value][0]; $('#c2').textContent=VAL[bS.value][0]; $('#c3').textContent='—'; $('#c4').textContent='—'; return; }
+    T+=dt; if(T>tEnd) setup(w,h);
+    // glide
+    atoms.forEach(a=>{ if(T>=tGlide){ a.tx=a.fx; a.ty=a.fy; } springTo(a.x,a.tx,38,7.5,dt); springTo(a.y,a.ty,38,7.5,dt); });
+    const pad=0;
+    // ionic flights
+    flights.forEach(f=>{
+      if(f.state===0&&T>=f.t0){ f.state=1; f.from.own[f.fs]=0; f.from.give++; }
+      if(f.state===1&&T>=f.t0+f.dur){ f.state=2; f.to.own[f.ts]=2; f.to.got++; }
+    });
+    // covalent bonds: electrons leave their slots and meet in the middle
+    bonds.forEach(b=>{
+      if(b.state===0&&T>=b.t0){ b.state=1; b.a.own[b.as]=0; b.b.own[b.bs]=0; }
+      if(b.state===1&&T>=b.t0+b.dur) b.state=2;
+    });
+    // ring scale: cations shrink, anions grow
+    atoms.forEach(a=>{ const m=VAL[a.sym][1]==='m'; const target=P.ionic?(m?(a.give/VAL[a.sym][0]):(a.got/(a.slots-VAL[a.sym][2]))):0; a.ion=approach(a.ion,target,8,dt); });
+    const rr=a=>ra*(P.ionic?(VAL[a.sym][1]==='m'?1-0.34*a.ion:1+0.16*a.ion):1);
+    // draw: bonds first
+    bonds.forEach(b=>{ if(b.state===2){ const mx=(b.a.x.x+b.b.x.x)/2, my=(b.a.y.x+b.b.y.x)/2;
+        const ang=Math.atan2(b.b.y.x-b.a.y.x,b.b.x.x-b.a.x.x), off=(b.idx-1-(b.idx>1?0.5:0))*7-(b.idx>1?3.5:0);
+        // pair drawn inside a yellow bond lens
+        ctx.save(); ctx.translate(mx,my); ctx.rotate(ang); ctx.beginPath(); ctx.ellipse(0,off,ra*0.5,ra*0.2,0,0,Math.PI*2); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore(); } });
+    atoms.forEach(a=>{
+      const R=rr(a), x=a.x.x, y=a.y.x, m=VAL[a.sym][1]==='m';
+      circ(ctx,x,y,R,P.ionic&&a.ion>0.85?(m?COL.red:COL.blue):COL.blue,'rgba(47,143,224,0.04)',2);
+      circ(ctx,x,y,ra*0.36,COL.red,'#fff4f1',2.2);
+      textAt(ctx,a.sym,x,y+5,{align:'center',size:Math.max(11,ra*0.42),weight:700,color:COL.ink});
+      for(let k=0;k<a.slots;k++){
+        const p=slotXY(a,k,t,R);
+        if(a.own[k]===1) circ(ctx,p.x,p.y,3.6,COL.blue,'#cfe5fb',1.6);
+        else if(a.own[k]===2) circ(ctx,p.x,p.y,3.6,COL.yellow,'#fff3c9',1.8);
+        else if(!m&&k>=VAL[a.sym][2]&&a.slots>0) circ(ctx,p.x,p.y,3.4,'#b9c8dc',null,1.1,[2,2]);
+        else if(!m&&VAL[a.sym][1]!=='m'&&a.own[k]===0) circ(ctx,p.x,p.y,3,'#d4deec',null,1,[2,2]);
+      }
+      if(P.ionic&&a.ion>0.85) textAt(ctx,ionLabel(a.sym,m?VAL[a.sym][0]:-(a.slots-VAL[a.sym][2])),x,y-R-8,{align:'center',size:14,weight:700,color:m?COL.red:COL.blue});
+    });
+    // electrons in flight
+    flights.forEach(f=>{ if(f.state!==1) return; const u=easeInOut((T-f.t0)/f.dur), A=slotXY(f.from,f.fs,t,rr(f.from)), Bp=slotXY(f.to,f.ts,t,rr(f.to));
+      const mx=(A.x+Bp.x)/2, my=(A.y+Bp.y)/2-Math.hypot(Bp.x-A.x,Bp.y-A.y)*0.28;
+      const px=(1-u)*(1-u)*A.x+2*(1-u)*u*mx+u*u*Bp.x, py=(1-u)*(1-u)*A.y+2*(1-u)*u*my+u*u*Bp.y;
+      for(let q=1;q<6;q++){ const uq=Math.max(0,u-q*0.04); circ(ctx,(1-uq)*(1-uq)*A.x+2*(1-uq)*uq*mx+uq*uq*Bp.x,(1-uq)*(1-uq)*A.y+2*(1-uq)*uq*my+uq*uq*Bp.y,3.4-q*0.45,null,'rgba(217,160,23,'+(0.45-q*0.07)+')',0); }
+      circ(ctx,px,py,4.4,COL.yellow,'#fff3c9',2); });
+    bonds.forEach(b=>{ if(b.state===0) return;
+      const A=slotXY(b.a,b.as,t,ra), Bp=slotXY(b.b,b.bs,t,ra), mx=(b.a.x.x+b.b.x.x)/2, my=(b.a.y.x+b.b.y.x)/2;
+      const ang=Math.atan2(b.b.y.x-b.a.y.x,b.b.x.x-b.a.x.x), off=(b.idx-1-(b.idx>1?0.5:0))*7-(b.idx>1?3.5:0);
+      const ex=mx-Math.sin(ang)*off, ey=my+Math.cos(ang)*off;
+      let u=b.state===2?1:easeInOut((T-b.t0)/b.dur);
+      const wob=b.state===2?Math.sin(t*5)*2.2:0;
+      [[A,-1],[Bp,1]].forEach(([p,s])=>{ const X=lerp(p.x,ex+Math.cos(ang)*s*6+Math.cos(ang+Math.PI/2)*wob*s*0,u), Y=lerp(p.y,ey+Math.sin(ang)*s*6,u); circ(ctx,X,Y,4.2,COL.blue,'#cfe5fb',1.8); }); });
+
+    // big formula
+    const fx=w*0.5, fy=h*0.9;
+    textAt(ctx,P.formula,fx,fy,{align:'center',size:Math.min(44,w*0.05),weight:700,color:COL.green});
+    const bonding=P.same?'Shared (covalent)':P.ionic?'Transfer (ionic)':'Shared (covalent)';
+    textAt(ctx,P.ionic?'electron transfer':'electron sharing',fx,h*0.08,{align:'center',size:14,weight:700,color:P.ionic?COL.yellow:COL.blue});
+    $('#c1').textContent=VAL[aS.value][0]; $('#c2').textContent=VAL[bS.value][0]; $('#c3').textContent=bonding; $('#c4').textContent=P.formula;
+  });
+  return wrap;
+}
+/* =====================================================================
+   3.9 METAL OR NON-METAL?     (Period 3, Na → S)
+   Drop-hammer: a falling mass hits the sample with speed v = √(2gH).
+   Malleable metals stop after a stopping distance d = v²/(2·a_yield) and stay flattened;
+   brittle solids pick up damage ∝ v² and shatter. A bulb in series shows conduction.
+   Metallic character falls across the period:  Na > Mg > Al > Si > P > S.
+   ===================================================================== */
+const SAMPLES={
+  Na:{n:'Na',cls:'Metal',     mal:true, Dm:30000, cond:1,   fill:'#f0f3f7', met:96},
+  Mg:{n:'Mg',cls:'Metal',     mal:true, Dm:50000, cond:1,   fill:'#e9eef5', met:82},
+  Al:{n:'Al',cls:'Metal',     mal:true, Dm:60000, cond:1,   fill:'#eef1f5', met:68},
+  Si:{n:'Si',cls:'Metalloid', mal:false,kb:0.85,   cond:0.22,fill:'#d7dde6', met:42},
+  P: {n:'P', cls:'Non-metal', mal:false,kb:1.15,   cond:0,   fill:'#f5d7d2', met:22},
+  S: {n:'S', cls:'Non-metal', mal:false,kb:1.45,   cond:0,   fill:'#f6ebb4', met:8},
+};
+const SAMPLE_KEYS=Object.keys(SAMPLES);
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togg('smB','Sample',SAMPLE_KEYS.map((k,i)=>[k,k,i===2]))+
+    slider('fR','Drop height',25,100,1,70)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="hitB">▼ Strike</button><button class="toggle-btn" id="newB">New sample</button></div></div>`+
+    cards([['Class','c1','green'],['Hammered','c2'],['Conducts','c3','blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), fR=$('#fR');
+  let key='Al', t=0, state='idle', hy=0, vy=0, hs=0, dmg=0, broken=false, brokenT=0, pressT=0, pressFrom=0, pressD=0, cracks=[], frags=[], flash=0, last={};
+  const BX={x:0,v:0}, MK={x:68,v:0}, DROP={x:-300,v:0};   // block drop-in spring, marker spring
+  const G=3600, HEAD=34;
+  const gS=SAMPLE_KEYS.length;
+  function mkCracks(){ const R=rng(key.charCodeAt(0)*7+3), a=[]; for(let i=0;i<6;i++){ const pts=[[R(),0]]; for(let k=1;k<6;k++) pts.push([clamp(pts[k-1][0]+(R()-0.5)*0.35,0.02,0.98),k/5+(R()-0.5)*0.06]); a.push(pts); } return a; }
+  function fresh(){ hs=-1; dmg=0; broken=false; brokenT=0; frags=[]; cracks=mkCracks(); DROP.x=-320; DROP.v=0; state='idle'; }
+  toggleWire(wrap.querySelectorAll('#smB button'),b=>{ key=b.dataset.v; fresh(); });
+  $('#newB').onclick=fresh;
+  $('#hitB').onclick=()=>{ if(state==='idle'&&!broken&&hs>0){ state='fall'; vy=0; } };
+  fresh();
+  animLoop((dt)=>{
+    t+=dt;
+    const S=SAMPLES[key], {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const GY=h*0.6, xc=w*0.29, bw0=Math.min(w*0.17,138), bh0=bw0*0.58;
+    if(hs<0) hs=bh0;
+    const Hmax=h*0.36, Hh=lerp(Hmax*0.25,Hmax,(+fR.value-25)/75), restY=GY-bh0-Hh-HEAD/2;
+    const topY=()=>GY-hs;
+    if(hy===0) hy=restY;
+    $('#fRV').textContent=fR.value+'%';
+    springTo(DROP,0,95,9.5,dt);
+    /* ---- hammer state machine ---- */
+    if(state==='idle'||state==='up'){ const tg=restY+(state==='idle'?Math.sin(t*2.1)*2.2:0); hy=approach(hy,tg,state==='up'?5:8,dt); vy=0; if(state==='up'&&Math.abs(hy-restY)<3) state='idle'; }
+    else if(state==='fall'){
+      vy+=G*dt; hy+=vy*dt;
+      const contact=(broken?GY:topY())-HEAD/2;
+      if(!broken&&hy>=contact){
+        hy=contact; const Ei=clamp((vy*vy)/(2*G*Hmax),0,1.2);
+        flash=1;
+        if(S.mal){ pressD=Math.min(vy*vy/(2*S.Dm),Math.max(0,hs-bh0*0.3)); pressFrom=hy; pressT=0; state='press'; }
+        else { dmg+=Ei*S.kb;
+          if(dmg>=1){ broken=true; brokenT=0; shatter(w,h,xc,GY,bw0,bh0,vy); state='fall'; vy*=0.55; }
+          else { pressD=0.8; pressFrom=hy; pressT=0; state='press'; } }
+      } else if(broken&&hy>=GY-HEAD/2){ hy=GY-HEAD/2; vy=-vy*0.25; if(Math.abs(vy)<80){ state='up'; } }
+    }
+    else if(state==='press'){
+      pressT+=dt; const u=clamp(pressT/0.13,0,1), e=easeOutCubic(u);
+      hy=pressFrom+pressD*e; if(S.mal){ hs=hs-0; }
+      if(u>=1){ if(S.mal){ hs=Math.max(bh0*0.3,hs-pressD); } state='up'; }
+    }
+    if(broken){ brokenT+=dt; if(brokenT>3.6) fresh(); }
+    if(flash>0) flash=Math.max(0,flash-dt*3.2);
+
+    /* ---- the live block (height eased through press) ---- */
+    const dropY=DROP.x;
+    const hsNow=(state==='press'&&S.mal)?hs-pressD*easeOutCubic(clamp(pressT/0.13,0,1)):hs;
+    function drawBlock(){
+      const hh=Math.max(4,hsNow), widen=Math.pow(bh0/hh,0.75), bw=bw0*widen, bulge=(bw-bw0)*0.18+2, xl=xc-bw/2, xr=xc+bw/2, yt=GY-hh+dropY;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(xl,GY+dropY); ctx.quadraticCurveTo(xl-bulge,GY-hh/2+dropY,xl+3,yt); ctx.lineTo(xr-3,yt); ctx.quadraticCurveTo(xr+bulge,GY-hh/2+dropY,xr,GY+dropY); ctx.closePath();
+      ctx.fillStyle=S.fill; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.clip();
+      if(S.mal){ ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(xl+8,yt+hh*0.85); ctx.lineTo(xl+hh*0.5+8,yt+4); ctx.stroke();
+        ctx.strokeStyle='rgba(129,149,171,0.45)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(xl+16,yt+hh*0.9); ctx.lineTo(xl+hh*0.5+16,yt+6); ctx.stroke(); }
+      else { ctx.strokeStyle='rgba(129,149,171,0.55)'; ctx.lineWidth=1.2; for(let i=1;i<4;i++){ ctx.beginPath(); ctx.moveTo(xl+bw*i/4,yt); ctx.lineTo(xl+bw*i/4+hh*0.35,yt+hh); ctx.stroke(); } }
+      // cracks grow with damage
+      if(!S.mal&&dmg>0) { ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; cracks.slice(0,Math.ceil(dmg*5)).forEach(c=>{ ctx.beginPath(); const L=Math.min(1,dmg*1.15); for(let k=0;k<c.length;k++){ if(c[k][1]>L) break; const X=xl+c[k][0]*bw, Y=yt+c[k][1]*hh; k?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); }); }
+      ctx.restore();
+    }
+    // anvil + guide rails + rope
+    rect(ctx,xc-w*0.15,GY,w*0.3,h*0.05,COL.ink,'#eef2f8',2.4); rect(ctx,xc-w*0.09,GY+h*0.05,w*0.18,h*0.045,COL.ink,'#eef2f8',2.4);
+    const rail=bw0*0.98; line(ctx,xc-rail,h*0.03,xc-rail,GY,COL.pale,3); line(ctx,xc+rail,h*0.03,xc+rail,GY,COL.pale,3);
+    line(ctx,xc,h*0.03,xc,hy-HEAD/2,COL.mid,2,[4,4]);
+    if(!broken) drawBlock();
+    // fragments
+    for(let i=frags.length-1;i>=0;i--){ const f=frags[i]; f.vy+=G*0.55*dt; f.x+=f.vx*dt; f.y+=f.vy*dt; f.a+=f.w*dt;
+      if(f.y>GY-f.r*0.6){ f.y=GY-f.r*0.6; if(Math.abs(f.vy)>40){ f.vy=-f.vy*0.38; f.vx*=0.7; f.w*=0.7; } else { f.vy=0; f.vx*=0.9; f.w*=0.85; } }
+      ctx.save(); ctx.translate(f.x,f.y+dropY*0); ctx.rotate(f.a); ctx.beginPath(); f.p.forEach((q,k)=>k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fillStyle=S.fill; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore(); }
+    // hammer head
+    const hwid=bw0*1.5;
+    rect(ctx,xc-hwid/2,hy-HEAD/2,hwid,HEAD,COL.red,'#fbe3de',3);
+    line(ctx,xc-hwid/2+6,hy-HEAD/2+8,xc+hwid/2-6,hy-HEAD/2+8,COL.red,1.4);
+    if(flash>0){ for(let i=0;i<9;i++){ const a=Math.PI+Math.PI*i/8, L=(14+26*(1-flash))*1; line(ctx,xc+Math.cos(a)*bw0*0.5*(1-flash*0.2),(broken?GY:topY())+Math.sin(a)*L*0.3-2,xc+Math.cos(a)*(bw0*0.5+L),(broken?GY:topY())+Math.sin(a)*L-2,COL.yellow,2.2*flash+0.4); } }
+    textAt(ctx,'mass',xc,hy+4,{align:'center',size:11,weight:700,color:COL.red});
+    // velocity cue while falling
+    if(state==='fall'&&!broken) vec(ctx,xc+hwid/2+14,hy-14,xc+hwid/2+14,hy-14+clamp(vy*0.04,6,50),COL.yellow,2.6);
+
+    /* ---------- circuit ---------- */
+    const x0=w*0.6,x1=w*0.95,y0=h*0.13,y1=h*0.5, xm=(x0+x1)/2, ym=(y0+y1)/2, cond=S.cond;
+    const glow=cond*(0.9+0.1*Math.sin(t*37));
+    // wires with gaps for battery (left), bulb (top), sample (bottom)
+    line(ctx,x0,y0,xm-30,y0,COL.ink,2.4); line(ctx,xm+30,y0,x1,y0,COL.ink,2.4); line(ctx,x1,y0,x1,y1,COL.ink,2.4);
+    line(ctx,x1,y1,xm+34,y1,COL.ink,2.4); line(ctx,xm-34,y1,x0,y1,COL.ink,2.4);
+    line(ctx,x0,y1,x0,ym+14,COL.ink,2.4); line(ctx,x0,ym-14,x0,y0,COL.ink,2.4);
+    // battery
+    line(ctx,x0-14,ym-5,x0+14,ym-5,COL.red,3); line(ctx,x0-8,ym+5,x0+8,ym+5,COL.blue,3);
+    textAt(ctx,'+',x0+20,ym-3,{size:13,weight:700,color:COL.red}); textAt(ctx,'−',x0+20,ym+11,{size:14,weight:700,color:COL.blue});
+    // bulb
+    const br=Math.min(h*0.065,32);
+    if(glow>0.02){ const gr=ctx.createRadialGradient(xm,y0,br*0.3,xm,y0,br*2.8); gr.addColorStop(0,'rgba(217,160,23,'+(0.55*glow)+')'); gr.addColorStop(1,'rgba(217,160,23,0)'); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(xm,y0,br*2.8,0,Math.PI*2); ctx.fill();
+      for(let i=0;i<12;i++){ const a=i*Math.PI/6+t*0.4; line(ctx,xm+Math.cos(a)*(br+5),y0+Math.sin(a)*(br+5),xm+Math.cos(a)*(br+5+16*glow),y0+Math.sin(a)*(br+5+16*glow),COL.yellow,2); } }
+    circ(ctx,xm,y0,br,COL.ink,glow>0.02?'rgba(255,245,200,'+(0.3+0.5*glow)+')':'#fff',2.4);
+    ctx.save(); ctx.strokeStyle=glow>0.05?COL.yellow:COL.mid; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(xm-br*0.5,y0+br*0.7); ctx.lineTo(xm-br*0.5,y0); for(let i=0;i<5;i++) ctx.lineTo(xm-br*0.4+i*br*0.2,y0+(i%2?-1:1)*br*0.25); ctx.lineTo(xm+br*0.5,y0); ctx.lineTo(xm+br*0.5,y0+br*0.7); ctx.stroke(); ctx.restore();
+    // the sample in the circuit (small copy)
+    rect(ctx,xm-34,y1-11,68,22,COL.ink,S.fill,2.2);
+    // conduction electrons drift around the loop (speed ∝ conductivity)
+    const per=2*(x1-x0)+2*(y1-y0), pts=u=>{ let d=((u%1)+1)%1*per; if(d<x1-x0) return [x0+d,y0]; d-=x1-x0; if(d<y1-y0) return [x1,y0+d]; d-=y1-y0; if(d<x1-x0) return [x1-d,y1]; d-=x1-x0; return [x0,y1-d]; };
+    last.u=(last.u||0)+dt*0.18*cond;
+    for(let i=0;i<22;i++){ const p=pts(last.u+i/22+(cond>0?0:Math.sin(t*3+i)*0.002)); if((Math.abs(p[0]-xm)<(p[1]<ym?32:36)&&Math.abs(p[1]-y0)<2)||(Math.abs(p[0]-x0)<2&&Math.abs(p[1]-ym)<16)) continue;
+      circ(ctx,p[0],p[1],3.6,COL.blue,'#cfe5fb',1.5); }
+    textAt(ctx,cond===1?'bulb bright':cond>0?'bulb dim':'bulb off',xm,y1+30,{align:'center',size:12,weight:700,color:cond>0?COL.yellow:COL.mid});
+
+    /* ---------- metallic-character gauge ---------- */
+    const gx=w*0.08, gw=w*0.84, gy=h*0.86, gh=h*0.05;
+    const gr=ctx.createLinearGradient(gx,0,gx+gw,0); gr.addColorStop(0,'rgba(31,157,85,0.55)'); gr.addColorStop(1,'rgba(47,143,224,0.55)');
+    ctx.fillStyle=gr; rrect(ctx,gx,gy,gw,gh,gh/2); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.6; ctx.stroke();
+    SAMPLE_KEYS.forEach((k,i)=>{ const x=gx+gw*(i+0.5)/gS; textAt(ctx,k,x,gy+gh+16,{align:'center',size:12,weight:k===key?700:500,color:k===key?COL.ink:COL.muted}); });
+    springTo(MK,(SAMPLE_KEYS.indexOf(key)+0.5)/gS*100,70,10,dt);
+    const mx=gx+gw*MK.x/100; arrowHead(ctx,mx,gy-2,Math.PI/2,COL.yellow,11);
+    textAt(ctx,'metallic',gx+4,gy-22,{size:11,weight:700,color:COL.green}); textAt(ctx,'non-metallic',gx+gw-4,gy-22,{align:'right',size:11,weight:700,color:COL.blue});
+
+    $('#c1').textContent=S.cls; $('#c2').textContent=S.mal?(hsNow<bh0*0.99?'Flattens':'Soft · malleable'):(broken?'Shatters':'Brittle'); $('#c3').textContent=cond===1?'Very well':cond>0?'Poorly':'No';
+  });
+  function shatter(w,h,xc,GY,bw0,bh0,v){
+    frags=[]; const R=rng(Date.now()&0xffff);
+    for(let i=0;i<16;i++){ const r=7+R()*13, cx=xc+(R()-0.5)*bw0*0.9, cy=GY-R()*bh0, n=3+Math.floor(R()*2), p=[];
+      for(let k=0;k<n;k++){ const a=k*Math.PI*2/n+R()*0.5; p.push([Math.cos(a)*r*(0.7+R()*0.5),Math.sin(a)*r*(0.7+R()*0.5)]); }
+      frags.push({x:cx,y:cy,vx:(cx-xc)*7+(R()-0.5)*260,vy:-(160+R()*480),a:R()*6,w:(R()-0.5)*16,r,p}); }
+  }
+  return wrap;
+}
+/* =====================================================================
+   3.10 OXIDES IN WATER
+   Left of the period → basic oxide (Na₂O + H₂O → 2NaOH); right → acidic (Cl₂O₇ + H₂O → 2HClO₄);
+   middle → amphoteric (Al₂O₃, dissolves in acid AND base) or neutral (CO, N₂O).
+   pH of the water follows net base − acid:  pH = 7 + 7·tanh(2.2·(B − A)).
+   ===================================================================== */
+const OXIDES={
+  Na2O:{f:'Na₂O',  type:'basic',    sol:1,    str:1.0,  pos:0.06, eq:'Na₂O + H₂O → 2NaOH'},
+  MgO: {f:'MgO',   type:'basic',    sol:0.28, str:0.2,  pos:0.17, eq:'MgO + H₂O → Mg(OH)₂  (slightly)'},
+  Al2O3:{f:'Al₂O₃',type:'amph',     sol:0,    str:0,    pos:0.33, eq:'insoluble · no change in water'},
+  CO:  {f:'CO',    type:'neutral',  sol:0,    str:0,    pos:0.46, eq:'no reaction · gas bubbles through', gas:1},
+  N2O: {f:'N₂O',   type:'neutral',  sol:0,    str:0,    pos:0.58, eq:'no reaction · gas bubbles through', gas:1},
+  P4O10:{f:'P₄O₁₀',type:'acidic',   sol:1,    str:-0.85,pos:0.72, eq:'P₄O₁₀ + 6H₂O → 4H₃PO₄'},
+  SO3: {f:'SO₃',   type:'acidic',   sol:1,    str:-0.95,pos:0.85, eq:'SO₃ + H₂O → H₂SO₄'},
+  Cl2O7:{f:'Cl₂O₇',type:'acidic',   sol:1,    str:-1.0, pos:0.96, eq:'Cl₂O₇ + H₂O → 2HClO₄'},
+};
+const OX_KEYS=Object.keys(OXIDES);
+const PH_STOPS=[[0,'#d9432b'],[3,'#e8742a'],[5,'#d9a017'],[7,'#1f9d55'],[9.5,'#2f8fe0'],[12,'#4f5fc4'],[14,'#7b4fc4']];
+const phCol=ph=>rampCol(PH_STOPS,ph);
+const TYPE_COL={basic:COL.blue,amph:COL.green,neutral:COL.green,acidic:COL.red};
+const TYPE_NAME={basic:'Basic',amph:'Amphoteric',neutral:'Neutral',acidic:'Acidic'};
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Oxide</label><div class="toggle-group" id="oxB">${OX_KEYS.map((k,i)=>`<button class="toggle-btn${i===0?' active':''}" data-v="${k}">${OXIDES[k].f}</button>`).join('')}</div></div>`+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="addB">Add oxide ▼</button></div>
+      <div class="toggle-group" style="margin-top:6px"><button class="toggle-btn" id="acB" style="border-color:var(--f-red);color:var(--f-red)">+ Acid (HCl)</button><button class="toggle-btn" id="baB" style="border-color:var(--f-blue);color:var(--f-blue)">+ Base (NaOH)</button></div>
+      <div class="toggle-group" style="margin-top:6px"><button class="toggle-btn" id="rsB">Fresh water</button></div></div>`+
+    cards([['Type','c1'],['pH','c2'],['Reaction','c3','',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let key='Na2O', t=0, A=0, B=0, m=0, added=false, pour=0, pouring=0, gasT=0, tipA=0, tipB=0;
+  const PH={x:7,v:0}, TILT={x:0,v:0}, MK={x:0.06,v:0};
+  const grains=[], drops=[], bubbles=[], rings=[], plumes=[]; let nPour=0, pourAcc=0, doses=0;
+  const R=rng(11);
+  toggleWire(wrap.querySelectorAll('#oxB button'),b=>{ key=b.dataset.v; });
+  $('#addB').onclick=()=>{ if(pouring<=0){ pouring=1.3; nPour=0; pourAcc=0; added=true; } };
+  $('#acB').onclick=()=>{ tipA=0.35; drops.push({x:0,y:0,vy:0,c:'A',wait:0.12}); };
+  $('#baB').onclick=()=>{ tipB=0.35; drops.push({x:0,y:0,vy:0,c:'B',wait:0.12}); };
+  $('#rsB').onclick=()=>{ A=0;B=0;m=0;added=false;grains.length=0;drops.length=0;bubbles.length=0;rings.length=0;plumes.length=0;doses=0; };
+  animLoop((dt)=>{
+    t+=dt;
+    const O=OXIDES[key], {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.3, bx0=cx-w*0.15, bx1=cx+w*0.15, bt=h*0.34, bb=h*0.88, G=1900;
+    const level=Math.min(0.66,0.52+doses*0.012), wy=bb-(bb-bt)*level;
+    /* --- net acidity / basicity --- */
+    const net=B-A; let rate=0;
+    if(m>0.001){
+      const reactsAcid=(O.type==='basic'||O.type==='amph')&&A>0.02, reactsBase=(O.type==='acidic'||O.type==='amph')&&B>0.02;
+      if(reactsAcid){ rate=Math.min(m,0.5*dt*Math.min(1,A*3)); A=Math.max(0,A-rate*0.9); m-=rate; }
+      else if(reactsBase){ rate=Math.min(m,0.5*dt*Math.min(1,B*3)); B=Math.max(0,B-rate*0.9); m-=rate; }
+    }
+    if(m>0&&m<0.06&&rate>0) m=0;
+    if(Math.abs(A-B)<0.0006&&A>0){ A=B=0; }
+    if(A>0&&B>0){ const c=Math.min(A,B); A-=c*Math.min(1,dt*4); B-=c*Math.min(1,dt*4); }
+    const phT=clamp(7+7*Math.tanh(2.2*(B-A)),0,14);
+    springTo(PH,phT,45,7.5,dt); springTo(TILT,pouring>0?2.0:0,40,8.5,dt);
+    /* --- pouring oxide --- */
+    const pvx=cx-w*0.12, pvy=h*0.2, mx=pvx+Math.sin(TILT.x)*52, my=pvy-Math.cos(TILT.x)*52;
+    if(pouring>0&&TILT.x>1.4){ pouring-=dt; pourAcc+=dt*30; while(pourAcc>=1&&nPour<40){ pourAcc-=1; nPour++;
+        if(O.gas) bubbles.push({x:cx+(R()-0.5)*20,y:bb-8,vy:-70-R()*40,r:2.5+R()*3.5,ph:R()*6,gas:1});
+        else grains.push({x:mx,y:my,vx:50+R()*80,vy:20+R()*60,r:2.4+R()*2,st:'fall',sol:R()<O.sol,life:1}); } }
+    else if(pouring>0&&TILT.x<=1.4) { /* waiting for the vial to tilt */ }
+    if(pouring<=0&&nPour>=40) nPour=0;
+    /* --- grains --- */
+    for(let i=grains.length-1;i>=0;i--){ const g=grains[i];
+      if(g.st==='fall'){ g.vy+=G*dt; g.x+=g.vx*dt; g.y+=g.vy*dt; g.vx*=0.995; if(g.y>wy){ g.st=g.sol?'dis':'sink'; g.vy*=0.25; g.vx*=0.3; rings.push({x:g.x,y:wy,r:2,a:0.7}); } }
+      else if(g.st==='sink'){ g.vy=approach(g.vy,70,3,dt); g.y+=g.vy*dt; g.x+=Math.sin(t*3+g.r*9)*10*dt; if(g.y>bb-g.r-1){ g.y=bb-g.r-1; m=Math.min(1,m+1/38); g.st='rest'; grains.splice(i,1); } }
+      else if(g.st==='dis'){ g.life-=dt*1.1; g.y+=25*dt; g.r*=(1-dt*1.6); plumes.push({x:g.x,y:g.y,r:6,a:0.35,t:0});
+        if(g.life<=0){ const sg=O.str/(36*Math.max(O.sol,0.01)); if(sg>0) B+=sg; else A+=-sg; grains.splice(i,1); } }
+      g.x=clamp(g.x,bx0+4,bx1-4);
+    }
+    /* --- drops from the acid / base bottles --- */
+    const ax=cx+w*0.03, bxx=cx+w*0.09, tipY=h*0.22;
+    for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; if(d.wait>0){ d.wait-=dt; d.x=d.c==='A'?ax:bxx; d.y=tipY; continue; }
+      d.vy+=G*dt; d.y+=d.vy*dt; if(d.y>wy){ rings.push({x:d.x,y:wy,r:2,a:0.9}); plumes.push({x:d.x,y:wy+6,r:10,a:0.5,t:0,c:d.c}); if(d.c==='A') A=Math.min(1.2,A+0.45); else B=Math.min(1.2,B+0.45); doses++; drops.splice(i,1); } }
+    tipA=Math.max(0,tipA-dt); tipB=Math.max(0,tipB-dt);
+    /* --- bubbles (gas / reaction fizz) --- */
+    if(rate>0.0002&&R()<0.9) bubbles.push({x:bx0+10+R()*(bx1-bx0-20),y:bb-10-R()*30,vy:-45-R()*40,r:1.8+R()*2.2,ph:R()*6});
+    for(let i=bubbles.length-1;i>=0;i--){ const b=bubbles[i]; b.y+=b.vy*dt; b.x+=Math.sin(t*5+b.ph)*18*dt; if(b.y<wy){ rings.push({x:b.x,y:wy,r:1,a:0.5}); bubbles.splice(i,1); } }
+    for(let i=rings.length-1;i>=0;i--){ const r=rings[i]; r.r+=dt*60; r.a-=dt*1.1; if(r.a<=0) rings.splice(i,1); }
+    for(let i=plumes.length-1;i>=0;i--){ const p=plumes[i]; p.t+=dt; p.r+=dt*14; p.a-=dt*0.55; if(p.a<=0) plumes.splice(i,1); }
+
+    /* ---------- beaker + water ---------- */
+    const surf=x=>wy+Math.sin(x*0.07+t*2.6)*1.4+Math.sin(x*0.13-t*1.9)*0.9;
+    ctx.save(); ctx.beginPath(); ctx.moveTo(bx0,surf(bx0)); for(let x=bx0;x<=bx1;x+=6) ctx.lineTo(x,surf(x)); ctx.lineTo(bx1,bb); ctx.lineTo(bx0,bb); ctx.closePath();
+    const wc=phCol(PH.x); ctx.fillStyle=wc; ctx.globalAlpha=0.34; ctx.fill(); ctx.globalAlpha=1; ctx.clip();
+    plumes.forEach(p=>{ const c=p.c==='A'?COL.red:(p.c==='B'?COL.blue:wc); ctx.globalAlpha=Math.max(0,p.a); circ(ctx,p.x,p.y,p.r,null,c,0); }); ctx.globalAlpha=1;
+    // the solid pile on the bottom
+    const nPile=Math.round(m*40), RP=rng(5); for(let i=0;i<nPile;i++){ const gx=bx0+10+RP()*(bx1-bx0-20), gy=bb-3-RP()*Math.min(22,6+nPile*0.4); circ(ctx,gx,gy,3+RP()*1.8,COL.ink,'#fff',1.2); }
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx0-6,bt-8); ctx.lineTo(bx0,bt); ctx.lineTo(bx0,bb-8); ctx.quadraticCurveTo(bx0,bb,bx0+8,bb); ctx.lineTo(bx1-8,bb); ctx.quadraticCurveTo(bx1,bb,bx1,bb-8); ctx.lineTo(bx1,bt); ctx.lineTo(bx1+6,bt-8); ctx.stroke();
+    for(let i=1;i<5;i++){ const y=bb-(bb-bt)*i/5; line(ctx,bx0+1,y,bx0+(i%2?12:20),y,COL.mid,1.3); } ctx.restore();
+    rings.forEach(r=>{ ctx.save(); ctx.globalAlpha=Math.max(0,r.a); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.beginPath(); ctx.ellipse(r.x,wy,r.r,r.r*0.22,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); });
+    bubbles.forEach(b=>circ(ctx,b.x,b.y,b.r,b.gas?COL.ink:COL.mid,'rgba(255,255,255,0.7)',1.3));
+    if(O.gas&&pouring>0){ line(ctx,cx,bt-h*0.12,cx,bb-8,COL.mid,3); line(ctx,cx,bt-h*0.12,cx+w*0.08,bt-h*0.12,COL.mid,3); }
+    grains.forEach(g=>{ circ(ctx,g.x,g.y,Math.max(0.5,g.r),COL.ink,'#fff',1.3); });
+
+    /* ---------- vial of oxide ---------- */
+    ctx.save(); ctx.translate(pvx,pvy); ctx.rotate(TILT.x); ctx.lineJoin='round';
+    rrect(ctx,-13,-52,26,52,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke();
+    ctx.fillStyle='#eef2f8'; ctx.fillRect(-11,-26,22,25); rect(ctx,-9,-58,18,7,COL.ink,'#fff',2);
+    textAt(ctx,O.f,0,-8,{align:'center',size:9,weight:700}); ctx.restore();
+    // acid / base bottles
+    [[ax,COL.red,tipA,'HCl'],[bxx,COL.blue,tipB,'NaOH']].forEach(([x,c,tp,lb])=>{
+      const sq=tp>0?1-0.2*Math.sin(tp/0.35*Math.PI):1;
+      rrect(ctx,x-15,h*0.05,30,h*0.13,7); ctx.save(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.fillStyle=c; ctx.globalAlpha=0.25; ctx.fillRect(x-13,h*0.1,26,h*0.07); ctx.restore();
+      textAt(ctx,lb,x,h*0.145,{align:'center',size:9.5,weight:700,color:c});
+      ctx.save(); ctx.beginPath(); ctx.moveTo(x-6*sq,h*0.18); ctx.lineTo(x,tipY); ctx.lineTo(x+6*sq,h*0.18); ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); });
+    drops.forEach(d=>{ if(d.wait>0) return; const c=d.c==='A'?COL.red:COL.blue; ctx.save(); ctx.beginPath(); ctx.moveTo(d.x,d.y-9); ctx.quadraticCurveTo(d.x+5,d.y,d.x,d.y+4); ctx.quadraticCurveTo(d.x-5,d.y,d.x,d.y-9); ctx.fillStyle=c; ctx.fill(); ctx.restore(); });
+
+    /* ---------- pH gauge ---------- */
+    const gx=w*0.74, gy=h*0.4, gr=Math.min(w*0.17,h*0.28);
+    for(let i=0;i<28;i++){ const a0=Math.PI+i*Math.PI/28, a1=a0+Math.PI/28+0.01; ctx.save(); ctx.strokeStyle=phCol(i/28*14+0.25); ctx.lineWidth=gr*0.17; ctx.beginPath(); ctx.arc(gx,gy,gr,a0,a1); ctx.stroke(); ctx.restore(); }
+    [0,7,14].forEach(v=>{ const a=Math.PI+v/14*Math.PI; textAt(ctx,String(v),gx+Math.cos(a)*(gr+22),gy+Math.sin(a)*(gr+22)+4,{align:'center',size:12,weight:700,color:COL.muted}); });
+    const na=Math.PI+clamp(PH.x,0,14)/14*Math.PI; line(ctx,gx,gy,gx+Math.cos(na)*gr*0.9,gy+Math.sin(na)*gr*0.9,COL.ink,3.4); circ(ctx,gx,gy,7,COL.ink,'#fff',2.6);
+    textAt(ctx,'pH '+fmt(PH.x,1),gx,gy+gr*0.42,{align:'center',size:22,weight:700,color:phCol(PH.x)});
+    textAt(ctx,'acid',gx-gr,gy+18,{align:'center',size:11,weight:700,color:COL.red}); textAt(ctx,'base',gx+gr,gy+18,{align:'center',size:11,weight:700,color:COL.violet});
+
+    /* ---------- basic → acidic scale with the chosen oxide ---------- */
+    const sx=w*0.5, sw=w*0.47, sy=h*0.8, sh=h*0.045;
+    const gg=ctx.createLinearGradient(sx,0,sx+sw,0); gg.addColorStop(0,'rgba(47,143,224,0.6)'); gg.addColorStop(0.5,'rgba(31,157,85,0.6)'); gg.addColorStop(1,'rgba(217,67,43,0.6)');
+    ctx.fillStyle=gg; rrect(ctx,sx,sy,sw,sh,sh/2); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.6; ctx.stroke();
+    OX_KEYS.forEach(k=>{ const x=sx+sw*OXIDES[k].pos; textAt(ctx,OXIDES[k].f,x,sy+sh+15,{align:'center',size:10.5,weight:k===key?700:500,color:k===key?COL.ink:COL.muted}); });
+    springTo(MK,O.pos,70,10,dt); arrowHead(ctx,sx+sw*MK.x,sy-2,Math.PI/2,COL.yellow,11);
+    textAt(ctx,'basic',sx,sy-10,{size:11,weight:700,color:COL.blue}); textAt(ctx,'amphoteric · neutral',sx+sw/2,sy-10,{align:'center',size:11,weight:700,color:COL.green}); textAt(ctx,'acidic',sx+sw,sy-10,{align:'right',size:11,weight:700,color:COL.red});
+    $('#c1').innerHTML=`<span style="color:${TYPE_COL[O.type]}">${TYPE_NAME[O.type]}</span>`; $('#c2').textContent=fmt(PH.x,1);
+    $('#c3').textContent=added?O.eq:'—';
+  });
+  return wrap;
+}
+/* =====================================================================
+   3.11 ALKALI METALS IN WATER
+   Lower ionization enthalpy down Group 1 → the outer electron leaves more easily
+   → more vigorous reaction:  2M + 2H₂O → 2MOH + H₂↑   (water turns basic).
+   ===================================================================== */
+const ALK={
+  Li:{iH:520,r:0.2, fl:null,         word:'Gentle fizz'},
+  Na:{iH:496,r:0.45,fl:COL.yellow,   word:'Darts, melts'},
+  K: {iH:419,r:0.68,fl:COL.violet,   word:'Lilac flame'},
+  Rb:{iH:403,r:0.86,fl:COL.violet,   word:'Violent'},
+  Cs:{iH:376,r:1.0, fl:COL.violet,   word:'Explodes'},
+};
+const ALK_KEYS=Object.keys(ALK);
+function buildA11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togg('mB','Metal',ALK_KEYS.map((k,i)=>[k,k,i===1]))+
+    slider('sR','Piece size',0.5,1.5,0.05,1)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="dropB">▼ Drop it in</button><button class="toggle-btn" id="rsB">Fresh water</button></div></div>`+
+    cards([['1st iH','c1','red'],['Reactivity','c2'],['H₂ bubbles /s','c3','blue'],['Reaction','c4','',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sR=$('#sR');
+  let key='Na', t=0, shake=0, alk=0, rate=0, goneT=0;
+  const L={st:'hold',x:0,y:0,vx:0,vy:0,mass:1,tr:0,bob:{x:0,v:0}}, IDX={x:1,v:0};
+  const spray=[], bub=[], rings=[], R=rng(23); let flash=0, shock=0;
+  function ready(){ L.st='hold'; L.mass=1; L.vx=0; L.vy=0; L.tr=0; L.x=null; goneT=0; }
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ key=b.dataset.v; ready(); alk=0; spray.length=0; bub.length=0; });
+  $('#dropB').onclick=()=>{ if(L.st==='hold') L.st='fall'; };
+  $('#rsB').onclick=()=>{ alk=0; ready(); spray.length=0; bub.length=0; };
+  ready();
+  animLoop((dt)=>{
+    t+=dt;
+    const M=ALK[key], r=M.r, size=+sR.value; $('#sRV').textContent=fmt(size,2)+'×';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const bx0=w*0.05, bx1=w*0.61, bt=h*0.44, bb=h*0.92, wy=h*0.6, G=2200, cxm=(bx0+bx1)/2;
+    if(L.x===null){ L.x=cxm; L.y=h*0.2; }
+    const rl0=12+14*size, rl=rl0*Math.sqrt(Math.max(0.02,L.mass));
+    springTo(IDX,ALK_KEYS.indexOf(key),60,10,dt);
+    /* ---- lump dynamics ---- */
+    rate=0;
+    if(L.st==='hold'){ L.x=approach(L.x,cxm,5,dt); L.y=h*0.2+Math.sin(t*2.2)*2; }
+    else if(L.st==='fall'){
+      L.vy+=G*dt; L.y+=L.vy*dt;
+      if(L.y>=wy-rl*0.4){ // splash
+        const n=Math.round(6+26*r*size); for(let i=0;i<n;i++){ const a=-Math.PI/2+(R()-0.5)*2.2, sp=(120+380*r)*(0.4+R()); spray.push({x:L.x,y:wy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:1.6+R()*2.2}); }
+        for(let i=0;i<3;i++) rings.push({x:L.x+(R()-0.5)*20,y:wy,r:2+i*6,a:0.8});
+        L.vy=0; L.vx=(R()<0.5?-1:1)*(40+260*r); L.st=r>=0.99?'boom':'react'; L.tr=0; shake=0.25+0.5*r; }
+    }
+    else if(L.st==='react'){
+      L.tr+=dt; const lam=1.5+16*r;
+      if(R()<lam*dt) L.vx+=(R()<0.5?-1:1)*(60+420*r)*(0.4+R()*0.8);
+      L.vx*=Math.exp(-1.15*dt); L.x+=L.vx*dt;
+      if(L.x<bx0+rl){ L.x=bx0+rl; L.vx=Math.abs(L.vx)*0.8; } if(L.x>bx1-rl){ L.x=bx1-rl; L.vx=-Math.abs(L.vx)*0.8; }
+      springTo(L.bob,Math.sin(t*9)*(1+3*r),180,14,dt); L.y=wy-rl*0.55+L.bob.x;
+      const consume=(0.04+0.55*Math.pow(r,1.6))*dt/size; L.mass-=consume; alk=Math.min(1,alk+consume*size*0.45);
+      rate=6+60*r; if(R()<rate*dt*1.0) bub.push({x:L.x+(R()-0.5)*rl*1.4,y:wy+4+R()*4,t:0});
+      if(r>=0.8&&R()<(r*14)*dt){ const a=-Math.PI/2+(R()-0.5)*2.4, sp=120+220*r; spray.push({x:L.x,y:wy-rl*0.4,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:1.4+R()*1.6}); }
+      if(L.mass<=0.02){ L.st='gone'; goneT=0; }
+    }
+    else if(L.st==='boom'){
+      L.tr+=dt; L.y=wy-rl*0.55; rate=0;
+      if(L.tr>0.28){ flash=1; shock=0; shake=1; alk=Math.min(1,alk+0.6*size);
+        for(let i=0;i<70;i++){ const a=-Math.PI*(0.05+0.9*R()), sp=300+900*R(); spray.push({x:L.x,y:wy-6,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:1.8+R()*3}); }
+        L.st='gone'; goneT=0; }
+    }
+    else if(L.st==='gone'){ goneT+=dt; if(goneT>2.2) ready(); }
+    shake=Math.max(0,shake-dt*1.7); flash=Math.max(0,flash-dt*2.6); shock+=dt;
+    /* ---- particles ---- */
+    for(let i=spray.length-1;i>=0;i--){ const s=spray[i]; s.vy+=G*0.6*dt; s.x+=s.vx*dt; s.y+=s.vy*dt; if(s.y>wy&&s.vy>0){ rings.push({x:s.x,y:wy,r:1.5,a:0.5}); spray.splice(i,1); } else if(s.x<-20||s.x>w+20||s.y>h+20) spray.splice(i,1); }
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.t+=dt; if(b.t>0.45){ rings.push({x:b.x,y:wy,r:1,a:0.45}); bub.splice(i,1); } }
+    for(let i=rings.length-1;i>=0;i--){ const q=rings[i]; q.r+=dt*55; q.a-=dt*1.1; if(q.a<=0) rings.splice(i,1); }
+
+    ctx.save(); if(shake>0) ctx.translate((R()-0.5)*shake*8,(R()-0.5)*shake*6);
+    /* ---------- trough + water ---------- */
+    const surf=x=>wy+Math.sin(x*0.06+t*2.8)*1.6+Math.sin(x*0.12-t*2)*1.1+(L.st==='react'?Math.sin((x-L.x)*0.18-t*14)*2.2*Math.exp(-Math.abs(x-L.x)/90):0);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(bx0,surf(bx0)); for(let x=bx0;x<=bx1;x+=6) ctx.lineTo(x,surf(x)); ctx.lineTo(bx1,bb); ctx.lineTo(bx0,bb); ctx.closePath();
+    ctx.fillStyle=mixCol('#1f9d55','#7b4fc4',Math.min(1,alk)); ctx.globalAlpha=0.34; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx0-6,bt-8); ctx.lineTo(bx0,bt); ctx.lineTo(bx0,bb-8); ctx.quadraticCurveTo(bx0,bb,bx0+8,bb); ctx.lineTo(bx1-8,bb); ctx.quadraticCurveTo(bx1,bb,bx1,bb-8); ctx.lineTo(bx1,bt); ctx.lineTo(bx1+6,bt-8); ctx.stroke(); ctx.restore();
+    rings.forEach(q=>{ ctx.save(); ctx.globalAlpha=Math.max(0,q.a); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.beginPath(); ctx.ellipse(q.x,wy,q.r,q.r*0.2,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); });
+    bub.forEach(b=>{ const u=b.t/0.45; circ(ctx,b.x,wy+4-u*10,2.2+u*2,COL.blue,'rgba(255,255,255,0.6)',1.3); });
+    /* ---------- tweezers + the metal piece ---------- */
+    if(L.st==='hold'||L.st==='fall'){
+      const op=L.st==='fall'?0.5:0.0; ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(L.x-rl*0.8-op*10,L.y-rl*0.1); ctx.lineTo(L.x-6,h*0.04); ctx.moveTo(L.x+rl*0.8+op*10,L.y-rl*0.1); ctx.lineTo(L.x+6,h*0.04); ctx.stroke(); ctx.restore(); }
+    if(L.st==='hold'||L.st==='fall'||L.st==='react'||L.st==='boom'){
+      // flame
+      const fl=M.fl, fa=(L.st==='react')?(key==='Na'?(0.5+0.5*Math.sin(t*3)>0.55?1:0):(fl?1:0)):0;
+      if(L.st==='boom'){ for(let i=0;i<7;i++){ const hh=(14+30*L.tr/0.28)*(0.7+0.3*Math.sin(t*30+i)); ctx.save(); ctx.strokeStyle=COL.violet; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(L.x-rl+i*rl*0.33,L.y-2); ctx.quadraticCurveTo(L.x-rl+i*rl*0.33+4,L.y-hh*0.6,L.x-rl+i*rl*0.33,L.y-hh); ctx.stroke(); ctx.restore(); } }
+      if(fa>0&&fl){ for(let i=0;i<5;i++){ const fx=L.x-rl*0.8+rl*1.6*(i+0.5)/5, hh=(8+22*r)*(0.75+0.25*Math.sin(t*13+i*1.7)), sw=Math.sin(t*9+i*2.1)*3;
+          ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=fl; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(fx-6,L.y-rl*0.4); ctx.quadraticCurveTo(fx-6,L.y-hh*0.6-rl*0.4,fx+sw,L.y-hh-rl*0.4); ctx.quadraticCurveTo(fx+6,L.y-hh*0.6-rl*0.4,fx+6,L.y-rl*0.4); ctx.stroke();
+          ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(fx-3,L.y-rl*0.4); ctx.quadraticCurveTo(fx-2,L.y-hh*0.4-rl*0.4,fx+sw*0.5,L.y-hh*0.6-rl*0.4); ctx.quadraticCurveTo(fx+3,L.y-hh*0.4-rl*0.4,fx+3,L.y-rl*0.4); ctx.stroke(); ctx.restore(); } }
+      circ(ctx,L.x,L.y,rl,COL.ink,'#eef2f8',2.4); line(ctx,L.x-rl*0.55,L.y-rl*0.2,L.x-rl*0.1,L.y-rl*0.6,'#fff',2.4);
+      textAt(ctx,key,L.x,L.y+4,{align:'center',size:Math.max(9,rl*0.7),weight:700,color:COL.ink,alpha:0.85});
+      if(L.st==='react'&&r>0.4) for(let i=0;i<3;i++){ const a=Math.random()*6.28; line(ctx,L.x+Math.cos(a)*(rl+3),L.y+Math.sin(a)*(rl+3),L.x+Math.cos(a)*(rl+10+10*r),L.y+Math.sin(a)*(rl+10+10*r),COL.yellow,1.6); }
+    }
+    spray.forEach(s=>circ(ctx,s.x,s.y,s.r,COL.blue,'rgba(47,143,224,0.35)',1.2));
+    if(flash>0){ const q=1-flash; circ(ctx,L.x||cxm,wy,20+q*220,COL.red,null,5*flash+0.5); circ(ctx,L.x||cxm,wy,10+q*130,COL.yellow,'rgba(217,160,23,'+(0.25*flash)+')',3*flash+0.5); }
+    ctx.restore();
+
+    /* ---------- the two trends side by side ---------- */
+    const cx2=w*0.66, cw2=w*0.31;
+    barChart(ctx,{x:cx2,y:h*0.12,w:cw2,h:h*0.28,vals:ALK_KEYS.map(k=>ALK[k].iH),labels:ALK_KEYS,cur:IDX.x,max:560,col:COL.red,hi:COL.yellow,fmt:v=>v,title:'1st iH / kJ mol⁻¹  ↓'});
+    barChart(ctx,{x:cx2,y:h*0.58,w:cw2,h:h*0.28,vals:ALK_KEYS.map(k=>ALK[k].r),labels:ALK_KEYS,cur:IDX.x,max:1.05,col:COL.green,hi:COL.yellow,fmt:v=>'',title:'Reactivity  ↑'});
+    $('#c1').textContent=M.iH+' kJ/mol'; $('#c2').textContent=M.word; $('#c3').textContent=Math.round(rate);
+    $('#c4').innerHTML='2'+key+' + 2H₂O → 2'+key+'OH + H₂↑';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.12 HALOGEN DISPLACEMENT
+   Reactivity falls down Group 17 (F > Cl > Br > I): a more reactive halogen grabs the
+   electron from a halide ion of a less reactive one, setting the free halogen loose.
+   Cl₂ + 2Br⁻ → 2Cl⁻ + Br₂ (orange) ;  Br₂ + 2I⁻ → 2Br⁻ + I₂ (brown) ;  I₂ + Cl⁻ → ✗
+   ===================================================================== */
+const HAL={Cl:{chi:3.0,ra:99,ri:181,water:'#e3eeb0',prod:null},Br:{chi:2.8,ra:114,ri:196,water:'#f3bb5c',prod:'#ee8a1f'},I:{chi:2.5,ra:133,ri:220,water:'#cfa569',prod:'#6b3f17'}};
+const HAL_ORDER=['Cl','Br','I'];
+function buildA12(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togg('hB','Add halogen water',[['Cl','Cl₂',1],['Br','Br₂'],['I','I₂']])+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="pourB">▼ Add to all tubes</button><button class="toggle-btn" id="rsB">Fresh tubes</button></div></div>`+
+    cards([['in NaCl','c1'],['in NaBr','c2'],['in NaI','c3'],['Added χ','c4','red'],['Reactivity order','c5','green',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let hal='Cl', t=0, poured=false, pourT=-1, tPour0=0;
+  const tubes=HAL_ORDER.map(y=>({y,col:hexRgb('#f1f7fd'),tgt:hexRgb('#f1f7fd'),level:0.5,react:false,rt:0,plumes:[],drops:[],done:false,fill:{x:0.5,v:0}}));
+  const R=rng(31);
+  toggleWire(wrap.querySelectorAll('#hB button'),b=>{ hal=b.dataset.v; reset(); });
+  function reset(){ poured=false; pourT=-1; tubes.forEach(tb=>{ tb.col=hexRgb('#f1f7fd'); tb.tgt=hexRgb('#f1f7fd'); tb.level=0.5; tb.plumes=[]; tb.drops=[]; tb.done=false; tb.rt=0; }); }
+  $('#rsB').onclick=reset;
+  $('#pourB').onclick=()=>{ if(pourT<0){ reset(); pourT=0; poured=true; tPour0=t; } };
+  const reacts=(x,y)=>HAL_ORDER.indexOf(x)<HAL_ORDER.indexOf(y);
+  animLoop((dt)=>{
+    t+=dt;
+    const X=hal, HX=HAL[X], {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=Math.min(w*0.075,58), ty0=h*0.26, tyB=h*0.64, colX=k=>w*(0.17+0.33*k), G=2000;
+    if(pourT>=0){ pourT+=dt; if(pourT>1.6) pourT=-1; }
+    tubes.forEach((tb,k)=>{
+      const x=colX(k), react=reacts(X,tb.y), surfY=()=>tyB-(tyB-ty0)*tb.level;
+      // dropper
+      const sq=pourT>=0&&pourT<1.4?0.5+0.5*Math.sin(pourT*18):0, tipY=h*0.2;
+      rrect(ctx,x-14,h*0.03,28,h*0.11,7); ctx.save(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.fillStyle=HX.water; ctx.globalAlpha=0.7; ctx.fillRect(x-12,h*0.075,24,h*0.055); ctx.restore();
+      textAt(ctx,X+'₂',x,h*0.115,{align:'center',size:10,weight:700,color:COL.ink});
+      ctx.save(); ctx.beginPath(); ctx.moveTo(x-6+sq*1.5,h*0.14); ctx.lineTo(x,tipY); ctx.lineTo(x+6-sq*1.5,h*0.14); ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      if(pourT>=0&&pourT<1.4&&Math.random()<dt*22) tb.drops.push({x:x,y:tipY,vy:0});
+      for(let i=tb.drops.length-1;i>=0;i--){ const d=tb.drops[i]; d.vy+=G*dt; d.y+=d.vy*dt;
+        if(d.y>=surfY()){ tb.drops.splice(i,1); if(tb.rt===0) { tb.rt=0.001; } tb.level=Math.min(0.64,tb.level+0.006);
+          tb.tgt=hexRgb(HX.water); for(let q=0;q<4;q++) tb.plumes.push({x:x+(R()-0.5)*tw*0.4,y:surfY(),vy:30+R()*40,r:3+R()*3,a:0.9,c:HX.water}); } }
+      if(tb.rt>0){ tb.rt+=dt; if(tb.rt>1.6&&react&&HX.prod===null){ /* Cl added: products are Br2 / I2 */ }
+        if(tb.rt>1.7&&react){ const prod=tb.y==='Br'?HAL.Br.prod:HAL.I.prod; tb.tgt=hexRgb(prod); }
+      }
+      tb.col=tb.col.map((v,i)=>approach(v,tb.tgt[i],tb.rt>1.7&&react?1.1:2.6,dt));
+      // test tube + liquid
+      const sY=surfY(), cl='rgb('+tb.col.map(Math.round).join(',')+')';
+      ctx.save(); ctx.beginPath(); ctx.moveTo(x-tw/2,sY+Math.sin(t*3+k)*1.2); for(let q=0;q<=tw;q+=4) ctx.lineTo(x-tw/2+q,sY+Math.sin(q*0.22+t*3+k)*1.2); ctx.lineTo(x+tw/2,tyB); ctx.arc(x,tyB,tw/2,0,Math.PI,false); ctx.closePath(); ctx.fillStyle=cl; ctx.globalAlpha=0.78; ctx.fill(); ctx.globalAlpha=1; ctx.clip();
+      for(let i=tb.plumes.length-1;i>=0;i--){ const p=tb.plumes[i]; p.y+=p.vy*dt; p.vy*=0.985; p.x+=Math.sin(t*4+i)*8*dt; p.r+=dt*7; p.a-=dt*0.4; if(p.a<=0||p.y>tyB) { tb.plumes.splice(i,1); continue; } ctx.globalAlpha=Math.max(0,p.a)*0.8; circ(ctx,p.x,p.y,p.r,null,p.c,0); } ctx.globalAlpha=1;
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x-tw/2-5,ty0-6); ctx.lineTo(x-tw/2,ty0); ctx.lineTo(x-tw/2,tyB); ctx.arc(x,tyB,tw/2,Math.PI,0,true); ctx.lineTo(x+tw/2,ty0); ctx.lineTo(x+tw/2+5,ty0-6); ctx.stroke(); ctx.restore();
+      textAt(ctx,'Na'+tb.y,x,tyB+tw/2+22,{align:'center',size:15,weight:700});
+      tb.drops.forEach(d=>{ ctx.save(); ctx.beginPath(); ctx.moveTo(x,d.y-8); ctx.quadraticCurveTo(x+4,d.y,x,d.y+3); ctx.quadraticCurveTo(x-4,d.y,x,d.y-8); ctx.fillStyle=HX.water; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); });
+
+      /* ---------- electron-grab micro-view ---------- */
+      const rv=Math.min(h*0.095,w*0.07), my=h*0.82, cyc=poured?((t-tPour0-1.6)%5)/5:-1, Yh=HAL[tb.y], kr=rv*0.5/220;
+      ctx.save(); ctx.beginPath(); ctx.arc(x,my,rv*1.18,0,Math.PI*2); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.clip();
+      let xs=-rv*0.62, hop=0, tryF=0;   // x position of X (relative), electron hop progress
+      if(cyc>=0){ const a=smooth01(0,0.22,cyc), b=1-smooth01(0.88,1,cyc); xs=lerp(-rv*0.72,-rv*0.38,a*b);
+        if(react){ hop=smooth01(0.28,0.5,cyc)*(cyc<0.88?1:1-smooth01(0.88,1,cyc)); } else { tryF=Math.sin(smooth01(0.28,0.6,cyc)*Math.PI); } }
+      const xX=x+xs, yX=my, xY=x+rv*0.5, yY=my, rX=(HAL[X].ra+(HAL[X].ri-HAL[X].ra)*hop)*kr, rY=(Yh.ri+(Yh.ra-Yh.ri)*hop)*kr;
+      circ(ctx,xX,yX,rX,hop>0.5?COL.blue:COL.blue,'rgba(47,143,224,0.06)',2); circ(ctx,xY,yY,rY,hop>0.5?COL.blue:COL.blue,'rgba(47,143,224,0.06)',2);
+      circ(ctx,xX,yX,3.6,COL.red,COL.red,1); circ(ctx,xY,yY,3.6,COL.red,COL.red,1);
+      // the electron: orbits Y⁻, may hop to X
+      const aOrb=t*3.2, ex0=xY+Math.cos(aOrb)*rY, ey0=yY+Math.sin(aOrb)*rY, ex1=xX+Math.cos(aOrb*1.3)*rX, ey1=yX+Math.sin(aOrb*1.3)*rX;
+      let ex=ex0, ey=ey0;
+      if(react){ ex=lerp(ex0,ex1,hop); ey=lerp(ey0,ey1,hop)-Math.sin(hop*Math.PI)*rv*0.5; }
+      else if(cyc>=0){ ex=lerp(ex0,(xX+xY)/2,tryF*0.55); ey=lerp(ey0,yY,tryF*0.55); }
+      circ(ctx,ex,ey,4.6,COL.blue,'#cfe5fb',2);
+      ctx.restore(); circ(ctx,x,my,rv*1.18,COL.ink,null,2);
+      textAt(ctx,X+(hop>0.5?'⁻':''),xX,my+rv*1.18+14+0,{align:'center',size:11,weight:700,color:COL.ink});
+      textAt(ctx,tb.y+(hop>0.5?'':'⁻'),xY,my+rv*1.18+14,{align:'center',size:11,weight:700,color:COL.ink});
+      if(cyc>=0.5&&cyc<0.88) textAt(ctx,react?'✓':'✗',x,my-rv*1.18-6,{align:'center',size:18,weight:700,color:react?COL.green:COL.red});
+    });
+    
+    const txt=(y)=>{ if(!poured) return '—'; const r=reacts(X,y); return r?(y==='Br'?'Br₂ orange':'I₂ brown'):'no change'; };
+    $('#c1').textContent=txt('Cl'); $('#c2').textContent=txt('Br'); $('#c3').textContent=txt('I'); $('#c4').textContent=HX.chi; $('#c5').textContent='F > Cl > Br > I';
+  });
+  return wrap;
+}
+
+render();
+window.addEventListener('resize',()=>{});
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

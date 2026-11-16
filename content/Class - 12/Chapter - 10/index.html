@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 2 — Wave Optics | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label:not(:first-child){margin-top:10px;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-group.nomt{margin-top:0;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); line-height:1.4;}
+.hidden{display:none !important;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🌊</div>
+    <div>
+      <div class="chip">Grade 12 · Part 2 · Ch 2</div>
+      <h1>Wave Optics</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change · Sources</span>
+      <span><i style="background:var(--f-blue)"></i>Incident · Wavefront</span>
+      <span><i style="background:var(--f-green)"></i>Refracted · New front · Bright</span>
+      <span><i style="background:var(--f-red)"></i>Reflected · Wavelets · Rays</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">2.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 · PART 2 · CHAPTER 2 — WAVE OPTICS (NCERT)
+   Every activity runs on a continuous animation loop. Sliders and buttons
+   only set a TARGET; the drawn object eases / springs toward it every frame.
+   Waves are drawn from their real phase equations, so wavelengths shrink,
+   fronts bend and fringes slide exactly as the formulas say.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#dbe4f0'};
+
+/* ---------- canvas + drawing helpers ---------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8); }
+function dvec(ctx,x1,y1,x2,y2,color,width){ // double-headed
+  line(ctx,x1,y1,x2,y2,color,width||2.6); const a=Math.atan2(y2-y1,x2-x1);
+  arrowHead(ctx,x2,y2,a,color,8); arrowHead(ctx,x1,y1,a+Math.PI,color,8);
+}
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function frac(x){ return x-Math.floor(x); }
+/* visible wavelength (nm) → [r,g,b] */
+function wlRGB(wl){
+  let r=0,g=0,b=0;
+  if(wl<440){ r=-(wl-440)/60; b=1; } else if(wl<490){ g=(wl-440)/50; b=1; } else if(wl<510){ g=1; b=-(wl-510)/20; }
+  else if(wl<580){ r=(wl-510)/70; g=1; } else if(wl<645){ r=1; g=-(wl-645)/65; } else { r=1; }
+  const f = wl<420 ? 0.35+0.65*(wl-380)/40 : wl>680 ? 0.35+0.65*(700-wl)/20 : 1;
+  return [r,g,b].map(v=>Math.round(255*Math.pow(clamp(v*f,0,1),0.8)));
+}
+function wlCss(wl){ const c=wlRGB(wl); return 'rgb('+c.join(',')+')'; }
+
+/* ---------- animation engine ---------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function springTo(st,target,k,damping,dt){ const acc=(target-st.x)*k - st.v*damping; st.v+=acc*dt; st.x+=st.v*dt; return st.x; }
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); }); }
+
+/* ---------- control builders ---------- */
+function sld(id,label,min,max,step,val){
+  return '<label>'+label+'<span class="val" id="'+id+'V"></span></label><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+}
+function card(label,id,wide){ return '<div class="rcard'+(wide?' wide':'')+'"><div class="rlabel">'+label+'</div><div class="rval" id="'+id+'">—</div></div>'; }
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML='<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>'; return wrap;
+}
+
+/* ---------- 3-D-lite projection for transverse waves (x along beam, y up, z toward viewer) ---------- */
+const OBL={zx:-0.55, zy:0.42};
+function proj(x,cy,y,z){ return [x+z*OBL.zx, cy-y+z*OBL.zy]; }
+function hAng(k){ return frac(Math.sin(k*127.1+3.7)*43758.5453)*Math.PI; }
+function uAng(te){ const q=te/0.5, k=Math.floor(q), f=Math.min(1,(q-k)/0.3), s=f*f*(3-2*f); return lerp(hAng(k-1),hAng(k),s); } // new random plane every 0.5 s, turned smoothly
+/* ribbon of a transverse wave. fn(x) → [signedAmp(0..1), planeAngle] ; angle 0 = vertical, 90° = toward viewer */
+function ribbon(ctx,x0,x1,cy,A,k,xref,wt,fn,color){
+  const pts=[];
+  for(let x=x0;x<=x1;x+=3){ const f=fn(x); const s=f[0]*A*Math.sin(k*(x-xref)-wt); const p=proj(x,cy,s*Math.cos(f[1]),s*Math.sin(f[1])); pts.push([x,p[0],p[1]]); }
+  ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=0.2; ctx.lineWidth=1; ctx.beginPath();
+  for(let i=0;i<pts.length;i+=2){ ctx.moveTo(pts[i][0],cy); ctx.lineTo(pts[i][1],pts[i][2]); } ctx.stroke();
+  ctx.globalAlpha=1; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+  pts.forEach((p,i)=>i?ctx.lineTo(p[1],p[2]):ctx.moveTo(p[1],p[2])); ctx.stroke(); ctx.restore();
+}
+/* round polaroid / slit-board disc in the y–z plane */
+function discPath(ctx,cx,cy,R){
+  ctx.beginPath(); for(let i=0;i<=48;i++){ const a=i/48*Math.PI*2; const p=proj(cx,cy,R*Math.cos(a),R*Math.sin(a)); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.closePath();
+}
+function polaroid(ctx,cx,cy,R,axis,alpha,col,label,sub){
+  ctx.save(); discPath(ctx,cx,cy,R); ctx.fillStyle='rgba(47,143,224,'+(0.07*alpha)+')'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke();
+  ctx.clip();
+  const ay=Math.cos(axis), az=Math.sin(axis), py=-az, pz=ay;
+  ctx.strokeStyle=col; ctx.globalAlpha=0.35; ctx.lineWidth=1.2; ctx.beginPath();
+  for(let i=-7;i<=7;i++){ const o=R*i/7.4, L=Math.sqrt(Math.max(0,R*R-o*o));
+    const a=proj(cx,cy,o*py-L*ay,o*pz-L*az), b=proj(cx,cy,o*py+L*ay,o*pz+L*az); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); }
+  ctx.stroke(); ctx.restore();
+  const a=proj(cx,cy,-R*1.02*ay,-R*1.02*az), b=proj(cx,cy,R*1.02*ay,R*1.02*az);
+  dvec(ctx,a[0],a[1],b[0],b[1],col,3);
+  if(label){ const by=cy+R*0.45+R+14; textAt(ctx,label,cx,by,{align:'center',size:12,weight:700}); if(sub) textAt(ctx,sub,cx,by+16,{align:'center',size:11,weight:600,color:col}); }
+}
+
+/* =====================================================================
+   2.1  HUYGENS' WAVELETS  (§10.2)
+   Every point on a wavefront is a source of secondary wavelets of radius
+   v·Δt. Their forward envelope is the new wavefront.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group"><label>Wave type</label><div class="toggle-group" id="md"><button class="toggle-btn active" data-m="sph">Point source</button><button class="toggle-btn" data-m="pln">Plane wave</button><button class="toggle-btn" data-m="gap">Through a gap</button></div></div>'+
+    '<div class="control-group">'+sld('dl','Time step Δt',20,80,1,44)+'<div id="gN">'+sld('nn','Wavelet sources',5,25,2,11)+'</div><div id="gG" class="hidden">'+sld('gw','Gap width',30,260,1,110)+'</div></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('Wavelet radius','r1')+card('Wave speed','r2')+card('Front shape','r3',true)+'</div></div>'+
+    '<div class="hint">Yellow dots: secondary sources · red arcs: wavelets · green: new wavefront.</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='sph', Dl=44, Ra=-1, rho=0, s=0, t=0;
+  const V=70;
+  toggleWire([...wrap.querySelectorAll('#md .toggle-btn')],b=>{ mode=b.dataset.m; Ra=-1; rho=0; s=0;
+    $('#gN').classList.toggle('hidden',mode==='gap'); $('#gG').classList.toggle('hidden',mode!=='gap'); });
+  animLoop(dt=>{
+    t+=dt; Dl=approach(Dl,+$('#dl').value,8,dt);
+    $('#dlV').textContent=Math.round($('#dl').value); $('#nnV').textContent=$('#nn').value; $('#gwV').textContent=$('#gw').value;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h/2, N=+$('#nn').value;
+    if(mode==='sph'){
+      const C={x:w*0.1,y:cy}, Rmax=w*0.84, pm=0.95, Rs=w*0.3; if(Ra<0) Ra=Rs;
+      rho+=V*dt; if(rho>=Dl){ rho-=Dl; Ra+=Dl; } if(Ra+rho>Rmax){ Ra=Rs; rho=0; }
+      for(let j=1;Ra-j*Dl>10;j++){ ctx.save(); ctx.globalAlpha=Math.max(0.12,0.55-j*0.04); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(C.x,C.y,Ra-j*Dl,-pm,pm); ctx.stroke(); ctx.restore(); }
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(C.x,C.y,Ra,-pm,pm); ctx.stroke(); ctx.restore();
+      for(let i=0;i<N;i++){
+        const ph=-pm+2*pm*i/(N-1), sx=C.x+Ra*Math.cos(ph), sy=C.y+Ra*Math.sin(ph);
+        ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(sx,sy,Math.max(0.5,rho),ph-Math.PI/2,ph+Math.PI/2); ctx.stroke();
+        ctx.globalAlpha=0.18; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.arc(sx,sy,Math.max(0.5,rho),ph+Math.PI/2,ph+Math.PI*1.5); ctx.stroke(); ctx.restore();
+        circ(ctx,sx,sy,4,COL.ink,COL.yellow,1.6);
+        circ(ctx,C.x+(Ra+rho)*Math.cos(ph),C.y+(Ra+rho)*Math.sin(ph),3,null,COL.green);
+      }
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=3.4; ctx.beginPath(); ctx.arc(C.x,C.y,Ra+rho,-pm,pm); ctx.stroke(); ctx.restore();
+      circ(ctx,C.x,C.y,7,COL.ink,COL.yellow,2); textAt(ctx,'S',C.x-8,C.y+4,{align:'right',size:13,weight:700});
+      $('#r3').textContent='Spherical';
+    } else if(mode==='pln'){
+      const X0=w*0.1, Xmax=w*0.88, Ym=h*0.4, Xs=w*0.35; if(Ra<0) Ra=Xs;
+      rho+=V*dt; if(rho>=Dl){ rho-=Dl; Ra+=Dl; } if(Ra+rho>Xmax){ Ra=Xs; rho=0; }
+      for(let j=1;Ra-j*Dl>X0-2;j++){ line(ctx,Ra-j*Dl,cy-Ym,Ra-j*Dl,cy+Ym,mixCol('#2f8fe0','#ffffff',Math.min(0.85,0.3+j*0.05)),1.6); }
+      line(ctx,Ra,cy-Ym,Ra,cy+Ym,COL.blue,3);
+      for(let i=0;i<N;i++){
+        const y=cy-Ym+2*Ym*i/(N-1);
+        ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(Ra,y,Math.max(0.5,rho),-Math.PI/2,Math.PI/2); ctx.stroke();
+        ctx.globalAlpha=0.18; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.arc(Ra,y,Math.max(0.5,rho),Math.PI/2,Math.PI*1.5); ctx.stroke(); ctx.restore();
+        circ(ctx,Ra,y,4,COL.ink,COL.yellow,1.6); circ(ctx,Ra+rho,y,3,null,COL.green);
+      }
+      line(ctx,Ra+rho,cy-Ym,Ra+rho,cy+Ym,COL.green,3.4);
+      vec(ctx,w*0.04,cy,w*0.1-6,cy,COL.red,2.4); textAt(ctx,'ray',w*0.04,cy-8,{size:11,weight:600,color:COL.red});
+      $('#r3').textContent='Plane';
+    } else {
+      const bx=w*0.28, g=+$('#gw').value, Lmax=w*0.62, Ng=9, hv=g/2;
+      s+=90*dt; if(s>=3*Dl) s%=3*Dl;
+      const ph0=s%Dl;
+      ctx.save(); ctx.lineJoin='round';
+      for(let m=-12;m<=40;m++){
+        const d=ph0+m*Dl; if(d>Lmax) break;
+        if(d<=0){ if(bx+d>12) line(ctx,bx+d,10,bx+d,h-10,COL.blue,1.8); continue; }
+        ctx.strokeStyle=COL.blue; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(bx+d,cy-hv); ctx.lineTo(bx+d,cy+hv); ctx.stroke();
+        for(const sg of [-1,1]){ ctx.beginPath(); const ey=cy+sg*hv;
+          for(let q=0;q<=14;q++){ const f=q/14*Math.PI/2; const px=bx+d*Math.cos(f), py=ey+sg*d*Math.sin(f); q?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+          ctx.globalAlpha=0.9; ctx.stroke(); ctx.globalAlpha=1; }
+      }
+      ctx.restore();
+      const rw=s;
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=1.4; ctx.globalAlpha=0.85;
+      for(let i=0;i<Ng;i++){ const y=cy-hv+g*(i+0.5)/Ng; ctx.beginPath(); ctx.arc(bx,y,Math.max(0.5,rw),-Math.PI/2,Math.PI/2); ctx.stroke(); }
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.beginPath();
+      if(rw>0.5){ for(let q=0;q<=14;q++){ const f=Math.PI/2-q/14*Math.PI/2; const px=bx+rw*Math.cos(f), py=cy-hv-rw*Math.sin(f); q?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+        ctx.lineTo(bx+rw,cy+hv); for(let q=0;q<=14;q++){ const f=q/14*Math.PI/2; ctx.lineTo(bx+rw*Math.cos(f),cy+hv+rw*Math.sin(f)); } }
+      ctx.stroke(); ctx.restore();
+      for(let i=0;i<Ng;i++){ const y=cy-hv+g*(i+0.5)/Ng; circ(ctx,bx,y,3.6,COL.ink,COL.yellow,1.4); }
+      ctx.save(); ctx.fillStyle='#e3ecf7'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3;
+      ctx.fillRect(bx-9,0,9,cy-hv); ctx.strokeRect(bx-9,-3,9,cy-hv+3); ctx.fillRect(bx-9,cy+hv,9,h-cy-hv); ctx.strokeRect(bx-9,cy+hv,9,h-cy-hv+3); ctx.restore();
+      dimArrow(ctx,bx-26,cy-hv,cy+hv,COL.yellow); textAt(ctx,'gap',bx-32,cy+4,{align:'right',size:11.5,weight:700,color:COL.yellow});
+      $('#r3').textContent=g<90?'Spreads out':'Flat + bent edges';
+    }
+    $('#r1').textContent='v·Δt = '+Math.round(Dl)+' px'; $('#r2').textContent=(mode==='gap'?90:V)+' px/s';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.2  REFRACTION & REFLECTION BY WAVEFRONTS  (§10.3)
+   Frequency never changes: v = c/n, λ = λ0/n, n1 sin i = n2 sin r.
+   Check (Ex. 10.1 / Q10.1): 589 nm into water n = 1.33 → λ = 443 nm,
+   v = 2.26×10⁸ m/s, f = 5.09×10¹⁴ Hz in both media.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group"><label>Light goes</label><div class="toggle-group" id="dr"><button class="toggle-btn active" data-d="in">Air → medium</button><button class="toggle-btn" data-d="out">Medium → air</button></div></div>'+
+    '<div class="control-group">'+sld('an','Angle of incidence i',0,85,1,40)+sld('nr','Refractive index n',1.0,2.4,0.01,1.33)+'</div>'+
+    '<div class="toggle-group nomt"><button class="toggle-btn active" id="rf">Reflected beam ✓</button><button class="toggle-btn" id="pre">589 nm → water</button></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('Angle r','r1')+card('λ in 2nd medium','r2')+card('Speed in 2nd','r3')+card('Frequency','r4')+card('Critical angle','r5',true)+'</div></div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let dir='in', showR=true, t=0; const S={ang:40,n:1.33,tf:1,rf:1};
+  toggleWire([...wrap.querySelectorAll('#dr .toggle-btn')],b=>{ dir=b.dataset.d; });
+  $('#rf').onclick=()=>{ showR=!showR; $('#rf').classList.toggle('active',showR); $('#rf').textContent='Reflected beam '+(showR?'✓':'✗'); };
+  $('#pre').onclick=()=>{ dir='in'; wrap.querySelectorAll('#dr .toggle-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); $('#nr').value=1.33; $('#an').value=40; };
+  function beam(ctx,O,d,lam,tau,bw,color,alpha,L){
+    const p=[d[1],-d[0]], m0=Math.floor(-L/lam-tau), m1=Math.ceil(L/lam-tau);
+    ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=alpha; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let m=m0;m<=m1;m++){ const u=lam*(m+tau), cx=O[0]+d[0]*u, cy=O[1]+d[1]*u; ctx.moveTo(cx-p[0]*bw,cy-p[1]*bw); ctx.lineTo(cx+p[0]*bw,cy+p[1]*bw); }
+    ctx.stroke(); ctx.globalAlpha=alpha*0.5; ctx.lineWidth=1; ctx.setLineDash([5,5]); ctx.beginPath();
+    for(const sg of [-1,1]){ ctx.moveTo(O[0]+p[0]*bw*sg-d[0]*L,O[1]+p[1]*bw*sg-d[1]*L); ctx.lineTo(O[0]+p[0]*bw*sg+d[0]*L,O[1]+p[1]*bw*sg+d[1]*L); }
+    ctx.stroke(); ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    S.ang=approach(S.ang,+$('#an').value,9,dt); S.n=approach(S.n,+$('#nr').value,9,dt);
+    const th=S.ang*Math.PI/180, n=S.n, n1=dir==='in'?1:n, n2=dir==='in'?n:1;
+    let sr=n1/n2*Math.sin(th); const tir=sr>=1; sr=Math.min(sr,1); const r=Math.asin(sr);
+    S.tf=approach(S.tf,tir?0:1,10,dt); S.rf=approach(S.rf,showR||tir?1:0,10,dt);
+    $('#anV').textContent=Math.round($('#an').value)+'°'; $('#nrV').textContent=(+$('#nr').value).toFixed(2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const yI=h*0.5, O=[w*0.5,yI], L=Math.hypot(w,h), bw=Math.min(w,h)*0.075, tau=t/1.6, lam0=46;
+    // media
+    const dense=dir==='in'?[0,yI,w,h-yI]:[0,0,w,yI];
+    ctx.fillStyle='rgba(47,143,224,'+(0.05+0.13*(n-1)/1.4)+')'; ctx.fillRect(dense[0],dense[1],dense[2],dense[3]);
+    line(ctx,0,yI,w,yI,COL.ink,3);
+    line(ctx,O[0],yI-h*0.43,O[0],yI+h*0.43,COL.mid,1.5,[6,6]);
+    const di=[Math.sin(th),Math.cos(th)], dt_=[sr,Math.cos(r)], dr=[Math.sin(th),-Math.cos(th)];
+    const l1=lam0/n1, l2=lam0/n2, bt=bw*Math.cos(r)/Math.cos(th);
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,w,yI); ctx.clip();
+    beam(ctx,O,di,l1,tau,bw,COL.blue,0.95,L);
+    if(S.rf>0.02) beam(ctx,O,dr,l1,tau,bw,COL.red,0.9*S.rf,L);
+    ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(0,yI,w,h-yI); ctx.clip();
+    if(S.tf>0.02) beam(ctx,O,dt_,l2,tau,bt,COL.green,0.95*S.tf,L);
+    ctx.restore();
+    // rays
+    const R1=Math.min(w,h)*0.46;
+    vec(ctx,O[0]-di[0]*R1,O[1]-di[1]*R1,O[0]-di[0]*10,O[1]-di[1]*10,COL.blue,2.8);
+    if(S.rf>0.02){ ctx.save(); ctx.globalAlpha=S.rf; vec(ctx,O[0]+10*dr[0],O[1]+10*dr[1],O[0]+dr[0]*R1,O[1]+dr[1]*R1,COL.red,2.8); ctx.restore(); }
+    if(S.tf>0.02){ ctx.save(); ctx.globalAlpha=S.tf; vec(ctx,O[0]+10*dt_[0],O[1]+10*dt_[1],O[0]+dt_[0]*R1,O[1]+dt_[1]*R1,COL.green,2.8); ctx.restore(); }
+    // angle arcs
+    const ra=56;
+    ctx.save(); ctx.lineWidth=2.4;
+    ctx.strokeStyle=COL.yellow; ctx.beginPath(); ctx.arc(O[0],O[1],ra,-Math.PI/2-th,-Math.PI/2); ctx.stroke();
+    if(S.tf>0.05){ ctx.globalAlpha=S.tf; ctx.beginPath(); ctx.arc(O[0],O[1],ra,Math.PI/2-r,Math.PI/2); ctx.stroke(); }
+    ctx.restore();
+    textAt(ctx,'i',O[0]-(ra+14)*Math.sin(th/2+0.0)-4,O[1]-(ra+14)*Math.cos(th/2)+4,{align:'center',size:14,weight:700,color:COL.yellow});
+    if(S.tf>0.05) textAt(ctx,'r',O[0]+(ra+14)*Math.sin(r/2)+4,O[1]+(ra+14)*Math.cos(r/2)+4,{align:'center',size:14,weight:700,color:COL.yellow,alpha:S.tf});
+    circ(ctx,O[0],O[1],4,COL.ink,'#fff',2);
+    textAt(ctx,'normal',O[0]+6,yI-h*0.43+12,{size:10.5,weight:600,color:COL.mid});
+    textAt(ctx,dir==='in'?'AIR  n₁ = 1.00':'MEDIUM  n₁ = '+n.toFixed(2),14,22,{size:13,weight:700,color:COL.ink});
+    textAt(ctx,dir==='in'?'MEDIUM  n₂ = '+n.toFixed(2):'AIR  n₂ = 1.00',14,h-14,{size:13,weight:700,color:COL.ink});
+    if(tir) textAt(ctx,'Total internal reflection',w-14,h-14,{align:'right',size:13.5,weight:700,color:COL.red});
+    // readouts
+    const lam2=589/n2, v2=3/n2;
+    $('#r1').textContent=tir?'TIR':fmt(r*180/Math.PI,1)+'°';
+    $('#r2').textContent=fmt(lam2,0)+' nm'; $('#r3').textContent=fmt(v2,2)+'×10⁸ m/s';
+    $('#r4').textContent='5.09×10¹⁴ Hz'; $('#r5').textContent=(dir==='out'&&n>1)?fmt(Math.asin(1/n)*180/Math.PI,1)+'°':'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.3  TWO-SOURCE INTERFERENCE — ripple tank  (§10.4)
+   Path difference Δ = S₂P − S₁P.  Bright: Δ = nλ.  Dark: Δ = (n+½)λ.
+   I = 2I₀(1 + cos(2πΔ/λ)) for coherent sources; incoherent: intensities add.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group">'+sld('dd','Source separation d',2,10,0.1,6)+sld('ll','Wavelength λ',1,3,0.1,1.5)+sld('pp','Point P on screen',-1,1,0.01,0.35)+'</div>'+
+    '<div class="control-group"><label>Sources</label><div class="toggle-group" id="co"><button class="toggle-btn active" data-c="1">Coherent</button><button class="toggle-btn" data-c="0">Incoherent</button></div>'+
+    '<div class="toggle-group"><button class="toggle-btn" id="sc">▶ Auto-scan P</button></div></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('S₁P','r1')+card('S₂P','r2')+card('Path diff Δ','r3')+card('At P','r4')+card('Bright lines','r5',true)+'</div></div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, coh=1, cohT=1, scan=false, ph=0; const D={d:6,l:1.5,p:0.35};
+  toggleWire([...wrap.querySelectorAll('#co .toggle-btn')],b=>{ cohT=+b.dataset.c; });
+  $('#sc').onclick=()=>{ scan=!scan; $('#sc').classList.toggle('active',scan); $('#sc').textContent=scan?'⏸ Auto-scan P':'▶ Auto-scan P'; };
+  function hyp(ctx,delta,d,xs,cy,w,col,dash,alpha){
+    const a=delta/2, c=d/2; if(a>=c-0.01) return; ctx.save(); ctx.strokeStyle=col; ctx.globalAlpha=alpha; ctx.lineWidth=2.2; ctx.setLineDash(dash||[]);
+    if(a<0.3){ ctx.beginPath(); ctx.moveTo(xs-w,cy); ctx.lineTo(xs+w,cy); ctx.stroke(); ctx.restore(); return; }
+    const b=Math.sqrt(c*c-a*a), T=Math.asinh(w*1.1/b);
+    for(const sg of [-1,1]){ ctx.beginPath(); for(let q=0;q<=70;q++){ const tt=-T+2*T*q/70; const x=xs+b*Math.sinh(tt), y=cy+sg*a*Math.cosh(tt); q?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); }
+    ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(scan){ ph+=dt*0.4; $('#pp').value=(Math.sin(ph)*0.92).toFixed(3); }
+    D.d=approach(D.d,+$('#dd').value,8,dt); D.l=approach(D.l,+$('#ll').value,8,dt); D.p=approach(D.p,+$('#pp').value,9,dt); coh=approach(coh,cohT,6,dt);
+    $('#ddV').textContent=(+$('#dd').value).toFixed(1)+' cm'; $('#llV').textContent=(+$('#ll').value).toFixed(1)+' cm'; $('#ppV').textContent='';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pxcm=h/26, cy=h/2, xs=w*0.3, xsc=w*0.78, d=D.d*pxcm, lam=D.l*pxcm, tau=t/1.5, Rmax=Math.hypot(w,h);
+    const S1=[xs,cy-d/2], S2=[xs,cy+d/2];
+    const jump=Math.floor(t/0.35), off2=(1-coh)*frac(Math.sin(jump*91.7+1.3)*43758.5);
+    [[S1,COL.blue,0],[S2,COL.red,off2]].forEach(([S,col,off])=>{
+      const fr=frac(tau+off); ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.5;
+      for(let k=0;;k++){ const r=lam*(fr+k); if(r>Rmax*0.8) break; ctx.globalAlpha=clamp(0.65-r/(Rmax*0.9),0.06,0.6); ctx.beginPath(); ctx.arc(S[0],S[1],Math.max(0.5,r),0,Math.PI*2); ctx.stroke(); }
+      ctx.restore();
+    });
+    const nb=Math.floor(d/lam+1e-6);
+    for(let n=0;n<=nb;n++) hyp(ctx,n*lam,d,xs,cy,w,COL.green,null,0.9*coh);
+    for(let n=0;(n+0.5)*lam<d;n++) hyp(ctx,(n+0.5)*lam,d,xs,cy,w,COL.yellow,[7,6],0.95*coh);
+    if(coh<0.7) textAt(ctx,'Phase jumps randomly → no fixed pattern',xs+30,28,{size:12.5,weight:700,color:COL.red,alpha:1-coh});
+    // screen + intensity
+    const Hs=h*0.46, gw=w*0.1; let curve=[];
+    for(let y=cy-Hs;y<=cy+Hs;y+=3){
+      const r1=Math.hypot(xsc-xs,y-S1[1]), r2=Math.hypot(xsc-xs,y-S2[1]);
+      const I=(1+coh*Math.cos(2*Math.PI*(r2-r1)/lam))/2;
+      ctx.fillStyle='rgba(47,143,224,'+I.toFixed(3)+')'; ctx.fillRect(xsc-12,y,12,3); curve.push([xsc+12+I*gw,y]);
+    }
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2.2; ctx.beginPath(); curve.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+    line(ctx,xsc,cy-Hs,xsc,cy+Hs,COL.ink,3); textAt(ctx,'screen',xsc,cy-Hs-8,{align:'center',size:11.5,weight:700,color:COL.muted});
+    // sources
+    dimArrow(ctx,xs-34,S1[1],S2[1],COL.yellow); textAt(ctx,'d',xs-40,cy+4,{align:'right',size:12.5,weight:700,color:COL.yellow});
+    circ(ctx,S1[0],S1[1],7,COL.ink,COL.yellow,2.2); circ(ctx,S2[0],S2[1],7,COL.ink,COL.yellow,2.2);
+    textAt(ctx,'S₁',xs+11,S1[1]-9,{size:12.5,weight:700,color:COL.blue}); textAt(ctx,'S₂',xs+11,S2[1]+20,{size:12.5,weight:700,color:COL.red});
+    // probe
+    const Py=cy+D.p*h*0.42, P=[xsc,Py], p1=Math.hypot(P[0]-S1[0],P[1]-S1[1]), p2=Math.hypot(P[0]-S2[0],P[1]-S2[1]), del=p2-p1, dl=del/lam;
+    line(ctx,S1[0],S1[1],P[0],P[1],COL.blue,2.2); line(ctx,S2[0],S2[1],P[0],P[1],COL.red,2.2);
+    circ(ctx,P[0],P[1],7,COL.ink,COL.yellow,2.4); textAt(ctx,'P',P[0]+12,P[1]+5,{size:13,weight:700,color:COL.yellow});
+    $('#r1').textContent=fmt(p1/pxcm,1)+' cm'; $('#r2').textContent=fmt(p2/pxcm,1)+' cm';
+    $('#r3').textContent=fmt(Math.abs(dl),2)+' λ';
+    const f=frac(Math.abs(dl)), res=coh<0.5?'Intensities add':(f<0.08||f>0.92)?'Bright':(Math.abs(f-0.5)<0.08)?'Dark':'In between';
+    $('#r4').textContent=res; $('#r5').textContent=(2*nb+1)+' lines';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4  YOUNG'S DOUBLE SLIT  (§10.5)
+   Δ = y·d/D ;  bright at y = nλD/d ;  fringe width β = λD/d.
+   Check (Q10.4): d = 0.28 mm, D = 1.4 m, λ = 600 nm → β = 3 mm,
+   4th bright fringe at 12 mm = 1.2 cm.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group">'+sld('dm','Slit separation d',0.2,1,0.01,0.28)+sld('Dm','Screen distance D',0.5,2.5,0.05,1.4)+sld('lm','Wavelength λ',400,700,5,600)+sld('py','Point P on screen',-14,14,0.1,6)+'</div>'+
+    '<div class="control-group"><label>Light</label><div class="toggle-group" id="lt"><button class="toggle-btn active" data-l="m">Single colour</button><button class="toggle-btn" data-l="w">White</button></div>'+
+    '<div class="toggle-group"><button class="toggle-btn" id="pre">Textbook: 0.28 mm · 1.4 m</button></div></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('Fringe width β','r1')+card('4th bright','r2')+card('Path diff at P','r3')+card('Intensity at P','r4')+'</div></div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, white=false; const D={d:0.28,D:1.4,l:600,p:6};
+  toggleWire([...wrap.querySelectorAll('#lt .toggle-btn')],b=>{ white=b.dataset.l==='w'; });
+  $('#pre').onclick=()=>{ $('#dm').value=0.28; $('#Dm').value=1.4; $('#lm').value=600; };
+  animLoop(dt=>{
+    t+=dt;
+    D.d=approach(D.d,+$('#dm').value,7,dt); D.D=approach(D.D,+$('#Dm').value,7,dt); D.l=approach(D.l,+$('#lm').value,7,dt); D.p=approach(D.p,+$('#py').value,9,dt);
+    $('#dmV').textContent=(+$('#dm').value).toFixed(2)+' mm'; $('#DmV').textContent=(+$('#Dm').value).toFixed(2)+' m';
+    $('#lmV').textContent=Math.round($('#lm').value)+' nm'; $('#lmV').style.color=wlCss(+$('#lm').value); $('#pyV').textContent=(+$('#py').value).toFixed(1)+' mm';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h/2, ppm=(h*0.41)/14, xb=w*0.27, Dpx=w*0.2+D.D*w*0.085, xs=xb+Dpx;
+    const dpx=10+(D.d-0.2)/0.8*38, lpx=7+(D.l-400)/300*6, tau=t/1.2;
+    const S1=[xb,cy-dpx/2], S2=[xb,cy+dpx/2];
+    const beta=D.l*D.D/D.d*1e-3;
+    // lamp + single slit S0
+    const x0=w*0.05, xS=w*0.14;
+    circ(ctx,x0,cy,13,COL.ink,COL.yellow,2.4); for(let i=0;i<8;i++){ const a=i*Math.PI/4+t*0.5; line(ctx,x0+Math.cos(a)*17,cy+Math.sin(a)*17,x0+Math.cos(a)*24,cy+Math.sin(a)*24,COL.yellow,2); }
+    ctx.save(); ctx.beginPath(); ctx.rect(xS,0,xb-xS,h); ctx.clip(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.3;
+    for(let k=0;k<40;k++){ const r=lpx*(frac(tau)+k); if(r>xb-xS+10) break; ctx.globalAlpha=0.5; ctx.beginPath(); ctx.arc(xS,cy,Math.max(0.5,r),-1.3,1.3); ctx.stroke(); } ctx.restore();
+    line(ctx,x0+28,cy,xS-4,cy,COL.yellow,2,[4,4]);
+    ctx.save(); ctx.fillStyle='#e3ecf7'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.fillRect(xS-4,0,8,cy-3); ctx.strokeRect(xS-4,-2,8,cy-1); ctx.fillRect(xS-4,cy+3,8,h-cy-3); ctx.strokeRect(xS-4,cy+3,8,h-cy); ctx.restore();
+    textAt(ctx,'S₀',xS,cy-14,{align:'center',size:12,weight:700,color:COL.muted});
+    // double slit barrier
+    ctx.save(); ctx.fillStyle='#e3ecf7'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6;
+    const segs=[[0,S1[1]-3],[S1[1]+3,S2[1]-3],[S2[1]+3,h]]; segs.forEach(s=>{ ctx.fillRect(xb-4,s[0],8,s[1]-s[0]); ctx.strokeRect(xb-4,s[0],8,s[1]-s[0]); }); ctx.restore();
+    // waves from S1,S2 up to screen
+    ctx.save(); ctx.beginPath(); ctx.rect(xb+4,0,Dpx-4,h); ctx.clip(); ctx.lineWidth=1.3;
+    [[S1,COL.blue],[S2,COL.red]].forEach(([S,col])=>{ ctx.strokeStyle=col; for(let k=0;k<90;k++){ const r=lpx*(frac(tau)+k); if(r>Dpx*1.5) break; ctx.globalAlpha=clamp(0.5-r/(Dpx*3),0.12,0.5); ctx.beginPath(); ctx.arc(S[0],S[1],Math.max(0.5,r),-1.5,1.5); ctx.stroke(); } });
+    ctx.restore();
+    circ(ctx,S1[0],S1[1],3.6,COL.ink,COL.yellow,1.6); circ(ctx,S2[0],S2[1],3.6,COL.ink,COL.yellow,1.6);
+    textAt(ctx,'S₁',xb-12,S1[1]+4,{align:'right',size:12,weight:700,color:COL.blue}); textAt(ctx,'S₂',xb-12,S2[1]+4,{align:'right',size:12,weight:700,color:COL.red});
+    dimArrow(ctx,xb-34,S1[1],S2[1],COL.yellow); textAt(ctx,'d',xb-40,cy+4,{align:'right',size:12.5,weight:700,color:COL.yellow});
+    // screen strip + graph
+    const H2=14*ppm, gx=xs+58, gw=Math.max(60,w-gx-24), chans=white?[[650,[255,60,60]],[540,[40,220,80]],[450,[70,110,255]]]:[[D.l,wlRGB(D.l)]];
+    const arg=(l,y)=>Math.PI*D.d*y/(l*D.D*1e-3), Ifn=(l,y)=>{ const c=Math.cos(arg(l,y)); return c*c; };
+    for(let py=cy-H2;py<cy+H2;py+=2){
+      const y=(cy-py-1)/ppm; let rgb;
+      if(white){ rgb=[0,1,2].map(i=>Math.round(14+(255-14)*Ifn(chans[i][0],y)*(chans[i][1][i]/255)+0)); rgb=[0,1,2].map(i=>Math.min(255,Math.round(14+Ifn(chans[i][0],y)*240))); }
+      else { const I=Ifn(D.l,y), c=chans[0][1]; rgb=[0,1,2].map(i=>Math.round(14+(c[i]-14)*I)); }
+      ctx.fillStyle='rgb('+rgb.join(',')+')'; ctx.fillRect(xs,py,26,2);
+    }
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.strokeRect(xs,cy-H2,26,2*H2); ctx.restore();
+    textAt(ctx,'screen',xs+13,cy-H2-8,{align:'center',size:11.5,weight:700,color:COL.muted});
+    line(ctx,gx,cy-H2,gx,cy+H2,COL.mid,1.4);
+    for(let m=-10;m<=10;m+=5){ const yy=cy-m*ppm; line(ctx,xs+27,yy,xs+33,yy,COL.mid,1.3); textAt(ctx,m+'',xs+36,yy+3.5,{size:9.5,weight:600,color:COL.mid}); }
+    textAt(ctx,'mm',xs+36,cy+H2+14,{size:9.5,weight:600,color:COL.mid});
+    chans.forEach(([l,c],i)=>{ const col=white?['#d9432b','#1f9d55','#2f8fe0'][i]:COL.green; ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.beginPath();
+      for(let py=cy-H2;py<=cy+H2;py+=2){ const I=Ifn(l,(cy-py)/ppm); const x=gx+I*gw*0.82; py===cy-H2?ctx.moveTo(x,py):ctx.lineTo(x,py); } ctx.stroke(); ctx.restore(); });
+    // bright-fringe ticks
+    if(!white && beta*ppm>13) for(let n=-Math.floor(14/beta);n<=Math.floor(14/beta);n++){ const yy=cy-n*beta*ppm; line(ctx,gx-5,yy,gx,yy,COL.green,2); if(beta*ppm>22) textAt(ctx,n+'',gx-8,yy+3.5,{align:'right',size:9.5,weight:700,color:COL.green}); }
+    if(4*beta<14){ const yy=cy-4*beta*ppm; line(ctx,xs-6,yy,w-14,yy,COL.yellow,1.6,[6,5]); textAt(ctx,'4th bright · '+fmt(4*beta,1)+' mm',w-16,yy-6,{align:'right',size:11,weight:700,color:COL.yellow}); }
+    // probe
+    const Py=cy-D.p*ppm, P=[xs,Py];
+    line(ctx,S1[0],S1[1],P[0],P[1],COL.blue,1.8); line(ctx,S2[0],S2[1],P[0],P[1],COL.red,1.8);
+    ctx.save(); ctx.fillStyle=COL.yellow; ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(xs-2,Py); ctx.lineTo(xs-14,Py-8); ctx.lineTo(xs-14,Py+8); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    textAt(ctx,'P',xs-18,Py+4,{align:'right',size:12.5,weight:700,color:COL.yellow});
+    const Ip=Ifn(white?550:D.l,D.p), delnm=D.p*D.d/D.D*1000;
+    line(ctx,xs+26,Py,gx+Ip*gw*0.82,Py,COL.yellow,1.2,[3,3]); circ(ctx,gx+Ip*gw*0.82,Py,4.5,COL.ink,COL.yellow,1.8);
+    $('#r1').textContent=fmt(beta,2)+' mm'; $('#r2').textContent=fmt(4*beta,1)+' mm';
+    $('#r3').textContent=fmt(Math.abs(delnm),0)+' nm ('+fmt(Math.abs(delnm)/D.l,2)+' λ)'; $('#r4').textContent=white?'mixed colours':fmt(Ip*100,0)+' %';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.5  SINGLE-SLIT DIFFRACTION  (§10.6)
+   First minimum: a sinθ = λ.  I(θ) = I₀ (sin β / β)²,  β = π a sinθ / λ.
+   Central maximum is 2λ/a wide in angle — narrower slit, wider pattern.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group">'+sld('aw','Slit width a',0.5,8,0.1,3)+sld('lw','Wavelength λ',400,700,5,600)+sld('th','Direction θ to P',-40,40,0.5,12)+'</div>'+
+    '<div class="toggle-group nomt"><button class="toggle-btn" id="sc">▶ Auto-scan θ</button></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('First minimum θ₁','r1')+card('a / λ','r2')+card('a sinθ at P','r3')+card('Intensity at P','r4')+card('Central max width (screen 1 m)','r5',true)+'</div></div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, scan=false, ph=0; const D={a:3,l:600,th:12};
+  $('#sc').onclick=()=>{ scan=!scan; $('#sc').classList.toggle('active',scan); $('#sc').textContent=scan?'⏸ Auto-scan θ':'▶ Auto-scan θ'; };
+  const sinc2=b=>Math.abs(b)<1e-4?1:Math.pow(Math.sin(b)/b,2);
+  animLoop(dt=>{
+    t+=dt;
+    if(scan){ ph+=dt*0.35; $('#th').value=(Math.sin(ph)*36).toFixed(1); }
+    D.a=approach(D.a,+$('#aw').value,7,dt); D.l=approach(D.l,+$('#lw').value,7,dt); D.th=approach(D.th,+$('#th').value,9,dt);
+    $('#awV').textContent=(+$('#aw').value).toFixed(1)+' µm'; $('#lwV').textContent=Math.round($('#lw').value)+' nm'; $('#lwV').style.color=wlCss(+$('#lw').value); $('#thV').textContent=(+$('#th').value).toFixed(1)+'°';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h/2, xb=w*0.3, xs=w*0.72, Dpx=xs-xb, lpx=16*D.l/550, apx=Math.min(h*0.8,D.a*1000/D.l*lpx), hv=apx/2, tau=t/1.2, col=wlCss(D.l);
+    // incoming plane waves (blue) and transmitted fronts (green)
+    for(let m=0;;m++){ const dd=lpx*(frac(tau))+lpx*m; const x=xb-dd; if(x<14) break; line(ctx,x,6,x,h-6,COL.blue,1.6); }
+    ctx.save(); ctx.beginPath(); ctx.rect(xb,0,Dpx,h); ctx.clip(); ctx.lineJoin='round';
+    for(let m=0;m<200;m++){ const d=lpx*(frac(tau)+m); if(d>Dpx*1.4) break; if(d<0.5) continue;
+      ctx.strokeStyle=COL.green; ctx.lineWidth=1.7; ctx.beginPath(); ctx.moveTo(xb+d,cy-hv); ctx.lineTo(xb+d,cy+hv); ctx.stroke();
+      for(const sg of [-1,1]){ const ey=cy+sg*hv; for(let q=0;q<14;q++){ const f0=q/14*Math.PI/2, f1=(q+1)/14*Math.PI/2; ctx.globalAlpha=clamp((1+Math.cos((f0+f1)/2))/2,0.08,1); ctx.beginPath(); ctx.moveTo(xb+d*Math.cos(f0),ey+sg*d*Math.sin(f0)); ctx.lineTo(xb+d*Math.cos(f1),ey+sg*d*Math.sin(f1)); ctx.stroke(); } ctx.globalAlpha=1; } }
+    ctx.restore();
+    ctx.save(); ctx.fillStyle='#e3ecf7'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.fillRect(xb-9,0,9,cy-hv); ctx.strokeRect(xb-9,-3,9,cy-hv+3); ctx.fillRect(xb-9,cy+hv,9,h-cy-hv); ctx.strokeRect(xb-9,cy+hv,9,h-cy-hv+3); ctx.restore();
+    dimArrow(ctx,xb-26,cy-hv,cy+hv,COL.yellow); textAt(ctx,'a',xb-32,cy+4,{align:'right',size:13,weight:700,color:COL.yellow});
+    // first-minimum guide rays
+    const s1=D.l*1e-9/(D.a*1e-6);
+    if(s1<1){ const t1=Math.asin(s1); for(const sg of [-1,1]) line(ctx,xb,cy,xs,cy+sg*Dpx*Math.tan(t1),COL.green,1.5,[6,6]); }
+    // screen: intensity strip + graph
+    const Hs=h*0.45, gx=xs+34, gw=Math.max(60,w-gx-20);
+    for(let y=-Hs;y<=Hs;y+=2){ const th=Math.atan(y/Dpx), b=Math.PI*D.a*1e-6*Math.sin(th)/(D.l*1e-9), I=sinc2(b);
+      const c=wlRGB(D.l); ctx.fillStyle='rgb('+[0,1,2].map(i=>Math.round(14+(c[i]-14)*I)).join(',')+')'; ctx.fillRect(xs,cy+y,26,2); }
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.strokeRect(xs,cy-Hs,26,2*Hs);
+    line(ctx,gx,cy-Hs,gx,cy+Hs,COL.mid,1.4);
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2.4; ctx.beginPath();
+    for(let y=-Hs;y<=Hs;y+=2){ const th=Math.atan(y/Dpx), I=sinc2(Math.PI*D.a*1e-6*Math.sin(th)/(D.l*1e-9)); const x=gx+I*gw*0.85; y===-Hs?ctx.moveTo(x,cy+y):ctx.lineTo(x,cy+y); } ctx.stroke(); ctx.restore();
+    textAt(ctx,'screen',xs+13,cy-Hs-8,{align:'center',size:11.5,weight:700,color:COL.muted});
+    // probe construction
+    const T=D.th*Math.PI/180, u=[Math.cos(T),Math.sin(T)], N=[xb,cy-hv], Lp=[xb,cy+hv], Pp=[xs,cy+Dpx*Math.tan(T)];
+    const dN=[Pp[0]-N[0],Pp[1]-N[1]], dL=[Pp[0]-Lp[0],Pp[1]-Lp[1]];
+    line(ctx,N[0],N[1],Pp[0],Pp[1],COL.blue,2); line(ctx,Lp[0],Lp[1],Pp[0],Pp[1],COL.red,2);
+    const dpath=2*hv*Math.sin(T), F=[N[0]+u[0]*dpath,N[1]+u[1]*dpath];
+    if(Math.abs(dpath)>1.5){ line(ctx,N[0],N[1],F[0],F[1],COL.yellow,5); line(ctx,F[0],F[1],Lp[0],Lp[1],COL.yellow,1.4,[3,3]); }
+    circ(ctx,Pp[0],Pp[1],7,COL.ink,COL.yellow,2.4); textAt(ctx,'P',Pp[0]+12,Pp[1]+5,{size:13,weight:700,color:COL.yellow});
+    const Ip=sinc2(Math.PI*D.a*1e-6*Math.sin(T)/(D.l*1e-9)); line(ctx,xs+26,Pp[1],gx+Ip*gw*0.85,Pp[1],COL.yellow,1.2,[3,3]); circ(ctx,gx+Ip*gw*0.85,Pp[1],4.5,COL.ink,COL.yellow,1.8);
+    $('#r1').textContent=s1<1?fmt(Math.asin(s1)*180/Math.PI,1)+'°':'none (>90°)'; $('#r2').textContent=fmt(D.a*1000/D.l,1);
+    $('#r3').textContent=fmt(D.a*1e-6*Math.sin(T)/(D.l*1e-9),2)+' λ'; $('#r4').textContent=fmt(Ip*100,1)+' %';
+    $('#r5').textContent=s1<1?fmt(2*Math.tan(Math.asin(s1))*1000,0)+' mm':'whole screen';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.6  A TRANSVERSE WAVE THROUGH A SLIT  (§10.7, Fig 10.17)
+   A slit passes only the component of the displacement along it:
+   amplitude A cos(φ − α), intensity ∝ cos²(φ − α). Unpolarised: plane
+   of vibration changes at random every ~0.5 s.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group"><label>Wave on the string</label><div class="toggle-group" id="wm"><button class="toggle-btn active" data-m="lin">Plane-polarised</button><button class="toggle-btn" data-m="unp">Unpolarised</button></div></div>'+
+    '<div class="control-group">'+sld('ph','Vibration plane φ',-90,90,1,0)+sld('al','Slit direction α',-90,90,1,0)+'</div>'+
+    '<div class="toggle-group nomt"><button class="toggle-btn" id="pv">Vertical</button><button class="toggle-btn" id="ph2">Horizontal</button><button class="toggle-btn" id="sp">Spin slit ▶</button></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('Amplitude out / in','r1')+card('Intensity out / in','r2')+'</div></div>'+
+    '<div class="hint">Slit ∥ vibration → passes fully · slit ⟂ vibration → blocked.</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, mode='lin', spin=false; const A={ph:0}, AL={x:0,v:0};
+  toggleWire([...wrap.querySelectorAll('#wm .toggle-btn')],b=>{ mode=b.dataset.m; });
+  $('#pv').onclick=()=>{ mode='lin'; wrap.querySelectorAll('#wm .toggle-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); $('#ph').value=0; };
+  $('#ph2').onclick=()=>{ mode='lin'; wrap.querySelectorAll('#wm .toggle-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); $('#ph').value=90; };
+  $('#sp').onclick=()=>{ spin=!spin; $('#sp').classList.toggle('active',spin); };
+  const rad=x=>x*Math.PI/180;
+  animLoop(dt=>{
+    t+=dt;
+    if(spin){ let v=+$('#al').value+40*dt; if(v>90) v-=180; $('#al').value=v; }
+    A.ph=approach(A.ph,+$('#ph').value,9,dt); springTo(AL,+$('#al').value,70,9,dt);
+    $('#phV').textContent=Math.round($('#ph').value)+'°'; $('#alV').textContent=Math.round($('#al').value)+'°';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h*0.56, xL=w*0.05, xR=w*0.95, xb=w*0.5, lamW=w*0.15, T0=1.4, vp=lamW/T0, k=2*Math.PI/lamW, wt=2*Math.PI*t/T0, Amp=h*0.17;
+    const al=rad(AL.x), phi0=rad(A.ph), Rb=h*0.3;
+    const phiAt=x=>mode==='unp'?uAng(t-(x-xL)/vp):phi0;
+    // board (disc in y–z plane) + slot
+    ctx.save(); discPath(ctx,xb,cy,Rb); ctx.fillStyle='#e3ecf7'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    const a1=proj(xb,cy,-Rb*0.88*Math.cos(al),-Rb*0.88*Math.sin(al)), a2=proj(xb,cy,Rb*0.88*Math.cos(al),Rb*0.88*Math.sin(al));
+    ctx.save(); ctx.lineCap='round'; line(ctx,a1[0],a1[1],a2[0],a2[1],COL.ink,15); line(ctx,a1[0],a1[1],a2[0],a2[1],'#ffffff',10); line(ctx,a1[0],a1[1],a2[0],a2[1],COL.yellow,2.4,[2,6]); ctx.restore();
+    // string
+    line(ctx,xL,cy,xR,cy,COL.grid,1.5);
+    ribbon(ctx,xL,xb-1,cy,Amp,k,xL,wt,x=>[1,phiAt(x)],COL.blue);
+    ribbon(ctx,xb,xR,cy,Amp,k,xL,wt,x=>[Math.cos(phiAt(x)-al),al],COL.green);
+    ctx.save(); ctx.fillStyle=COL.ink; ctx.fillRect(xR-3,cy-Rb*0.5,6,Rb); ctx.restore(); textAt(ctx,'fixed end',xR-8,cy+Rb*0.5+16,{align:'right',size:10.5,weight:600,color:COL.muted});
+    const p0=proj(xL,cy,Amp*Math.sin(-wt)*Math.cos(phiAt(xL)),Amp*Math.sin(-wt)*Math.sin(phiAt(xL))); circ(ctx,p0[0],p0[1],6,COL.ink,COL.yellow,2);
+    textAt(ctx,'hand',xL,cy+Rb*0.5+16,{size:10.5,weight:600,color:COL.muted});
+    textAt(ctx,'slit',xb,cy+Rb+22,{align:'center',size:12,weight:700,color:COL.ink});
+    // end-view inset
+    const ix=w*0.86, iy=h*0.17, ir=h*0.11, pn=(mode==='unp'?uAng(t):phi0);
+    circ(ctx,ix,iy,ir+8,COL.border,'#f6f9fc',2); line(ctx,ix-ir,iy,ix+ir,iy,COL.grid,1); line(ctx,ix,iy-ir,ix,iy+ir,COL.grid,1);
+    line(ctx,ix-Math.sin(al)*ir,iy+Math.cos(al)*ir,ix+Math.sin(al)*ir,iy-Math.cos(al)*ir,COL.yellow,6);
+    dvec(ctx,ix-Math.sin(pn)*ir*0.9,iy+Math.cos(pn)*ir*0.9,ix+Math.sin(pn)*ir*0.9,iy-Math.cos(pn)*ir*0.9,COL.blue,2.4);
+    const cc=Math.cos(pn-al), g=ir*0.9*Math.abs(cc);
+    if(g>2) dvec(ctx,ix-Math.sin(al)*g,iy+Math.cos(al)*g,ix+Math.sin(al)*g,iy-Math.cos(al)*g,COL.green,3.4);
+    textAt(ctx,'end view',ix,iy-ir-14,{align:'center',size:11,weight:700,color:COL.muted});
+    $('#r1').textContent=mode==='unp'?'varies ('+fmt(Math.abs(cc),2)+')':fmt(Math.abs(cc),2);
+    $('#r2').textContent=mode==='unp'?'½ on average':fmt(cc*cc,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.7  POLAROIDS AND MALUS' LAW  (§10.7, Ex. 10.2)
+   Unpolarised I_s → after P₁: I₀ = I_s/2.  Two sheets: I = I₀cos²θ.
+   Crossed P₁,P₃ with P₂ between at θ: I = (I₀/4) sin²2θ, max at 45°.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=
+    '<div class="control-group"><label>Set-up</label><div class="toggle-group" id="sm"><button class="toggle-btn active" data-m="2">Two polaroids</button><button class="toggle-btn" data-m="3">Three (P₁ ⟂ P₃)</button></div></div>'+
+    '<div class="control-group">'+sld('tt','Angle θ of P₂',0,180,1,0)+'</div>'+
+    '<div class="toggle-group nomt"><button class="toggle-btn" id="sp">Spin P₂ ▶</button><button class="toggle-btn" id="p45">θ = 45°</button></div>'+
+    '<div class="control-group"><div class="result-cards">'+card('Transmitted I / I₀','r1')+card('Of source light','r2')+card('Formula','r3',true)+'</div></div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, mode=2, spin=false, Ie=0; const TH={x:0,v:0};
+  toggleWire([...wrap.querySelectorAll('#sm .toggle-btn')],b=>{ mode=+b.dataset.m; });
+  $('#sp').onclick=()=>{ spin=!spin; $('#sp').classList.toggle('active',spin); };
+  $('#p45').onclick=()=>{ spin=false; $('#sp').classList.remove('active'); $('#tt').value=45; };
+  const rad=x=>x*Math.PI/180;
+  animLoop(dt=>{
+    t+=dt;
+    if(spin){ let v=+$('#tt').value+28*dt; if(v>180) v-=180; $('#tt').value=v; }
+    springTo(TH,+$('#tt').value,80,10,dt); $('#ttV').textContent=Math.round($('#tt').value)+'°';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h*0.4, R=h*0.17, Amp=h*0.11, T0=1.3, lamW=w*0.1, vp=lamW/T0, k=2*Math.PI/lamW, wt=2*Math.PI*t/T0;
+    const th=rad(TH.x), c=Math.cos(th), s=Math.sin(th);
+    const xl=w*0.06, x1=w*0.24, x2=mode===2?w*0.5:w*0.43, x3=w*0.63, xe=w*0.87;
+    const xLast=mode===2?x2:x3, endX=xe-h*0.1-6;
+    const a0=Math.SQRT1_2;
+    // lamp
+    circ(ctx,xl,cy,15,COL.ink,COL.yellow,2.4); for(let i=0;i<8;i++){ const a=i*Math.PI/4+t*0.6; line(ctx,xl+Math.cos(a)*19,cy+Math.sin(a)*19,xl+Math.cos(a)*27,cy+Math.sin(a)*27,COL.yellow,2); }
+    textAt(ctx,'source',xl,cy+R+30,{align:'center',size:11.5,weight:700,color:COL.muted});
+    line(ctx,xl,cy,endX,cy,COL.grid,1.4);
+    // beam ribbons
+    ribbon(ctx,xl+30,x1-2,cy,Amp,k,xl,wt,x=>[1,uAng(t-(x-xl)/vp)],COL.mid);
+    ribbon(ctx,x1+2,x2-2,cy,Amp,k,xl,wt,x=>[a0,0],COL.blue);
+    if(mode===2){ ribbon(ctx,x2+2,endX,cy,Amp,k,xl,wt,x=>[a0*c,th],COL.green); }
+    else { ribbon(ctx,x2+2,x3-2,cy,Amp,k,xl,wt,x=>[a0*c,th],COL.green); ribbon(ctx,x3+2,endX,cy,Amp,k,xl,wt,x=>[a0*c*s,Math.PI/2],COL.red); }
+    // sheets
+    polaroid(ctx,x1,cy,R,0,1,COL.blue,'P₁','axis 0°');
+    polaroid(ctx,x2,cy,R,th,1,COL.yellow,mode===2?'P₂':'P₂ (middle)','θ = '+Math.round(((TH.x%180)+180)%180)+'°');
+    if(mode===3) polaroid(ctx,x3,cy,R,Math.PI/2,1,COL.red,'P₃','axis 90°');
+    // eye view
+    const I=mode===2?0.5*c*c:0.125*Math.pow(Math.sin(2*th),2); Ie=approach(Ie,I,10,dt);
+    const lum=Math.pow(clamp(Ie/0.5,0,1),0.55);
+    circ(ctx,xe,cy,h*0.1,COL.ink,mixCol('#1a2a3a','#ffffff',lum),3.2); textAt(ctx,'what you see',xe,cy+h*0.1+22,{align:'center',size:11.5,weight:700,color:COL.muted});
+    // plot
+    const gx=w*0.18, gy=h*0.74, gW=w*0.62, gH=h*0.19, peak=mode===2?1:0.25;
+    line(ctx,gx,gy+gH,gx+gW,gy+gH,COL.mid,1.5); line(ctx,gx,gy,gx,gy+gH,COL.mid,1.5);
+    ctx.save(); ctx.strokeStyle=mode===2?COL.green:COL.red; ctx.lineWidth=2.6; ctx.beginPath();
+    for(let q=0;q<=180;q+=2){ const a=rad(q), v=mode===2?Math.cos(a)**2:Math.pow(Math.sin(2*a),2)/4, x=gx+gW*q/180, y=gy+gH-gH*0.92*v/peak; q?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore();
+    const cth=((TH.x%180)+180)%180, vcur=mode===2?Math.cos(rad(cth))**2:Math.pow(Math.sin(2*rad(cth)),2)/4;
+    const dx=gx+gW*cth/180, dy=gy+gH-gH*0.92*vcur/peak;
+    line(ctx,dx,gy+gH,dx,dy,COL.yellow,1.4,[3,3]); circ(ctx,dx,dy,6,COL.ink,COL.yellow,2);
+    textAt(ctx,'θ',gx+gW+10,gy+gH+4,{size:12,weight:700}); textAt(ctx,'I / I₀',gx-6,gy+4,{align:'right',size:11.5,weight:700});
+    [0,90,180].forEach(a=>textAt(ctx,a+'°',gx+gW*a/180,gy+gH+16,{align:'center',size:10.5,weight:600,color:COL.mid}));
+    textAt(ctx,mode===2?'I = I₀ cos²θ':'I = (I₀/4) sin²2θ',gx+gW*0.5,gy-8,{align:'center',size:13,weight:700,color:COL.ink});
+    $('#r1').textContent=fmt(mode===2?c*c:Math.pow(Math.sin(2*th),2)/4,3); $('#r2').textContent=fmt(I*100,1)+' %';
+    $('#r3').textContent=mode===2?'I₀cos²θ':'(I₀/4)·sin²2θ  (max 45°)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   ROUTER
+   ===================================================================== */
+const activities = [
+  { num:'2.1', title:"Huygens' Wavelets", desc:'Every point is a new source', build: buildA1 },
+  { num:'2.2', title:'Refraction & Reflection', desc:'Wavefronts bend, λ shrinks', build: buildA2 },
+  { num:'2.3', title:'Two-Source Interference', desc:'Coherent vs incoherent', build: buildA3 },
+  { num:'2.4', title:"Young's Double Slit", desc:'β = λD / d', build: buildA4 },
+  { num:'2.5', title:'Single-Slit Diffraction', desc:'a sinθ = λ gives the first dark', build: buildA5 },
+  { num:'2.6', title:'Wave Through a Slit', desc:'Transverse waves polarise', build: buildA6 },
+  { num:'2.7', title:"Polaroids · Malus' Law", desc:'I = I₀ cos²θ', build: buildA7 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn=document.createElement('button'); btn.className='nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML='<span class="n-num">'+a.num+'</span><span class="n-title">'+a.title+'</span>';
+    btn.onclick=()=>{ currentIndex=i; render(); }; nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc||'';
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

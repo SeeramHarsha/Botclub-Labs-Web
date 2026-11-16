@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 7 — Alternating Current | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{ flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px); display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5; }
+.topbar .brand-badge{ width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:clamp(15px,1.3vw,20px); flex:0 0 auto; }
+.topbar .chip{ display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28); border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px; }
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center; flex-wrap:wrap;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{ flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border); overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px; }
+.nav-item{ display:flex; align-items:center; gap:8px; text-align:left; width:100%; border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease; }
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:34px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.act{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:360px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚡</div>
+    <div>
+      <div class="chip">Grade 12 · Physics Part 1 · Ch 7</div>
+      <h1>Alternating Current</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>Supply voltage v</span>
+      <span><i style="background:var(--f-blue)"></i>Current i</span>
+      <span><i style="background:var(--f-red)"></i>Resistor · power</span>
+      <span><i style="background:var(--f-green)"></i>Inductor · field</span>
+      <span><i style="background:#a9c4e4;border:1px solid #fff"></i>Capacitor</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">7.2</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 7: ALTERNATING CURRENT
+   Every scene runs a continuous loop. Sliders and buttons only set TARGETS;
+   parameters ease toward them, springs settle, charges slosh back and forth
+   as the real integral of i(t). Motion is slowed so a 50 Hz supply is
+   watchable; reactances, phases and powers use the real frequency.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', navy:'#1a3a5c', muted:'#4c6178', mid:'#8195ab', grid:'#dbe4f0'};
+const TAU = Math.PI*2;
+
+/* ---------- canvas + drawing helpers ---------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||8); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save(); ctx.font=(o.weight||600)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha; ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+
+/* ---------- animation engine ---------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){ const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now; tick(dt); raf = requestAnimationFrame(frame); }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf); activeStops.push(stop); return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function springTo(s,target,k,damping,dt){ s.v += ((target-s.x)*k - s.v*damping)*dt; s.x += s.v*dt; return s.x; }
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); }); }
+/* visual rotation rate (cycles per second) — a slowed-down stand-in for f */
+function rateOf(f){ return clamp(0.5*Math.sqrt(f/50),0.15,1.3); }
+
+/* ---------- physics: series R-L-C driven by v = Vm sin(wt); i = Im sin(wt - phi) ---------- */
+function solve(p){
+  const w=TAU*p.f, XL=w*(p.L||0), XC=(p.C>0&&isFinite(p.C))?1/(w*p.C):0, X=XL-XC;
+  const Z=Math.hypot(p.R,X), Vm=p.V*Math.SQRT2, Im=Vm/Z, Irms=p.V/Z;
+  return {w,XL,XC,X,Z,Vm,Im,Irms,phi:Math.atan2(X,p.R),pf:p.R/Z,P:Irms*Irms*p.R};
+}
+
+/* ---------- UI builders ---------- */
+const activities = [];
+function labShell(){ const wrap=document.createElement('div'); wrap.className='lab-view'; wrap.innerHTML=`<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`; return wrap; }
+function sl(id,label,min,max,step,val){ return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function seg(id,title,opts){ return `<div class="control-group"><label>${title}</label><div class="toggle-group" id="${id}">`+opts.map((o,i)=>`<button class="toggle-btn${i?'':' active'}" data-v="${o[0]}">${o[1]}</button>`).join('')+`</div></div>`; }
+function btns(id,title,opts){ return `<div class="control-group">${title?`<label>${title}</label>`:''}<div class="toggle-group" id="${id}">`+opts.map(o=>`<button class="toggle-btn" data-v="${o[0]}">${o[1]}</button>`).join('')+`</div></div>`; }
+function cards(list){ return `<div class="control-group"><div class="result-cards">`+list.map(c=>`<div class="rcard"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}" style="${c[2]?'color:'+c[2]:''}">—</div></div>`).join('')+`</div></div>`; }
+function mkUI(wrap){
+  const $=s=>wrap.querySelector(s);
+  return {$, canvas:$('canvas'), val:id=>parseFloat($('#'+id).value), set:(id,v)=>{$('#'+id).value=v;}, txt:(id,s)=>{ const e=$('#'+id); if(e) e.textContent=s; }};
+}
+
+/* ---------- history scope (newest sample at the left edge, waves flow right) ---------- */
+class Scope{
+  constructor(span){this.span=span; this.s=[];}
+  push(t,v){ this.s.push([t].concat(v)); while(this.s.length && t-this.s[0][0]>this.span+0.3) this.s.shift(); }
+}
+function drawScope(ctx,sc,tNow,x,y,w,h,defs,o){
+  o=o||{}; const zf=o.zero===undefined?0.5:o.zero, cy=y+h*zf, Au=cy-y-9, Ad=y+h-cy-9;
+  ctx.save(); rrect(ctx,x,y,w,h,8); ctx.fillStyle='#fbfcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke(); ctx.clip();
+  line(ctx,x,cy,x+w,cy,COL.mid,1,[5,4]);
+  const S=sc.s, PX=s=>x+(tNow-s[0])/sc.span*w;
+  defs.forEach(d=>{
+    if(S.length<2) return;
+    const py=v=>cy-(v>0?Au:Ad)*clamp(v*(d.gain||1),-1.05,1.05);
+    if(d.fill){
+      ctx.beginPath(); S.forEach((s,i)=>i?ctx.lineTo(PX(s),py(s[d.i])):ctx.moveTo(PX(s),py(s[d.i])));
+      ctx.lineTo(PX(S[S.length-1]),cy); ctx.lineTo(PX(S[0]),cy); ctx.closePath();
+      ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,cy-y); ctx.clip(); ctx.beginPath(); S.forEach((s,i)=>i?ctx.lineTo(PX(s),py(s[d.i])):ctx.moveTo(PX(s),py(s[d.i]))); ctx.lineTo(PX(S[S.length-1]),cy); ctx.lineTo(PX(S[0]),cy); ctx.closePath(); ctx.fillStyle=d.fill[0]; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.rect(x,cy,w,y+h-cy); ctx.clip(); ctx.beginPath(); S.forEach((s,i)=>i?ctx.lineTo(PX(s),py(s[d.i])):ctx.moveTo(PX(s),py(s[d.i]))); ctx.lineTo(PX(S[S.length-1]),cy); ctx.lineTo(PX(S[0]),cy); ctx.closePath(); ctx.fillStyle=d.fill[1]; ctx.fill(); ctx.restore();
+    }
+    ctx.beginPath(); S.forEach((s,i)=>i?ctx.lineTo(PX(s),py(s[d.i])):ctx.moveTo(PX(s),py(s[d.i])));
+    ctx.strokeStyle=d.color; ctx.lineWidth=d.lw||2.6; ctx.lineJoin='round'; ctx.stroke();
+    if(d.mean!==undefined){ const my=py(d.mean); line(ctx,x,my,x+w,my,d.meanColor||COL.yellow,2,[8,5]); textAt(ctx,d.meanLabel||'',x+w-8,my-5,{align:'right',size:11,weight:700,color:d.meanColor||COL.yellow}); }
+  });
+  line(ctx,x+1,y,x+1,y+h,COL.ink,2);
+  let lx=x+12; defs.forEach(d=>{ if(!d.label) return; line(ctx,lx,y+13,lx+16,y+13,d.color,3); textAt(ctx,d.label,lx+21,y+17,{size:11,color:d.color,weight:700}); lx+=34+d.label.length*6.4; });
+  ctx.restore();
+}
+
+/* ---------- phasor wheel ---------- */
+function drawPhasors(ctx,cx,cy,R,th,list,projX,o){
+  o=o||{}; ctx.save(); if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  circ(ctx,cx,cy,R,COL.grid,'#fbfcfe',1.4);
+  line(ctx,cx-R-6,cy,cx+R+6,cy,COL.mid,1); line(ctx,cx,cy-R-6,cx,cy+R+6,COL.mid,1);
+  list.forEach(p=>{
+    const a=th+p.off, tx=cx+p.len*R*Math.cos(a), ty=cy-p.len*R*Math.sin(a);
+    if(p.proj && projX!==undefined){ line(ctx,tx,ty,projX,ty,p.color,1.3,[4,4]); line(ctx,tx,ty,tx,cy,p.color,1.1,[3,4]); circ(ctx,projX,ty,3.4,p.color,p.color,1); }
+  });
+  list.forEach(p=>{
+    const a=th+p.off, tx=cx+p.len*R*Math.cos(a), ty=cy-p.len*R*Math.sin(a);
+    if(p.dash) line(ctx,cx,cy,tx,ty,p.color,2,[5,4]); else vec(ctx,cx,cy,tx,ty,p.color,p.w||3,9);
+    if(p.label) textAt(ctx,p.label,tx+Math.cos(a)*11,ty-Math.sin(a)*11+4,{size:12,color:p.color,align:'center',weight:700});
+  });
+  circ(ctx,cx,cy,3.4,COL.ink,COL.ink,1); ctx.restore();
+}
+function arcBetween(ctx,cx,cy,r,a1,a2,color,label){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=2; ctx.beginPath();
+  for(let i=0;i<=24;i++){ const a=lerp(a1,a2,i/24); const x=cx+r*Math.cos(a), y=cy-r*Math.sin(a); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore();
+  if(label){ const m=(a1+a2)/2; textAt(ctx,label,cx+(r+12)*Math.cos(m),cy-(r+12)*Math.sin(m)+4,{size:12,color,align:'center',weight:700}); }
+}
+/* phasor wheel on the left + scope on the right, inside a band [yp, yp+Hp] */
+function bottomBand(ctx,w,yp,Hp,th,phasors,sc,t,defs,o){
+  o=o||{}; const R=Math.min(Hp/2-16,w*0.14), cx=16+R+8, cy=yp+Hp/2, sx=cx+R+34;
+  drawPhasors(ctx,cx,cy,R,th,phasors,sx+1,o);
+  textAt(ctx,'phasors',cx,yp+8,{align:'center',size:10.5,color:COL.mid});
+  drawScope(ctx,sc,t,sx,yp,w-sx-12,Hp,defs,{zero:0.5});
+  return {cx,cy,R,sx};
+}
+
+/* ---------- wire loop with sloshing charge carriers ---------- */
+function mkLoop(x0,y0,x1,y1){
+  const pts=[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]], seg=[]; let T=0;
+  for(let i=0;i<4;i++){ const L=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]); seg.push([T,L,pts[i],pts[i+1]]); T+=L; }
+  return {x0,y0,x1,y1,total:T,at(s){ s=((s%T)+T)%T; for(const q of seg){ if(s<=q[0]+q[1]) { const u=(s-q[0])/q[1]; return [lerp(q[2][0],q[3][0],u),lerp(q[2][1],q[3][1],u)]; } } return pts[0]; }};
+}
+function drawWire(ctx,lp){ ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.strokeRect(lp.x0,lp.y0,lp.x1-lp.x0,lp.y1-lp.y0); ctx.restore(); }
+function drawDots(ctx,lp,disp,spacing){
+  const n=Math.max(6,Math.round(lp.total/(spacing||17)));
+  ctx.save(); ctx.fillStyle=COL.blue; ctx.strokeStyle='#fff'; ctx.lineWidth=1;
+  for(let j=0;j<n;j++){ const p=lp.at(j*lp.total/n+disp); ctx.beginPath(); ctx.arc(p[0],p[1],3.8,0,TAU); ctx.fill(); ctx.stroke(); }
+  ctx.restore();
+}
+
+/* ---------- components ---------- */
+function drawSource(ctx,x,y,r,dc,th){
+  circ(ctx,x,y,r,COL.yellow,'#fff',4);
+  ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.beginPath();
+  if(dc<0.5){ for(let i=0;i<=24;i++){ const u=i/24, px=x-r*0.55+u*r*1.1, py=y-Math.sin(u*TAU)*r*0.32; i?ctx.lineTo(px,py):ctx.moveTo(px,py);} ctx.stroke(); }
+  else { ctx.moveTo(x-r*0.22,y-r*0.5); ctx.lineTo(x-r*0.22,y+r*0.5); ctx.moveTo(x+r*0.22,y-r*0.28); ctx.lineTo(x+r*0.22,y+r*0.28); ctx.stroke(); textAt(ctx,'+',x-r*0.55,y-r*0.2,{size:12,color:COL.ink}); }
+  ctx.restore();
+  if(dc<0.5){ const a=-th; circ(ctx,x+Math.cos(a)*r,y+Math.sin(a)*r,4,COL.yellow,COL.yellow,1); }
+}
+function drawBulb(ctx,x,y,r,b,t,zig,heat){
+  if(b>0.02){ const gr=r*(1.5+b*1.7), g=ctx.createRadialGradient(x,y,r*0.2,x,y,gr); g.addColorStop(0,'rgba(255,214,90,'+(0.8*b).toFixed(3)+')'); g.addColorStop(1,'rgba(255,214,90,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,gr,0,TAU); ctx.fill();
+    for(let k=0;k<12;k++){ const a=k/12*TAU+t*0.3; line(ctx,x+Math.cos(a)*r*1.18,y+Math.sin(a)*r*1.18,x+Math.cos(a)*r*(1.3+0.55*b),y+Math.sin(a)*r*(1.3+0.55*b),'rgba(217,160,23,'+(0.7*b).toFixed(2)+')',2); } }
+  circ(ctx,x,y,r,COL.ink,'rgba(255,255,255,0.88)',2.6);
+  ctx.save(); ctx.lineJoin='round'; const n=Math.max(3,Math.round(zig)), pts=[]; for(let i=0;i<=n*2;i++){ pts.push([x+(i%2?1:-1)*r*0.34*(i===0||i===n*2?0:1), y-r+ (i/(n*2))*2*r]); }
+  ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.strokeStyle=mixCol('#9aa8b8',COL.red,b*1.2); ctx.lineWidth=2.8; ctx.stroke();
+  if(b>0.1){ ctx.strokeStyle='rgba(255,226,120,'+clamp(b*1.1,0,1).toFixed(2)+')'; ctx.lineWidth=1.3; ctx.stroke(); }
+  ctx.restore();
+  if(heat && b>0.12){ for(let k=0;k<3;k++){ ctx.save(); ctx.strokeStyle='rgba(217,67,43,'+(0.65*b).toFixed(2)+')'; ctx.lineWidth=2; ctx.beginPath();
+      for(let j=0;j<=14;j++){ const u=j/14, yy=y-r*1.35-u*r*0.9-((t*26+k*14)%28)*0.0; const xx=x+(k-1)*r*0.5+Math.sin(u*9+t*5+k*2)*5; j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore(); } }
+}
+function drawZig(ctx,x1,y,x2,amp,color,n,lw){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x1,y);
+  const len=x2-x1, pad=len*0.1; ctx.lineTo(x1+pad,y);
+  for(let i=0;i<n*2;i++){ const px=x1+pad+(len-2*pad)*(i+0.5)/(n*2); ctx.lineTo(px,y+(i%2?1:-1)*amp); }
+  ctx.lineTo(x2-pad,y); ctx.lineTo(x2,y); ctx.stroke(); ctx.restore();
+}
+function drawCoil(ctx,cx,cy,len,hh,turns,color,core){
+  const p=len/turns, rx=p*0.62, ry=hh/2, x0=cx-len/2+rx*0.5;
+  ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(cx-len/2-rx*0.5,cy-ry-2,len+rx,ry*2+4); ctx.restore();
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=2.6;
+  for(let i=0;i<turns;i++){ ctx.beginPath(); ctx.ellipse(x0+i*p,cy,rx,ry,0,Math.PI/2,Math.PI*1.5); ctx.stroke(); }
+  ctx.restore();
+  if(core) core();
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=2.6;
+  for(let i=0;i<turns;i++){ ctx.beginPath(); ctx.ellipse(x0+i*p,cy,rx,ry,0,-Math.PI/2,Math.PI/2); ctx.stroke(); }
+  ctx.restore();
+}
+function drawCore(ctx,cx,cy,len,th){
+  ctx.save(); rrect(ctx,cx-len/2,cy-th/2,len,th,4); ctx.fillStyle='rgba(205,214,226,0.92)'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.clip();
+  ctx.strokeStyle='rgba(19,42,68,0.35)'; ctx.lineWidth=1; for(let x=cx-len/2-th;x<cx+len/2+th;x+=9){ ctx.beginPath(); ctx.moveTo(x,cy+th/2); ctx.lineTo(x+th,cy-th/2); ctx.stroke(); }
+  ctx.restore(); textAt(ctx,'iron',cx,cy+4,{align:'center',size:11,color:COL.ink,weight:700});
+}
+function gauge(ctx,x,yTop,hh,val,color,label,labelBelow){
+  const cy=yTop+hh/2; ctx.save(); rrect(ctx,x-8,yTop,16,hh,5); ctx.fillStyle='#fbfcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.4; ctx.stroke(); ctx.clip();
+  const v=clamp(val,-1,1); ctx.fillStyle=color; ctx.globalAlpha=0.85; ctx.fillRect(x-8,v>=0?cy-v*hh/2:cy,16,Math.abs(v)*hh/2); ctx.restore();
+  line(ctx,x-11,cy,x+11,cy,COL.mid,1.2);
+  textAt(ctx,label,x,labelBelow?yTop+hh+14:yTop-6,{align:'center',size:12,color,weight:700});
+}
+
+/* =====================================================================
+   7.2  AC VOLTAGE APPLIED TO A RESISTOR
+   i = v/R in phase.  P = V²/R.  Textbook check (Example 7.1): 100 W, 220 V
+   → R = 484 Ω, vm = 311 V, Irms = 0.454 A.
+   ===================================================================== */
+function buildResistor(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    seg('src','Supply',[['ac','AC'],['dc','DC']]) +
+    sl('V','Voltage (rms)',20,250,1,220) + sl('R','Resistance R',50,1000,1,484) + sl('f','Frequency f',10,200,1,50) +
+    btns('pre','',[['b','100 W bulb · 220 V']]) +
+    cards([['cVm','Peak vm','var(--f-yellow)'],['cIm','Peak im','var(--f-blue)'],['cIr','Irms','var(--f-blue)'],['cP','Power P','var(--f-red)']]) +
+    `<p class="hint">P = V²/R · motion slowed for viewing</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  let dc=false, t=0, th=0, mix=0, drift=0, iScale=-1; const E={V:val('V'),R:val('R'),f:val('f')}; const sc=new Scope(3.6);
+  toggleWire(wrap.querySelectorAll('#src button'),b=>{dc=b.dataset.v==='dc';});
+  $('#pre button').onclick=()=>{ set('V',220); set('R',484); set('f',50); };
+  animLoop(dt=>{
+    t+=dt; ['V','R','f'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); mix=approach(mix,dc?1:0,5,dt);
+    th+=TAU*rateOf(E.f)*dt*(1-mix);
+    const Vm=E.V*Math.SQRT2, Irms=E.V/E.R, Im=Irms*Math.SQRT2, P=E.V*E.V/E.R;
+    const vN=((1-mix)*Math.sin(th)*Vm+mix*E.V)/354, iInst=(vN*354)/E.R;
+    iScale=iScale<0?Math.max(Im,0.05):approach(iScale,Math.max(Im,0.05),3,dt); sc.push(t,[vN,iInst/iScale*0.8]);
+    txt('VV',fmt(val('V'),0)+' V'); txt('RV',fmt(val('R'),0)+' Ω'); txt('fV',fmt(val('f'),0)+' Hz');
+    txt('cVm',fmt(Vm,0)+' V'); txt('cIm',fmt(Im,2)+' A'); txt('cIr',fmt(Irms,3)+' A'); txt('cP',fmt(P,0)+' W');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.56, lp=mkLoop(w*0.1,Hs*0.2,w*0.84,Hs-14);
+    drift+=mix*60*clamp(Irms/2.5,0.1,1)*dt;
+    const A=10+42*clamp(Irms/2.5,0.06,1);
+    drawWire(ctx,lp); drawDots(ctx,lp,(1-mix)*(-A*Math.cos(th))+drift);
+    const ym=(lp.y0+lp.y1)/2, r=Math.min(Hs*0.2,52);
+    drawSource(ctx,lp.x0,ym,r*0.55,mix,th); textAt(ctx,dc?'DC':'AC',lp.x0+r*0.8,ym+4,{size:12,color:COL.yellow});
+    const flick=1+0.1*(1-mix)*Math.cos(2*th);
+    drawBulb(ctx,lp.x1,ym,r,clamp(P/150,0,1)*flick,t,3+E.R/130,true);
+    textAt(ctx,'R',lp.x1+r+10,ym+4,{size:13,color:COL.red});
+    bottomBand(ctx,w,Hs+6,h-Hs-14,th,[{len:0.95*clamp(E.V/250,0.12,1),off:0,color:COL.yellow,label:'v',proj:true},{len:0.72*clamp(E.V/250,0.12,1)+0.06,off:0,color:COL.blue,label:'i',proj:true,w:2.6}],sc,t,
+      [{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}],{alpha:1-0.7*mix});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.3  PHASORS — rotating vectors whose vertical component is v or i
+   ===================================================================== */
+function buildPhasors(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    seg('el','Connect',[['R','Resistor'],['L','Inductor'],['C','Capacitor']]) +
+    sl('spd','Rotation speed ω',0.2,2,0.05,0.7) +
+    btns('pp','',[['p','⏯ Pause / Play']]) +
+    cards([['cA','Angle ωt','var(--f-yellow)'],['cPh','Phase φ',null]]) +
+    `<div class="control-group"><div class="rcard"><div class="rlabel">Current</div><div class="rval" id="cTx" style="color:var(--f-blue)">—</div></div></div>`;
+  const {$,canvas,val,txt}=mkUI(wrap);
+  let phiT=0, t=0, th=0, paused=false; const PH={x:0,v:0}; const sc=new Scope(5.2);
+  toggleWire(wrap.querySelectorAll('#el button'),b=>{phiT={R:0,L:Math.PI/2,C:-Math.PI/2}[b.dataset.v];});
+  $('#pp button').onclick=()=>{paused=!paused;};
+  animLoop(dt=>{
+    if(!paused){ t+=dt; th+=TAU*val('spd')*0.45*dt; } txt('spdV',fmt(val('spd'),2)+'×');
+    springTo(PH,phiT,55,7.5,dt); const phi=PH.x;
+    if(!paused) sc.push(t,[Math.sin(th),0.8*Math.sin(th-phi)]);
+    txt('cA',fmt(((th*180/Math.PI)%360+360)%360,0)+'°'); txt('cPh',fmt(phiT*180/Math.PI,0)+'°');
+    txt('cTx',phiT===0?'in phase with v':(phiT>0?'lags v by 90°':'leads v by 90°'));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.36,w*0.2), cx=R+w*0.06, cy=h*0.52, sx=cx+R+60;
+    drawPhasors(ctx,cx,cy,R,th,[{len:0.95,off:0,color:COL.yellow,label:'V',proj:true},{len:0.75,off:-phi,color:COL.blue,label:'I',proj:true}],sx);
+    if(Math.abs(phi)>0.06) arcBetween(ctx,cx,cy,R*0.3,Math.min(th,th-phi),Math.max(th,th-phi),COL.red,'φ');
+    drawScope(ctx,sc,t,sx,cy-R-10,w-sx-16,2*R+20,[{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}]);
+    textAt(ctx,'vertical component of the rotating arrow  =  value of v or i now',w/2,h-16,{align:'center',size:12,color:COL.mid,weight:500});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.4  AC VOLTAGE APPLIED TO AN INDUCTOR
+   XL = ωL;  i lags v by π/2.  Example 7.5: an iron rod pushed into the coil
+   raises L, raises XL, and the bulb in series dims.
+   ===================================================================== */
+function buildInductor(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    btns('core','Iron core',[['0','Pull out'],['100','Push in']]) +
+    sl('ins','Core position',0,100,1,0) + sl('L','Coil L',20,200,1,100) + sl('f','Frequency f',10,200,1,50) + sl('V','Voltage (rms)',50,250,1,200) +
+    cards([['cXL','Reactance XL','var(--f-green)'],['cZ','Impedance Z',null],['cIr','Irms','var(--f-blue)'],['cPh','i lags v by','var(--f-red)']]) +
+    `<p class="hint">XL = ωL · bulb is 60 Ω</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  $('#core button[data-v="0"]').onclick=()=>set('ins',0); $('#core button[data-v="100"]').onclick=()=>set('ins',100);
+  let t=0, th=0, fOff=0, iScale=-1; const E={V:val('V'),f:val('f'),L:val('L')}; const K={x:0,v:0}; const sc=new Scope(3.6);
+  animLoop(dt=>{
+    t+=dt; ['V','f','L'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); springTo(K,val('ins')/100,34,8,dt);
+    const Ke=clamp(K.x,0,1.04), Leff=E.L/1000*(1+7*Ke);
+    const S=solve({R:60,L:Leff,C:0,f:E.f,V:E.V}); th+=TAU*rateOf(E.f)*dt;
+    const iInst=S.Im*Math.sin(th-S.phi); iScale=iScale<0?S.Im:approach(iScale,S.Im,3,dt);
+    sc.push(t,[S.Vm*Math.sin(th)/354,0.8*iInst/iScale]);
+    txt('VV',fmt(val('V'),0)+' V'); txt('LV',fmt(val('L'),0)+' mH'); txt('fV',fmt(val('f'),0)+' Hz'); txt('insV',fmt(val('ins'),0)+' %');
+    txt('cXL',fmt(S.XL,1)+' Ω'); txt('cZ',fmt(S.Z,1)+' Ω'); txt('cIr',fmt(S.Irms,2)+' A'); txt('cPh',fmt(S.phi*180/Math.PI,0)+'°');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.58, lp=mkLoop(w*0.07,Hs*0.44,w*0.93,Hs-12), ym=(lp.y0+lp.y1)/2;
+    const cL=w*0.44, cLen=w*0.34, cH=Hs*0.22, r=Math.min(Hs*0.16,46);
+    // magnetic field around the coil (green): strength ∝ sin φ, direction follows i
+    const Bn=S.X/S.Z*(0.4+0.6*E.V/250), Bt=Math.sin(th-S.phi)*Bn, sgn=Math.sign(iInst)||1;
+    fOff+=sgn*Math.abs(Bt)*90*dt;
+    for(let k=1;k<=2;k++){ const rx=cLen/2+14+k*28, ry=cH/2+6+k*15;
+      ctx.save(); ctx.globalAlpha=clamp(Math.abs(Bt)*1.2,0,1)*(k===1?1:0.7); ctx.strokeStyle=COL.green; ctx.lineWidth=1.6+2*Math.abs(Bt); ctx.setLineDash([9,7]); ctx.lineDashOffset=-fOff*(k===1?1:0.8);
+      ctx.beginPath(); ctx.ellipse(cL,lp.y0,rx,ry,0,0,TAU); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.globalAlpha=clamp(Math.abs(Bt)*1.4,0,1); for(const sy of [-1,1]) arrowHead(ctx,cL,lp.y0+sy*ry,sgn>0?Math.PI:0,COL.green,6+7*Math.abs(Bt)); ctx.restore(); }
+    drawWire(ctx,lp);
+    const A=10+36*clamp(S.Irms/4.5,0.05,1);
+    drawDots(ctx,lp,-A*Math.cos(th-S.phi)*1);
+    // coil + iron core (springs in with overshoot)
+    const coreX=lerp(cL-cLen*0.98,cL,Ke), coreY=lerp(lp.y0-cH*1.7,lp.y0,Math.pow(Ke,0.8));
+    drawCoil(ctx,cL,lp.y0,cLen,cH,10,COL.green,()=>drawCore(ctx,coreX,coreY,cLen*1.02,cH*0.5));
+    if(Ke<0.2) drawCore(ctx,coreX,coreY,cLen*1.02,cH*0.5);
+    textAt(ctx,'L',cL,lp.y0+cH/2+22,{align:'center',size:13,color:COL.green});
+    drawSource(ctx,lp.x0,ym,r*0.6,0,th);
+    const b=clamp(S.P/(230*230/60),0,1)*(1+0.08*Math.cos(2*th-2*S.phi));
+    drawBulb(ctx,lp.x1,ym,r,b,t,4,false);
+    bottomBand(ctx,w,Hs+6,h-Hs-14,th,[{len:0.95*clamp(S.Vm/354,0.15,1),off:0,color:COL.yellow,label:'V',proj:true},{len:0.75,off:-S.phi,color:COL.blue,label:'I',proj:true}],sc,t,
+      [{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.5  AC VOLTAGE APPLIED TO A CAPACITOR
+   XC = 1/ωC;  i leads v by π/2.  Example 7.4: 15 µF, 220 V, 50 Hz →
+   XC = 212 Ω, Irms = 1.04 A.  Example 7.3: lamp glows on ac, not on dc.
+   ===================================================================== */
+function buildCapacitor(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    seg('src','Supply',[['ac','AC'],['dc','DC']]) +
+    sl('C','Capacitance C',5,60,0.5,15) + sl('f','Frequency f',10,200,1,50) + sl('V','Voltage (rms)',50,250,1,220) +
+    btns('sl','Dielectric slab',[['0','Pull out'],['1','Slide in']]) +
+    cards([['cXC','Reactance XC','#1a3a5c'],['cIr','Irms','var(--f-blue)'],['cIm','Peak im','var(--f-blue)'],['cPh','i leads v by','var(--f-red)']]) +
+    `<p class="hint">XC = 1/ωC · lamp 5 Ω · slab K = 5</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  let dc=false, t=0, th=0, mix=0, vcS=0, slabT=0, iScale=-1; const E={V:val('V'),f:val('f'),C:val('C')}; const SL={x:0,v:0}; const sc=new Scope(3.6);
+  toggleWire(wrap.querySelectorAll('#src button'),b=>{dc=b.dataset.v==='dc';});
+  wrap.querySelectorAll('#sl button').forEach(b=>b.onclick=()=>{slabT=+b.dataset.v;});
+  let iDC=0, qAcc=0, drift=0;
+  animLoop(dt=>{
+    t+=dt; ['V','f','C'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); mix=approach(mix,dc?1:0,6,dt);
+    springTo(SL,slabT,30,7,dt); const se=clamp(SL.x,0,1.05), Ceff=E.C*1e-6*(1+4*se);
+    const S=solve({R:5,L:0,C:Ceff,f:E.f,V:E.V}); th+=TAU*rateOf(E.f)*dt*(1-mix*0.0);
+    const vAC=S.Vm*Math.sin(th), iAC=S.Im*Math.sin(th-S.phi), vcAC=-S.Im*S.XC*Math.cos(th-S.phi);
+    // dc branch: capacitor charges through the lamp, current dies away (RC compressed to ~0.4 s)
+    const tau=0.12+0.6*Ceff/300e-6;
+    if(dc){ vcS+=((E.V-vcS)/tau)*dt; iDC=(E.V-vcS)/5; } else { vcS=vcAC; iDC=iAC; }
+    const vNow=dc?E.V:vAC, iNow=iDC, vc=dc?vcS:vcAC;
+    iScale=iScale<0?S.Im:approach(iScale,S.Im,3,dt);
+    sc.push(t,[vNow/354,0.8*iNow/iScale]);
+    txt('VV',fmt(val('V'),0)+' V'); txt('CV',fmt(val('C'),1)+' µF'); txt('fV',fmt(val('f'),0)+' Hz');
+    txt('cXC',dc?'∞':fmt(S.XC,0)+' Ω'); txt('cIr',dc?fmt(Math.abs(iNow),2)+' A':fmt(S.Irms,2)+' A'); txt('cIm',dc?'—':fmt(S.Im,2)+' A'); txt('cPh',dc?'—':'90°');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.58, lp=mkLoop(w*0.07,Hs*0.3,w*0.93,Hs-12), ym=(lp.y0+lp.y1)/2, r=Math.min(Hs*0.16,46);
+    drawWire(ctx,lp);
+    const A=10+36*clamp(Math.abs(dc?iNow:S.Irms)/2.5,0.04,1);
+    if(dc){ qAcc+=(iNow/5)*0.0; drift+=iNow*18*dt; drawDots(ctx,lp,drift); } else drawDots(ctx,lp,-A*Math.cos(th-S.phi));
+    // capacitor plates with charge and field
+    const cx=w*0.45, gap=Math.min(78,w*0.1), ph=Hs*0.34, y0=lp.y0-ph/2;
+    ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(cx-gap/2-12,y0-4,gap+24,ph+8); ctx.restore();
+    // slab slides in from above
+    const slabY=lerp(y0-ph-34,y0,Math.min(se,1));
+    if(se>0.02){ ctx.save(); rrect(ctx,cx-gap/2+5,slabY,gap-10,ph,3); ctx.fillStyle='rgba(47,143,224,0.13)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.8; ctx.setLineDash([5,3]); ctx.stroke(); ctx.restore();
+      const pol=clamp(Math.abs(vc)/300,0,1)*se; for(let k=0;k<5;k++){ const yy=slabY+ph*(k+0.5)/5, dx=Math.sign(vc)*pol*6; circ(ctx,cx-6+dx,yy,3,COL.red,'#fff',1.3); circ(ctx,cx+6+dx,yy,3,COL.blue,'#fff',1.3); } }
+    const plateL=(x)=>{ ctx.save(); ctx.fillStyle=COL.navy; ctx.fillRect(x-4,y0,8,ph); ctx.restore(); };
+    plateL(cx-gap/2); plateL(cx+gap/2);
+    const qn=Math.sqrt(clamp(Math.abs(Ceff*vc)/0.02,0,1)), sgnq=Math.sign(vc)||1;
+    for(let j=0;j<8;j++){ const al=clamp(qn*8.5-j,0,1); if(al<=0) continue; const yy=y0+ph*(j+0.5)/8;
+      textAt(ctx,sgnq>0?'+':'−',cx-gap/2-15,yy+5,{size:15,align:'center',color:sgnq>0?COL.red:COL.blue,alpha:al,weight:700});
+      textAt(ctx,sgnq>0?'−':'+',cx+gap/2+15,yy+5,{size:15,align:'center',color:sgnq>0?COL.blue:COL.red,alpha:al,weight:700}); }
+    const fa=clamp(Math.abs(vc)/330,0,1);
+    if(fa>0.04) for(let k=0;k<3;k++){ const yy=y0+ph*(k+1)/4, L=(gap-24)*fa; const a=cx-L/2*sgnq, b2=cx+L/2*sgnq; vec(ctx,a,yy,b2,yy,COL.green,2.2,7); }
+    textAt(ctx,'C',cx,y0+ph+22,{align:'center',size:13,color:COL.navy});
+    drawSource(ctx,lp.x0,ym,r*0.6,mix,th);
+    const lampI=Math.abs(dc?iNow:S.Irms), b=Math.pow(clamp(lampI/2,0,1),1.4);
+    drawBulb(ctx,lp.x1,ym,r,b,t,4,false);
+    if(dc && Math.abs(iNow)<0.02) textAt(ctx,'fully charged · no current',w/2,lp.y1+(-6),{align:'center',size:12,color:COL.red});
+    bottomBand(ctx,w,Hs+6,h-Hs-14,th,[{len:0.95*clamp(S.Vm/354,0.15,1),off:0,color:COL.yellow,label:'V',proj:true},{len:0.75,off:-S.phi,color:COL.blue,label:'I',proj:true}],sc,t,
+      [{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}],{alpha:1-0.7*mix});
+  });
+  return wrap;
+}
+
+/* ---------- series L-C-R loop shared by 7.6 and 7.6.2 ---------- */
+function drawLCRLoop(ctx,w,Hs,S,th,t,E,sc,bulbMode){
+  const lp=mkLoop(w*0.07,Hs*0.46,w*0.76,Hs-12), ym=(lp.y0+lp.y1)/2, r=Math.min(Hs*0.15,42);
+  drawWire(ctx,lp);
+  const A=10+38*clamp(Math.log10(1+S.Irms)/Math.log10(1+75),0.04,1);
+  drawDots(ctx,lp,-A*Math.cos(th-S.phi));
+  const cH=Hs*0.18, Lx=lp.x0+(lp.x1-lp.x0)*0.30, Cx=lp.x0+(lp.x1-lp.x0)*0.68, GH=Math.max(30,Math.min(Hs*0.3,lp.y0-cH/2-12-24));
+  const iph=th-S.phi;
+  drawCoil(ctx,Lx,lp.y0,(lp.x1-lp.x0)*0.22,cH,7,COL.green); textAt(ctx,'L',Lx,lp.y0+cH/2+20,{align:'center',size:13,color:COL.green});
+  const gap=22, py=cH*1.05;
+  ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(Cx-gap/2-8,lp.y0-py/2-3,gap+16,py+6); ctx.restore();
+  ctx.save(); ctx.fillStyle=COL.navy; ctx.fillRect(Cx-gap/2-3,lp.y0-py/2,6,py); ctx.fillRect(Cx+gap/2-3,lp.y0-py/2,6,py); ctx.restore();
+  textAt(ctx,'C',Cx,lp.y0+py/2+20,{align:'center',size:13,color:COL.navy});
+  drawSource(ctx,lp.x0,ym,r*0.6,0,th);
+  const sc2=Math.max(S.Vm,S.Im*S.R,S.Im*S.XL,S.Im*S.XC)*1.05;
+  const vR=S.Im*S.R*Math.sin(iph), vL=S.Im*S.XL*Math.cos(iph), vC=-S.Im*S.XC*Math.cos(iph);
+  const gt=lp.y0-cH/2-12-GH;
+  gauge(ctx,Lx,gt,GH,vL/sc2,COL.green,'VL'); gauge(ctx,Cx,gt,GH,vC/sc2,COL.navy,'VC');
+  const rx=lp.x1;
+  if(bulbMode){ const b=clamp(S.pf*S.pf,0,1)*(1+0.06*Math.cos(2*iph)); drawBulb(ctx,rx,ym,r,b,t,4,true); }
+  else { ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(rx-14,ym-r*1.1,28,r*2.2); ctx.restore(); ctx.save(); ctx.translate(rx,ym); ctx.rotate(Math.PI/2); drawZig(ctx,-r*1.1,0,r*1.1,9,COL.red,5,3); ctx.restore();
+    const hb=clamp(S.P/9000,0,1); for(let k=0;k<3;k++){ ctx.save(); ctx.strokeStyle='rgba(217,67,43,'+(0.7*hb).toFixed(2)+')'; ctx.lineWidth=2; ctx.beginPath(); for(let j=0;j<=12;j++){ const u=j/12; const xx=rx+26+k*10+Math.sin(u*8+t*5+k)*3, yy=ym+r*0.9-u*r*1.8; j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); ctx.restore(); } }
+  textAt(ctx,'R',rx-r-10,ym+4,{align:'right',size:13,color:COL.red});
+  gauge(ctx,w*0.9,ym-GH/2,GH,vR/sc2,COL.red,'VR',true);
+  return {lp,sc2,vR,vL,vC,iph};
+}
+
+/* =====================================================================
+   7.6  SERIES LCR CIRCUIT — phasor solution
+   Z = √(R² + (XL − XC)²),  tan φ = (XL − XC)/R
+   Example 7.8: R = 3 Ω, L = 25.48 mH, C = 796 µF, 50 Hz → XL = 8, XC = 4,
+   Z = 5 Ω, φ = 53.1° (i lags v).
+   ===================================================================== */
+function buildLCR(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('R','Resistance R',1,20,0.5,3) + sl('L','Inductance L',5,60,0.01,25.48) + sl('C','Capacitance C',100,1500,1,796) + sl('f','Frequency f',20,120,1,50) +
+    btns('pre','',[['a','Textbook values']]) +
+    cards([['cXL','XL','var(--f-green)'],['cXC','XC','#1a3a5c'],['cZ','Z',null],['cPh','φ',null]]) +
+    `<div class="control-group"><div class="rcard"><div class="rlabel">Circuit acts</div><div class="rval" id="cNat">—</div></div><p class="hint">tan φ = (XL − XC)/R · 200 V rms</p></div>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  $('#pre button').onclick=()=>{set('R',3);set('L',25.48);set('C',796);set('f',50);};
+  let t=0, th=0, iScale=-1, refS=-1; const E={R:3,L:25.48,C:796,f:50}; const sc=new Scope(3.6);
+  animLoop(dt=>{
+    t+=dt; ['R','L','C','f'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); th+=TAU*rateOf(E.f)*dt;
+    const S=solve({R:E.R,L:E.L/1000,C:E.C*1e-6,f:E.f,V:200}); S.R=E.R;
+    iScale=iScale<0?S.Im:approach(iScale,S.Im,3,dt);
+    {const tg=Math.max(S.Vm,S.Im*S.XL,S.Im*S.XC,S.Im*S.R)*1.05; refS=refS<0?tg:approach(refS,tg,4,dt);}
+    const iph=th-S.phi; sc.push(t,[S.Vm*Math.sin(th)/refS,0.8*S.Im*Math.sin(iph)/iScale]);
+    txt('RV',fmt(val('R'),1)+' Ω'); txt('LV',fmt(val('L'),2)+' mH'); txt('CV',fmt(val('C'),0)+' µF'); txt('fV',fmt(val('f'),0)+' Hz');
+    txt('cXL',fmt(S.XL,1)+' Ω'); txt('cXC',fmt(S.XC,1)+' Ω'); txt('cZ',fmt(S.Z,2)+' Ω'); txt('cPh',fmt(S.phi*180/Math.PI,1)+'°');
+    txt('cNat',Math.abs(S.X)<0.03*S.R?'purely resistive (resonance)':(S.X>0?'inductive · i lags v':'capacitive · i leads v'));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.55; drawLCRLoop(ctx,w,Hs,S,th,t,E,sc,false);
+    const k=1/refS;
+    const o=bottomBand(ctx,w,Hs+6,h-Hs-14,th,[
+      {len:S.Vm*k,off:0,color:COL.yellow,label:'V',proj:true},
+      {len:S.Im*S.R*k,off:-S.phi,color:COL.red,label:'VR',w:2.6},
+      {len:S.Im*S.XL*k,off:-S.phi+Math.PI/2,color:COL.green,label:'VL',w:2.6},
+      {len:S.Im*S.XC*k,off:-S.phi-Math.PI/2,color:COL.navy,label:'VC',w:2.6},
+      {len:0.5,off:-S.phi,color:COL.blue,label:'I',proj:true,w:2.2}],sc,t,
+      [{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}]);
+    if(Math.abs(S.phi)>0.05) arcBetween(ctx,o.cx,o.cy,o.R*0.22,Math.min(th,th-S.phi),Math.max(th,th-S.phi),COL.red,'');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.6.2  RESONANCE — ω0 = 1/√(LC),  Q = ω0 L / R,  Imax = V/R
+   Example 7.9 circuit resonates at 35.4 Hz: Z = R = 3 Ω, Irms = 66.7 A,
+   P = 13.3 kW.
+   ===================================================================== */
+function buildResonance(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('f','Tune frequency f',5,150,0.5,30) + sl('R','Resistance R',2,30,0.5,3) + sl('L','Inductance L',10,60,0.01,25.48) + sl('C','Capacitance C',200,1500,1,796) +
+    btns('pre','',[['a','Textbook values'],['r','Jump to f₀']]) +
+    cards([['cF0','Resonant f₀','var(--f-green)'],['cIr','Irms','var(--f-blue)'],['cQ','Q factor',null],['cBW','Width Δf','var(--f-green)']]) +
+    `<p class="hint">f₀ = 1/(2π√LC) · 200 V rms</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  $('#pre button[data-v="a"]').onclick=()=>{set('R',3);set('L',25.48);set('C',796);set('f',30);};
+  $('#pre button[data-v="r"]').onclick=()=>{ const f0=1/(TAU*Math.sqrt(val('L')/1000*val('C')*1e-6)); set('f',clamp(f0,5,150).toFixed(1)); };
+  let t=0, th=0, iScale=-1, refS=-1; const E={R:3,L:25.48,C:796,f:30}; const F={x:30,v:0}; const sc=new Scope(3.2);
+  const IofF=(f)=>solve({R:E.R,L:E.L/1000,C:E.C*1e-6,f,V:200}).Irms;
+  animLoop(dt=>{
+    t+=dt; ['R','L','C'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); springTo(F,val('f'),70,13,dt); E.f=Math.max(5,F.x);
+    th+=TAU*rateOf(E.f)*dt;
+    const S=solve({R:E.R,L:E.L/1000,C:E.C*1e-6,f:E.f,V:200}); S.R=E.R;
+    const w0=1/Math.sqrt(E.L/1000*E.C*1e-6), f0=w0/TAU, Q=w0*E.L/1000/E.R, f1=f0*(Math.sqrt(1+1/(4*Q*Q))-1/(2*Q)), f2=f0*(Math.sqrt(1+1/(4*Q*Q))+1/(2*Q));
+    iScale=iScale<0?S.Im:approach(iScale,S.Im,3,dt); {const tg=Math.max(S.Vm,S.Im*S.XL,S.Im*S.XC)*1.05; refS=refS<0?tg:approach(refS,tg,4,dt);}
+    txt('fV',fmt(val('f'),1)+' Hz'); txt('RV',fmt(val('R'),1)+' Ω'); txt('LV',fmt(val('L'),2)+' mH'); txt('CV',fmt(val('C'),0)+' µF');
+    txt('cF0',fmt(f0,1)+' Hz'); txt('cIr',fmt(S.Irms,1)+' A'); txt('cQ',fmt(Q,1)); txt('cBW',fmt(f2-f1,1)+' Hz');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.46; drawLCRLoop(ctx,w,Hs,S,th,t,E,sc,true);
+    // resonance curve
+    const x0=w*0.09, x1=w*0.96, y0=Hs+30, y1=h-34, YM=100, FX=f=>x0+(f-5)/145*(x1-x0), IY=i=>y1-(y1-y0)*clamp(i/YM,0,1.04);
+    ctx.save(); rrect(ctx,x0-8,y0-12,x1-x0+16,y1-y0+44,8); ctx.fillStyle='#fbfcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.fillStyle='rgba(31,157,85,0.13)'; const bx1=FX(clamp(f1,5,150)), bx2=FX(clamp(f2,5,150)); ctx.fillRect(bx1,y0,bx2-bx1,y1-y0); ctx.restore();
+    line(ctx,x0,y1,x1,y1,COL.ink,1.6); line(ctx,x0,y0,x0,y1,COL.ink,1.6);
+    for(let f=25;f<=150;f+=25){ line(ctx,FX(f),y1,FX(f),y1+5,COL.ink,1.2); textAt(ctx,String(f),FX(f),y1+18,{align:'center',size:10.5,color:COL.mid,weight:500}); }
+    textAt(ctx,'f (Hz)',x1,y1+31,{align:'right',size:11,color:COL.mid}); textAt(ctx,'Irms (A)',x0+6,y0+2,{size:11,color:COL.mid});
+    for(const a of [0,50,100]) { line(ctx,x0-4,IY(a),x0,IY(a),COL.ink,1.2); textAt(ctx,String(a),x0-8,IY(a)+4,{align:'right',size:10.5,color:COL.mid,weight:500}); }
+    ctx.save(); ctx.beginPath(); for(let i=0;i<=200;i++){ const f=5+145*i/200, I=IofF(f); i?ctx.lineTo(FX(f),IY(I)):ctx.moveTo(FX(f),IY(I)); } ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    line(ctx,FX(clamp(f0,5,150)),y0,FX(clamp(f0,5,150)),y1,COL.green,2,[7,5]); textAt(ctx,'f₀',FX(clamp(f0,5,150)),y0-1,{align:'center',size:12,color:COL.green});
+    const mx=FX(E.f), my=IY(S.Irms); line(ctx,mx,my,mx,y1,COL.yellow,2,[4,4]); circ(ctx,mx,my,8,COL.yellow,'#fff',3.5);
+    textAt(ctx,fmt(S.Irms,1)+' A',E.f<f0?mx-12:mx+12,my-12,{align:E.f<f0?'right':'left',size:12,color:COL.blue});
+    textAt(ctx,'bulb glows brightest at f₀',w/2,Hs+16,{align:'center',size:11.5,color:COL.mid,weight:500});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.7  POWER IN AN AC CIRCUIT — the power factor
+   P = V I cos φ.   Example 7.8 (R = 3 Ω, X = 4 Ω, V = 200 V): Z = 5 Ω,
+   I = 40 A, cos φ = 0.6, P = 4800 W.
+   ===================================================================== */
+function buildPower(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('R','Resistance R',0.5,30,0.5,3) + sl('X','Net reactance XL − XC',-30,30,0.5,4) +
+    btns('pre','Try',[['r','Pure R'],['l','Mostly L'],['c','Mostly C'],['a','Textbook']]) +
+    cards([['cPF','cos φ','var(--f-red)'],['cP','Power P','var(--f-red)'],['cIp','Power part Ip','var(--f-green)'],['cIq','Wattless Iq','var(--f-red)']]) +
+    `<p class="hint">P = V I cos φ · V = 200 V rms</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  const P0={r:[5,0],l:[0.5,25],c:[0.5,-25],a:[3,4]};
+  $('#pre').querySelectorAll('button').forEach(b=>b.onclick=()=>{const p=P0[b.dataset.v]; set('R',p[0]); set('X',p[1]);});
+  let t=0, th=0, iScale=-1; const E={R:3,X:4}; const sc1=new Scope(4), sc2=new Scope(4); const dir={x:1};
+  animLoop(dt=>{
+    t+=dt; ['R','X'].forEach(k=>{E[k]=approach(E[k],val(k),7,dt);}); th+=TAU*0.5*dt;
+    const V=200, Z=Math.hypot(E.R,E.X), Irms=V/Z, Im=Irms*Math.SQRT2, Vm=V*Math.SQRT2, phi=Math.atan2(E.X,E.R), pf=E.R/Z, P=Irms*Irms*E.R, Sapp=V*Irms;
+    iScale=iScale<0?Im:approach(iScale,Im,3,dt);
+    const vI=Vm*Math.sin(th), iI=Im*Math.sin(th-phi), pI=vI*iI;
+    sc1.push(t,[vI/283,0.8*iI/iScale]); sc2.push(t,[pI/(2*Sapp)]);
+    txt('RV',fmt(val('R'),1)+' Ω'); txt('XV',fmt(val('X'),1)+' Ω');
+    txt('cPF',fmt(pf,2)); txt('cP',fmt(P,0)+' W'); txt('cIp',fmt(Irms*pf,1)+' A'); txt('cIq',fmt(Math.abs(Irms*Math.sin(phi)),1)+' A');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.4, lp=mkLoop(w*0.08,Hs*0.22,w*0.92,Hs-10), ym=(lp.y0+lp.y1)/2, r=Math.min(Hs*0.17,40);
+    drawWire(ctx,lp);
+    const A=10+36*clamp(Math.log10(1+Irms)/Math.log10(1+60),0.04,1); drawDots(ctx,lp,-A*Math.cos(th-phi));
+    // energy flow arrows: green → to the load, red ← back to the source
+    const flow=pI/(2*Sapp), fl=clamp(Math.abs(flow)*1.6,0,1);
+    dir.x+=0; for(let k=0;k<5;k++){ const x=lp.x0+(lp.x1-lp.x0)*(0.16+k*0.17); if(fl>0.05){ const L=8+26*fl; const c=flow>0?COL.green:COL.red; const s=flow>0?1:-1; vec(ctx,x-s*L/2,lp.y0-22,x+s*L/2,lp.y0-22,c,2+2*fl,6+5*fl); } }
+    textAt(ctx,flow>=0?'energy flows to the circuit':'energy returned to the source',w/2,lp.y0-36,{align:'center',size:12,color:flow>=0?COL.green:COL.red});
+    // R (zig) and X (coil or plates)
+    const rx=lp.x0+(lp.x1-lp.x0)*0.3, xx=lp.x0+(lp.x1-lp.x0)*0.7, ln=Math.min(100,(lp.x1-lp.x0)*0.16);
+    ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(rx-ln/2-4,lp.y1-24,ln+8,48); ctx.restore(); ctx.save(); ctx.translate(0,0); drawZig(ctx,rx-ln/2,lp.y1,rx+ln/2,11,COL.red,4,3); ctx.restore(); textAt(ctx,'R',rx,lp.y1+30,{align:'center',size:13,color:COL.red});
+    if(E.X>=0) { drawCoil(ctx,xx,lp.y1,ln*1.2,Math.min(32,10+Math.abs(E.X)*0.7),6,COL.green); textAt(ctx,'L',xx,lp.y1+30,{align:'center',size:13,color:COL.green}); }
+    else { ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(xx-22,lp.y1-24,44,48); ctx.fillStyle=COL.navy; ctx.fillRect(xx-9,lp.y1-20,5,40); ctx.fillRect(xx+4,lp.y1-20,5,40); ctx.restore(); textAt(ctx,'C',xx,lp.y1+30,{align:'center',size:13,color:COL.navy}); }
+    drawSource(ctx,lp.x0,ym,r*0.7,0,th);
+    drawBulb(ctx,lp.x1,ym,r,clamp(P/9000,0,1),t,4,true);
+    // bottom: phasors (with Ip / Iq components) + v,i scope + power scope
+    const yp=Hs+6, Hp=h-yp-10, R=Math.min(Hp/2-18,w*0.13), cx=16+R+10, cy=yp+Hp/2, sx=cx+R+36;
+    const Il=0.78, comp=(l,off)=>l<0?{len:-l,off:off+Math.PI}:{len:l,off};
+    const ipv=comp(Il*Math.cos(phi),0), iqv=comp(-Il*Math.sin(phi),Math.PI/2);
+    drawPhasors(ctx,cx,cy,R,th,[{len:0.95,off:0,color:COL.yellow,label:'V',proj:true},{len:Il,off:-phi,color:COL.blue,label:'I',proj:true},
+      Object.assign({color:COL.green,label:'Ip',dash:true},ipv),Object.assign({color:COL.red,label:'Iq',dash:true},iqv)],sx+1);
+    const hh1=Hp*0.42, hh2=Hp-hh1-8;
+    drawScope(ctx,sc1,t,sx,yp,w-sx-12,hh1,[{i:1,color:COL.yellow,label:'v'},{i:2,color:COL.blue,label:'i'}]);
+    drawScope(ctx,sc2,t,sx,yp+hh1+8,w-sx-12,hh2,[{i:1,color:COL.ink,lw:1.6,fill:['rgba(31,157,85,0.55)','rgba(217,67,43,0.5)'],label:'p = v·i  (green: used · red: returned)',mean:(pf/2),meanLabel:'average P',meanColor:COL.yellow}],{zero:0.64});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8  TRANSFORMER — Vs/Vp = Ns/Np ,  Is/Ip = Np/Ns   (ideal, Pin = Pout)
+   Textbook: Np = 100, Ns = 200, 220 V at 10 A → 440 V at 5 A.
+   ===================================================================== */
+function buildTransformer(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('Np','Primary turns Np',50,400,10,100) + sl('Ns','Secondary turns Ns',25,400,5,200) + sl('V','Input voltage Vp',50,250,1,220) + sl('R','Load resistance',20,500,1,88) +
+    btns('pre','',[['a','Textbook example'],['d','Step-down 2:1']]) +
+    cards([['cVs','Vs (rms)','var(--f-green)'],['cTy','Type',null],['cIp','Ip','var(--f-yellow)'],['cIs','Is','var(--f-green)']]) +
+    `<p class="hint">Vs/Vp = Ns/Np · Ip·Vp = Is·Vs</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  $('#pre button[data-v="a"]').onclick=()=>{set('Np',100);set('Ns',200);set('V',220);set('R',88);};
+  $('#pre button[data-v="d"]').onclick=()=>{set('Np',200);set('Ns',100);set('V',220);set('R',22);};
+  let t=0, th=0, fOff=0, refS=-1; const E={Np:100,Ns:200,V:220,R:88}; const sc=new Scope(3.6);
+  animLoop(dt=>{
+    t+=dt; ['Np','Ns','V','R'].forEach(k=>{E[k]=approach(E[k],val(k),6,dt);}); th+=TAU*0.5*dt;
+    const Vs=E.V*E.Ns/E.Np, Is=Vs/E.R, Ip=Is*E.Ns/E.Np, Ps=Vs*Is;
+    {const tg=Math.max(E.V,Vs)*Math.SQRT2*1.05; refS=refS<0?tg:approach(refS,tg,4,dt);}
+    sc.push(t,[E.V*Math.SQRT2*Math.sin(th)/refS,Vs*Math.SQRT2*Math.sin(th)/refS]);
+    txt('NpV',fmt(val('Np'),0)); txt('NsV',fmt(val('Ns'),0)); txt('VV',fmt(val('V'),0)+' V'); txt('RV',fmt(val('R'),0)+' Ω');
+    const vs=E.V*E.Ns/E.Np; txt('cVs',fmt(vs,0)+' V'); txt('cTy',Math.abs(val('Ns')-val('Np'))<1?'1 : 1':(val('Ns')>val('Np')?'step-up':'step-down')); txt('cIp',fmt(Ip,1)+' A'); txt('cIs',fmt(Is,1)+' A');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Hs=h*0.66, cx=w*0.5, cw=Math.min(w*0.2,190), T=Math.min(Hs*0.13,44);
+    const cy0=Hs*0.1, cy1=Hs*0.86, X0=cx-cw, X1=cx+cw;
+    // core (double outline) + flux
+    ctx.save(); ctx.beginPath(); ctx.rect(X0-T/2,cy0,2*cw+T,cy1-cy0); ctx.rect(X0+T/2,cy0+T,2*cw-T,cy1-cy0-2*T); ctx.fillStyle='rgba(205,214,226,0.9)'; ctx.fill('evenodd'); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke();
+    ctx.strokeStyle='rgba(19,42,68,0.22)'; ctx.lineWidth=1; for(let k=1;k<4;k++){ ctx.strokeRect(X0-T/2+k*T/4,cy0+k*T/4,2*cw+T-k*T/2,cy1-cy0-k*T/2); } ctx.restore();
+    const phiN=clamp((E.V/(E.Np*50))/(220/(100*50)),0,1.4), phiT=-Math.cos(th)*phiN, fs=Math.sign(phiT)||1;
+    fOff+=phiT*55*dt;
+    const fx0=X0, fx1=X1, fy0=cy0+T/2, fy1=cy1-T/2, per=2*(fx1-fx0)+2*(fy1-fy0);
+    ctx.save(); ctx.strokeStyle=COL.red; ctx.globalAlpha=clamp(Math.abs(phiT)*0.9+0.08,0,1); ctx.lineWidth=2+3*Math.abs(phiT); ctx.setLineDash([12,9]); ctx.lineDashOffset=-fOff; ctx.strokeRect(fx0,fy0,fx1-fx0,fy1-fy0); ctx.restore();
+    ctx.save(); ctx.globalAlpha=clamp(Math.abs(phiT)*1.2,0,1); const hs=7+9*Math.abs(phiT);
+    arrowHead(ctx,cx,fy0,fs>0?0:Math.PI,COL.red,hs); arrowHead(ctx,cx,fy1,fs>0?Math.PI:0,COL.red,hs); arrowHead(ctx,fx1,(fy0+fy1)/2,fs>0?Math.PI/2:-Math.PI/2,COL.red,hs); arrowHead(ctx,fx0,(fy0+fy1)/2,fs>0?-Math.PI/2:Math.PI/2,COL.red,hs); ctx.restore();
+    textAt(ctx,'flux Φ',cx,cy0+T+26,{align:'center',size:12,color:COL.red});
+    // circuits
+    const ctop=cy0+T*1.4, cbot=cy1-T*1.4, rxl=T/2+8;
+    const pcx=X0, scx=X1;
+    const lpP=mkLoop(w*0.09,ctop,pcx-rxl,cbot), lpS=mkLoop(scx+rxl,ctop,w*0.91,cbot);
+    drawWire(ctx,lpP); drawWire(ctx,lpS);
+    const AP=8+30*Math.pow(clamp(Ip/22,0,1),0.6), AS=8+30*Math.pow(clamp(Is/22,0,1),0.6);
+    drawDots(ctx,lpP,-AP*Math.cos(th),16); drawDots(ctx,lpS,-AS*Math.cos(th),16);
+    const nP=Math.round(clamp(E.Np/25,2,16)), nS=Math.round(clamp(E.Ns/25,1,16));
+    const coilV=(x,n,col)=>{ const y0=ctop, y1=cbot, p=(y1-y0)/n; ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=3;
+      for(let i=0;i<n;i++){ ctx.beginPath(); ctx.ellipse(x,y0+p*(i+0.5),rxl,Math.min(7,p*0.45),0,0,TAU); ctx.stroke(); } ctx.restore(); };
+    coilV(pcx,nP,COL.yellow); coilV(scx,nS,COL.green);
+    drawSource(ctx,lpP.x0,(ctop+cbot)/2,Math.min(26,Hs*0.07),0,th);
+    const bm=1-Math.exp(-Vs*Is/700);
+    drawBulb(ctx,lpS.x1,(ctop+cbot)/2,Math.min(Hs*0.12,40),bm,t,4,true);
+    textAt(ctx,'Np = '+fmt(val('Np'),0),pcx,cy1+22,{align:'center',size:13,color:COL.yellow});
+    textAt(ctx,'Ns = '+fmt(val('Ns'),0),scx,cy1+22,{align:'center',size:13,color:COL.green});
+    textAt(ctx,fmt(E.V,0)+' V',lpP.x0+30,ctop-8,{size:12,color:COL.yellow}); textAt(ctx,fmt(Vs,0)+' V',lpS.x1-30,ctop-8,{align:'right',size:12,color:COL.green});
+    drawScope(ctx,sc,t,12,Hs+22,w-24,h-Hs-34,[{i:1,color:COL.yellow,label:'vp (primary)'},{i:2,color:COL.green,label:'vs (secondary)'}]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   ROUTER
+   ===================================================================== */
+activities.push(
+  {num:'7.2',   title:'AC through a Resistor',  desc:'Current follows voltage · heating is the same for AC and DC', build:buildResistor},
+  {num:'7.3',   title:'Rotating Phasors',       desc:'A spinning arrow draws the sine wave', build:buildPhasors},
+  {num:'7.4',   title:'Inductor',               desc:'Push an iron core in · the bulb dims', build:buildInductor},
+  {num:'7.5',   title:'Capacitor',              desc:'Plates charge and discharge · DC is blocked', build:buildCapacitor},
+  {num:'7.6',   title:'Series LCR Circuit',     desc:'Phasors add at angles · find Z and φ', build:buildLCR},
+  {num:'7.6.2', title:'Resonance',              desc:'Tune the frequency · current peaks at f₀', build:buildResonance},
+  {num:'7.7',   title:'Power Factor',           desc:'Power used vs power sent back', build:buildPower},
+  {num:'7.8',   title:'Transformer',            desc:'Turns ratio sets the output voltage', build:buildTransformer}
+);
+let currentIndex = 0;
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{ const b=document.createElement('button'); b.className='nav-item'+(i===currentIndex?' active':'');
+    b.innerHTML=`<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`; b.onclick=()=>{currentIndex=i; render();}; nav.appendChild(b); });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num; document.getElementById('panelTitle').textContent=a.title; document.getElementById('panelDesc').textContent=a.desc||'';
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

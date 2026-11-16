@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 5 — Magnetism and Matter | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.chip-btn.small{font-size:11px;padding:5px 9px;}
+.toggle-btn.red{background:var(--f-red);border-color:var(--f-red);color:#fff;}
+.toggle-btn.yellow{background:var(--f-yellow);border-color:var(--f-yellow);color:#fff;}
+.status{font-size:var(--fs-sm);font-weight:700;padding:7px 10px;border-radius:8px;text-align:center;margin-top:0;}
+.status.ok{background:#e4f7ec;color:#1f6b3d;} .status.bad{background:#fdece7;color:#a4331c;} .status.warn{background:#fdf4dc;color:#8a6410;} .status.info{background:#e3ecf7;color:#1a3a5c;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🧲</div>
+    <div>
+      <div class="chip">Grade 12 · Part 1 · Ch 5</div>
+      <h1>Magnetism and Matter</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Field B · South</span>
+      <span><i style="background:var(--f-green)"></i>Current · Magnetisation · Force</span>
+      <span><i style="background:var(--f-red)"></i>North · Torque · Heat</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHAPTER-5 HELPERS — UI builders, magnets, compass, field lines
+   --------------------------------------------------------------------- */
+const MU0 = 4e-7*Math.PI;
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function sci(x,d){ d=d===undefined?2:d; if(!isFinite(x)) return '—'; if(x===0) return '0'; const a=Math.abs(x);
+  if(a>=0.01 && a<10000) return fmt(x, a<1?3:(a<100?2:0));
+  const e=Math.floor(Math.log10(a)), m=x/Math.pow(10,e); const sup='⁰¹²³⁴⁵⁶⁷⁸⁹';
+  const es=String(Math.abs(e)).split('').map(c=>sup[+c]).join(''); return fmt(m,d)+'×10'+(e<0?'⁻':'')+es; }
+
+/* ---- control builders (HTML strings) ---- */
+function rangeCtl(id,label,min,max,step,val,hint){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}">${hint?`<div class="hint">${hint}</div>`:''}</div>`; }
+function btnRow(items){
+  return `<div class="toggle-group" style="margin-top:0">`+items.map(b=>`<button class="toggle-btn ${b.cls||''}" id="${b.id}" style="padding:9px 6px">${b.txt}</button>`).join('')+`</div>`; }
+function chipGroup(label,items){
+  return `<div class="control-group"><label>${label}</label><div class="toggle-group">`+items.map(b=>`<button class="toggle-btn small${b.active?' active':''}" id="${b.id}">${b.txt}</button>`).join('')+`</div></div>`; }
+function cardsHtml(items){
+  return `<div class="control-group"><div class="result-cards">`+items.map(c=>`<div class="rcard${c[4]?' wide':''}"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}" style="${c[3]?'color:'+c[3]:''}">${c[2]}</div></div>`).join('')+`</div></div>`; }
+function setStatus(el,cls,txt){ el.className='status '+cls; el.textContent=txt; }
+/* returns a function that refreshes slider read-outs: map id -> (value)=>text */
+function bindVals(wrap,map){ return ()=>{ for(const id in map){ const el=wrap.querySelector('#'+id), v=wrap.querySelector('#'+id+'V'); if(el&&v) v.textContent=map[id](+el.value); } }; }
+
+/* ---- drawing ---- */
+function drawBar(ctx,cx,cy,hl,hw,ang,o){
+  o=o||{}; const s=o.split===undefined?0.5:o.split, L=2*hl;
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(ang||0);
+  if(o.plain){ ctx.fillStyle='#fff'; ctx.fillRect(-hl,-hw,L,2*hw); }
+  else { ctx.fillStyle='#e6f1fc'; ctx.fillRect(-hl,-hw,L*s,2*hw); ctx.fillStyle='#fde9e5'; ctx.fillRect(-hl+L*s,-hw,L*(1-s),2*hw); }
+  ctx.strokeStyle=COL.ink; ctx.lineWidth=o.lw||2.4; ctx.lineJoin='round'; ctx.strokeRect(-hl,-hw,L,2*hw);
+  if(!o.plain && s>0.02 && s<0.98){ ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(-hl+L*s,-hw); ctx.lineTo(-hl+L*s,hw); ctx.stroke(); }
+  if(o.labels!==false && !o.plain){
+    const fs=clamp(hw*1.15,9,24);
+    for(const [lab,px,col,ok] of [['S',-hl+L*s/2,COL.blue,s>0.2],['N',-hl+L*(s+(1-s)/2),COL.red,s<0.8]]){ if(!ok) continue;
+      ctx.save(); ctx.translate(px,0); ctx.rotate(-(ang||0)); ctx.font='700 '+fs+'px Poppins, sans-serif'; ctx.fillStyle=col; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(lab,0,1); ctx.restore(); }
+  }
+  ctx.restore();
+}
+/* magnetic compass: th = screen angle of the red (north) tip */
+function drawCompass(ctx,x,y,R,th,label){
+  circ(ctx,x,y,R,COL.ink,'#fff',2.4); circ(ctx,x,y,R*0.84,COL.mid,null,1);
+  for(let i=0;i<4;i++){ const a=i*Math.PI/2; line(ctx,x+Math.cos(a)*R*0.84,y+Math.sin(a)*R*0.84,x+Math.cos(a)*R*0.68,y+Math.sin(a)*R*0.68,COL.mid,1.4); }
+  ctx.save(); ctx.translate(x,y); ctx.rotate(th); ctx.lineJoin='round'; ctx.lineWidth=1.6; ctx.strokeStyle=COL.ink;
+  ctx.beginPath(); ctx.moveTo(R*0.78,0); ctx.lineTo(0,-R*0.15); ctx.lineTo(0,R*0.15); ctx.closePath(); ctx.fillStyle=COL.red; ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-R*0.78,0); ctx.lineTo(0,-R*0.15); ctx.lineTo(0,R*0.15); ctx.closePath(); ctx.fillStyle=COL.blue; ctx.fill(); ctx.stroke();
+  ctx.restore(); circ(ctx,x,y,R*0.07,COL.ink,'#fff',1.4);
+  if(label) textAt(ctx,label,x,y+R+15,{align:'center',size:11,weight:700,color:COL.muted});
+}
+/* small dipole arrow (atom): head = north */
+function dipArrow(ctx,x,y,a,len,col,lwd){
+  const dx=Math.cos(a)*len/2, dy=Math.sin(a)*len/2;
+  line(ctx,x-dx,y-dy,x+dx,y+dy,col||COL.green,lwd||2); arrowHead(ctx,x+dx,y+dy,a,col||COL.green,Math.max(4,len*0.38));
+}
+/* stroke a polyline, with direction arrows at given fractions */
+function pathLine(ctx,pts,col,wd,dashOff,arrows){
+  if(pts.length<2) return;
+  const trace=()=>{ ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]); ctx.stroke(); };
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dashOff!==null && dashOff!==undefined){ ctx.globalAlpha*=0.55; trace(); ctx.globalAlpha/=0.55; ctx.setLineDash([0.1,17]); ctx.lineDashOffset=-dashOff; ctx.lineWidth=wd*2.1; }
+  trace(); ctx.restore();
+  if(arrows) for(const f of arrows){ const i=clamp(Math.floor(f*(pts.length-1)),1,pts.length-1), a=pts[i-1], b=pts[i];
+    arrowHead(ctx,b[0],b[1],Math.atan2(b[1]-a[1],b[0]-a[0]),col,Math.max(6,wd*3.2)); }
+}
+
+/* ---- pole-model magnet field: B = Σ q (r − r_pole)/|r − r_pole|³ ---- */
+function bPoles(poles,x,y){ let bx=0,by=0;
+  for(let i=0;i<poles.length;i++){ const p=poles[i], dx=x-p.x, dy=y-p.y, d2=dx*dx+dy*dy+1e-9, inv=p.q/(d2*Math.sqrt(d2)); bx+=dx*inv; by+=dy*inv; }
+  return [bx,by]; }
+/* follow B from (x0,y0). ends when close to a negative pole ('pole') or far away ('far') */
+function traceField(poles,x0,y0,rho,far,hmax,maxStep){
+  const pts=[[x0,y0]]; let x=x0,y=y0, end='far';
+  for(let i=0;i<maxStep;i++){
+    let dmin=1e9; for(let k=0;k<poles.length;k++){ const d=Math.hypot(x-poles[k].x,y-poles[k].y); if(poles[k].q<0 && d<rho){ pts.push([poles[k].x,poles[k].y]); return {pts,end:'pole'}; } if(d<dmin) dmin=d; }
+    const h=Math.min(hmax,Math.max(hmax*0.25,0.2*dmin));
+    let [bx,by]=bPoles(poles,x,y); let n=Math.hypot(bx,by); if(n<1e-12) break; bx/=n; by/=n;
+    let [cx,cy]=bPoles(poles,x+bx*h/2,y+by*h/2); n=Math.hypot(cx,cy); if(n<1e-12) break;
+    x+=cx/n*h; y+=cy/n*h; pts.push([x,y]);
+    if(Math.hypot(x,y)>far) break;
+  }
+  return {pts,end};
+}
+/* normalised bar magnet: N at (+1,0), S at (−1,0). nSide lines per side, equal "flux" per line */
+const _dipCache={};
+function dipoleLines(nSide){
+  if(_dipCache[nSide]) return _dipCache[nSide];
+  const poles=[{x:1,y:0,q:1},{x:-1,y:0,q:-1}], rho=0.12, lines=[];
+  const cmin=Math.cos(Math.PI-0.3), cmax=Math.cos(0.3);
+  for(const side of [1,-1]) for(let k=0;k<nSide;k++){
+    const rank=(k+0.5)/nSide, c=cmax-rank*(cmax-cmin), psi=Math.acos(c);
+    const r=traceField(poles,1+rho*1.05*Math.cos(psi),side*rho*1.05*Math.sin(psi),rho,30,0.07,4000);
+    if(r.end!=='pole') continue;
+    const pts=[[1,0]].concat(r.pts); lines.push({pts,side,rank});
+  }
+  return _dipCache[nSide]=lines;
+}
+/* inside the magnet the lines run S -> N */
+function interiorPts(side,rank,n){ const out=[], yk=side*(0.05+0.17*(1-rank)); n=n||16;
+  for(let i=0;i<=n;i++){ const u=-1+2*i/n; out.push([u,yk*(1-u*u)]); } return out; }
+function mapPts(pts,cx,cy,sc,a){ const c=Math.cos(a||0)*sc, s=Math.sin(a||0)*sc; const o=new Array(pts.length);
+  for(let i=0;i<pts.length;i++){ const p=pts[i]; o[i]=[cx+c*p[0]-s*p[1], cy+s*p[0]+c*p[1]]; } return o; }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   5.1 IRON FILINGS AND FIELD LINES  (Section 5.2, Fig. 5.1 – 5.2)
+   Each filing is a tiny needle: torque = m×B, so it rotates (spring +
+   damper) until it lies along the local field. Field of a bar magnet is
+   modelled with two poles, B = Σ ±q r̂ / r²; a finite solenoid gives the
+   same pattern, which is the point of the figure.
+   ===================================================================== */
+function drawSolenoid(ctx,cx,cy,hl,hw,t,cur,nW,labels){
+  ctx.save(); ctx.translate(cx,cy);
+  rect(ctx,-hl,-hw,2*hl,2*hw,COL.ink,'#fff',2.4);
+  const sl=hw*0.75, step=2*hl/nW, on=Math.abs(cur)>0.02;
+  for(let i=0;i<nW;i++){
+    const x0=-hl+step*(i+0.5)-sl/2, x1=x0+sl;
+    line(ctx,x0,-hw,x1,hw,COL.green,2.2);
+    if(on){ let f=(t*0.9*Math.min(2.5,Math.abs(cur))+i*0.37)%1; if(cur<0) f=1-f; circ(ctx,x0+(x1-x0)*f,-hw+2*hw*f,Math.max(2,hw*0.09),COL.green,'#fff',1.6); }
+  }
+  // leads + battery
+  const by=hw+Math.max(22,hw*0.9);
+  line(ctx,-hl,hw,-hl,by,COL.ink,2); line(ctx,hl,hw,hl,by,COL.ink,2); line(ctx,-hl,by,-8,by,COL.ink,2); line(ctx,8,by,hl,by,COL.ink,2);
+  line(ctx,-8,by-9,-8,by+9,COL.ink,2.6); line(ctx,8,by-5,8,by+5,COL.ink,4.5);
+  if(labels!==false){
+    const nr=cur>=0;
+    textAt(ctx,nr?'S':'N',-hl-12,5,{align:'right',size:15,weight:700,color:nr?COL.blue:COL.red});
+    textAt(ctx,nr?'N':'S',hl+12,5,{size:15,weight:700,color:nr?COL.red:COL.blue});
+  }
+  ctx.restore();
+}
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('st','Magnet strength',1,10,0.5,5) +
+    chipGroup('Source of the field',[{id:'mM',txt:'Bar magnet',active:1},{id:'mS',txt:'Current solenoid'}]) +
+    btnRow([{id:'spr',txt:'Sprinkle filings',cls:'yellow'},{id:'tap',txt:'Tap the sheet'}]) +
+    chipGroup('Field lines',[{id:'lOn',txt:'Show',active:1},{id:'lOff',txt:'Hide'}]) +
+    rangeCtl('cp','Compass position',0,360,1,50,'Slides round the magnet') +
+    cardsHtml([['r1','Field at compass','—',COL.blue],['r2','Needle points','—',COL.red],['r3','Filings aligned','—',COL.green],['r4','Field lines','closed loops']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{st:v=>fmt(v,1),cp:v=>v+'°'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  let mode='M', showLines=true, t=0, fil=[], fkey='', sprinkleNow=true;
+  toggleWire([$('#mM'),$('#mS')],b=>{ mode=b.id==='mM'?'M':'S'; });
+  toggleWire([$('#lOn'),$('#lOff')],b=>{ showLines=b.id==='lOn'; });
+  $('#spr').onclick=()=>{ sprinkleNow=true; };
+  $('#tap').onclick=()=>{ fil.forEach(p=>{ if(p.oy===0){ p.vy=-(70+Math.random()*190); p.oy=-0.01; p.om+=(Math.random()-0.5)*46; } }); };
+  const cmp={x:0,v:0}, POLES=[{x:1,y:0,q:1},{x:-1,y:0,q:-1}];
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const key=w+'x'+h;
+    if(key!==fkey){ fkey=key; fil=[]; const gs=clamp(Math.sqrt(w*h/1150),17,28);
+      for(let y=gs/2;y<h;y+=gs) for(let x=gs/2;x<w;x+=gs) fil.push({x:x+(Math.random()-0.5)*gs*0.6,y:y+(Math.random()-0.5)*gs*0.6,th:Math.random()*Math.PI,om:0,oy:0,vy:0,delay:0}); sprinkleNow=true; }
+    if(sprinkleNow){ sprinkleNow=false; fil.forEach(p=>{ p.oy=-(h+60+Math.random()*220); p.vy=0; p.th=Math.random()*Math.PI; p.om=(Math.random()-0.5)*12; p.delay=Math.random()*0.9; }); }
+    const S=+$('#st').value, cx=w/2, cy=h*0.48, hl=Math.min(w*0.15,h*0.2), hw=hl*0.2;
+    // --- filings: gravity, bounce, then torque toward the local field ---
+    let al=0, na=0;
+    ctx.save(); ctx.strokeStyle='rgba(38,54,76,0.82)'; ctx.lineWidth=1.5; ctx.lineCap='round'; ctx.beginPath();
+    for(let i=0;i<fil.length;i++){ const p=fil[i];
+      if(p.delay>0){ p.delay-=dt; continue; }
+      if(p.oy<0 || p.vy!==0){ p.vy+=1500*dt; p.oy+=p.vy*dt; p.th+=p.om*dt; p.om*=Math.exp(-0.8*dt);
+        if(p.oy>=0){ p.oy=0; if(p.vy>170){ p.vy=-p.vy*0.28; p.oy=-0.01; } else p.vy=0; } }
+      else {
+        const nx=(p.x-cx)/hl, ny=(p.y-cy)/hl, B=bPoles(POLES,nx,ny), mag=Math.hypot(B[0],B[1]), fa=clamp(S*0.55*mag,0,7);
+        const d=p.th-Math.atan2(B[1],B[0]);
+        p.om+=(-60*fa*Math.sin(2*d)-(8+3*fa)*p.om)*dt; p.th+=p.om*dt;
+        if(i%3===0){ al+=0.5+0.5*Math.cos(2*d); na++; }
+      }
+      const c=Math.cos(p.th)*5.5, s=Math.sin(p.th)*5.5, y=p.y+p.oy;
+      if(y<-10) continue;
+      ctx.moveTo(p.x-c,y-s); ctx.lineTo(p.x+c,y+s);
+    }
+    ctx.stroke(); ctx.restore();
+    // --- field lines ---
+    if(showLines){ dipoleLines(7).forEach(L=>{ pathLine(ctx,mapPts(L.pts,cx,cy,hl,0),COL.blue,1.9,t*26,[0.28,0.55,0.8]); }); }
+    // --- the source ---
+    if(mode==='M') drawBar(ctx,cx,cy,hl,hw,0,{});
+    else drawSolenoid(ctx,cx,cy,hl,hw,t,1,18,true);
+    // --- compass on its own track ---
+    const bet=+$('#cp').value*Math.PI/180, rx=Math.min(hl*2.15,w/2-40), ry=Math.min(hl*1.55,h*0.46-26), R=clamp(hl*0.22,15,26);
+    const kx=cx+rx*Math.cos(bet), ky=cy+ry*Math.sin(bet);
+    const Bc=bPoles(POLES,(kx-cx)/hl,(ky-cy)/hl), mc=Math.hypot(Bc[0],Bc[1]), phi=Math.atan2(Bc[1],Bc[0]);
+    cmp.v+=(-95*clamp(0.3+S*0.2*mc,0.3,5)*Math.sin(cmp.x-phi)-5.2*cmp.v)*dt; cmp.x+=cmp.v*dt;
+    ctx.save(); ctx.globalAlpha=0.35; ctx.setLineDash([4,6]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    drawCompass(ctx,kx,ky,R,cmp.x,'');
+    vec(ctx,kx,ky,kx+Math.cos(phi)*R*1.7,ky+Math.sin(phi)*R*1.7,COL.blue,2.2);
+    textAt(ctx,'B',kx+Math.cos(phi)*R*2.0,ky+Math.sin(phi)*R*2.0+4,{align:'center',size:12,weight:700,color:COL.blue});
+    $('#r1').textContent=fmt(S*mc*0.9,2)+' mT'; $('#r2').textContent=fmt((((-cmp.x*180/Math.PI)%360)+360)%360,0)+'°';
+    $('#r3').textContent=na?fmt(100*al/na,0)+' %':'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.2 BAR MAGNET AS AN EQUIVALENT SOLENOID  (Section 5.2.2, Eq. 5.1, 5.5)
+   m_solenoid = N·I·A  ·  far field B = (μ0/4π)(m/r³)√(1+3cos²φ)
+   Textbook check (Ex. 5.7): m = 0.48 J/T, r = 10 cm → axis 96 µT, equator 48 µT.
+   Ex. 5.3: N = 800, A = 2.5×10⁻⁴ m², I = 3 A → m = 0.6 J/T.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('mm','Bar-magnet moment',0.1,1,0.02,0.48) +
+    rangeCtl('ii','Solenoid current',0,5,0.1,1.2,'800 turns · area 2.5×10⁻⁴ m²') +
+    btnRow([{id:'match',txt:'Match solenoid to magnet',cls:'yellow'},{id:'rev',txt:'Reverse current'}]) +
+    rangeCtl('rr','Compass distance',9,22,0.5,10) +
+    rangeCtl('ph','Compass angle from axis',0,90,1,0) +
+    cardsHtml([['r1','B · bar magnet','—',COL.blue],['r2','B · solenoid','—',COL.blue],['r3','m · magnet','—',COL.red],['r4','m · solenoid','—',COL.green]]) +
+    '<div class="status info" id="stat">—</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{mm:v=>fmt(v,2)+' J/T',ii:v=>fmt(v,1)+' A',rr:v=>fmt(v,1)+' cm',ph:v=>v+'°'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const NT=800, AR=2.5e-4;
+  let t=0, dir=1, matching=false;
+  const Iact={x:1.2,v:0}, cm=[{x:0,v:0},{x:0,v:0}], POLES=[{x:1,y:0,q:1},{x:-1,y:0,q:-1}];
+  $('#match').onclick=()=>{ matching=true; };
+  $('#rev').onclick=()=>{ dir=-dir; };
+  animLoop(dt=>{
+    t+=dt;
+    if(matching){ const tgt=+$('#mm').value/(NT*AR), el=$('#ii'); const nv=approach(+el.value,Math.min(5,tgt),5,dt); el.value=nv; vals(); if(Math.abs(nv-Math.min(5,tgt))<0.004){ el.value=Math.min(5,tgt); matching=false; vals(); } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const mM=+$('#mm').value, Iset=+$('#ii').value*dir, rcm=+$('#rr').value, phd=+$('#ph').value, ph=phd*Math.PI/180;
+    springTo(Iact,Iset,40,9,dt);
+    const mS=NT*Iact.x*AR;
+    const pxcm=Math.min(w*0.25*0.88/22,(h*0.5-40)/22), hlp=4.5*pxcm, hwp=hlp*0.26;
+    const cy=h*0.53, cxs=[w*0.25,w*0.75], ms=[mM,mS];
+    const rpx=rcm*pxcm;
+    for(let k=0;k<2;k++){
+      const cx=cxs[k], m=ms[k];
+      ctx.save(); ctx.beginPath(); ctx.rect(cx-w*0.25+4,6,w*0.5-8,h-12); ctx.clip();
+      const sgn=m>=0?1:-1; // field lines fade with |m|
+      ctx.globalAlpha=clamp(Math.abs(m)/0.5,0.15,0.75);
+      dipoleLines(4).forEach(L=>pathLine(ctx,mapPts(L.pts,cx,cy,hlp*1.0,sgn>0?0:Math.PI),COL.blue,1.6,t*22,[0.3,0.6]));
+      ctx.globalAlpha=1;
+      if(k===0) drawBar(ctx,cx,cy,hlp,hwp,0,{}); else drawSolenoid(ctx,cx,cy,hlp,hwp,t,Iact.x,12,true);
+      // compass on the same relative spot
+      const kx=cx+rpx*Math.cos(ph), ky=cy-rpx*Math.sin(ph);
+      const B=bPoles([{x:cx+hlp,y:cy,q:m},{x:cx-hlp,y:cy,q:-m}], kx, ky);
+      const phi=Math.atan2(B[1],B[0]), mag=Math.hypot(B[0],B[1]);
+      const c=cm[k]; c.v+=(-70*Math.sin(c.x-phi)*clamp(Math.abs(m)/0.3,0.25,3)-4.8*c.v)*dt; c.x+=c.v*dt;
+      line(ctx,cx,cy,kx,ky,COL.yellow,2,[5,5]);
+      drawCompass(ctx,kx,ky,clamp(hlp*0.45,14,22),c.x,'');
+      vec(ctx,kx,ky,kx+Math.cos(phi)*30,ky+Math.sin(phi)*30,COL.blue,2.2);
+      ctx.restore();
+      textAt(ctx,k?'Current solenoid':'Bar magnet',cx,26,{align:'center',size:14,weight:700,color:COL.ink});
+    }
+    line(ctx,w/2,14,w/2,h-14,'#dbe4f0',1.5);
+    const Bf=m=>MU0/(4*Math.PI)*m/Math.pow(rcm/100,3)*Math.sqrt(1+3*Math.cos(ph)*Math.cos(ph))*1e6;
+    const B1=Bf(mM), B2=Bf(mS);
+    $('#r1').textContent=fmt(B1,1)+' µT'; $('#r2').textContent=fmt(B2,1)+' µT'; $('#r3').textContent=fmt(mM,2)+' J/T'; $('#r4').textContent=fmt(mS,2)+' J/T';
+    const same=Math.abs(B1-B2)<0.03*Math.max(B1,0.1);
+    setStatus($('#stat'),same?'ok':'info',same?'Same field, same compass reading ✓':(Math.abs(mS)<0.02?'Switch the current on':'Different moments — tune I or press Match'));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3 CUT THE MAGNET  (Section 5.1 (iv), Example 5.1 (a), Section 5.2.2)
+   Pole strength ∝ cross-section, moment m = q·l.  Cut across → same q,
+   half l → m/2.  Cut along → half q, same l → m/2.  Poles never separate.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    btnRow([{id:'cAcross',txt:'✂ Cut across',cls:'yellow'},{id:'cAlong',txt:'✂ Cut along'}]) +
+    btnRow([{id:'reset',txt:'↺ Whole magnet'}]) +
+    rangeCtl('gap','Pull the pieces apart',0,1,0.01,0) +
+    chipGroup('Look inside',[{id:'pk0',txt:'Plain',active:1},{id:'pk1',txt:'Circulating currents'}]) +
+    cardsHtml([['r1','Pieces','1'],['r2','Moment of each','m',COL.green],['r3','Poles on each piece','N + S',COL.red],['r4','Lone N or S found','None',COL.blue]]) +
+    '<div class="status info" id="stat">Every piece is a complete magnet</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{gap:v=>fmt(v*100,0)+' %'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const START=()=>[{x0:-1,x1:1,y0:-0.3,y1:0.3,s:0.5}];
+  let pieces=START(), cutAnim=null, peek=false, t=0;
+  const gp={x:0,v:0};
+  toggleWire([$('#pk0'),$('#pk1')],b=>{ peek=b.id==='pk1'; });
+  function startCut(type){ if(cutAnim||pieces.length*2>8) return; cutAnim={type,t:0}; if(+$('#gap').value<0.7){ $('#gap').value=0.7; vals(); } }
+  $('#cAcross').onclick=()=>startCut('across'); $('#cAlong').onclick=()=>startCut('along');
+  $('#reset').onclick=()=>{ pieces=START(); cutAnim=null; $('#gap').value=0; vals(); };
+  function applyCut(type){
+    const out=[]; pieces.forEach(p=>{
+      if(type==='across'){ const xm=(p.x0+p.x1)/2; out.push({x0:p.x0,x1:xm,y0:p.y0,y1:p.y1,s:clamp(2*p.s,0,1)},{x0:xm,x1:p.x1,y0:p.y0,y1:p.y1,s:clamp(2*p.s-1,0,1)}); }
+      else { const ym=(p.y0+p.y1)/2; out.push({x0:p.x0,x1:p.x1,y0:p.y0,y1:ym,s:p.s},{x0:p.x0,x1:p.x1,y0:ym,y1:p.y1,s:p.s}); } });
+    pieces=out;
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(cutAnim){ cutAnim.t+=dt; if(cutAnim.t>0.6){ applyCut(cutAnim.type); cutAnim=null; } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(gp,+$('#gap').value,38,9,dt);
+    const ox=w/2, oy=h*0.5, hlp=Math.min(w*0.19,h*0.27);
+    pieces.forEach(p=>{ p.s=approach(p.s,0.5,3.2,dt); });
+    const P=pieces.map(p=>{ const cxa=(p.x0+p.x1)/2, cya=(p.y0+p.y1)/2;
+      return {p, cx:ox+hlp*cxa*(1+gp.x*0.85), cy:oy+hlp*cya*(1+gp.x*3.6), hl:(p.x1-p.x0)/2*hlp, hw:(p.y1-p.y0)/2*hlp, q:(p.y1-p.y0)/0.6}; });
+    // field of all pieces
+    const poles=[]; P.forEach(o=>{ poles.push({x:o.cx+o.hl-ox,y:o.cy-oy,q:o.q},{x:o.cx-o.hl-ox,y:o.cy-oy,q:-o.q}); });
+    const rho=hlp*0.07;
+    P.forEach(o=>{ const n=Math.max(5,Math.round(10*o.q)); for(let k=0;k<n;k++){ const a=(k+0.5)/n*Math.PI*2;
+      const r=traceField(poles,o.cx+o.hl-ox+Math.cos(a)*rho*1.1,o.cy-oy+Math.sin(a)*rho*1.1,rho,hlp*3.2,hlp*0.05,600);
+      pathLine(ctx,r.pts.map(q=>[q[0]+ox,q[1]+oy]),COL.blue,1.5,t*22,[0.4,0.75]); } });
+    // pieces
+    P.forEach(o=>{
+      drawBar(ctx,o.cx,o.cy,o.hl,o.hw,0,{split:o.p.s,lw:2.2});
+      if(peek){
+        const nL=Math.max(2,Math.round(o.hl/Math.max(6,o.hw*0.5))), stp=2*o.hl/nL;
+        for(let i=0;i<nL;i++){ const lx=o.cx-o.hl+stp*(i+0.5), rx=Math.max(2.5,o.hw*0.16), ry=o.hw*0.82;
+          ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=1.8; ctx.beginPath(); ctx.ellipse(lx,o.cy,rx,ry,0,0,Math.PI*2); ctx.stroke(); ctx.restore();
+          const a=t*2.4+i*0.9; circ(ctx,lx+Math.cos(a)*rx,o.cy+Math.sin(a)*ry,2.4,COL.green,'#fff',1.4); }
+      }
+      // interior field lines run S → N
+      [-0.4,0.4].forEach(f=>{ const yy=o.cy+o.hw*f; pathLine(ctx,[[o.cx-o.hl+3,yy],[o.cx+o.hl-3,yy]],'rgba(47,143,224,0.6)',1.4,t*22,[0.5,0.95]); });
+    });
+    // knife lines
+    if(cutAnim){ const g=clamp(cutAnim.t/0.45,0,1);
+      P.forEach(o=>{ ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.setLineDash([8,5]);
+        ctx.beginPath(); if(cutAnim.type==='across'){ ctx.moveTo(o.cx,o.cy-o.hw-14); ctx.lineTo(o.cx,o.cy-o.hw-14+(2*o.hw+28)*g); } else { ctx.moveTo(o.cx-o.hl-14,o.cy); ctx.lineTo(o.cx-o.hl-14+(2*o.hl+28)*g,o.cy); }
+        ctx.stroke(); ctx.restore(); });
+    }
+    const n=pieces.length, frac=(pieces[0].x1-pieces[0].x0)*(pieces[0].y1-pieces[0].y0)/(2*0.6);
+    $('#r1').textContent=n; $('#r2').textContent=n===1?'m':'m / '+Math.round(1/frac);
+    $('#cAcross').disabled=$('#cAlong').disabled=(n*2>8)||!!cutAnim;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.4 GAUSS'S LAW FOR MAGNETISM  (Section 5.3, Eq. 5.6, Fig. 5.2)
+   Field lines are continuous closed loops, so every line that leaves a
+   closed surface also enters it:  ∮ B·dS = 0.  An electric dipole's lines
+   start on +q, so a surface round +q has a net outward flux = q/ε0.
+   Lines are counted exactly (crossings of the loop with the circle).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipGroup('Field of a …',[{id:'fM',txt:'Bar magnet · B',active:1},{id:'fE',txt:'Electric dipole · E'}]) +
+    rangeCtl('sx','Surface left / right',-2.2,2.2,0.05,1) +
+    rangeCtl('sy','Surface up / down',-1.6,1.6,0.05,0) +
+    rangeCtl('sr','Surface size',0.3,2,0.05,0.7) +
+    cardsHtml([['r1','Lines leaving','0',COL.red],['r2','Lines entering','0',COL.green],['r3','Net (out − in)','0',COL.blue],['r4','Encloses','—']]) +
+    '<div class="status info" id="stat">—</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{sx:v=>fmt(v,2),sy:v=>fmt(v,2),sr:v=>fmt(v,2)}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  let mag=true, t=0;
+  const X={x:1,v:0}, Y={x:0,v:0}, R={x:0.7,v:0};
+  toggleWire([$('#fM'),$('#fE')],b=>{ mag=b.id==='fM'; });
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(X,+$('#sx').value,60,11,dt); springTo(Y,+$('#sy').value,60,11,dt); springTo(R,+$('#sr').value,60,11,dt);
+    const cx=w/2, cy=h*0.5, hl=Math.min(w*0.17,h*0.22), hw=hl*0.2;
+    const sx=cx+X.x*hl, sy=cy+Y.x*hl, rr=Math.max(4,R.x*hl);
+    const L=dipoleLines(9), full=[];
+    L.forEach(l=>{ const ext=mapPts(l.pts,cx,cy,hl,0); full.push({ext,int:mag?mapPts(interiorPts(l.side,l.rank),cx,cy,hl,0):null}); });
+    full.forEach(f=>pathLine(ctx,f.ext,COL.blue,1.8,t*26,[0.3,0.62,0.85]));
+    if(mag) drawBar(ctx,cx,cy,hl,hw,0,{});
+    else { circ(ctx,cx+hl,cy,hl*0.11,COL.red,'#fde9e5',2.4); circ(ctx,cx-hl,cy,hl*0.11,COL.blue,'#e6f1fc',2.4);
+      textAt(ctx,'+',cx+hl,cy+5,{align:'center',size:16,weight:700,color:COL.red}); textAt(ctx,'−',cx-hl,cy+5,{align:'center',size:18,weight:700,color:COL.blue}); }
+    if(mag) full.forEach(f=>pathLine(ctx,f.int,COL.blue,1.5,t*26,[0.55]));
+    // the closed surface
+    ctx.save(); ctx.fillStyle='rgba(217,160,23,0.08)'; ctx.beginPath(); ctx.arc(sx,sy,rr,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.4; ctx.setLineDash([11,6]); ctx.lineDashOffset=-t*18; ctx.stroke(); ctx.restore();
+    // count crossings
+    let nOut=0,nIn=0; const marks=[];
+    full.forEach(f=>{ const pts=f.int?f.ext.concat(f.int):f.ext;
+      for(let i=1;i<pts.length;i++){ const a=pts[i-1], b=pts[i], da=Math.hypot(a[0]-sx,a[1]-sy), db=Math.hypot(b[0]-sx,b[1]-sy), ia=da<rr, ib=db<rr;
+        if(ia!==ib){ const u=(rr-da)/((db-da)||1e-9); marks.push({x:lerp(a[0],b[0],u),y:lerp(a[1],b[1],u),out:ia}); if(ia) nOut++; else nIn++; } } });
+    marks.forEach(m=>{ circ(ctx,m.x,m.y,5.2,'#fff',m.out?COL.red:COL.green,2); });
+    const encN=Math.hypot(cx+hl-sx,cy-sy)<rr, encS=Math.hypot(cx-hl-sx,cy-sy)<rr;
+    textAt(ctx,'● leaves',w-110,24,{size:12,weight:700,color:COL.red}); textAt(ctx,'● enters',w-50,24,{size:12,weight:700,color:COL.green});
+    $('#r1').textContent=nOut; $('#r2').textContent=nIn; $('#r3').textContent=nOut-nIn;
+    $('#r4').textContent=encN&&encS?'both poles':encN?(mag?'N pole':'+ charge'):encS?(mag?'S pole':'− charge'):'nothing';
+    const net=nOut-nIn;
+    if(net===0) setStatus($('#stat'),'ok',mag?'Net flux = 0 — every line that leaves also enters':'Net flux = 0 — no net charge inside');
+    else setStatus($('#stat'),'warn','Net flux ≠ 0 — a source (+q) is inside');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.5 A MAGNETIC NEEDLE IN A UNIFORM FIELD  (Section 5.2.3, Eq. 5.2, 5.3)
+   τ = m B sinθ (restoring)      U = −m B cosθ
+   I·θ'' = −m B sinθ − c·θ'     small-angle period T = 2π√(I / mB)
+   Textbook check (Ex. 5.2): m = 0.32 J/T, B = 0.15 T → U = −0.048 J (stable, θ=0°), +0.048 J (unstable, 180°).
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('B','Field B',0.02,0.5,0.01,0.15) +
+    rangeCtl('m','Magnetic moment m',0.05,0.6,0.01,0.32) +
+    rangeCtl('th0','Starting angle θ',0,180,1,60) +
+    chipGroup('Friction',[{id:'d0',txt:'None'},{id:'d1',txt:'Light',active:1},{id:'d2',txt:'Heavy'}]) +
+    btnRow([{id:'rel',txt:'▶ Release',cls:'play'},{id:'hold',txt:'⏸ Hold at θ'}]) +
+    cardsHtml([['r1','Torque τ','—',COL.red],['r2','Energy U','—',COL.blue],['r3','Period T (small θ)','—'],['r4','Period measured','—',COL.green]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{B:v=>fmt(v,2)+' T',m:v=>fmt(v,2)+' J/T',th0:v=>v+'°'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const IN=0.004, CD=[0,0.003,0.04];
+  let fric=1, held=true, th=60*Math.PI/180, om=0, t=0, lastCross=null, Tm=null, prevW=0;
+  toggleWire([$('#d0'),$('#d1'),$('#d2')],b=>{ fric=+b.id[1]; });
+  $('#rel').onclick=()=>{ held=false; om=0; lastCross=null; Tm=null; };
+  $('#hold').onclick=()=>{ held=true; om=0; lastCross=null; Tm=null; };
+  animLoop(dt=>{
+    t+=dt;
+    const B=+$('#B').value, m=+$('#m').value, th0=+$('#th0').value*Math.PI/180, c=CD[fric];
+    if(held){ th=approach(th,th0,11,dt); om=0; }
+    else { const n=8, hh=dt/n; for(let i=0;i<n;i++){ const acc=(-m*B*Math.sin(th)-c*om)/IN; om+=acc*hh; th+=om*hh; } }
+    const thw=angDiff(th,0);
+    if(!held && prevW<0 && thw>=0 && om>0){ if(lastCross!==null) Tm=t-lastCross; lastCross=t; }
+    prevW=thw;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h*0.33, Ln=Math.min(w*0.19,h*0.21), hw=Ln*0.13;
+    // uniform field
+    const rows=3+Math.round((B-0.02)/0.48*7), y0=h*0.07, y1=h*0.6;
+    for(let i=0;i<rows;i++){ const y=rows===1?cy:lerp(y0,y1,i/(rows-1)); pathLine(ctx,[[w*0.05,y],[w*0.95,y]],'rgba(47,143,224,0.55)',1.7,t*(30+B*320),[0.28,0.62,0.97]); }
+    textAt(ctx,'B',w*0.95,y0-8,{align:'right',size:15,weight:700,color:COL.blue});
+    // stand + needle
+    ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx-11,cy+30); ctx.lineTo(cx+11,cy+30); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    line(ctx,cx-Ln*1.25,cy,cx+Ln*1.25,cy,COL.blue,1.2,[5,5]);
+    drawBar(ctx,cx,cy,Ln,hw,-th,{});
+    circ(ctx,cx,cy,4,COL.ink,'#fff',2);
+    // forces on the poles — equal and opposite, so no net force
+    const tx=cx+Ln*Math.cos(th), ty=cy-Ln*Math.sin(th), Fp=24+B*210;
+    vec(ctx,tx,ty,tx+Fp,ty,COL.green,3); vec(ctx,2*cx-tx,2*cy-ty,2*cx-tx-Fp,2*cy-ty,COL.green,3);
+    textAt(ctx,'F',tx+Fp+8,ty+4,{size:13,weight:700,color:COL.green}); textAt(ctx,'−F',2*cx-tx-Fp-8,2*cy-ty+4,{align:'right',size:13,weight:700,color:COL.green});
+    // θ arc and restoring torque
+    if(Math.abs(thw)>0.03){
+      ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(cx,cy,Ln*0.34,thw>0?-thw:0,thw>0?0:-thw); ctx.stroke(); ctx.restore();
+      textAt(ctx,'θ',cx+Ln*0.44*Math.cos(thw/2),cy-Ln*0.44*Math.sin(thw/2)+4,{align:'center',size:13,weight:700,color:COL.yellow});
+      const tq=Math.sin(thw)*m*B, wd=2+Math.min(9,Math.abs(tq)/0.05*3.2), rA=Ln*0.62, a0=-thw, a1=-thw*0.35;
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=wd; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(cx,cy,rA,Math.min(a0,a1),Math.max(a0,a1)); ctx.stroke(); ctx.restore();
+      arrowHead(ctx,cx+Math.cos(a1)*rA,cy+Math.sin(a1)*rA,a1+(thw>0?Math.PI/2:-Math.PI/2),COL.red,8+wd);
+      textAt(ctx,'τ',cx+Math.cos(a1*0.6)*rA*1.18,cy+Math.sin(a1*0.6)*rA*1.18+4,{align:'center',size:13,weight:700,color:COL.red});
+    }
+    // energy well: U(θ) = −mB cosθ, ball = the needle
+    const gx0=w*0.11, gx1=w*0.92, gy0=h*0.69, gy1=h*0.94, gm=(gy0+gy1)/2, sc=(gy1-gy0)/2/0.31;
+    const X=a=>lerp(gx0,gx1,(a+Math.PI)/(2*Math.PI)), Yy=u=>gm-u*sc;
+    line(ctx,gx0,gm,gx1,gm,COL.mid,1,[4,5]); line(ctx,X(0),gy0-6,X(0),gy1+4,COL.mid,1,[4,5]);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.8; ctx.beginPath();
+    for(let i=0;i<=120;i++){ const a=-Math.PI+i/120*2*Math.PI, u=-m*B*Math.cos(a); i?ctx.lineTo(X(a),Yy(u)):ctx.moveTo(X(a),Yy(u)); } ctx.stroke(); ctx.restore();
+    const U=-m*B*Math.cos(th), KE=0.5*IN*om*om, E=U+KE;
+    if(!held){ line(ctx,gx0,Yy(E),gx1,Yy(E),COL.green,1.6,[7,5]); if(KE>1e-5) line(ctx,X(thw),Yy(U),X(thw),Yy(E),COL.green,3); }
+    circ(ctx,X(thw),Yy(U),8,COL.red,'#fff',2.6);
+    circ(ctx,X(0),Yy(-m*B),4,COL.green,COL.green,1); textAt(ctx,'stable',X(0)+9,Yy(-m*B)+16,{size:11,weight:700,color:COL.green});
+    circ(ctx,X(Math.PI),Yy(m*B),4,COL.red,COL.red,1); textAt(ctx,'unstable',X(Math.PI)-8,Yy(m*B)-8,{align:'right',size:11,weight:700,color:COL.red});
+    circ(ctx,X(-Math.PI),Yy(m*B),4,COL.red,COL.red,1);
+    textAt(ctx,'U',gx0-10,gy0+4,{align:'right',size:13,weight:700,color:COL.blue});
+    ['−180°','0°','180°'].forEach((s,i)=>textAt(ctx,s,gx0+i*(gx1-gx0)/2,gy1+17,{align:'center',size:11,weight:600,color:COL.muted}));
+    textAt(ctx,'θ',gx1+10,gm+4,{size:13,weight:700,color:COL.muted});
+    $('#r1').textContent=fmt(m*B*Math.sin(thw),3)+' N m'; $('#r2').textContent=fmt(U,3)+' J';
+    $('#r3').textContent=fmt(2*Math.PI*Math.sqrt(IN/(m*B)),2)+' s'; $('#r4').textContent=Tm?fmt(Tm,2)+' s':'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.6 TWO DIPOLES — EQUILIBRIUM  (Section 5.2.4, Example 5.2, Eq. 5.4, 5.5)
+   P (fixed) makes  B_axis = (μ0/4π)·2m/r³,  B_equator = −(μ0/4π)·m/r³.
+   Q turns until m_Q ∥ B_P (stable).  Anti-parallel is an unstable balance.
+   Field is shown in units of B_E(r); U = −m_Q·B in units of m_Q·B_E.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipGroup('Put needle Q …',[{id:'pa',txt:'On axis · east'},{id:'pe',txt:'On equator · north',active:1},{id:'pw',txt:'On axis · west'}]) +
+    rangeCtl('ph','Position angle of Q',0,360,1,90) +
+    rangeCtl('rr','Distance r',2,3.4,0.05,2.6) +
+    rangeCtl('q0','Direction of Q',0,360,1,90) +
+    btnRow([{id:'rel',txt:'▶ Release Q',cls:'play'},{id:'flip',txt:'⇅ Flip Q'}]) +
+    cardsHtml([['r1','B at Q','—',COL.blue],['r2','Torque on Q','—',COL.red],['r3','Energy U','—',COL.blue],['r4','Axial : equatorial','2 : 1',COL.green]]) +
+    '<div class="status info" id="stat">—</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{ph:v=>v+'°',rr:v=>fmt(v,2)+' l',q0:v=>v+'°'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const ps=[$('#pa'),$('#pe'),$('#pw')];
+  toggleWire(ps,b=>{ $('#ph').value=b.id==='pa'?0:b.id==='pe'?90:180; vals(); held=true; });
+  let held=true, psi=Math.PI/2, om=0, t=0;
+  $('#rel').onclick=()=>{ if(held){ held=false; om=0; const B=Bat(); if(Math.abs(Math.sin(psi-B.phi))<0.02 && Math.cos(psi-B.phi)<0) psi+=0.03; $('#rel').textContent='⏸ Hold Q'; } else { held=true; $('#rel').textContent='▶ Release Q'; $('#q0').value=((Math.round(psi*180/Math.PI)%360)+360)%360; vals(); } };
+  $('#flip').onclick=()=>{ if(!held){ held=true; $('#rel').textContent='▶ Release Q'; } $('#q0').value=(Math.round(psi*180/Math.PI)+180+360*4)%360; vals(); };
+    function Bat(){ const ph=+$('#ph').value*Math.PI/180, c=Math.cos(ph), s=Math.sin(ph), Bx=3*c*c-1, By=3*c*s; return {Bx,By,mag:Math.hypot(Bx,By),phi:Math.atan2(By,Bx)}; }
+  animLoop(dt=>{
+    t+=dt;
+    const B=Bat(), r=+$('#rr').value, g=Math.pow(2.6/r,3);
+    if(held){ const tgt=+$('#q0').value*Math.PI/180; psi+=angDiff(tgt,psi)*(1-Math.exp(-10*dt)); om=0; }
+    else { const n=6,hh=dt/n; for(let i=0;i<n;i++){ om+=(-70*B.mag*g*Math.sin(psi-B.phi)-3.2*om)*hh; psi+=om*hh; } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const px=w*0.42, py=h*0.45, hlP=Math.min(w*0.095,h*0.12), hwP=hlP*0.2;
+    ctx.save(); ctx.globalAlpha=0.55; dipoleLines(8).forEach(L=>pathLine(ctx,mapPts(L.pts,px,py,hlP,0),COL.blue,1.4,t*20,[0.35,0.7])); ctx.restore();
+    drawBar(ctx,px,py,hlP,hwP,0,{});
+    textAt(ctx,'P',px,py-hwP-10,{align:'center',size:14,weight:700,color:COL.ink});
+    const ph=+$('#ph').value*Math.PI/180, qx=px+r*hlP*Math.cos(ph), qy=py-r*hlP*Math.sin(ph);
+    line(ctx,px,py,qx,qy,COL.yellow,1.6,[4,6]);
+    // B at Q (blue) and the torque arc
+    const bl=26+16*B.mag; vec(ctx,qx,qy,qx+Math.cos(-B.phi)*bl,qy+Math.sin(-B.phi)*bl,COL.blue,3);
+    textAt(ctx,'B',qx+Math.cos(-B.phi)*(bl+12),qy+Math.sin(-B.phi)*(bl+12)+4,{align:'center',size:13,weight:700,color:COL.blue});
+    const hq=hlP*0.42, hwq=hq*0.3, D=angDiff(psi,B.phi), tq=Math.sin(D)*B.mag*g;
+    if(Math.abs(Math.sin(D))>0.04){ const rA=hq*1.7, a0=-B.phi, a1=-psi; // screen angles (y flipped)
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2+Math.min(6,Math.abs(Math.sin(D))*B.mag*4); ctx.lineCap='round'; ctx.beginPath(); ctx.arc(qx,qy,rA,a1,a1+angDiff(a0,a1),angDiff(a0,a1)<0); ctx.stroke(); ctx.restore();
+      arrowHead(ctx,qx+Math.cos(a0)*rA,qy+Math.sin(a0)*rA,a0+(angDiff(a0,a1)>0?Math.PI/2:-Math.PI/2),COL.red,9); }
+    drawBar(ctx,qx,qy,hq,hwq,-psi,{lw:2});
+    textAt(ctx,'Q',qx,qy+hq*1.9+14,{align:'center',size:14,weight:700,color:COL.ink});
+    // energy plot U(Δ) = −|B| cosΔ
+    const gx0=w*0.71, gx1=w*0.96, gy0=h*0.68, gy1=h*0.92, gm=(gy0+gy1)/2, sc=(gy1-gy0)/2/2.2, X=a=>lerp(gx0,gx1,(a+Math.PI)/(2*Math.PI)), Yy=u=>gm-u*sc;
+    textAt(ctx,'Energy of Q',(gx0+gx1)/2,gy0-14,{align:'center',size:12,weight:700,color:COL.muted});
+    line(ctx,gx0,gm,gx1,gm,COL.mid,1,[4,5]); line(ctx,X(0),gy0-4,X(0),gy1+2,COL.mid,1,[4,5]);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.beginPath(); for(let i=0;i<=80;i++){ const a=-Math.PI+i/80*2*Math.PI; const u=-B.mag*Math.cos(a); i?ctx.lineTo(X(a),Yy(u)):ctx.moveTo(X(a),Yy(u)); } ctx.stroke(); ctx.restore();
+    circ(ctx,X(0),Yy(-B.mag),3.5,COL.green,COL.green,1); circ(ctx,X(Math.PI),Yy(B.mag),3.5,COL.red,COL.red,1); circ(ctx,X(-Math.PI),Yy(B.mag),3.5,COL.red,COL.red,1);
+    circ(ctx,X(D),Yy(-B.mag*Math.cos(D)),7,COL.red,'#fff',2.4);
+    // read-outs
+    const U=-B.mag*g*Math.cos(D)/g; // in units of m_Q·B_E(r)
+    $('#r1').textContent=fmt(B.mag,2)+' B_E'; $('#r2').textContent=fmt(Math.abs(Math.sin(D))*B.mag,2); $('#r3').textContent=fmt(U,2);
+    const torq=Math.abs(Math.sin(D))*B.mag;
+    if(torq<0.04) setStatus($('#stat'),Math.cos(D)>0?'ok':'bad',Math.cos(D)>0?'Stable equilibrium — m ∥ B':'Unstable equilibrium — m anti-parallel to B');
+    else setStatus($('#stat'),'warn',held?'Not in equilibrium — torque acts':'Turning … torque acts');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.7 SOLENOID WITH A MATERIAL CORE  (Section 5.4, Eq. 5.8 – 5.15, Example 5.5)
+   H = nI      M = χH = (μr − 1)H      B = μ0(H + M) = μ0 μr H      I_M = (μr − 1)I
+   Textbook check: μr = 400, n = 1000 /m, I = 2 A → H = 2×10³ A/m, B ≈ 1.0 T,
+   M ≈ 8×10⁵ A/m. (Textbook rounds B to 1 T and quotes I_M ≈ 794 A; exact (μr−1)I = 798 A.)
+   Iron saturates near M ≈ 1.7×10⁶ A/m — beyond that extra current adds only μ0H.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('n','Turns per metre n',200,2000,50,1000) +
+    rangeCtl('I','Current I',0,5,0.1,2) +
+    rangeCtl('mu','Core permeability μr',1,1000,1,400) +
+    btnRow([{id:'ex',txt:'Textbook example',cls:'yellow'},{id:'nc',txt:'Remove the core'}]) +
+    cardsHtml([['r1','H = nI','—',COL.yellow],['r2','M magnetisation','—',COL.green],['r3','B total','—',COL.blue],['r4','Magnetising current I_M','—',COL.red]]) +
+    '<div class="status info" id="stat">B = μ0 μr H</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{n:v=>v+' /m',I:v=>fmt(v,1)+' A',mu:v=>fmt(v,0)}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const MSAT=1.7e6;
+  let tw=null, t=0;
+  const Ia={x:2,v:0}, nA={x:1000}, muA={x:400}, bH={x:0,v:0}, bM={x:0,v:0}, bB={x:0,v:0};
+  const atoms=[]; { const R=rng(11); for(let i=0;i<48;i++) atoms.push({a:(R()-0.5)*2*Math.PI,ph:R()*6.28}); }
+  $('#ex').onclick=()=>{ tw={n:1000,I:2,mu:400}; };
+  $('#nc').onclick=()=>{ tw={mu:1}; };
+  animLoop(dt=>{
+    t+=dt;
+    if(tw){ let done=true; for(const k in tw){ const el=$('#'+k), nv=approach(+el.value,tw[k],6,dt); el.value=nv; if(Math.abs(nv-tw[k])>0.004*(k==='n'?1000:k==='mu'?400:2)) done=false; else el.value=tw[k]; } vals(); if(done) tw=null; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(Ia,+$('#I').value,45,9,dt); nA.x=approach(nA.x,+$('#n').value,10,dt); muA.x=approach(muA.x,+$('#mu').value,10,dt);
+    const H=nA.x*Ia.x, Mraw=(muA.x-1)*H, M=Math.min(Mraw,MSAT), Bt=MU0*(H+M), f=clamp(M/MSAT,0,1);
+    springTo(bH,clamp(H/10000,0,1),70,10,dt); springTo(bM,clamp(M/MSAT,0,1),70,10,dt); springTo(bB,clamp(Bt/3.5,0,1),70,10,dt);
+    const cx=w*0.36, cy=h*0.47, hl=w*0.3, hw=Math.min(h*0.15,w*0.1);
+    // return loops of B outside the coil
+    const nOut=clamp(Math.round(Bt*3),0,3), aOut=clamp(0.25+Bt*0.5,0,0.9);
+    for(let k=0;k<nOut;k++) for(const sg of [-1,1]){
+      const yy=cy+sg*hw*(0.2+k*0.1), top=cy+sg*hw*(sg<0?1.55+k*0.5:2.7+k*0.45), pts=[];
+      for(let i=0;i<=40;i++){ const u=i/40, b0=(1-u)*(1-u)*(1-u), b1=3*u*(1-u)*(1-u), b2=3*u*u*(1-u), b3=u*u*u;
+        pts.push([b0*(cx+hl)+b1*(cx+hl*1.5)+b2*(cx-hl*1.5)+b3*(cx-hl), b0*yy+b1*top+b2*top+b3*yy]); }
+      ctx.save(); ctx.globalAlpha=aOut*(1-k*0.18); pathLine(ctx,pts,COL.blue,1.6,t*(20+Bt*60),[0.5]); ctx.restore(); }
+    drawSolenoid(ctx,cx,cy,hl,hw,t,Ia.x,clamp(Math.round(nA.x/45),6,26),false);
+    // the core
+    const cw=hl*0.93, ch=hw*0.72;
+    ctx.save(); ctx.fillStyle=muA.x>1.5?'#eef2f8':'#ffffff'; ctx.fillRect(cx-cw,cy-ch,2*cw,2*ch); ctx.setLineDash(muA.x>1.5?[]:[5,5]); ctx.strokeStyle=muA.x>1.5?COL.mid:'#c2d1e5'; ctx.lineWidth=2; ctx.strokeRect(cx-cw,cy-ch,2*cw,2*ch); ctx.restore();
+        // atomic dipoles inside the core
+    if(muA.x>1.5){ let q=0; for(let r=0;r<3;r++) for(let c=0;c<16;c++,q++){ const a=atoms[q], x=cx-cw+(c+0.5)*(2*cw/16), y=cy-ch+(r+0.5)*(2*ch/3);
+      const ang=a.a*(1-f)+Math.sin(t*3+a.ph)*0.35*(1-f); dipArrow(ctx,x,y,ang,Math.min(2*cw/16,2*ch/3)*0.78,COL.green,2); } }
+    // B field through the core and out to the ends
+    const nl=clamp(Math.round(1+Bt*5),1,9);
+    for(let i=0;i<nl;i++){ const y=cy-ch*0.8+(2*ch*0.8)*(nl===1?0.5:i/(nl-1)); pathLine(ctx,[[cx-hl*1.0,y],[cx+hl*1.0,y]],'rgba(47,143,224,0.75)',1.9,t*(25+Bt*120),[0.3,0.65,0.97]); }
+    textAt(ctx,'n = '+fmt(nA.x,0)+' turns/m  ·  '+(muA.x>1.5?'core μr = '+fmt(muA.x,0):'air core'),cx,cy+hw+Math.max(22,hw*0.9)+34,{align:'center',size:12,weight:600,color:COL.muted});
+    // gauges: H (yellow), M (green), B (blue)
+    const gx=w*0.735, gw=w*0.05, gb=h*0.8, gh=h*0.56;
+    [['H',bH,COL.yellow,fmt(H,0)+' A/m'],['M',bM,COL.green,sci(M,2)+' A/m'],['B',bB,COL.blue,Bt.toPrecision(2)+' T']].forEach(([lab,s,col,txt],i)=>{
+      const x=gx+i*(gw*1.85);
+      rect(ctx,x,gb-gh,gw,gh,COL.mid,'#fff',1.6); ctx.save(); ctx.fillStyle=col; ctx.globalAlpha=0.85; const hh=gh*clamp(s.x,0,1.04); ctx.fillRect(x+1,gb-hh,gw-2,hh); ctx.restore();
+      textAt(ctx,lab,x+gw/2,gb+20,{align:'center',size:15,weight:700,color:col});
+ });
+    $('#r1').textContent=fmt(H,0)+' A/m'; $('#r2').textContent=sci(M,2)+' A/m'; $('#r3').textContent=Bt.toPrecision(2)+' T'; $('#r4').textContent=fmt(M/Math.max(nA.x,1),0)+' A';
+    if(Mraw>MSAT) setStatus($('#stat'),'warn','Core saturated — every atomic dipole aligned');
+    else setStatus($('#stat'),'info','M = (μr − 1)H · aligned: '+fmt(f*100,0)+' %');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.8 DIA-, PARA- AND FERROMAGNETS NEAR A MAGNET  (Section 5.5, Fig. 5.7)
+   Force on a sample ∝ χ·B·(dB/dx): diamagnet (χ<0) driven to weaker field,
+   para (χ>0, tiny) and ferro (χ≫1) drawn to stronger field.
+   The sample hangs as a pendulum; θ'' = ω0²(−sinθ + F/mg·cosθ) − cθ'.
+   Real χ ~ 10⁻⁵, far too small to see — the motion and induced poles are exaggerated.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipGroup('Hanging sample',[{id:'m0',txt:'Bismuth',active:1},{id:'m1',txt:'Aluminium'},{id:'m2',txt:'Iron'}]) +
+    rangeCtl('S','Magnet strength',0,10,0.5,5) +
+    rangeCtl('dg','Gap to the magnet',0.4,1.6,0.05,0.8) +
+    btnRow([{id:'on',txt:'Magnet ON',cls:'yellow'},{id:'off',txt:'Magnet OFF'}]) +
+    cardsHtml([['r1','Susceptibility χ','—',COL.blue],['r2','Relative μr','—'],['r3','Field inside','—',COL.blue],['r4','Sample is','—',COL.green]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{S:v=>fmt(v,1),dg:v=>fmt(v,2)+' l'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const MAT=[{name:'Bismuth',type:'diamagnetic',K:-0.0125,al:-0.9,chi:'−1.7×10⁻⁴',mur:'< 1',inside:'weaker'},
+             {name:'Aluminium',type:'paramagnetic',K:0.0125,al:0.55,chi:'+2.2×10⁻⁵',mur:'slightly > 1',inside:'slightly stronger'},
+             {name:'Iron',type:'ferromagnetic',K:0.25,al:2.0,chi:'≈ 10³ and more',mur:'≫ 1',inside:'much stronger'}];
+  let mi=0, t=0, th=0, om=0, pxA=null, SA=5, tweenS=null;
+  const atoms=(()=>{ const R=rng(5), a=[]; for(let i=0;i<12;i++) a.push({a:(R()-0.5)*2*Math.PI,ph:R()*6.28}); return a; })();
+  toggleWire([$('#m0'),$('#m1'),$('#m2')],b=>{ mi=+b.id[1]; th=0; om=0; });
+  $('#on').onclick=()=>{ tweenS=5; }; $('#off').onclick=()=>{ tweenS=0; };
+  animLoop(dt=>{
+    t+=dt;
+    if(tweenS!==null){ const el=$('#S'), nv=approach(+el.value,tweenS,7,dt); el.value=nv; if(Math.abs(nv-tweenS)<0.02){ el.value=tweenS; tweenS=null; } vals(); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const M=MAT[mi], S=+$('#S').value; SA=approach(SA,S,9,dt);
+    const cxm=w*0.17, hlm=w*0.12, hwm=hlm*0.27, ya=h*0.6, py=h*0.07, Lp=ya-py, bhw=w*0.036, bhh=h*0.1, xface=cxm+hlm;
+    const dg=+$('#dg').value, ptx=xface+dg*hlm+bhw; pxA=pxA===null?ptx:approach(pxA,ptx,6,dt);
+    // pendulum
+    let bx=pxA-Lp*Math.sin(th), gapc=bx-bhw-xface;
+    const r=M.K*Math.pow(SA/5,2)*Math.pow(0.8/Math.max(gapc/hlm,0.04),3);
+    const sn=8, hh=dt/sn; for(let i=0;i<sn;i++){ om+=(16*(-Math.sin(th)+r*Math.cos(th))-2.2*om)*hh; th+=om*hh;
+      bx=pxA-Lp*Math.sin(th); if(bx-bhw<xface){ th=Math.asin(clamp((pxA-(xface+bhw))/Lp,-1,1)); if(om>0) om*=-0.2; } }
+    bx=pxA-Lp*Math.sin(th); const by=py+Lp*Math.cos(th); gapc=bx-bhw-xface;
+    // field with induced poles on the sample
+    const wx=(bx-cxm)/hlm, wy=(by-ya)/hlm, poles=[{x:1,y:0,q:1},{x:-1,y:0,q:-1}];
+    const Be=bPoles(poles,wx,wy), bm=Math.hypot(Be[0],Be[1]), ux=Be[0]/bm, uy=Be[1]/bm, qs=M.al*0.5*Math.min(bm,0.6);
+    const sp=[{x:wx+ux*0.3,y:wy+uy*0.3,q:qs},{x:wx-ux*0.3,y:wy-uy*0.3,q:-qs}];
+    const all=poles.concat(sp), seeds=[[0,1,18]];
+    const pos=all.filter(p=>p.q>0.02);
+    pos.forEach(p=>{ const n=Math.max(3,Math.round(18*p.q)); for(let k=0;k<n;k++){ const a=(k+0.5)/n*Math.PI*2;
+      const r2=traceField(all,p.x+Math.cos(a)*0.11,p.y+Math.sin(a)*0.11,0.1,10,0.07,700);
+      pathLine(ctx,r2.pts.map(q=>[cxm+q[0]*hlm,ya+q[1]*hlm]),COL.blue,1.5,t*22,[0.4,0.75]); } });
+    // magnet + string + bob
+    drawBar(ctx,cxm,ya,hlm,hwm,0,{});
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; line(ctx,pxA-26,py,pxA+26,py,COL.ink,4); ctx.restore();
+    ctx.save(); ctx.translate(bx,by); ctx.rotate(th);
+    line(ctx,0,-bhh,0,-Lp,COL.ink,1.8);
+    rect(ctx,-bhw,-bhh,2*bhw,2*bhh,COL.ink,'#f6f9fc',2.4);
+    const f=mi===0?clamp(SA/10,0,1)*0.9:mi===1?clamp(SA/10,0,1)*0.35:0.5+0.5*clamp(SA/10,0,1);
+    for(let i=0;i<12;i++){ const c=i%2, rw=Math.floor(i/2), x=(c-0.5)*bhw*1.0, y=-bhh+(rw+0.5)*(2*bhh/6), a=atoms[i];
+      let ang; if(mi===0) ang=Math.PI; else ang=a.a*(1-f)+Math.sin(t*3+a.ph)*0.35*(1-f);
+      if(mi===0 && SA<0.2) continue; if(mi===0) ctx.globalAlpha=clamp(SA/6,0.15,1);
+      dipArrow(ctx,x,y,ang-th,bhw*(mi===0?0.8:0.9),COL.green,1.8); ctx.globalAlpha=1; }
+    ctx.restore();
+    textAt(ctx,M.name,bx,by+bhh+22,{align:'center',size:13,weight:700,color:COL.ink});
+    textAt(ctx,M.type,bx,by+bhh+38,{align:'center',size:11,weight:600,color:COL.muted});
+    $('#r1').textContent=M.chi; $('#r2').textContent=M.mur; $('#r3').textContent=M.inside;
+    $('#r4').textContent=gapc<3&&mi===2?'stuck to magnet':th>0.006?'pulled in':th<-0.006?'pushed away':'barely moves';
+    const arr=$('#r4'); arr.style.color=th<-0.006?COL.red:COL.green;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.9 PARAMAGNETISM: ATOMIC DIPOLES VS HEAT  (Section 5.5.2)
+   Each atom carries a permanent dipole μ (3 μB here). Rotational Brownian
+   motion on a sphere with U = −μB cosθ gives  ⟨cosθ⟩ = L(x), x = μB/kT,
+   L(x) = coth x − 1/x ≈ x/3 for small x (Curie's law  M ∝ B/T).
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('B','Applied field B',0,5,0.1,2) +
+    rangeCtl('T','Temperature T',2,300,1,100) +
+    btnRow([{id:'cold',txt:'❄ Cool to 4 K'},{id:'room',txt:'Room 300 K',cls:'red'}]) +
+    cardsHtml([['r1','x = μB / kT','—',COL.yellow],['r2','Alignment ⟨cos θ⟩','—',COL.green],['r3','Langevin L(x)','—',COL.blue],['r4','B / T','—']]) +
+    '<div class="status info" id="stat">—</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{B:v=>fmt(v,1)+' T',T:v=>fmt(v,0)+' K'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const NC=12, NR=7, U=[]; for(let i=0;i<NC*NR;i++){ let a,b,c; do{ a=Math.random()*2-1; b=Math.random()*2-1; c=Math.random()*2-1; }while(a*a+b*b+c*c>1||a*a+b*b+c*c<0.05); const n=Math.hypot(a,b,c); U.push([a/n,b/n,c/n]); }
+  let tw=null, t=0, meas=0;
+  const Tl=x=>x<0.02?x/3:1/Math.tanh(x)-1/x;
+  $('#cold').onclick=()=>{ tw=4; }; $('#room').onclick=()=>{ tw=300; };
+  animLoop(dt=>{
+    t+=dt;
+    if(tw!==null){ const el=$('#T'), nv=approach(+el.value,tw,5,dt); el.value=nv; if(Math.abs(nv-tw)<0.5){ el.value=tw; tw=null; } vals(); }
+    const B=+$('#B').value, T=+$('#T').value, x=2.015*B/T, D=1+T/90;
+    const sub=3, hh=dt/sub; let sx=0;
+    for(let s=0;s<sub;s++) for(let i=0;i<U.length;i++){ const u=U[i];
+      const dx=1-u[0]*u[0], dy=-u[0]*u[1], dz=-u[0]*u[2];
+      let g1=gauss(), g2=gauss(), g3=gauss(); const gu=g1*u[0]+g2*u[1]+g3*u[2]; g1-=gu*u[0]; g2-=gu*u[1]; g3-=gu*u[2];
+      const k=Math.sqrt(2*D*hh);
+      u[0]+=D*x*dx*hh+k*g1-2*D*u[0]*hh; u[1]+=D*x*dy*hh+k*g2-2*D*u[1]*hh; u[2]+=D*x*dz*hh+k*g3-2*D*u[2]*hh;
+      const n=Math.hypot(u[0],u[1],u[2]); u[0]/=n; u[1]/=n; u[2]/=n; }
+    U.forEach(u=>sx+=u[0]); sx/=U.length; meas=approach(meas,sx,1.6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const bx0=w*0.06, by0=h*0.07, bw=w*0.66, bh=h*0.56;
+    rect(ctx,bx0,by0,bw,bh,COL.ink,'#fbfdff',2.4);
+    // applied field
+    const rows=1+Math.round(B/5*6);
+    for(let i=0;i<rows;i++){ const y=by0+bh*(rows===1?0.5:(0.08+0.84*i/(rows-1))); pathLine(ctx,[[bx0-w*0.045,y],[bx0+bw+w*0.045,y]],'rgba(47,143,224,0.4)',1.6,t*(15+B*30),[0.06,0.95]); }
+    textAt(ctx,'B',bx0-w*0.04,by0+10,{align:'center',size:14,weight:700,color:COL.blue});
+    // dipoles (red = north end, blue = south end)
+    const cw=bw/NC, ch=bh/NR, Ln=Math.min(cw,ch)*0.82;
+    U.forEach((u,i)=>{ const c=i%NC, r=Math.floor(i/NC), x=bx0+(c+0.5)*cw, y=by0+(r+0.5)*ch;
+      const pl=Math.max(0.16,Math.hypot(u[0],u[1])), ex=u[0]/Math.hypot(u[0],u[1])*Ln*0.5*pl, ey=u[1]/Math.hypot(u[0],u[1])*Ln*0.5*pl;
+      const dep=0.45+0.55*(u[2]+1)/2; ctx.save(); ctx.globalAlpha=dep; ctx.lineCap='round'; ctx.lineWidth=2.6+1.2*dep;
+      ctx.strokeStyle=COL.blue; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-ex,y-ey); ctx.stroke();
+      ctx.strokeStyle=COL.red; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+ex,y+ey); ctx.stroke(); ctx.restore(); });
+    // thermometer
+    thermo(ctx,w*0.81,h*0.12,h*0.55,T/300,COL.ink,COL.red); textAt(ctx,fmt(T,0)+' K',w*0.81,h*0.09,{align:'center',size:13,weight:700,color:COL.red});
+    for(let i=0;i<4&&T>60;i++){ const ph=(t*0.6+i*0.25)%1; ctx.save(); ctx.globalAlpha=(1-ph)*clamp(T/300,0,1)*0.8; ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.beginPath(); for(let q=0;q<=8;q++){ const yy=by0+bh+8+ph*20+q*2.4, xx=bx0+bw*(0.15+i*0.23)+Math.sin(q*1.1+t*5)*3; q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore(); }
+    // magnetisation curve
+    const gx0=w*0.1, gx1=w*0.72, gy0=h*0.74, gy1=h*0.94, X=v=>gx0+v/6*(gx1-gx0), Yv=v=>gy1-v*(gy1-gy0);
+    line(ctx,gx0,gy1,gx1,gy1,COL.ink,1.6); line(ctx,gx0,gy1,gx0,gy0-4,COL.ink,1.6);
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(X(0),Yv(0)); ctx.lineTo(X(3),Yv(1)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.beginPath(); for(let i=0;i<=60;i++){ const v=i/10; i?ctx.lineTo(X(v),Yv(Tl(v))):ctx.moveTo(X(v),Yv(Tl(v))); } ctx.stroke(); ctx.restore();
+    const xc=Math.min(x,6); circ(ctx,X(xc),Yv(clamp(meas,0,1.02)),7,COL.red,'#fff',2.6);
+    textAt(ctx,'Curie law (small x)',X(0.35),Yv(0.86),{size:11,weight:700,color:COL.yellow,align:'left'});
+    textAt(ctx,'saturation',X(5.9),Yv(1)-6,{size:11,weight:700,color:COL.blue,align:'right'});
+    textAt(ctx,'M / M_sat',gx0+6,gy0-8,{align:'left',size:11,weight:700,color:COL.muted}); textAt(ctx,'x = μB / kT',gx1,gy1+16,{align:'right',size:11,weight:700,color:COL.muted});
+    $('#r1').textContent=fmt(x,2); $('#r2').textContent=fmt(meas,2); $('#r3').textContent=fmt(Tl(x),2); $('#r4').textContent=fmt(B/T,3)+' T/K';
+    setStatus($('#stat'),x>2?'ok':x>0.3?'info':'warn',x>2?'Strong alignment — near saturation':x>0.3?'Partly aligned':'Heat wins — almost random');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.10 FERROMAGNET: DOMAINS AND HYSTERESIS  (Section 5.5.3, Fig. 5.8)
+   Each domain flips when the field it feels, H − D·M, passes its own
+   threshold. Domains lined up with H grow. Soft iron: low thresholds and a
+   large demagnetising term (M falls back); alnico: high thresholds (M stays).
+   Above the Curie temperature (iron ≈ 1043 K) domains vanish.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('H','Applied field H',-1.2,1.2,0.01,0) +
+    chipGroup('Material',[{id:'soft',txt:'Soft iron',active:1},{id:'hard',txt:'Alnico (hard)'}]) +
+    rangeCtl('T','Temperature',300,1300,10,300) +
+    btnRow([{id:'sweep',txt:'↻ Sweep field',cls:'yellow'},{id:'zero',txt:'Remove field'}]) +
+    cardsHtml([['r1','Magnetisation M','—',COL.green],['r2','Domains along +H','—',COL.blue],['r3','M kept at H = 0','—',COL.red],['r4','T / Curie 1043 K','—']]) +
+    '<div class="status info" id="stat">—</div>';
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const vals=bindVals(wrap,{H:v=>fmt(v,2),T:v=>fmt(v,0)+' K'}); vals();
+  wrap.querySelectorAll('input').forEach(i=>i.oninput=vals);
+  const R_=5, C_=5, TC=1043, N=R_*C_, rnd=rng(77);
+  const dom=[]; for(let i=0;i<N;i++) dom.push({s:rnd()<0.5?1:-1,phi:0,w:1,u:rnd(),jit:rnd()*6.28});
+  dom.forEach(d=>d.phi=d.s>0?0:Math.PI);
+  let hard=false, sweeping=false, Hact=0, t=0, kept=0, trail=[], Tprev=300;
+  const params=()=>hard?{lo:0.45,hi:1.05,D:0.08}:{lo:0.03,hi:0.25,D:0.3};
+  toggleWire([$('#soft'),$('#hard')],b=>{ hard=b.id==='hard'; });
+  $('#sweep').onclick=()=>{ sweeping=!sweeping; $('#sweep').textContent=sweeping?'■ Stop sweep':'↻ Sweep field'; if(sweeping){ t0=t; } };
+  $('#zero').onclick=()=>{ sweeping=false; $('#sweep').textContent='↻ Sweep field'; $('#H').value=0; vals(); };
+  let t0=0;
+  animLoop(dt=>{
+    t+=dt;
+    const P=params(), T=+$('#T').value, hot=T>=TC;
+    if(sweeping){ const v=1.1*Math.sin((t-t0)*2*Math.PI/11); $('#H').value=v; vals(); }
+    Hact=approach(Hact,+$('#H').value,sweeping?20:7,dt);
+    const shr=hot?0:clamp(Math.sqrt(Math.max(0,1-T/TC))/Math.sqrt(1-300/TC),0,1.1);
+    let sw=0, sa=0; dom.forEach(d=>{ sw+=d.s*d.w; sa+=d.w; }); let Mn=sw/sa*shr;
+    const Heff=Hact-P.D*Mn/Math.max(shr,0.3);
+    dom.forEach(d=>{
+      const th=P.lo+(P.hi-P.lo)*d.u;
+      if(hot){ if(Math.random()<dt*6) d.s=Math.random()<0.5?1:-1; }
+      else if(Math.random()<1-Math.exp(-dt*28)){ if(d.s<0 && Heff>th) d.s=1; else if(d.s>0 && Heff<-th) d.s=-1; }
+      const tw=1+0.7*d.s*clamp(Hact*1.2,-1,1)*(hot?0:1); d.w=approach(d.w,tw,6,dt);
+      const tgt=hot?d.jit+t*(2+d.u*3):(d.s>0?0:Math.PI)+Math.sin(t*2+d.jit)*0.06; d.phi+=angDiff(tgt,d.phi)*(1-Math.exp(-9*dt)); });
+    sw=0; sa=0; let nPlus=0; dom.forEach(d=>{ sw+=d.s*d.w; sa+=d.w; if(d.s>0) nPlus++; }); Mn=sw/sa*shr;
+    if(Math.abs(Hact)<0.015 && !hot) kept=Mn;
+    if(!trail.length||Math.hypot(trail[trail.length-1][0]-Hact,trail[trail.length-1][1]-Mn)>0.004) { trail.push([Hact,Mn]); if(trail.length>700) trail.shift(); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // sample as a mosaic of domains (rows of bricks); aligned domains grow
+    const side=Math.min(w*0.42,h*0.72), sx0=w*0.06, sy0=h*0.5-side/2+16;
+    const rowS=[]; for(let r=0;r<R_;r++){ let s=0; for(let c=0;c<C_;c++) s+=dom[r*C_+c].w; rowS.push(s/C_); } const tot=rowS.reduce((a,b)=>a+b,0);
+    let y=sy0;
+    for(let r=0;r<R_;r++){ const rh=rowS[r]/tot*side; let ws=0; for(let c=0;c<C_;c++) ws+=dom[r*C_+c].w; let x=sx0;
+      for(let c=0;c<C_;c++){ const d=dom[r*C_+c], cw=d.w/ws*side;
+        ctx.fillStyle=hot?'#f4f1e6':(d.s>0?'#dcebfa':'#fbe4df'); ctx.fillRect(x,y,cw,rh);
+        ctx.strokeStyle=COL.ink; ctx.lineWidth=1.3; ctx.strokeRect(x,y,cw,rh);
+        dipArrow(ctx,x+cw/2,y+rh/2,d.phi,Math.min(cw,rh)*0.62*(hot?0.55:Math.max(0.35,shr)),COL.green,2.4);
+        x+=cw; }
+      y+=rh; }
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.strokeRect(sx0,sy0,side,side);
+    if(T>380) flame(ctx,sx0+side/2,sy0+side+30,side*0.7,clamp((T-300)/900,0,1),t);
+    // applied H arrow
+    const aL=Hact*side*0.45, ay=sy0-26; line(ctx,sx0+side/2-side*0.5,ay,sx0+side/2+side*0.5,ay,'#e7edf5',1.2);
+    if(Math.abs(aL)>2) vec(ctx,sx0+side/2,ay,sx0+side/2+aL,ay,COL.yellow,4.5);
+    textAt(ctx,'H = '+fmt(Hact,2),sx0+side/2,ay-12,{align:'center',size:13,weight:700,color:COL.yellow});
+    // hysteresis loop
+    const pg=Math.min(w*0.38,h*0.78), gx=w*0.57, gy=h*0.5-pg/2, gcx=gx+pg/2, gcy=gy+pg/2;
+    rect(ctx,gx,gy,pg,pg,'#c2d1e5','#fbfdff',1.4);
+    line(ctx,gx,gcy,gx+pg,gcy,COL.ink,1.6); line(ctx,gcx,gy,gcx,gy+pg,COL.ink,1.6);
+    textAt(ctx,'H',gx+pg-6,gcy-8,{align:'right',size:13,weight:700,color:COL.yellow}); textAt(ctx,'M',gcx+8,gy+14,{size:13,weight:700,color:COL.green});
+    const GX=v=>gcx+v/1.2*pg*0.46, GY=v=>gcy-v*pg*0.44;
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.lineJoin='round'; ctx.beginPath(); trail.forEach((p,i)=>i?ctx.lineTo(GX(p[0]),GY(p[1])):ctx.moveTo(GX(p[0]),GY(p[1]))); ctx.stroke(); ctx.restore();
+    circ(ctx,GX(Hact),GY(Mn),7,COL.red,'#fff',2.6);
+    $('#r1').textContent=fmt(Mn,2); $('#r2').textContent=nPlus+' / '+N; $('#r3').textContent=fmt(kept,2); $('#r4').textContent=fmt(T/TC,2);
+    setStatus($('#stat'),hot?'bad':'info',hot?'Above Curie temperature — domains gone, paramagnet':hard?'Hard magnet — keeps its magnetisation':'Soft magnet — loses it when H is removed');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY LIST
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'5.1', title:'Iron Filings & Field Lines', desc:'Sprinkle · tap · follow a compass', build: buildA1 },
+  { num:'5.2', title:'Bar Magnet = Solenoid', desc:'Match the moments · same field', build: buildA2 },
+  { num:'5.3', title:'Cut the Magnet', desc:'Poles never come apart', build: buildA3 },
+  { num:'5.4', title:'Gauss’s Law for B', desc:'Count lines through a closed surface', build: buildA4 },
+  { num:'5.5', title:'Needle in a Field', desc:'Torque · energy well · oscillation', build: buildA5 },
+  { num:'5.6', title:'Two Dipoles', desc:'Stable or unstable equilibrium', build: buildA6 },
+  { num:'5.7', title:'Solenoid with a Core', desc:'H · M · B · magnetising current', build: buildA7 },
+  { num:'5.8', title:'Dia · Para · Ferro', desc:'Pushed away or pulled in', build: buildA8 },
+  { num:'5.9', title:'Paramagnet vs Heat', desc:'Align the atomic dipoles', build: buildA9 },
+  { num:'5.10', title:'Domains & Hysteresis', desc:'Grow · flip · remember', build: buildA10 },
+];
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 6 — Systems of Particles and Rotational Motion | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.toggle-btn.hold{background:var(--navy-2); border-color:var(--navy-2); color:#fff; padding:10px 6px; user-select:none; touch-action:none;}
+.toggle-btn.hold.on{background:var(--f-red); border-color:var(--f-red);}
+.btn-row{display:flex; gap:6px;}
+.btn-row .toggle-btn{margin-top:0;}
+.rcard .rlabel{text-transform:none; font-size:10.5px; letter-spacing:0;}
+.formula{font-size:var(--fs-sm); font-weight:600; color:var(--navy-3); background:var(--surface-2); border-radius:7px; padding:6px 9px; margin-top:8px; text-align:center;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚙️</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 1 · Ch 6</div>
+      <h1>Systems of Particles and Rotational Motion</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Velocity · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Centre of mass · Result</span>
+      <span><i style="background:var(--f-red)"></i>Force · Torque</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">6.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 6: SYSTEMS OF PARTICLES AND ROTATIONAL MOTION
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET or a PARAMETER; the drawn object eases, springs or is physically
+   integrated (F = ma, τ = Iα, L = Iω) every frame — never a jump.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', faint:'#dbe4f0'};
+const G = 9.8;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<3) return;
+  const a=Math.atan2(y2-y1,x2-x1), hd=Math.min(9,L*0.5);
+  line(ctx,x1,y1,x2-Math.cos(a)*hd*0.7,y2-Math.sin(a)*hd*0.7,color,width||2.6); arrowHead(ctx,x2,y2,a,color,hd);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, system-ui, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function poly(ctx,pts,stroke,fill,lw,dash){
+  ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||2.2; ctx.lineJoin='round'; ctx.setLineDash(dash||[]); ctx.stroke(); }
+  ctx.restore();
+}
+function arcArrow(ctx,cx,cy,r,a0,a1,color,width){ // arc with head at a1 (angles in canvas radians)
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2.4; ctx.lineCap='round'; ctx.beginPath();
+  const ccw=a1<a0; ctx.arc(cx,cy,r,a0,a1,ccw); ctx.stroke(); ctx.restore();
+  const ex=cx+Math.cos(a1)*r, ey=cy+Math.sin(a1)*r;
+  arrowHead(ctx,ex,ey,a1+(ccw?-Math.PI/2:Math.PI/2),color,Math.max(7,(width||2.4)*3));
+}
+function chip(ctx,txt,x,y,color,align){
+  ctx.save(); ctx.font='700 11.5px Poppins, system-ui, sans-serif'; const tw=ctx.measureText(txt).width;
+  let bx=x; if(align==='center') bx=x-tw/2-6; else if(align==='right') bx=x-tw-12; else bx=x-6;
+  rrect(ctx,bx,y-13,tw+12,19,6); ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.fill(); ctx.strokeStyle=color; ctx.lineWidth=1.3; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+6,y+1,{size:11.5,weight:700,color});
+}
+function ground(ctx,x1,x2,y,col){
+  line(ctx,x1,y,x2,y,col||COL.ink,2.4);
+  ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath();
+  for(let x=x1;x<x2;x+=12){ ctx.moveTo(x,y); ctx.lineTo(x-8,y+9); } ctx.stroke(); ctx.restore();
+}
+function dim(ctx,x1,y1,x2,y2,color,txt,off){
+  line(ctx,x1,y1,x2,y2,color,1.6); const a=Math.atan2(y2-y1,x2-x1);
+  arrowHead(ctx,x1,y1,a+Math.PI,color,6); arrowHead(ctx,x2,y2,a,color,6);
+  if(txt) chip(ctx,txt,(x1+x2)/2,(y1+y2)/2-(off===undefined?14:off),color,'center');
+}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; const s=Number(x.toFixed(d)); return (Object.is(s,-0)?0:s).toString(); }
+function sgn(x){ return x>0?1:x<0?-1:0; }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. state = {x,v}. */
+function springTo(state,target,k,damping,dt){
+  const n=Math.max(1,Math.ceil(dt/0.008)), h=dt/n;
+  for(let i=0;i<n;i++){ const acc=(target-state.x)*k - state.v*damping; state.v+=acc*h; state.x+=state.v*h; }
+  return state.x;
+}
+
+/* ---------------------------------------------------------------------
+   0c. UI BUILDERS (right-hand 30 % column)
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function rangeCtl(id,label,min,max,step,val,unit,dec){
+  return `<div class="control-group" id="${id}G"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" data-u="${unit||''}" data-d="${dec===undefined?0:dec}"></div>`;
+}
+function toggleCtl(id,label,items){
+  return `<div class="control-group" id="${id}G"><label style="margin-bottom:2px;">${label}</label><div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn${i?'':' active'}" data-v="${it[0]}">${it[1]}</button>`).join('')}</div></div>`;
+}
+function btnRow(items){ // [[id,text,cls]]
+  return `<div class="control-group"><div class="btn-row">${items.map(b=>`<button class="toggle-btn ${b[2]||''}" id="${b[0]}" style="flex:1;padding:9px 6px;">${b[1]}</button>`).join('')}</div></div>`;
+}
+function cards(list,formula){
+  return `<div class="control-group"><div class="result-cards">${list.map(c=>`<div class="rcard${c.wide?' wide':''}"><div class="rlabel">${c.label}</div><div class="rval" id="${c.id}"${c.color?` style="color:${c.color}"`:''}>—</div></div>`).join('')}</div>${formula?`<div class="formula" id="fm">${formula}</div>`:''}</div>`;
+}
+function ui(wrap){
+  const $=s=>wrap.querySelector(s);
+  return {
+    $,
+    v(id){ const e=$('#'+id); const x=+e.value; const lab=$('#'+id+'V'); if(lab){ const s=fmt(x,+e.dataset.d)+(e.dataset.u?' '+e.dataset.u:''); if(lab.textContent!==s) lab.textContent=s; } return x; },
+    set(id,txt){ const e=$('#'+id); if(e && e.textContent!==txt) e.textContent=txt; },
+    setRange(id,val,min,max,step){ const e=$('#'+id); if(min!==undefined){ e.min=min; e.max=max; e.step=step; } e.value=val; },
+    show(id,on){ const e=$('#'+id); if(e) e.classList.toggle('hidden',!on); },
+    /* wire a toggle group; returns {v} and calls cb(value) on every click */
+    pick(id,cb){
+      const btns=[...wrap.querySelectorAll('#'+id+' .toggle-btn')]; const st={v:btns[0].dataset.v};
+      btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); st.v=b.dataset.v; if(cb) cb(st.v); });
+      return st;
+    },
+    click(id,cb){ $('#'+id).onclick=cb; },
+    /* press-and-hold button */
+    hold(id,down,up){
+      const b=$('#'+id); let on=false;
+      const d=e=>{ e.preventDefault(); if(on) return; on=true; b.classList.add('on'); down(); };
+      const u=()=>{ if(!on) return; on=false; b.classList.remove('on'); up(); };
+      b.addEventListener('pointerdown',d); window.addEventListener('pointerup',u); b.addEventListener('pointerleave',u); b.addEventListener('pointercancel',u);
+    },
+    onInput(ids,cb){ ids.forEach(i=>$('#'+i).addEventListener('input',cb)); }
+  };
+}
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+
+/* =====================================================================
+   6.1 KINDS OF RIGID-BODY MOTION   (Fig 6.1, 6.2, 6.6)
+   Frictionless block:      a = g sinθ                 (pure translation)
+   Rolling solid cylinder:  a = g sinθ / (1 + ½) = ⅔ g sinθ ; v_contact = 0
+   Free body: path of O is a fixed parabola; spin only changes P.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    toggleCtl('mode','Motion',[['slide','Slide'],['roll','Roll'],['free','Free body']]) +
+    rangeCtl('th','Incline angle',10,45,1,30,'°') +
+    rangeCtl('sp','Spin of the body',0,6,0.1,0,'rad/s',1) +
+    btnRow([['rp','↺ Replay','play']]) +
+    cards([{id:'r1',label:'Motion',wide:true,color:'var(--f-blue)'},{id:'r2',label:'v centre'},{id:'r3',label:'v other point'}],'Pure translation: every point has the same v');
+  const canvas=U.$('canvas');
+  let mode='slide', t=0, lastSig='';
+  const S={s:0,v:0,hold:0,gT:0,ghosts:[],tt:0,trail:[]};
+  function reset(){ S.s=0;S.v=0;S.hold=0;S.gT=0;S.ghosts=[];S.tt=0;S.trail=[]; }
+  U.pick('mode',v=>{ mode=v; U.show('thG',v!=='free'); U.show('spG',v==='free'); reset(); });
+  U.show('spG',false);
+  U.click('rp',reset);
+  const FREE_T=3.4;
+
+  animLoop(dt=>{
+    t+=dt;
+    const thD=U.v('th'), th=thD*Math.PI/180, spin=U.v('sp');
+    const sig=mode+thD+spin; if(sig!==lastSig){ lastSig=sig; if(mode!=='free'||false) reset(); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+
+    if(mode!=='free'){
+      const Bx=w*0.9, By=h*0.86, Lpx=Math.min(w*0.84/Math.cos(th), h*0.68/Math.sin(th));
+      const dx=Math.cos(th), dy=Math.sin(th), nx=Math.sin(th), ny=-Math.cos(th);
+      const Tx=Bx-dx*Lpx, Ty=By-dy*Lpx;
+      const OR=clamp(Lpx*0.07,26,50), m0=OR*1.9+14, ppm=(Lpx-2*m0)/3;   // 3 m of travel
+      // physics
+      const a=mode==='slide'? G*Math.sin(th) : G*Math.sin(th)*2/3;
+      if(S.hold>0){ S.hold-=dt; if(S.hold<=0) reset(); }
+      else { S.v+=a*dt; S.s+=S.v*dt; S.gT+=dt; if(S.s>=3){ S.s=3; S.hold=1.1; } }
+      if(S.hold<=0 && S.gT>0.22){ S.gT=0; S.ghosts.push(S.s); if(S.ghosts.length>12) S.ghosts.shift(); }
+      // scene
+      ctx.save(); poly(ctx,[[Tx,Ty],[Bx,By],[Tx,By]],COL.ink,'#f6f9fc',2.4); ctx.restore();
+      ground(ctx,w*0.03,w*0.97,By);
+      // slope hatch
+      ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.1; ctx.beginPath();
+      for(let q=18;q<Lpx-8;q+=16){ const px=Tx+dx*q, py=Ty+dy*q; ctx.moveTo(px,py); ctx.lineTo(px-nx*7-dx*5,py-ny*7-dy*5); } ctx.stroke(); ctx.restore();
+      arcArrow(ctx,Bx,By,52,Math.PI,Math.PI+th,COL.yellow,2.2);
+      textAt(ctx,thD+'°',Bx-82,By-12,{size:12,weight:700,color:COL.yellow});
+      const sp=m0+S.s*ppm;
+      const k=14;                                // px per m/s
+      if(mode==='slide'){
+        const bw=OR*2.4, bh=OR*1.5;
+        S.ghosts.forEach(g=>{ const q=m0+g*ppm, cx=Tx+dx*q+nx*bh/2, cy=Ty+dy*q+ny*bh/2;
+          ctx.save(); ctx.translate(cx,cy); ctx.rotate(th); ctx.globalAlpha=0.22; ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; ctx.strokeRect(-bw/2,-bh/2,bw,bh); ctx.restore(); });
+        const cx=Tx+dx*sp+nx*bh/2, cy=Ty+dy*sp+ny*bh/2;
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(th); rrect(ctx,-bw/2,-bh/2,bw,bh,4); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke();
+        line(ctx,-bw/2+8,-bh/2+9,bw/2-8,-bh/2+9,COL.faint,2); ctx.restore();
+        const loc=(lx,ly)=>[cx+dx*lx-ny*0+(-Math.sin(th))*ly, cy+dy*lx+Math.cos(th)*ly];
+        const pts=[['P₁',loc(bw/2,bh/2)],['P₂',loc(-bw/2,-bh/2)],['O',loc(0,0)]];
+        pts.forEach(([n,p],i)=>{
+          vec(ctx,p[0],p[1],p[0]+dx*S.v*k,p[1]+dy*S.v*k,COL.blue,2.8);
+          circ(ctx,p[0],p[1],4.2,i===2?COL.green:COL.ink,i===2?COL.green:'#fff',2);
+          textAt(ctx,n,p[0]-4+(i===1?-14:0),p[1]+(i===0?18:-9),{size:12,weight:700,color:i===2?COL.green:COL.ink});
+        });
+        U.set('r1','Pure translation'); U.set('r2',fmt(S.v,2)+' m/s'); U.set('r3',fmt(S.v,2)+' m/s (same)'); U.set('fm','Pure translation: every point has the same v');
+      } else {
+        const R=OR;
+        const draw=(q,alpha)=>{ const cx=Tx+dx*q+nx*R, cy=Ty+dy*q+ny*R, phi=(q-m0)/R;
+          ctx.save(); ctx.globalAlpha=alpha; circ(ctx,cx,cy,R,COL.ink,alpha<1?null:'#fff',alpha<1?1.4:2.6);
+          if(alpha>=1){ for(let i=0;i<2;i++){ const aa=phi+i*Math.PI/2; line(ctx,cx-Math.cos(aa)*R*0.9,cy-Math.sin(aa)*R*0.9,cx+Math.cos(aa)*R*0.9,cy+Math.sin(aa)*R*0.9,COL.faint,1.8); } }
+          else line(ctx,cx,cy,cx+Math.cos(phi)*R,cy+Math.sin(phi)*R,COL.ink,1.2);
+          ctx.restore(); return [cx,cy,phi]; };
+        S.ghosts.forEach(g=>draw(m0+g*ppm,0.22));
+        const [cx,cy,phi]=draw(sp,1);
+        for(let i=0;i<4;i++){
+          const aa=phi+i*Math.PI/2, rx=Math.cos(aa)*R, ry=Math.sin(aa)*R;
+          const px=cx+rx, py=cy+ry;
+          const vx=S.v*(dx+(-ry/R)), vy=S.v*(dy+(rx/R));
+          vec(ctx,px,py,px+vx*k*0.8,py+vy*k*0.8,COL.blue,2.8);
+          circ(ctx,px,py,4.2,COL.ink,'#fff',2);
+          textAt(ctx,'P'+['₁','₂','₃','₄'][i],px+(rx>0?7:-18),py+(ry>0?15:-8),{size:12,weight:700});
+        }
+        circ(ctx,cx,cy,4.5,COL.green,COL.green,1); vec(ctx,cx,cy,cx+dx*S.v*k*0.8,cy+dy*S.v*k*0.8,COL.blue,2.8);
+        const cxp=cx-nx*R, cyp=cy-ny*R; chip(ctx,'v = 0',cxp+8,cyp+30,COL.red);
+        U.set('r1','Translation + rotation'); U.set('r2',fmt(S.v,2)+' m/s'); U.set('r3','Contact: 0 · Top: '+fmt(2*S.v,2)); U.set('fm','v of a point = v of centre + ω × r');
+      }
+      chip(ctx,mode==='slide'?'Fig 6.1  ·  a = g sinθ':'Fig 6.2  ·  a = ⅔ g sinθ',w*0.04+6,30,COL.muted);
+    } else {
+      /* ---- free body: same path for O, spin changes only the orientation (Fig 6.6) ---- */
+      S.tt+=dt; if(S.tt>=FREE_T+0.6){ S.tt=0; S.trail=[]; }
+      const tc=Math.min(S.tt,FREE_T), u=tc/FREE_T;
+      const x0=w*0.1, x1=w*0.9, yb=h*0.8, Hh=h*0.5, Lb=clamp(w*0.065,48,88), Hb=Lb*0.3;
+      const O=uu=>[x0+(x1-x0)*uu, yb-4*Hh*uu*(1-uu)];
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2; ctx.setLineDash([7,6]); ctx.beginPath();
+      for(let i=0;i<=60;i++){ const p=O(i/60); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke(); ctx.restore();
+      textAt(ctx,'path of O',x0+(x1-x0)*0.5,yb-Hh-14,{align:'center',size:12,weight:700,color:COL.green});
+      const body=(uu,alpha,live)=>{
+        const p=O(uu), psi=spin*uu*FREE_T;
+        ctx.save(); ctx.translate(p[0],p[1]); ctx.rotate(psi); ctx.globalAlpha=alpha;
+        rrect(ctx,-Lb,-Hb,2*Lb,2*Hb,5); ctx.fillStyle=live?'#fff':'rgba(255,255,255,0)'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=live?2.6:1.5; ctx.stroke();
+        line(ctx,0,0,Lb,0,COL.red,live?2.4:1.4); circ(ctx,0,0,live?4.6:3,COL.green,COL.green,1); circ(ctx,Lb,0,live?4.6:3,COL.red,'#fff',2); ctx.restore();
+        return {p,psi};
+      };
+      [0.12,0.36,0.6,0.84].forEach(uu=>body(uu,0.28,false));
+      const {p,psi}=body(u,1,true);
+      // trail of P
+      const Px=p[0]+Math.cos(psi)*Lb, Py=p[1]+Math.sin(psi)*Lb;
+      if(S.tt<FREE_T) S.trail.push([Px,Py]);
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=1.8; ctx.beginPath(); S.trail.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.stroke(); ctx.restore();
+      textAt(ctx,'O',p[0]-14,p[1]+22,{size:12,weight:700,color:COL.green}); textAt(ctx,'P',Px+8,Py-6,{size:12,weight:700,color:COL.red});
+      // velocities (px/s)
+      const vOx=(x1-x0)/FREE_T, vOy=-4*Hh*(1-2*u)/FREE_T;
+      const vPx=vOx+spin*(-(Py-p[1])), vPy=vOy+spin*(Px-p[0]);
+      const ak=0.3;
+      vec(ctx,p[0],p[1],p[0]+vOx*ak,p[1]+vOy*ak,COL.blue,3); vec(ctx,Px,Py,Px+vPx*ak,Py+vPy*ak,COL.blue,3);
+      chip(ctx,'Fig 6.6  ·  '+(spin<0.05?'(a) pure translation':'(b) translation + rotation'),w*0.04+6,30,COL.muted);
+      U.set('r1',spin<0.05?'Pure translation':'Translation + rotation');
+      U.set('fm',spin<0.05?'Pure translation: O and P have the same v':'Rotation makes v of P differ from v of O'); U.set('r2',fmt(Math.hypot(vOx,vOy)/100,2)+' m/s'); U.set('r3',spin<0.05?'= v of O (same)':fmt(Math.hypot(vPx,vPy)/100,2)+' m/s (differs)');
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.2 CENTRE OF MASS   (Eq 6.1 – 6.4; Examples 6.1, 6.3)
+   X = Σ mᵢxᵢ / Σ mᵢ ,  Y = Σ mᵢyᵢ / Σ mᵢ
+   Textbook check: 100 g, 150 g, 200 g on a 0.5 m triangle → (0.278, 0.192) m
+                   three 1 kg squares of the L-plate    → (5/6, 5/6) m
+   Bottom: the system hangs from a pin and settles with its CM directly below.
+   ===================================================================== */
+const CM_SHAPES={
+  tri:{n:3,pts:[[0,0],[0.5,0],[0.25,0.4330]],outline:[[0,0],[0.5,0],[0.25,0.4330]],unit:'g',min:50,max:300,step:10,def:[100,150,200],xr:[0,0.5],yr:[0,0.433]},
+  L:{n:3,pts:[[0.5,0.5],[1.5,0.5],[0.5,1.5]],outline:[[0,0],[2,0],[2,1],[1,1],[1,2],[0,2]],unit:'kg',min:0.2,max:3,step:0.1,def:[1,1,1],xr:[0,2],yr:[0,2]},
+  two:{n:2,pts:[[0,0],[1.2,0]],outline:null,unit:'kg',min:0.5,max:5,step:0.1,def:[2,1],xr:[0,1.2],yr:[0,0]}
+};
+function buildA2(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    toggleCtl('shape','System',[['tri','Triangle'],['L','L-plate'],['two','Two masses']]) +
+    rangeCtl('m1','Mass m₁',50,300,10,100,'g') + rangeCtl('m2','Mass m₂',50,300,10,150,'g') + rangeCtl('m3','Mass m₃',50,300,10,200,'g') +
+    rangeCtl('pin','Pin position x',0,0.5,0.005,0.25,'m',2) +
+    btnRow([['snap','Pin at CM','play']]) +
+    cards([{id:'rx',label:'X',color:'var(--f-green)'},{id:'ry',label:'Y',color:'var(--f-green)'},{id:'rm',label:'Total mass',wide:true}],'X = Σ mᵢxᵢ / Σ mᵢ');
+  const canvas=U.$('canvas');
+  let shape='tri', t=0;
+  const fr={x:0,v:0}, rs=[{x:12,v:0},{x:12,v:0},{x:12,v:0}], cmS={x:0.28,y:0.19};
+  function apply(){
+    const S=CM_SHAPES[shape];
+    ['m1','m2','m3'].forEach((id,i)=>{ const e=U.$('#'+id); e.dataset.u=S.unit; if(i<S.n) U.setRange(id,S.def[i],S.min,S.max,S.step); });
+    U.show('m3G',S.n===3);
+    U.setRange('pin',(S.xr[0]+S.xr[1])/2,S.xr[0],S.xr[1],0.005);
+  }
+  U.pick('shape',v=>{ shape=v; apply(); });
+  U.click('snap',()=>{ U.setRange('pin',cmS.tx); });
+  apply();
+
+  animLoop(dt=>{
+    t+=dt;
+    const S=CM_SHAPES[shape];
+    const ms=['m1','m2','m3'].slice(0,S.n).map(id=>U.v(id)); const pin=U.v('pin');
+    const M=ms.reduce((a,b)=>a+b,0);
+    let X=0,Y=0; ms.forEach((m,i)=>{ X+=m*S.pts[i][0]; Y+=m*S.pts[i][1]; }); X/=M; Y/=M;
+    cmS.tx=X;
+    cmS.x=approach(cmS.x,X,7,dt); cmS.y=approach(cmS.y,Y,7,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- plan view mapping
+    const bw=Math.max(S.xr[1]-S.xr[0],0.5), bh=Math.max(S.yr[1]-S.yr[0],0.3);
+    const sc=Math.min(w*0.74/bw,(h*0.4)/bh,420);
+    const xm=(S.xr[0]+S.xr[1])/2, ym=(S.yr[0]+S.yr[1])/2, midY=h*0.27;
+    const SX=x=>w/2+(x-xm)*sc, SY=y=>midY-(y-ym)*sc;
+    if(S.outline){ poly(ctx,S.outline.map(p=>[SX(p[0]),SY(p[1])]),COL.ink,'rgba(47,143,224,0.07)',2.4);
+      if(shape==='L'){ line(ctx,SX(1),SY(0),SX(1),SY(1),COL.faint,1.4); line(ctx,SX(0),SY(1),SX(1),SY(1),COL.faint,1.4); line(ctx,SX(0),SY(1),SX(2),SY(1),COL.faint,1.4); line(ctx,SX(1),SY(1),SX(1),SY(2),COL.faint,1.4); line(ctx,SX(1),SY(1),SX(1),SY(0),COL.faint,1.4); }
+    } else line(ctx,SX(0),SY(0),SX(S.pts[1][0]),SY(0),COL.ink,4);
+    // unweighted mean (grey ×) – the "geometric" guess
+    let mx=0,my=0; S.pts.forEach(p=>{ mx+=p[0]; my+=p[1]; }); mx/=S.n; my/=S.n;
+    const gx=SX(mx), gy=SY(my);
+    line(ctx,gx-5,gy-5,gx+5,gy+5,COL.mid,1.6); line(ctx,gx-5,gy+5,gx+5,gy-5,COL.mid,1.6);
+    const cx=SX(cmS.x), cy=SY(cmS.y);
+    const cols=[COL.red,COL.blue,COL.ink];
+    const maxm=S.max;
+    S.pts.forEach((p,i)=>{
+      const r=springTo(rs[i],7+15*Math.sqrt(ms[i]/maxm),90,12,dt);
+      const px=SX(p[0]), py=SY(p[1]);
+      line(ctx,px,py,cx,cy,cols[i],1.4,[5,5]);
+      circ(ctx,px,py,r,cols[i],'#fff',2.6); circ(ctx,px,py,r*0.45,cols[i],cols[i],1);
+      textAt(ctx,'m'+['₁','₂','₃'][i]+' = '+fmt(ms[i],S.unit==='g'?0:1)+' '+S.unit,px,py+(py>midY?r+16:-r-9),{align:'center',size:12,weight:700,color:cols[i]});
+    });
+    const pulse=(Math.sin(t*3.2)*0.5+0.5);
+    circ(ctx,cx,cy,13+pulse*5,COL.green,null,1.4);
+    circ(ctx,cx,cy,7,COL.green,'#fff',3); line(ctx,cx-12,cy,cx+12,cy,COL.green,1.6); line(ctx,cx,cy-12,cx,cy+12,COL.green,1.6);
+    chip(ctx,'CM',cx+16,cy-16,COL.green);
+    // pin line (yellow)
+    const pinX=SX(pin);
+    line(ctx,pinX,18,pinX,h*0.585,COL.yellow,2,[7,5]);
+    // ---- hanging view
+    const pivY=h*0.64, D=Math.min(h*0.13,90);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(w*0.04,pivY-30); ctx.lineTo(w*0.96,pivY-30); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath(); for(let x=w*0.04;x<w*0.96;x+=12){ ctx.moveTo(x,pivY-30); ctx.lineTo(x+8,pivY-39); } ctx.stroke(); ctx.restore();
+    line(ctx,pinX,pivY-30,pinX,pivY,COL.yellow,3);
+    const cmScr=SX(X);
+    const phiEq=Math.atan2(cmScr-pinX,D);
+    const phi=springTo(fr,clamp(phiEq,-1.2,1.2),55,3.4,dt);
+    const rot=(qx,qy)=>{ const dx=qx-pinX, dy=qy-pivY, c=Math.cos(phi), s=Math.sin(phi); return [pinX+dx*c-dy*s, pivY+dx*s+dy*c]; };
+    const xa=SX(S.xr[0])-14, xb=SX(S.xr[1])+14;
+    const A=rot(xa,pivY), B=rot(xb,pivY);
+    line(ctx,A[0],A[1],B[0],B[1],COL.ink,5);
+    S.pts.forEach((p,i)=>{ const top=rot(SX(p[0]),pivY), bot=rot(SX(p[0]),pivY+D); const r=rs[i].x*0.8;
+      line(ctx,top[0],top[1],bot[0],bot[1],COL.mid,1.6); circ(ctx,bot[0],bot[1],r,cols[i],'#fff',2.4); circ(ctx,bot[0],bot[1],r*0.4,cols[i],cols[i],1); });
+    const cmp=rot(cmScr,pivY+D);
+    line(ctx,pinX,pivY,pinX,pivY+D+46,COL.green,1.6,[3,5]);
+    circ(ctx,cmp[0],cmp[1],5.5,COL.green,COL.green,1);
+    circ(ctx,pinX,pivY,5,COL.yellow,'#fff',2.6);
+    const off=Math.abs(pin-X)<0.012;
+    chip(ctx,off?'Balanced · CM directly below the pin':'Pin is not at the CM · the system swings until the CM hangs below it',w/2,h*0.93,off?COL.green:COL.muted,'center');
+    U.set('rx',fmt(X,3)+' m'); U.set('ry',S.n===3?fmt(Y,3)+' m':'0 m'); U.set('rm',fmt(M,S.unit==='g'?0:1)+' '+S.unit);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.3 THE EXPLODING PROJECTILE   (Fig 6.12, Eq 6.11  M·A = F_ext)
+   The shell follows x = v₀cosθ·t , y = v₀sinθ·t − ½gt².
+   Kicks are internal (Σ mᵢ·uᵢ = 0), so the CM — computed from the real
+   fragments, not from a formula — keeps following the same parabola.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('v0','Launch speed',10,25,1,20,'m/s') +
+    rangeCtl('ang','Launch angle',30,75,1,55,'°') +
+    rangeCtl('fx','Explodes at',20,85,1,50,'% of flight') +
+    rangeCtl('ku','Explosion kick',0,14,1,8,'m/s') +
+    toggleCtl('ms','Fragment masses',[['eq','1 : 1 : 1'],['un','1 : 2 : 3']]) +
+    btnRow([['go','▶ Launch again','play']]) +
+    cards([{id:'r1',label:'Explodes at'},{id:'r2',label:'Σ internal kick',color:'var(--f-red)'},{id:'r3',label:'CM now (x , y)',wide:true,color:'var(--f-green)'}],'M·A = F<sub>ext</sub> = M·g — kicks are internal');
+  const canvas=U.$('canvas');
+  const ms=U.pick('ms');
+  let sim, lastSig='', t=0, scS=null;
+  const mkSim=()=>({t:0,exp:false,frags:[],flash:-1,trail:[],tAcc:0,frozen:false,hold:0,kickInfo:null,sumKick:0,shellDev:0});
+  sim=mkSim();
+  U.click('go',()=>{ sim=mkSim(); });
+
+  animLoop(dt=>{
+    t+=dt;
+    const v0=U.v('v0'), angD=U.v('ang'), ang=angD*Math.PI/180, fx=U.v('fx')/100, ku=U.v('ku');
+    const sig=[v0,angD,fx,ku,ms.v].join('|'); if(sig!==lastSig){ lastSig=sig; sim=mkSim(); }
+    const vx0=v0*Math.cos(ang), vy0=v0*Math.sin(ang), T=2*vy0/G, te=fx*T;
+    const masses=ms.v==='eq'?[1,1,1]:[1,2,3], M=masses.reduce((a,b)=>a+b,0);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+
+    // ---- physics
+    if(sim.hold>0){ sim.hold-=dt; if(sim.hold<=0) sim=mkSim(); }
+    else {
+      sim.t+=dt;
+      if(!sim.exp && sim.t>=te){
+        sim.exp=true; sim.flash=0;
+        const ex=vx0*te, ey=vy0*te-0.5*G*te*te, evx=vx0, evy=vy0-G*te;
+        sim.exX=ex; sim.exY=ey;
+        const dirs=[90,210,330].map(d=>d*Math.PI/180);
+        sim.frags=masses.map((m,i)=>{ const u=ku*(M/3)/m; return {m,x:ex,y:ey,vx:evx+u*Math.cos(dirs[i]),vy:evy+u*Math.sin(dirs[i]),landed:false,kx:u*Math.cos(dirs[i]),ky:u*Math.sin(dirs[i])}; });
+        let sx=0,sy=0; sim.frags.forEach(f=>{ sx+=f.m*f.kx; sy+=f.m*f.ky; }); sim.sumKick=Math.hypot(sx,sy);
+      }
+      if(sim.exp){
+        sim.flash+=dt;
+        sim.frags.forEach(f=>{ if(!f.landed){ f.vy-=G*dt; f.x+=f.vx*dt; f.y+=f.vy*dt; if(f.y<=0){ f.y=0; f.vx=0; f.vy=0; f.landed=true; f.lx=f.x; sim.frozen=true; } } });
+        if(sim.frags.every(f=>f.landed)) sim.hold=1.5;
+      }
+      if(sim.t>T+8) sim.hold=0.01;
+    }
+    // shell / CM
+    let cm, cv;
+    if(!sim.exp){ cm=[vx0*sim.t, vy0*sim.t-0.5*G*sim.t*sim.t]; cv=[vx0,vy0-G*sim.t]; }
+    else { let X=0,Y=0,VX=0,VY=0; sim.frags.forEach(f=>{ X+=f.m*f.x; Y+=f.m*f.y; VX+=f.m*f.vx; VY+=f.m*f.vy; }); cm=[X/M,Y/M]; cv=[VX/M,VY/M]; }
+    sim.tAcc+=dt;
+    if(!sim.frozen && sim.tAcc>0.07 && sim.hold<=0){ sim.tAcc=0; sim.trail.push(cm.slice()); }
+    const expY=vy0*sim.t-0.5*G*sim.t*sim.t, expX=vx0*sim.t;
+    const dev=Math.hypot(cm[0]-expX,cm[1]-expY);
+
+    // ---- camera scale (eases to fit the whole flight)
+    const Rng=2*vx0*vy0/G, Hm=vy0*vy0/(2*G);
+    const wantW=Rng+ku*1.6+4, wantH=Hm+ku*ku/(2*G)+3;
+    const target=Math.min(w*0.86/wantW,h*0.72/wantH);
+    scS=scS===null?target:approach(scS,target,3,dt);
+    const sc=scS, ox=w*0.07, oy=h*0.88;
+    const X=x=>ox+x*sc, Y=y=>oy-y*sc;
+    ground(ctx,w*0.02,w*0.98,oy);
+    // intended parabola (grey dashed)
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.8; ctx.setLineDash([8,6]); ctx.beginPath();
+    for(let i=0;i<=60;i++){ const tt=T*i/60, px=X(vx0*tt), py=Y(vy0*tt-0.5*G*tt*tt); i?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.stroke(); ctx.restore();
+    // CM trail (green dots)
+    sim.trail.forEach(p=>circ(ctx,X(p[0]),Y(p[1]),3,COL.green,COL.green,1));
+    // kick vectors (momentum, equal & balanced) — fade after the blast
+    if(sim.exp && sim.flash<1.6){
+      const al=1-sim.flash/1.6;
+      ctx.save(); ctx.globalAlpha=al;
+      sim.frags.forEach(f=>{ const k=f.m*Math.hypot(f.kx,f.ky); const a=Math.atan2(-f.ky,f.kx); const L=Math.min(80,k*4.2);
+        vec(ctx,X(sim.exX),Y(sim.exY),X(sim.exX)+Math.cos(a)*L,Y(sim.exY)+Math.sin(a)*L,COL.red,2.6); });
+      ctx.restore();
+      const fl=sim.flash/0.45; if(fl<1){ circ(ctx,X(sim.exX),Y(sim.exY),10+fl*70,COL.yellow,null,3*(1-fl)+0.5); circ(ctx,X(sim.exX),Y(sim.exY),6+fl*40,COL.red,null,2*(1-fl)+0.5); }
+    }
+    // bodies
+    const fcol=[COL.red,COL.blue,COL.ink];
+    if(!sim.exp){
+      const px=X(cm[0]), py=Y(cm[1]);
+      circ(ctx,px,py,11,COL.ink,'#fff',2.8); line(ctx,px-4,py-12,px+2,py-19,COL.ink,2); circ(ctx,px+3,py-20,2.2,COL.red,COL.red,1);
+      chip(ctx,'shell',px+16,py+22,COL.muted);
+    } else sim.frags.forEach((f,i)=>{
+      const r=6+4.2*Math.sqrt(f.m); const px=X(f.x), py=Y(f.y);
+      circ(ctx,px,py,r,fcol[i],'#fff',2.8); circ(ctx,px,py,r*0.42,fcol[i],fcol[i],1);
+      if(!f.landed) vec(ctx,px,py,px+f.vx*3.2,py-f.vy*3.2,COL.blue,2);
+    });
+    // CM marker + velocity
+    const cx=X(cm[0]), cy=Y(cm[1]);
+    if(!sim.frozen) vec(ctx,cx,cy,cx+cv[0]*3.2,cy-cv[1]*3.2,COL.blue,2.6);
+    circ(ctx,cx,cy,8.5+Math.sin(t*5)*1.2,COL.green,null,2); circ(ctx,cx,cy,3.6,COL.green,COL.green,1);
+    chip(ctx,'CM',cx-34,cy-12,COL.green);
+    if(sim.exp && dev<0.08 && !sim.frozen) chip(ctx,'CM stays on the original path',w*0.5,34,COL.green,'center');
+    else if(sim.frozen) chip(ctx,'Ground force (external) now acts',w*0.5,34,COL.red,'center');
+    chip(ctx,'Fig 6.12',w*0.04,34,COL.muted);
+    U.set('r1',fmt(te,2)+' s'); U.set('r2',sim.exp?fmt(sim.sumKick,2)+' kg·m/s':'—'); U.set('r3','('+fmt(cm[0],1)+' , '+fmt(Math.max(0,cm[1]),1)+') m');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.4 SPLITTING NUCLEUS & BINARY STARS   (Fig 6.13, 6.14)
+   P = M·V is constant with no external force.
+   In the CM frame: m_A·v_A = − m_B·v_B (back to back), stars diametrically opposite.
+   Frame change is a Galilean shift x′ = x − V_cm·t, applied smoothly.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    toggleCtl('sys','System',[['split','Splitting nucleus'],['star','Binary stars']]) +
+    toggleCtl('frame','View from',[['lab','Lab frame'],['cm','CM frame']]) +
+    rangeCtl('V','Speed of the CM',0,4,0.1,2,'m/s',1) +
+    rangeCtl('mB','Mass of B  (A = 3)',0.5,6,0.1,1.5,'units',1) +
+    rangeCtl('kick','Split speed (relative)',1,4.5,0.5,3,'m/s',1) +
+    rangeCtl('dir','Split direction',20,160,5,60,'°') +
+    btnRow([['rp','↺ Replay','play']]) +
+    cards([{id:'r1',label:'Total momentum P',color:'var(--f-blue)'},{id:'r2',label:'v of CM',color:'var(--f-green)'},{id:'r3',label:'Σ m·v of A, B',wide:true}],'P = M V = constant');
+  const canvas=U.$('canvas');
+  let sys='split', frame='lab', t=0, T=0, fb=0, lastSig='', tr=[[],[]], trAcc=0;
+  U.pick('sys',v=>{ sys=v; U.show('kickG',v==='split'); U.show('dirG',v==='split'); });
+  U.pick('frame',v=>frame=v);
+  U.click('rp',()=>{ T=0; tr=[[],[]]; });
+  const TL=4.8, TS=1.0, DS=6, WS=1.5;
+
+  animLoop(dt=>{
+    t+=dt;
+    const V=U.v('V'), mA=3, mB=U.v('mB'), kick=U.v('kick'), dirD=U.v('dir'), M=mA+mB;
+    const sig=[sys,V,mB,kick,dirD].join('|'); if(sig!==lastSig){ lastSig=sig; T=0; tr=[[],[]]; }
+    T+=dt; if(T>TL){ T=0; tr=[[],[]]; }
+    fb=approach(fb,frame==='cm'?1:0,4,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w*0.94/24,h*0.9/22), ox=(w-24*sc)/2, oy=h*0.5;
+    const cmx=tt=>2+V*tt;
+    const sh=tt=>fb*(cmx(tt)-12);
+    const X=(x,tt)=>ox+(x-sh(tt))*sc, Y=y=>oy-y*sc;
+
+    // bodies at time tt (lab frame)
+    function at(tt){
+      if(sys==='split'){
+        const cm=[cmx(tt),0];
+        if(tt<TS) return {cm,split:false,A:cm.slice(),B:cm.slice(),vA:[V,0],vB:[V,0]};
+        const d=[Math.cos(dirD*Math.PI/180),Math.sin(dirD*Math.PI/180)];
+        const uA=[-kick*mB/M*d[0],-kick*mB/M*d[1]], uB=[kick*mA/M*d[0],kick*mA/M*d[1]], s=tt-TS;
+        return {cm,split:true,A:[cm[0]+uA[0]*s,uA[1]*s],B:[cm[0]+uB[0]*s,uB[1]*s],vA:[V+uA[0],uA[1]],vB:[V+uB[0],uB[1]]};
+      }
+      const rA=DS*mB/M, rB=DS*mA/M, ph=WS*tt+0.4, c=Math.cos(ph), s=Math.sin(ph), cm=[cmx(tt),0];
+      return {cm,split:true,A:[cm[0]-rA*c,-rA*s],B:[cm[0]+rB*c,rB*s],vA:[V+rA*WS*s,-rA*WS*c],vB:[V-rB*WS*s,rB*WS*c]};
+    }
+    const now=at(T);
+    trAcc+=dt; if(trAcc>0.035 && now.split){ trAcc=0; tr[0].push([T,now.A[0],now.A[1]]); tr[1].push([T,now.B[0],now.B[1]]); }
+
+    // ruler / grid fixed in the lab
+    for(let xg=-40;xg<=60;xg+=2){ const px=X(xg,T); if(px<0||px>w) continue; line(ctx,px,h*0.9,px,h*0.9+(xg%4===0?10:6),COL.mid,1.4); if(xg%4===0&&xg>=0&&xg<=24) textAt(ctx,xg+' m',px,h*0.9+24,{align:'center',size:10.5,color:COL.mid}); }
+    line(ctx,0,h*0.9,w,h*0.9,COL.faint,1.6);
+    // CM path
+    line(ctx,X(cmx(0),0),Y(0),X(cmx(T),T),Y(0),COL.green,1.4,[4,6]);
+    // trails
+    const cols=[COL.red,COL.blue];
+    tr.forEach((arr,i)=>{ ctx.save(); ctx.strokeStyle=cols[i]; ctx.lineWidth=2; ctx.globalAlpha=0.55; ctx.beginPath(); arr.forEach((p,j)=>{ const px=X(p[1],p[0]), py=Y(p[2]); j?ctx.lineTo(px,py):ctx.moveTo(px,py); }); ctx.stroke(); ctx.restore(); });
+    // CM-frame orbit guides for the stars
+    if(sys==='star' && fb>0.3){ const rA=DS*mB/M, rB=DS*mA/M; ctx.save(); ctx.globalAlpha=fb*0.7; circ(ctx,X(now.cm[0],T),Y(0),rA*sc,COL.red,null,1.2); circ(ctx,X(now.cm[0],T),Y(0),rB*sc,COL.blue,null,1.2); ctx.restore(); }
+    // bodies
+    const pk=3.2, rad=m=>7+5.2*Math.sqrt(m);
+    const cx=X(now.cm[0],T), cy=Y(0);
+    if(!now.split){
+      circ(ctx,cx,cy,rad(M),COL.ink,'#fff',2.8); circ(ctx,cx,cy,rad(M)*0.4,COL.ink,COL.ink,1);
+      textAt(ctx,'nucleus',cx,cy+rad(M)+16,{align:'center',size:12,weight:700});
+    } else {
+      if(sys==='split' && T-TS<0.45){ const f=(T-TS)/0.45; circ(ctx,cx,cy,10+f*80,COL.yellow,null,3*(1-f)+0.4); }
+      if(sys==='star') line(ctx,X(now.A[0],T),Y(now.A[1]),X(now.B[0],T),Y(now.B[1]),COL.mid,1.4,[4,5]);
+      [['A',now.A,now.vA,mA,COL.red],['B',now.B,now.vB,mB,COL.blue]].forEach(([n,p,v,m,c])=>{
+        const px=X(p[0],T), py=Y(p[1]); const ux=v[0]-fb*V, uy=v[1];
+        circ(ctx,px,py,rad(m),c,'#fff',2.8); circ(ctx,px,py,rad(m)*0.4,c,c,1);
+        const L=Math.min(150,Math.hypot(ux,uy)*m*pk), a=Math.atan2(-uy,ux);
+        if(L>4) vec(ctx,px,py,px+Math.cos(a)*L,py+Math.sin(a)*L,COL.blue,3);
+        textAt(ctx,n,px,py-rad(m)-7,{align:'center',size:13,weight:700,color:c});
+      });
+    }
+    // total momentum arrow at the CM
+    const Pn=M*V*(1-fb);
+    if(Pn>0.3) vec(ctx,cx,cy,cx+Math.min(170,Pn*pk),cy,COL.green,3.4);
+    circ(ctx,cx,cy,5.5,COL.green,'#fff',3); line(ctx,cx-11,cy,cx+11,cy,COL.green,1.4); line(ctx,cx,cy-11,cx,cy+11,COL.green,1.4);
+    chip(ctx,Pn>0.3?'P = M V':'CM at rest · P = 0',cx+12,cy+(Pn>0.3?-14:-18),COL.green);
+    chip(ctx,(sys==='split'?'Fig 6.13':'Fig 6.14')+'  ·  '+(frame==='cm'?'CM frame':'Lab frame'),w*0.04+6,30,COL.muted);
+
+    U.set('r1',fmt(M*V,1)+' kg·m/s'); U.set('r2',fmt(V,1)+' m/s →');
+    let sx=0; if(now.split){ sx=mA*now.vA[0]+mB*now.vB[0]; } else sx=M*V;
+    U.set('r3',now.split?fmt(sx,1)+' = '+fmt(M*V,1)+' ✓':fmt(sx,1));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.5 THE VECTOR PRODUCT   (Fig 6.15)
+   |a × b| = ab sinθ  (= area of the parallelogram), direction by the
+   right-hand screw rule; b × a = − a × b.  a, b lie in the x-y plane.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    toggleCtl('ord','Product',[['ab','a × b'],['ba','b × a']]) +
+    rangeCtl('A','Length of a',1,2,0.1,1.8,'',1) +
+    rangeCtl('B','Length of b',1,2,0.1,1.5,'',1) +
+    rangeCtl('th','Angle θ from a to b',0,360,1,60,'°') +
+    cards([{id:'r1',label:'|c| = ab sinθ',color:'var(--f-red)'},{id:'r2',label:'c points'},{id:'r3',label:'a · b = ab cosθ  (scalar)',wide:true}],'c = a × b = − (b × a)');
+  const canvas=U.$('canvas'); const ord=U.pick('ord');
+  let t=0; const sA={x:1.8,v:0}, sB={x:1.5,v:0}, sT={x:60,v:0}, sC={x:1,v:0};
+  animLoop(dt=>{
+    t+=dt;
+    const A=springTo(sA,U.v('A'),60,11,dt), B=springTo(sB,U.v('B'),60,11,dt), thD=springTo(sT,U.v('th'),55,10,dt);
+    const cs=springTo(sC,ord.v==='ab'?1:-1,38,5.5,dt);
+    const th=thD*Math.PI/180;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const az=0.62+0.16*Math.sin(t*0.45), el=0.52, sc=Math.min(w/8.5,h/8.2), cx=w*0.47, cy=h*0.52;
+    const P=(x,y,z)=>{ const ca=Math.cos(az), sa=Math.sin(az); const X=x*ca-y*sa, Y=x*sa+y*ca; return [cx+sc*X, cy-sc*(z*Math.cos(el)+Y*Math.sin(el))]; };
+    // floor grid
+    ctx.save(); ctx.strokeStyle=COL.faint; ctx.lineWidth=1;
+    for(let i=-3;i<=3;i++){ const a=P(i,-3,0), b=P(i,3,0), c=P(-3,i,0), d=P(3,i,0); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.moveTo(c[0],c[1]); ctx.lineTo(d[0],d[1]); ctx.stroke(); }
+    ctx.restore();
+    // axes
+    [['x',[2.9,0,0]],['y',[0,2.9,0]],['z',[0,0,3.7]]].forEach(([n,e])=>{ const o=P(0,0,0), p=P(e[0],e[1],e[2]); line(ctx,o[0],o[1],p[0],p[1],COL.mid,1.4); textAt(ctx,n,p[0]+6,p[1]-4,{size:12,weight:700,color:COL.mid}); });
+    const O=P(0,0,0), a=[A,0,0], b=[B*Math.cos(th),B*Math.sin(th),0];
+    const pa=P(...a), pb=P(...b), pab=P(a[0]+b[0],a[1]+b[1],0);
+    poly(ctx,[O,pa,pab,pb],COL.blue,'rgba(47,143,224,0.13)',1.4,[5,4]);
+    // angle arc θ (yellow)
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.beginPath();
+    const thS=th>Math.PI?th-2*Math.PI:th;
+    for(let i=0;i<=24;i++){ const q=thS*i/24, p=P(0.8*Math.cos(q),0.8*Math.sin(q),0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke(); ctx.restore();
+    { const q=thS/2, p=P(1.15*Math.cos(q),1.15*Math.sin(q),0); textAt(ctx,'θ',p[0],p[1]+4,{size:14,weight:700,color:COL.yellow,align:'center'}); }
+    // c = a × b
+    const cz=cs*A*B*Math.sin(th);
+    const pc=P(0,0,cz);
+    const big=Math.abs(cz)>0.04;
+    if(big){
+      line(ctx,P(0,0,0)[0],P(0,0,0)[1],pc[0],pc[1],COL.red,3.6); arrowHead(ctx,pc[0],pc[1],Math.atan2(pc[1]-O[1],pc[0]-O[0]),COL.red,11);
+      chip(ctx,ord.v==='ab'?'c = a × b':'c = b × a',pc[0]+14,pc[1]+(cz>0?-8:20),COL.red);
+      // screw tip advancing along c
+      for(let k=0;k<3;k++){ const f=((t*0.55)+k/3)%1, p=P(0,0,cz*f); circ(ctx,p[0],p[1],3.4,COL.red,'#fff',2); }
+      // right-hand rotation arc (from first vector to second, through the smaller angle)
+      const s0=ord.v==='ab'?0:thS, s1=ord.v==='ab'?thS:0;
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.2; ctx.globalAlpha=0.9; ctx.beginPath();
+      for(let i=0;i<=28;i++){ const q=lerp(s0,s1,i/28), p=P(1.45*Math.cos(q),1.45*Math.sin(q),0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke(); ctx.restore();
+      const qe=s1, pe=P(1.45*Math.cos(qe),1.45*Math.sin(qe),0), qb=lerp(s0,s1,0.93), pbk=P(1.45*Math.cos(qb),1.45*Math.sin(qb),0);
+      arrowHead(ctx,pe[0],pe[1],Math.atan2(pe[1]-pbk[1],pe[0]-pbk[0]),COL.red,9);
+      const u=(t*0.5)%1, qd=lerp(s0,s1,u), pd=P(1.45*Math.cos(qd),1.45*Math.sin(qd),0); circ(ctx,pd[0],pd[1],4.5,COL.red,COL.red,1);
+    }
+    // a, b vectors on top
+    vec(ctx,O[0],O[1],pa[0],pa[1],COL.blue,3.6); vec(ctx,O[0],O[1],pb[0],pb[1],COL.green,3.6);
+    chip(ctx,'a',pa[0]+12,pa[1]+4,COL.blue); chip(ctx,'b',pb[0]+12,pb[1]-8,COL.green);
+    circ(ctx,O[0],O[1],4,COL.ink,COL.ink,1);
+    chip(ctx,'Fig 6.15',w*0.04+6,30,COL.muted);
+    chip(ctx,'rotate the fingers from '+(ord.v==='ab'?'a to b':'b to a')+' · thumb gives c',w*0.04+6,h-18,COL.muted);
+    const mag=Math.abs(A*B*Math.sin(th));
+    U.set('r1',fmt(mag,2)); U.set('r2',Math.abs(cz)<0.05?'zero  (a ∥ b)':(cz>0?'+z  (up)':'−z  (down)')); U.set('r3',fmt(A*B*Math.cos(th),2));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.6 ROTATION ABOUT A FIXED AXIS   (Fig 6.4, 6.16, v = ω × r)
+   ω ramps toward the target at the chosen α (ω = ω₀ + αt), then holds.
+   Every point shares ω; v = ωr ; the point on the axis (r = 0) is still.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('wt','Target spin  ω',-10,10,0.5,4,'rad/s',1) +
+    rangeCtl('al','Angular acceleration  α',0.5,6,0.5,2,'rad/s²',1) +
+    rangeCtl('r2','Distance of P₂ from axis',0.3,2,0.1,0.8,'m',1) +
+    btnRow([['rs','■ Stop & reset','play']]) +
+    cards([{id:'r1',label:'ω (same for all)',color:'var(--f-red)'},{id:'r2v',label:'θ turned'},{id:'r3',label:'v₁ = ω r₁',color:'var(--f-blue)'},{id:'r4',label:'v₂ = ω r₂',color:'var(--f-blue)'}],'v = ω × r');
+  const canvas=U.$('canvas');
+  let t=0, om=0, th=0;
+  U.click('rs',()=>{ om=0; th=0; U.setRange('wt',0); });
+  animLoop(dt=>{
+    t+=dt;
+    const wt=U.v('wt'), al=U.v('al'), r2=U.v('r2'), r1=1.5;
+    const d=wt-om; om+=sgn(d)*Math.min(Math.abs(d),al*dt); th+=om*dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.4, cy=h*0.52, Rp=Math.min(w*0.34,h*0.42), m=Rp/2.3;
+    // disc
+    circ(ctx,cx,cy,2.3*m,COL.ink,'#f6f9fc',2.6);
+    for(let i=0;i<8;i++){ const a=-th+i*Math.PI/4; line(ctx,cx,cy,cx+Math.cos(a)*2.3*m,cy+Math.sin(a)*2.3*m,COL.faint,1.6); }
+    circ(ctx,cx,cy,r1*m,COL.mid,null,1.2); ctx.save(); ctx.setLineDash([5,5]); circ(ctx,cx,cy,r1*m,COL.mid,null,1.2); circ(ctx,cx,cy,r2*m,COL.mid,null,1.2); ctx.restore();
+    // reference line + swept angle
+    line(ctx,cx,cy,cx+2.5*m,cy,COL.mid,1.6,[6,5]);
+    const ph=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+    const phS=th>=0?ph:ph-2*Math.PI;
+    if(Math.abs(phS)>0.03) arcArrow(ctx,cx,cy,0.55*m,0,-phS,COL.yellow,2.6);
+    const kv=6;
+    const pts=[['P₁',r1,0.5,COL.blue],['P₂',r2,2.6,COL.green]];
+    const out=[];
+    pts.forEach(([n,r,off,c])=>{
+      const a=-(th+off), px=cx+Math.cos(a)*r*m, py=cy+Math.sin(a)*r*m;
+      line(ctx,cx,cy,px,py,c,2,[]);
+      const vx=om*r*Math.sin(a), vy=-om*r*Math.cos(a), L=Math.hypot(vx,vy)*kv; const f=L>140?140/L:1;
+      if(Math.abs(om)>0.05) vec(ctx,px,py,px+vx*kv*f,py+vy*kv*f,COL.blue,3.4);
+      circ(ctx,px,py,7,c,'#fff',3); circ(ctx,px,py,2.6,c,c,1);
+      textAt(ctx,n,px+Math.cos(a)*18-8,py+Math.sin(a)*18+4,{size:13,weight:700,color:c});
+    });
+    // axis point P3
+    circ(ctx,cx,cy,13,COL.red,'#fff',2.6);
+    if(om>0.05) circ(ctx,cx,cy,4,COL.red,COL.red,1); else if(om<-0.05){ line(ctx,cx-6,cy-6,cx+6,cy+6,COL.red,2.4); line(ctx,cx-6,cy+6,cx+6,cy-6,COL.red,2.4); } else circ(ctx,cx,cy,2,COL.red,COL.red,1);
+    textAt(ctx,'P₃ (on axis, r = 0): at rest',cx,cy+2.3*m+22,{align:'center',size:12,weight:700,color:COL.red});
+    // oblique mini view: ω as a vector along the axis
+    const mx=w*0.86, my=h*0.34, rx=Math.min(78,w*0.09), ry=rx*0.34;
+    ctx.save(); ctx.beginPath(); ctx.ellipse(mx,my,rx,ry,0,0,Math.PI*2); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+    line(ctx,mx,my+ry+12,mx,my-ry-6,COL.mid,1.4,[4,4]);
+    const a0=th+0.5, dx=mx+rx*Math.cos(a0), dy=my-ry*Math.sin(a0); circ(ctx,dx,dy,5,COL.blue,'#fff',2.6);
+    const Lw=clamp(Math.abs(om)*8,0,86);
+    if(Lw>5){ const s=om>0?-1:1; vec(ctx,mx,my,mx,my+s*Lw,COL.red,3.8); }
+    chip(ctx,'ω along the axis',mx,my+ry+34,COL.red,'center');
+    chip(ctx,'Fig 6.16',w*0.04+6,30,COL.muted);
+    U.set('r1',fmt(om,2)+' rad/s'); U.set('r2v',fmt(th/(2*Math.PI),2)+' rev'); U.set('r3',fmt(om*r1,2)+' m/s'); U.set('r4',fmt(om*r2,2)+' m/s');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.7 TORQUE ON A DOOR   (Fig 6.18, τ = r × F, τ = Iα)
+   Door of 20 kg, 1 m wide: I = ⅓ m L² = 6.67 kg m².  τ = r F sinφ.
+   Hinge friction −b·ω (b = 8 N m s) and a rubber stop at 115°.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('F','Force F',5,60,1,20,'N') +
+    rangeCtl('rr','Push at distance r from hinge',0.1,1,0.05,0.9,'m',2) +
+    rangeCtl('ph','Angle φ between r and F',15,90,1,90,'°') +
+    btnRow([['push','Push  (hold)','hold'],['rs','↺ Close door','']]) +
+    cards([{id:'r1',label:'τ = r F sinφ',color:'var(--f-red)'},{id:'r2',label:'α = τ / I'},{id:'r3',label:'ω now',color:'var(--f-blue)'},{id:'r4',label:'Door angle'}],'Lever arm  d = r sinφ');
+  const canvas=U.$('canvas');
+  let t=0, th=0, om=0, held=false, until=0;
+  const I=20/3, bDamp=8, MAXA=115*Math.PI/180;
+  U.hold('push',()=>{ held=true; until=t+0.5; },()=>{ held=false; });
+  U.click('rs',()=>{ th=0; om=0; });
+  animLoop(dt=>{
+    t+=dt;
+    const F=U.v('F'), r=U.v('rr'), phD=U.v('ph'), ph=phD*Math.PI/180;
+    const pushing=held||t<until;
+    const tau=r*F*Math.sin(ph);
+    const n=4, h2=dt/n;
+    for(let i=0;i<n;i++){
+      const T=(pushing?tau:0)-bDamp*om;
+      om+=T/I*h2; th+=om*h2;
+      if(th>MAXA){ th=MAXA; om=om>0?-om*0.35:om; if(Math.abs(om)<0.05) om=0; }
+      if(th<0){ th=0; om=om<0?-om*0.25:om; if(Math.abs(om)<0.04) om=0; }
+    }
+    if(!pushing && Math.abs(om)<0.012) om=0;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=Math.min(w*0.62,h*0.68), Hx=w*0.17, Hy=h*0.2;
+    // wall
+    line(ctx,w*0.03,Hy,Hx-7,Hy,COL.ink,9); line(ctx,Hx+L+7,Hy,w*0.97,Hy,COL.ink,9);
+    // swing sector
+    ctx.save(); ctx.strokeStyle=COL.faint; ctx.lineWidth=1.6; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.arc(Hx,Hy,L,0,MAXA); ctx.stroke(); ctx.restore();
+    line(ctx,Hx,Hy,Hx+Math.cos(MAXA)*L,Hy+Math.sin(MAXA)*L,COL.faint,1.6,[6,6]);
+    // door
+    const d=[Math.cos(th),Math.sin(th)], tn=[-Math.sin(th),Math.cos(th)], T=6;
+    poly(ctx,[[Hx+tn[0]*-T,Hy+tn[1]*-T],[Hx+d[0]*L-tn[0]*T,Hy+d[1]*L-tn[1]*T],[Hx+d[0]*L+tn[0]*T,Hy+d[1]*L+tn[1]*T],[Hx+tn[0]*T,Hy+tn[1]*T]],COL.ink,'#eaf3fc',2.8);
+    // contact point and force
+    const Px=Hx+d[0]*r*L, Py=Hy+d[1]*r*L;
+    const fd=[Math.cos(ph)*d[0]+Math.sin(ph)*tn[0], Math.cos(ph)*d[1]+Math.sin(ph)*tn[1]];
+    const flen=34+F*1.5, al=pushing?1:0.4;
+    // line of action + lever arm
+    const s=(Hx-Px)*fd[0]+(Hy-Py)*fd[1], fx=Px+s*fd[0], fy=Py+s*fd[1];
+    ctx.save(); ctx.globalAlpha=al; line(ctx,Px,Py,fx,fy,COL.red,1.4,[5,5]); line(ctx,Hx,Hy,fx,fy,COL.green,2.6,[]); ctx.restore();
+    if(Math.abs(s)>8) chip(ctx,'d = '+fmt(r*Math.sin(ph),2)+' m',(Hx+fx)/2-30,(Hy+fy)/2+(fy>Hy?22:-10),COL.green);
+    line(ctx,Hx,Hy,Px,Py,COL.green,1.4,[]);
+    ctx.save(); ctx.globalAlpha=al; vec(ctx,Px-fd[0]*flen,Py-fd[1]*flen,Px,Py,COL.red,pushing?5:3.2); ctx.restore();
+    chip(ctx,'F = '+F+' N',Px-fd[0]*flen-12,Py-fd[1]*flen-8,COL.red,'right');
+    circ(ctx,Px,Py,6.5,COL.yellow,'#fff',3);
+    // φ arc
+    { const a0=Math.atan2(d[1],d[0]), a1=Math.atan2(fd[1],fd[0]); ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(Px,Py,22,a0,a1,a1<a0); ctx.stroke(); ctx.restore(); }
+    // torque arc around hinge
+    const sweep=clamp(tau/40,0.05,1.0)*2.2;
+    ctx.save(); ctx.globalAlpha=al; arcArrow(ctx,Hx,Hy,34,th+0.15,th+0.15+sweep,COL.red,2+tau/12); ctx.restore();
+    chip(ctx,'τ',Hx-34,Hy-16,COL.red);
+    // hinge + angle
+    circ(ctx,Hx,Hy,8,COL.ink,'#fff',3);
+    arcArrow(ctx,Hx,Hy,L*0.28,0,th,COL.blue,2.4);
+    if(th>0.1) textAt(ctx,'θ = '+fmt(th*180/Math.PI,0)+'°',Hx+L*0.3,Hy+L*0.1+8,{size:12,weight:700,color:COL.blue});
+    chip(ctx,'Fig 6.18',w*0.04+6,h-18,COL.muted);
+    U.set('r1',fmt(tau,1)+' N·m'); U.set('r2',fmt(tau/I,2)+' rad/s²'); U.set('r3',fmt(om,2)+' rad/s'); U.set('r4',fmt(th*180/Math.PI,0)+'°');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.8 PRINCIPLE OF MOMENTS — BAR ON KNIFE-EDGES   (Example 6.8, Fig 6.26)
+   ΣF = 0 and Στ = 0 about K₁:  R₂·50 = W_bar·25 + W_load·(x − 10)  [cm]
+   Textbook check: 4 kg bar, 6 kg at 30 cm → R₁ = 54.9 N, R₂ = 43.1 N.
+   Load past a knife-edge makes the other reaction negative: the bar
+   really tips (τ = Iα about the edge, with a stop and a bounce).
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('ml','Hanging load',0,12,0.5,6,'kg',1) +
+    rangeCtl('xl','Load position from end A',0,70,1,30,'cm') +
+    btnRow([['tb','Textbook values','play']]) +
+    cards([{id:'r1',label:'R₁ at K₁',color:'var(--f-blue)'},{id:'r2',label:'R₂ at K₂',color:'var(--f-blue)'},{id:'r3',label:'Σ torque about K₁',wide:true,color:'var(--f-green)'}],'ΣF = 0  and  Στ = 0');
+  const canvas=U.$('canvas');
+  U.click('tb',()=>{ U.setRange('ml',6); U.setRange('xl',30); });
+  let t=0, phi=0, om=0, psi=0, psiW=0, prevAx=null, prevAxV=0;
+  const xlS={x:30,v:0}, mlS={x:6,v:0}, R1s={x:54.9,v:0}, R2s={x:43.1,v:0};
+  animLoop(dt=>{
+    t+=dt;
+    const xl=springTo(xlS,U.v('xl'),70,13,dt), ml=Math.max(0,springTo(mlS,U.v('ml'),70,13,dt));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Lpx=Math.min(w*0.74,660), ppc=Lpx/70, bx0=(w-Lpx)/2, barY=h*0.42, hk=clamp(ppc*3.2,12,32), tableY=barY+7+hk;
+    const Wb=4*G, Wl=ml*G;
+    const kPhi=Math.asin(clamp(hk/(10*ppc),0,0.9));         // bar end meets the table
+    // static reactions at φ = 0
+    const R2=(Wb*25+Wl*(xl-10))/50, R1=Wb+Wl-R2;
+    // ---- tipping dynamics
+    if(phi===0 && (R1<-1e-6||R2<-1e-6)){ phi=R1<0?1e-4:-1e-4; om=0; }
+    if(phi!==0){
+      const n=4, hh=dt/n;
+      for(let i=0;i<n && phi!==0;i++){
+        const pv=phi>0?60:10;
+        const tau=(Wb*(35-pv)+Wl*(xl-pv))/100*Math.cos(phi);
+        const Ip=4*(0.7*0.7/12+Math.pow((35-pv)/100,2))+ml*Math.pow((xl-pv)/100,2);
+        const prev=phi; om+=tau/Ip*hh; phi+=om*hh;
+        if(Math.abs(phi)>kPhi){ phi=sgn(phi)*kPhi; om=-om*0.28; if(Math.abs(om)<0.25) om=0; }
+        if(prev*phi<0 || (Math.abs(phi)<1e-5)){ phi=0; om=0; }
+      }
+    }
+    const tipping=phi!==0;
+    const r1t=tipping?(phi>0?0:Wb+Wl):R1, r2t=tipping?(phi>0?Wb+Wl:0):R2;
+    R1s.x=approach(R1s.x,Math.max(0,r1t),9,dt); R2s.x=approach(R2s.x,Math.max(0,r2t),9,dt);
+    // ---- drawing
+    const pvx=bx0+(phi>0?60:10)*ppc, pvy=barY+7;
+    const rot=(x,y)=>{ const dx=x-pvx, dy=y-pvy, c=Math.cos(phi), s=Math.sin(phi); return [pvx+dx*c-dy*s, pvy+dx*s+dy*c]; };
+    ground(ctx,w*0.04,w*0.96,tableY);
+    [10,60].forEach((k,i)=>{ const kx=bx0+k*ppc; poly(ctx,[[kx,barY+7],[kx-12,tableY],[kx+12,tableY]],COL.ink,'#fff',2.4); textAt(ctx,'K'+['₁','₂'][i],kx,tableY+34,{align:'center',size:13,weight:700}); });
+    // bar
+    const bar=[rot(bx0,barY-7),rot(bx0+Lpx,barY-7),rot(bx0+Lpx,barY+7),rot(bx0,barY+7)];
+    poly(ctx,bar,COL.ink,'#eaf3fc',2.8);
+    for(let c=10;c<70;c+=10){ const a=rot(bx0+c*ppc,barY-7), b=rot(bx0+c*ppc,barY-2); line(ctx,a[0],a[1],b[0],b[1],COL.mid,1.4); }
+    const eA=rot(bx0,barY), eB=rot(bx0+Lpx,barY);
+    textAt(ctx,'A',eA[0]-16,eA[1]+4,{size:13,weight:700}); textAt(ctx,'B',eB[0]+8,eB[1]+4,{size:13,weight:700});
+    // bar weight (red) at G
+    const G0=rot(bx0+35*ppc,barY-7), flen=Wb*0.8;
+    vec(ctx,G0[0],G0[1]-flen-4,G0[0],G0[1]-4,COL.red,3.2); chip(ctx,'W = '+fmt(Wb,1)+' N',G0[0]+8,G0[1]-flen-10,COL.red);
+    circ(ctx,G0[0],rot(bx0+35*ppc,barY)[1],3,COL.green,COL.green,1);
+    // hanging load with real pendulum swing
+    const ap=rot(bx0+xl*ppc,barY+7);
+    const ax=prevAx===null?0:(ap[0]-prevAx)/Math.max(dt,1e-3); const acc=prevAx===null?0:clamp((ax-prevAxV)/Math.max(dt,1e-3),-30000,30000);
+    prevAx=ap[0]; prevAxV=ax;
+    const ell=Math.min(h*0.17,95), gpx=G*100*ppc;
+    const nsub=Math.max(1,Math.ceil(dt/0.004)), hs=dt/nsub;
+    for(let i=0;i<nsub;i++){ const a2=-(gpx/ell)*Math.sin(psi)-(acc/ell)*Math.cos(psi)-1.8*psiW; psiW+=a2*hs; psi+=psiW*hs; }
+    psi=clamp(psi,-1,1);
+    const bsz=10+5*Math.cbrt(ml)*2.2, bpx=ap[0]+ell*Math.sin(psi), bpy=ap[1]+ell*Math.cos(psi);
+    if(ml>0.01){
+      line(ctx,ap[0],ap[1],bpx,bpy,COL.ink,1.8);
+      ctx.save(); ctx.translate(bpx,bpy); ctx.rotate(-psi*0.0); rrect(ctx,-bsz/2,0,bsz,bsz,3); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+      textAt(ctx,fmt(ml,1)+' kg',bpx,bpy+bsz*0.62+3,{align:'center',size:11,weight:700});
+      vec(ctx,bpx,bpy+bsz,bpx,bpy+bsz+Wl*0.8+6,COL.red,3.2);
+    } else circ(ctx,ap[0],ap[1]+3,3,COL.ink,'#fff',2);
+    // reactions (blue) under the table
+    [[10,R1s.x,'R₁'],[60,R2s.x,'R₂']].forEach(([k,R,n])=>{ const kx=bx0+k*ppc; if(R>0.5){ vec(ctx,kx,tableY+52+R*0.8,kx,tableY+52,COL.blue,3.6); chip(ctx,n+' = '+fmt(R,1)+' N',kx+12,tableY+60+R*0.4,COL.blue); } });
+    // distance of load from A (yellow)
+    const dy=barY-86; const sA=bx0, sP=bx0+xl*ppc;
+    line(ctx,sA,dy-6,sA,dy+6,COL.yellow,1.6); line(ctx,sP,dy-6,sP,dy+14,COL.yellow,1.6,[3,3]);
+    if(sP-sA>24) dim(ctx,sA,dy,sP,dy,COL.yellow,'x = '+fmt(xl,0)+' cm',-6);
+    chip(ctx,'Fig 6.26',w*0.04+6,28,COL.muted);
+    if(tipping) chip(ctx,'Load beyond the knife-edge: the bar tips',w/2,28,COL.red,'center');
+    const tq=R2s.x*0.5-Wb*0.25-Wl*(xl-10)/100;
+    U.set('r1',fmt(R1s.x,1)+' N'); U.set('r2',fmt(R2s.x,1)+' N'); U.set('r3',tipping?fmt(tq,1)+' N·m (not balanced)':fmt(Math.abs(tq)<0.05?0:tq,1)+' N·m  ✓');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.9 THE LADDER   (Example 6.9, Fig 6.27)
+   Static: N = W ; F₁ = F = W·x / (2H) with H = √(L² − x²) ; F₂ = √(F²+N²).
+   Textbook check: 20 kg, L = 3 m, x = 1 m → F₁ = 34.6 N, F₂ = 199 N, 80°.
+   If the floor cannot supply F (needs μ ≥ x/2H) the ladder really slips:
+   rigid-body equations with wall contact, then free of the wall.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('xf','Foot distance from wall  x',0.5,2.7,0.05,1,'m',2) +
+    rangeCtl('mu','Floor friction  μ',0,1,0.01,0.3,'',2) +
+    btnRow([['tb','Textbook values','play'],['rs','↺ Stand it up','']]) +
+    cards([{id:'r1',label:'F₁ = F (friction)',color:'var(--f-blue)'},{id:'r2',label:'Max μN',color:'var(--f-green)'},{id:'r3',label:'F₂ = √(F²+N²)',color:'var(--f-blue)'},{id:'r4',label:'F₂ angle with floor'}],'Στ about foot:  F₁ H = W x / 2');
+  const canvas=U.$('canvas');
+  const Lh=3, m=20, W=m*G, a=Lh/2, Ic=m*Lh*Lh/12;
+  let t=0, mode='static', th=0, om=0, xc=0, vxc=0;
+  const xfS={x:1,v:0}, F1s={x:34.6,v:0};
+  const standUp=()=>{ mode='static'; xc=0; vxc=0; xfS.x=+U.$('#xf').value; xfS.v=0; };
+  U.click('tb',()=>{ U.setRange('xf',1); U.setRange('mu',0.3); standUp(); });
+  U.click('rs',standUp);
+  U.onInput(['xf','mu'],()=>{ if(mode!=='static') standUp(); });
+
+  animLoop(dt=>{
+    t+=dt;
+    const xT=U.v('xf'), mu=U.v('mu');
+    if(mode==='static') springTo(xfS,xT,45,11,dt);
+    const x=xfS.x, Hh=Math.sqrt(Math.max(0.01,Lh*Lh-x*x));
+    const need=x/(2*Hh);                      // μ needed
+    if(mode==='static' && need>mu+1e-6){ mode='slide'; xc=0; th=Math.acos(clamp(x/Lh,-1,1)); om=0; }
+    // ---- rigid-body dynamics when it slips
+    if(mode!=='static'){
+      const n=Math.max(1,Math.ceil(dt/0.003)), hh=dt/n;
+      for(let i=0;i<n && mode!=='done';i++){
+        const s=Math.sin(th), c=Math.cos(th);
+        if(mode==='slide'){
+          const N0=m*G-m*a*s*om*om;
+          const A=-a*(N0*(c-2*mu*s)+m*a*s*c*om*om)/(Ic+m*a*a*(1-2*mu*s*c));
+          const N=N0+m*a*c*A, Nw=-m*a*(s*A+c*om*om)+mu*N;
+          if(Nw<0){ mode='free'; xc=a*c; vxc=-a*s*om; continue; }
+          om+=A*hh; th+=om*hh;
+        } else {
+          const vf=vxc-a*s*om, sg=vf>=0?1:-1, mus=sg*mu;
+          const N0=m*G-m*a*s*om*om;
+          const A=-a*N0*(c-mus*s)/(Ic+m*a*a*c*(c-mus*s));
+          const N=N0+m*a*c*A, f=mus*N;
+          vxc+=(-f/m)*hh; xc+=vxc*hh; om+=A*hh; th+=om*hh;
+        }
+        if(th<=0.04){ th=0.04; om=0; mode='done'; }
+      }
+    }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ppm=Math.min(h*0.74/3,w*0.68/3.4), wallX=w*0.12, floorY=h*0.84;
+    const WX=xm=>wallX+xm*ppm, WY=ym=>floorY-ym*ppm;
+    // wall + floor
+    line(ctx,wallX,floorY,wallX,h*0.04,COL.ink,3);
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath(); for(let y=floorY;y>h*0.06;y-=14){ ctx.moveTo(wallX,y); ctx.lineTo(wallX-9,y+8); } ctx.stroke(); ctx.restore();
+    ground(ctx,wallX,w*0.97,floorY);
+    // ladder geometry
+    let fx,tx,ty;
+    if(mode==='static'){ fx=x; tx=0; ty=Hh; }
+    else if(mode==='slide'){ fx=Lh*Math.cos(th); tx=0; ty=Lh*Math.sin(th); }
+    else { fx=xc+a*Math.cos(th); tx=xc-a*Math.cos(th); ty=Lh*Math.sin(th); }
+    if(mode==='done'){ fx=xc>0?xc+a*Math.cos(th):Lh*Math.cos(th); tx=xc>0?xc-a*Math.cos(th):0; }
+    const A0=[WX(fx),WY(0)], B0=[WX(tx),WY(ty)];
+    const dx=B0[0]-A0[0], dy=B0[1]-A0[1], Ln=Math.hypot(dx,dy), ux=dx/Ln, uy=dy/Ln, nx=-uy, ny=ux, rw=6;
+    line(ctx,A0[0]+nx*rw,A0[1]+ny*rw,B0[0]+nx*rw,B0[1]+ny*rw,COL.ink,3.4); line(ctx,A0[0]-nx*rw,A0[1]-ny*rw,B0[0]-nx*rw,B0[1]-ny*rw,COL.ink,3.4);
+    for(let q=0.25;q<Lh;q+=0.25){ const f=q/Lh; const px=A0[0]+dx*f, py=A0[1]+dy*f; line(ctx,px+nx*rw,py+ny*rw,px-nx*rw,py-ny*rw,COL.ink,2); }
+    const Gp=[(A0[0]+B0[0])/2,(A0[1]+B0[1])/2];
+    circ(ctx,Gp[0],Gp[1],4,COL.green,COL.green,1);
+    // forces (static view)
+    const Fneed=W*need, k=0.42;
+    F1s.x=approach(F1s.x,mode==='static'?Fneed:0,10,dt);
+    const stable=mode==='static';
+    if(stable){
+      vec(ctx,Gp[0],Gp[1],Gp[0],Gp[1]+W*k,COL.red,3.4); chip(ctx,'W = '+fmt(W,0)+' N',Gp[0]+12,Gp[1]+W*k*0.6,COL.red);
+      vec(ctx,A0[0],A0[1]+W*k,A0[0],A0[1],COL.blue,3.4); chip(ctx,'N = '+fmt(W,0)+' N',A0[0]+12,A0[1]+W*k*0.5,COL.blue);
+      vec(ctx,A0[0]+Math.max(F1s.x*k,8),A0[1]-14,A0[0],A0[1]-14,COL.blue,3.4); chip(ctx,'F = '+fmt(Fneed,1)+' N',A0[0]+Math.max(F1s.x*k,8)+10,A0[1]-18,COL.blue);
+      vec(ctx,B0[0],B0[1],B0[0]+Math.max(F1s.x*k,8),B0[1],COL.blue,3.4);
+      chip(ctx,'F₁ = '+fmt(Fneed,1)+' N',B0[0]+Math.max(F1s.x*k,8)+10,B0[1]+4,COL.blue);
+    }
+    dim(ctx,WX(0),floorY+26,WX(Math.max(fx,0.1)),floorY+26,COL.yellow,'x = '+fmt(Math.max(fx,0),2)+' m',-6);
+    chip(ctx,'Fig 6.27',w*0.04+6,28,COL.muted);
+    const holds=need<=mu+1e-6;
+    chip(ctx,mode==='static'?(holds?'Holds · friction is enough':'—'):mode==='done'?'The ladder has fallen':'Slipping! friction < needed',w/2,28,mode==='static'?COL.green:COL.red,'center');
+    const F2=Math.hypot(Fneed,W), ang=Math.atan2(W,Fneed)*180/Math.PI;
+    U.set('r1',fmt(Fneed,1)+' N'); U.set('r2',fmt(mu*W,1)+' N'); U.set('r3',fmt(F2,1)+' N'); U.set('r4',fmt(ang,1)+'°');
+    const needMu=U.$('#r2'); needMu.style.color=holds?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.10 MOMENT OF INERTIA RACE   (Eq 6.34, τ = Iα, K = ½Iω²)
+   Same M, same R, same torque: ring I = MR² · disc ½MR² · sphere ⅖MR² ·
+   dumbbell (two M/2 masses at r) I = M r².  Released, each coasts at constant ω.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('tq','Torque  τ',0.05,0.6,0.05,0.2,'N·m',2) +
+    rangeCtl('M','Mass  M',1,5,0.5,2,'kg',1) +
+    rangeCtl('R','Radius  R',0.1,0.4,0.05,0.2,'m',2) +
+    rangeCtl('rd','Dumbbell masses at  r',0.05,0.4,0.05,0.2,'m',2) +
+    btnRow([['tqb','▶ Apply torque','play'],['rs','↺ Reset','']]) +
+    cards([{id:'r1',label:'Fastest',color:'var(--f-green)'},{id:'r2',label:'Slowest',color:'var(--f-red)'},{id:'r3',label:'Time under torque',wide:true}],'α = τ / I     K = ½ I ω²');
+  const canvas=U.$('canvas');
+  let t=0, on=false, tOn=0;
+  const objs=[{n:'Ring',f:'MR²',c:COL.red,om:0,th:0},{n:'Disc',f:'½MR²',c:COL.blue,om:0,th:0},{n:'Solid sphere',f:'⅖MR²',c:COL.green,om:0,th:0},{n:'Dumbbell',f:'M r²',c:COL.yellow,om:0,th:0}];
+  const btn=U.$('#tqb');
+  function setOn(v){ on=v; btn.textContent=on?'❚❚ Release torque':'▶ Apply torque'; btn.classList.toggle('play',!on); btn.classList.toggle('navy',on); btn.style.width=''; btn.style.marginTop='0'; }
+  btn.onclick=()=>setOn(!on);
+  U.click('rs',()=>{ setOn(false); tOn=0; objs.forEach(o=>{ o.om=0; o.th=0; }); });
+  animLoop(dt=>{
+    t+=dt;
+    const tq=U.v('tq'), M=U.v('M'), R=U.v('R'), rd=U.v('rd');
+    const Iv=[M*R*R,0.5*M*R*R,0.4*M*R*R,M*rd*rd];
+    if(on) tOn+=dt;
+    objs.forEach((o,i)=>{ if(on && o.om<40) o.om+=tq/Iv[i]*dt; o.th+=o.om*dt; });
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const colW=w/4, cy=h*0.34, radMax=Math.min(colW*0.48,h*0.28), pm=radMax/0.4;
+    objs.forEach((o,i)=>{
+      const cx=colW*(i+0.5), th=o.th, Rp=R*pm, c=o.c;
+      if(i===0){ circ(ctx,cx,cy,Rp,COL.ink,null,2.4); circ(ctx,cx,cy,Math.max(2,Rp-9),COL.ink,null,2.4); circ(ctx,cx,cy,Rp-4.5,c,null,7); circ(ctx,cx+Math.cos(th)*(Rp-4.5),cy+Math.sin(th)*(Rp-4.5),6,COL.ink,COL.ink,1); }
+      else if(i===1){ circ(ctx,cx,cy,Rp,COL.ink,'rgba(47,143,224,0.12)',2.6); circ(ctx,cx,cy,Rp*0.6,COL.faint,null,1.4); circ(ctx,cx,cy,Rp*0.3,COL.faint,null,1.4);
+        line(ctx,cx,cy,cx+Math.cos(th)*Rp,cy+Math.sin(th)*Rp,c,3); circ(ctx,cx+Math.cos(th)*Rp*0.88,cy+Math.sin(th)*Rp*0.88,6,COL.ink,COL.ink,1); }
+      else if(i===2){ circ(ctx,cx,cy,Rp,COL.ink,'rgba(31,157,85,0.12)',2.6); [0.75,0.5,0.25].forEach(q=>circ(ctx,cx,cy,Rp*q,COL.faint,null,1.2));
+        ctx.save(); ctx.strokeStyle=c; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(cx,cy,Rp*0.82,Math.PI*1.1,Math.PI*1.45); ctx.stroke(); ctx.restore();
+        line(ctx,cx,cy,cx+Math.cos(th)*Rp,cy+Math.sin(th)*Rp,c,3); circ(ctx,cx+Math.cos(th)*Rp*0.88,cy+Math.sin(th)*Rp*0.88,6,COL.ink,COL.ink,1); }
+      else { const rp=rd*pm; ctx.save(); ctx.setLineDash([5,5]); circ(ctx,cx,cy,rp,COL.mid,null,1.2); ctx.restore();
+        const ex=Math.cos(th)*rp, ey=Math.sin(th)*rp; line(ctx,cx-ex,cy-ey,cx+ex,cy+ey,COL.ink,3);
+        const mr=8+5*Math.sqrt(M/5); [1,-1].forEach(s=>{ circ(ctx,cx+s*ex,cy+s*ey,mr,COL.ink,c,2.6); }); circ(ctx,cx,cy,3,COL.ink,COL.ink,1); }
+      circ(ctx,cx,cy,3.2,COL.ink,COL.ink,1);
+      if(on && o.om<40) arcArrow(ctx,cx,cy,radMax*1.12,-0.7,0.35,COL.red,2.6);
+      const y0=cy+radMax+30;
+      textAt(ctx,o.n,cx,y0,{align:'center',size:14,weight:700,color:COL.ink});
+      textAt(ctx,'I = '+o.f+' = '+fmt(Iv[i],3),cx,y0+19,{align:'center',size:12.5,weight:600,color:COL.muted});
+      textAt(ctx,'α = '+fmt(tq/Iv[i],1)+' rad/s²',cx,y0+37,{align:'center',size:12.5,weight:600,color:COL.red});
+      // ω bar
+      const bw=colW*0.7, bx=cx-bw/2, by=y0+52;
+      rrect(ctx,bx,by,bw,12,6); ctx.fillStyle=COL.faint; ctx.fill();
+      rrect(ctx,bx,by,Math.max(0.1,bw*clamp(o.om/40,0,1)),12,6); ctx.fillStyle=COL.blue; ctx.fill();
+      textAt(ctx,'ω = '+fmt(o.om,1)+' rad/s',cx,by+31,{align:'center',size:13.5,weight:700,color:COL.blue});
+      textAt(ctx,'K = '+fmt(0.5*Iv[i]*o.om*o.om,2)+' J',cx,by+49,{align:'center',size:12.5,weight:600,color:COL.muted});
+    });
+    chip(ctx,'Exercise 6.10  ·  equal torque',w*0.03+6,28,COL.muted);
+    const oms=objs.map(o=>o.om), mx=Math.max(...oms), mn=Math.min(...oms);
+    U.set('r1',mx>0.05?objs[oms.indexOf(mx)].n:'—'); U.set('r2',mx>0.05?objs[oms.indexOf(mn)].n:'—'); U.set('r3',fmt(tOn,1)+' s');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.11 FLYWHEEL AND CORD   (Example 6.12, Fig 6.31)
+   I = ½MR² ; α = F R / I ; W = F·s ; K = ½Iω² ; ω² = 2αθ.
+   Textbook check: 20 kg, 0.20 m, 25 N, 2 m of cord → α = 12.5 rad/s²,
+   W = 50 J, ω² = 250 (rad/s)², K = 50 J = W.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('F','Pull  F',5,50,1,25,'N') +
+    rangeCtl('M','Flywheel mass  M',5,30,1,20,'kg') +
+    rangeCtl('R','Radius  R',0.1,0.4,0.01,0.2,'m',2) +
+    btnRow([['tb','Textbook values','play'],['rp','↺ Replay','']]) +
+    cards([{id:'r1',label:'α = F R / I',color:'var(--f-red)'},{id:'r2',label:'Work W = F·s',color:'var(--f-red)'},{id:'r3',label:'Energy K = ½Iω²',color:'var(--f-blue)'},{id:'r4',label:'ω²'}],'W = K   (no friction loss)');
+  const canvas=U.$('canvas');
+  let t=0, th=0, om=0, hold=0, coast=0, lastSig='';
+  const SM=2;
+  const reset=()=>{ th=0; om=0; hold=0; coast=0; };
+  U.click('tb',()=>{ U.setRange('F',25); U.setRange('M',20); U.setRange('R',0.2); reset(); });
+  U.click('rp',reset);
+  animLoop(dt=>{
+    t+=dt;
+    const F=U.v('F'), M=U.v('M'), R=U.v('R'), I=0.5*M*R*R, al=F*R/I;
+    const sig=[F,M,R].join('|'); if(sig!==lastSig){ lastSig=sig; reset(); }
+    if(hold>0){ hold-=dt; if(hold<=0) reset(); }
+    else {
+      const n=4, hh=dt/n, thEnd=SM/R;
+      for(let i=0;i<n;i++){
+        if(th<thEnd){ om+=al*hh; th+=om*hh; if(th>=thEnd){ th=thEnd; om=Math.sqrt(2*al*thEnd); coast=0; } }   // ω² = 2αθ exactly at 2 m
+        else { th+=om*hh; coast+=hh; }
+      }
+      if(th>=thEnd && coast>1.6) hold=0.4;
+    }
+    const s=Math.min(R*th,SM), W=F*s, K=0.5*I*om*om;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.3, cy=h*0.26, Rp=clamp(R*430,40,h*0.24), pxm=h*0.52/SM;
+    // cord + hand
+    const ex=cx+Rp, ey=cy+s*pxm;
+    // wheel
+    circ(ctx,cx,cy,Rp,COL.ink,'#fff',3); circ(ctx,cx,cy,Rp-6,'#c2d1e5',null,4);
+    for(let i=0;i<4;i++){ const a=th+i*Math.PI/2; line(ctx,cx,cy,cx+Math.cos(a)*(Rp-8),cy+Math.sin(a)*(Rp-8),COL.mid,2.2); }
+    circ(ctx,cx+Math.cos(th)*(Rp-14),cy+Math.sin(th)*(Rp-14),6,COL.blue,COL.blue,1);
+    circ(ctx,cx,cy,9,COL.ink,'#fff',3);
+    line(ctx,ex,cy,ex,ey,COL.ink,2.4);
+    const stillPulling=R*th<SM;
+    if(stillPulling){ vec(ctx,ex,ey+6,ex,ey+6+18+F*1.7,COL.red,4.2); chip(ctx,'F = '+F+' N',ex+14,ey+34,COL.red); }
+    circ(ctx,ex,ey,6,COL.yellow,'#fff',3);
+    // ruler (green = what has been unwound)
+    const rx=ex+64;
+    line(ctx,rx,cy,rx,cy+SM*pxm,COL.mid,1.6);
+    for(let q=0;q<=SM*2;q++){ const yy=cy+q*0.5*pxm; line(ctx,rx-5,yy,rx+5,yy,COL.mid,1.6); textAt(ctx,fmt(q*0.5,1)+' m',rx+10,yy+4,{size:11,color:COL.mid}); }
+    dim(ctx,rx-18,cy,rx-18,ey,COL.green,null); chip(ctx,'s = '+fmt(s,2)+' m',rx-26,cy+s*pxm/2,COL.green,'right');
+    chip(ctx,'Fig 6.31',w*0.03+6,28,COL.muted);
+    if(om>0.05) arcArrow(ctx,cx,cy,Rp+16,-1.1,-0.2,COL.blue,2.8);
+    // energy bars
+    const bx=w*0.66, base=h*0.86, hs=h*0.62/100, bw=Math.min(70,w*0.08);
+    line(ctx,bx-30,base,bx+bw*2+60,base,COL.ink,2);
+    [[W,COL.red,'W = F·s',0],[K,COL.blue,'K = ½Iω²',1]].forEach(([v,c,n,j])=>{
+      const x0=bx+j*(bw+30), hh=Math.min(v*hs,h*0.7);
+      rrect(ctx,x0,base-hh,bw,Math.max(hh,0.1),5); ctx.fillStyle=c; ctx.fill();
+      textAt(ctx,fmt(v,1)+' J',x0+bw/2,base-hh-8,{align:'center',size:13,weight:700,color:c});
+      textAt(ctx,n,x0+bw/2,base+20,{align:'center',size:12,weight:700,color:c});
+    });
+    if(W>1 && Math.abs(W-K)<0.02*W+0.2) chip(ctx,'W = K',bx+bw+15,base-Math.min(Math.max(W,K)*hs,h*0.7)-34,COL.green,'center');
+    U.set('r1',fmt(al,2)+' rad/s²'); U.set('r2',fmt(W,1)+' J'); U.set('r3',fmt(K,1)+' J'); U.set('r4',fmt(om*om,0)+' (rad/s)²');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.12 THE SWIVEL CHAIR   (Fig 6.32, L = Iω = constant)
+   I = I₀ + 2(m_w + m_arm) r² ; with no external torque  ω = L / I.
+   Pulling the arms in lowers I, so ω rises and K = L²/2I rises too.
+   ===================================================================== */
+function buildA12(){
+  const wrap=labShell(), U=ui(wrap);
+  wrap.querySelector('.lab-side').innerHTML =
+    rangeCtl('arm','Arms  (in → out)',0,100,1,0,'%') +
+    rangeCtl('mw','Weights in hands',0,4,0.5,3,'kg',1) +
+    rangeCtl('w0','Spin given by friend',1,4,0.5,3,'rad/s',1) +
+    btnRow([['sp','↻ Give a spin','play'],['st','■ Stop','']]) +
+    cards([{id:'r1',label:'L = Iω  (constant)',color:'var(--f-blue)'},{id:'r2',label:'I now',color:'var(--f-green)'},{id:'r3',label:'ω now',color:'var(--f-red)'},{id:'r4',label:'K = ½Iω²'}],'I ↓  ⇒  ω ↑ ,  L stays the same');
+  const canvas=U.$('canvas');
+  let t=0, th=0, L=0, started=false, lastMw=null;
+  const arm={x:0,v:0};
+  const I0=1.2, Iof=(r,mw)=>I0+2*(mw+2)*r*r;
+  U.click('sp',()=>{ const r=0.2+0.55*arm.x; L=Iof(r,+U.$('#mw').value)*(+U.$('#w0').value); });
+  U.click('st',()=>{ L=0; });
+  animLoop(dt=>{
+    t+=dt;
+    const mw=U.v('mw'), w0=U.v('w0'), target=U.v('arm')/100;
+    springTo(arm,target,60,7.5,dt);
+    const a=clamp(arm.x,-0.08,1.08), r=0.2+0.55*a, I=Iof(r,mw);
+    if(!started){ started=true; L=Iof(0.2,mw)*w0; lastMw=mw; }
+    if(mw!==lastMw){ const omOld=L/Iof(r,lastMw); L=omOld*I; lastMw=mw; }   // swapping weights keeps ω
+    const om=L/I; th+=om*dt;
+    const K=0.5*I*om*om;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.4, cy=h*0.5, ppm=Math.min(w*0.34,h*0.42)/0.9;
+    // chair
+    circ(ctx,cx,cy,0.3*ppm,COL.ink,'#f6f9fc',2.4);
+    for(let i=0;i<5;i++){ const q=th*0.0+i*Math.PI*2/5+0.3; line(ctx,cx,cy,cx+Math.cos(q)*0.42*ppm,cy+Math.sin(q)*0.42*ppm,COL.mid,3); circ(ctx,cx+Math.cos(q)*0.42*ppm,cy+Math.sin(q)*0.42*ppm,4,COL.mid,COL.mid,1); }
+    // hand-radius guides
+    ctx.save(); ctx.setLineDash([5,6]); circ(ctx,cx,cy,r*ppm,COL.mid,null,1.2); ctx.restore();
+    // body (rotates with θ): front = th − 90°
+    const fr=th-Math.PI/2, lat=[Math.cos(th),Math.sin(th)], fw=[Math.cos(fr),Math.sin(fr)];
+    const shoulder=0.19*ppm;
+    const fold=1-a;
+    const hands=[1,-1].map(s=>{
+      const ang=s>0?th-fold*1.15:th+Math.PI+fold*1.15;
+      return [cx+Math.cos(ang)*r*ppm, cy+Math.sin(ang)*r*ppm, s];
+    });
+    hands.forEach(([hx,hy,s])=>{
+      const sx=cx+lat[0]*shoulder*s, sy=cy+lat[1]*shoulder*s;
+      const mx=(sx+hx)/2+lat[0]*s*0.12*ppm*fold+fw[0]*0.06*ppm*fold, my=(sy+hy)/2+lat[1]*s*0.12*ppm*fold+fw[1]*0.06*ppm*fold;
+      line(ctx,sx,sy,mx,my,COL.ink,6); line(ctx,mx,my,hx,hy,COL.ink,5); line(ctx,sx,sy,mx,my,'#fff',2.6); line(ctx,mx,my,hx,hy,'#fff',1.8);
+      const wr=mw>0?6+4.4*Math.sqrt(mw):5; circ(ctx,hx,hy,wr,COL.ink,mw>0?COL.yellow:'#fff',2.6);
+    });
+    // torso, head
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(th); ctx.beginPath(); ctx.ellipse(0,0,0.24*ppm,0.13*ppm,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+    circ(ctx,cx,cy,0.09*ppm,COL.ink,'#fff',2.6);
+    arrowHead(ctx,cx+fw[0]*0.13*ppm,cy+fw[1]*0.13*ppm,fr,COL.ink,9);
+    // ω arc
+    if(Math.abs(om)>0.1) arcArrow(ctx,cx,cy,0.98*ppm,-Math.PI*0.2,-Math.PI*0.2+clamp(om/12,0.15,1)*1.7,COL.red,2.6+Math.min(3,Math.abs(om)/5));
+    chip(ctx,'Fig 6.32',w*0.03+6,28,COL.muted);
+    // bars
+    const bw=Math.min(30,w*0.04), gap=bw*0.8, bx=w-4*(bw+gap)-w*0.04, base=h*0.8, bh=h*0.5;
+    line(ctx,bx-14,base,bx+4*(bw+gap),base,COL.ink,2);
+    const Iout=Iof(0.75,mw), Iin=Iof(0.2,mw), Ls=Math.abs(L)>1e-6, omIn=Ls?Math.abs(L)/Iin:1, Kin=Ls?0.5*Math.abs(L)*omIn:1;
+    [[Ls?1:0,COL.blue,'L',fmt(L,1)],[I/Iout,COL.green,'I',fmt(I,2)],[Math.abs(om)/omIn,COL.red,'ω',fmt(om,1)],[K/Kin,COL.ink,'K',fmt(K,1)]].forEach(([f,c,n,val],j)=>{
+      const x0=bx+j*(bw+gap), hh=clamp(f,0,1)*bh;
+      rrect(ctx,x0,base-hh,bw,Math.max(hh,0.1),4); ctx.fillStyle=c; ctx.fill();
+      textAt(ctx,val,x0+bw/2,base-hh-7,{align:'center',size:11.5,weight:700,color:c});
+      textAt(ctx,n,x0+bw/2,base+19,{align:'center',size:13,weight:700,color:c});
+    });
+    U.set('r1',fmt(L,1)+' kg·m²/s'); U.set('r2',fmt(I,2)+' kg·m²'); U.set('r3',fmt(om,2)+' rad/s'); U.set('r4',fmt(K,0)+' J');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY LIST + INIT
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'6.1',  title:'Kinds of Motion',        desc:'Slide · roll · spin a free body',            build: buildA1 },
+  { num:'6.2',  title:'Centre of Mass',         desc:'Change the masses · find the balance point', build: buildA2 },
+  { num:'6.3',  title:'Exploding Projectile',   desc:'The shell bursts · the CM does not notice',  build: buildA3 },
+  { num:'6.4',  title:'Splitting & Binary Stars', desc:'Switch frames · P = MV stays constant',    build: buildA4 },
+  { num:'6.5',  title:'Vector Product',         desc:'Turn b · watch c = a × b',                   build: buildA5 },
+  { num:'6.6',  title:'Rotation About an Axis', desc:'Spin it up · every point shares ω',          build: buildA6 },
+  { num:'6.7',  title:'Torque on a Door',       desc:'Push harder · farther · straighter',         build: buildA7 },
+  { num:'6.8',  title:'Knife-Edge Balance',     desc:'Slide the load · reactions share the weight', build: buildA8 },
+  { num:'6.9',  title:'The Ladder',             desc:'Move the foot · friction holds or fails',    build: buildA9 },
+  { num:'6.10', title:'Moment of Inertia Race', desc:'Same torque · different shapes',             build: buildA10 },
+  { num:'6.11', title:'Flywheel and Cord',      desc:'Work done = rotational kinetic energy',      build: buildA11 },
+  { num:'6.12', title:'The Swivel Chair',       desc:'Arms in · spin faster · L is conserved',     build: buildA12 },
+];
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

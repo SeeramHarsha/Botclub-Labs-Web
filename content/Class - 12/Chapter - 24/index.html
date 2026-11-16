@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chemistry Part 2 · Chapter 5 — Biomolecules | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🧬</div>
+    <div>
+      <div class="chip">Grade 12 · Chem Part 2 · Ch 5</div>
+      <h1>Biomolecules</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change · Anomeric C</span>
+      <span><i style="background:var(--f-blue)"></i>Measured · H-bond · Water</span>
+      <span><i style="background:var(--f-green)"></i>New bond · Product</span>
+      <span><i style="background:var(--f-red)"></i>Carbonyl · Heat · + charge</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+/* GRADE 12 CHEMISTRY PART 2 — CHAPTER 5: BIOMOLECULES
+   Every activity runs a continuous animation loop: sliders/buttons only set a
+   TARGET; the drawn object springs, eases or integrates toward it each frame. */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHAPTER-2 HELPERS — seeded random, eyepiece field, microscope,
+       living organisms (all line diagrams, all animated)
+   --------------------------------------------------------------------- */
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function lw(k,base){ return clamp(k*base,1,3); }
+
+/* ---------------------------------------------------------------------
+   CHAPTER-5 HELPERS
+   --------------------------------------------------------------------- */
+function mkShell(side){ const w=labShell(); w.querySelector('.lab-side').innerHTML=side; return w; }
+function cardsHTML(arr,cls){
+  return '<div class="control-group"><div class="result-cards'+(cls?' '+cls:'')+'">'+arr.map(c=>
+    `<div class="rcard${c[3]?' wide':''}"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}">${c[2]||'—'}</div></div>`).join('')+'</div></div>';
+}
+function setT(wrap,id,txt,color){ const e=wrap.querySelector('#'+id); if(!e) return; if(e.textContent!==txt) e.textContent=txt; if(color) e.style.color=color; }
+function lab(ctx,txt,x,y,col,size,bg){
+  size=size||12; ctx.save(); ctx.font='600 '+size+'px Poppins, sans-serif';
+  const wd=ctx.measureText(txt).width;
+  ctx.fillStyle=bg||'#fff'; ctx.beginPath(); ctx.ellipse(x,y,Math.max(wd/2+3,size*0.6),size*0.62,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=col||COL.ink; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,x,y+0.5); ctx.restore();
+}
+function poly(ctx,pts,col,lw,closed,fill){
+  ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); if(closed) ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.stroke(); ctx.restore();
+}
+function ngon(cx,cy,r,n,rot,sy){ return Array.from({length:n},(_,i)=>{ const a=rot+i*2*Math.PI/n; return [cx+r*Math.cos(a), cy+r*Math.sin(a)*(sy||1)]; }); }
+function run(wrap,draw){
+  const cv=wrap.querySelector('canvas'); let t=0;
+  animLoop(dt=>{ t+=dt; const f=fitCanvas(cv); f.ctx.clearRect(0,0,f.w,f.h); draw(f.ctx,f.w,f.h,dt,t); });
+}
+function alphaDo(ctx,a,fn){ ctx.save(); ctx.globalAlpha=clamp(a,0,1); fn(); ctx.restore(); }
+function wavy(ctx,x,y0,y1,amp,t,col,lwd,ph){ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lwd||1.6; ctx.beginPath();
+  for(let y=y0;y>=y1;y-=3){ const xx=x+Math.sin(y*0.09+t*6+(ph||0))*amp; y===y0?ctx.moveTo(xx,y):ctx.lineTo(xx,y); } ctx.stroke(); ctx.restore(); }
+
+/* =====================================================================
+   5.1  GLUCOSE & FRUCTOSE — OPEN CHAIN ⇄ RING
+   The –OH on C-5 attacks the carbonyl carbon: a hemiacetal ring forms.
+   Glucose → 6-membered pyranose (C1 anomeric). Fructose → 5-membered
+   furanose (C2 anomeric). New –OH on the anomeric carbon: α (down) / β (up).
+   ===================================================================== */
+const ZIG=i=>[(i-2.5)*0.866, i%2?0.25:-0.25];
+const OPENDIR=[-1,1,-1,1,-1,1];
+const dirv=(deg,L)=>[L*Math.cos(deg*Math.PI/180),L*Math.sin(deg*Math.PI/180)];
+const addv=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const SUGDEF={
+  glc:{ name:'glucopyranose', kinds:['carbonyl','OH','OH','OH','ringO','OH'], anC:0, anS:0, ringN:6, st:['an','d','u','d','p','p'], cst:['p','p','p','p','p'],
+    ring(){ const ang=[0,60,120,180,240], C=ang.map(a=>dirv(a,1)); C.push(addv(C[4],dirv(240,0.95)));
+      const S=[addv(C[0],dirv(0,0.95)),addv(C[1],dirv(60,0.95)),addv(C[2],dirv(120,0.95)),addv(C[3],dirv(180,0.95)),dirv(300,1),addv(C[5],dirv(200,0.9))];
+      return {C,S}; } },
+  fru:{ name:'fructofuranose', kinds:['OH','carbonyl','OH','OH','ringO','OH'], anC:1, anS:1, ringN:5, st:['p','an','u','d','p','p'], cst:['anc','p','p','p','p'],
+    ring(){ const R=0.9, C2=dirv(-18,R),C3=dirv(54,R),C4=dirv(126,R),C5=dirv(198,R);
+      const C1=addv(C2,dirv(-48,0.95)), C6=addv(C5,dirv(198,0.95));
+      const S=[addv(C1,dirv(-20,0.8)),addv(C2,dirv(12,0.95)),addv(C3,dirv(54,0.95)),addv(C4,dirv(126,0.95)),dirv(-90,R),addv(C6,dirv(160,0.85))];
+      return {C:[C1,C2,C3,C4,C5,C6],S}; } }
+};
+function wedge(ctx,a,b,style,ec,an){ // ring-mode stereo notation: bold = up, dashed = down
+  if(ec<0.02) return;
+  const up=style==='u'?1:style==='d'?0:style==='an'?(1+an)/2:(1-an)/2;
+  alphaDo(ctx,ec*clamp(up,0,1),()=>line(ctx,a[0],a[1],b[0],b[1],COL.ink,6));
+  alphaDo(ctx,ec*clamp(1-up,0,1),()=>line(ctx,a[0],a[1],b[0],b[1],COL.ink,3,[5,4]));
+}
+function buildA1(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Sugar</label>
+      <div class="toggle-group" id="sg"><button class="toggle-btn active" data-k="glc">Glucose</button><button class="toggle-btn" data-k="fru">Fructose</button></div></div>
+    <div class="control-group"><label>Ring closure <span class="val" id="rv">0%</span></label>
+      <input type="range" id="rr" min="0" max="100" value="0">
+      <div class="toggle-group"><button class="toggle-btn play" id="cl">Close ring</button><button class="toggle-btn" id="op">Open chain</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Anomeric –OH</label>
+      <div class="toggle-group" id="an"><button class="toggle-btn active" data-a="-1">α  (down)</button><button class="toggle-btn" data-a="1">β  (up)</button><button class="toggle-btn" data-a="0">Equilibrium</button></div>
+      <div class="hint">━ bold = up &nbsp; ┅ dashed = down<br>α m.p. 419 K · β m.p. 423 K</div></div>
+    ${cardsHTML([['c1','Form','Open chain',1],['c2','Ring atoms'],['c3','Free C=O?'],['c4','α : β time']])}`);
+  const $=s=>wrap.querySelector(s);
+  const ring={x:0,v:0}, an={x:-1,v:0};
+  let tgt=0, anT=-1, eq=false, eqT=1, sugar='glc', tA=0, tB=0;
+  toggleWire([...$('#sg').children], b=>{ sugar=b.dataset.k; tA=tB=0; });
+  toggleWire([...$('#an').children], b=>{ const a=+b.dataset.a; if(a===0){ eq=true; eqT=0.2; } else { eq=false; anT=a; } tgt=1; $('#rr').value=100; tA=tB=0; });
+  $('#rr').oninput=()=>{ tgt=$('#rr').value/100; };
+  $('#cl').onclick=()=>{ tgt=1; $('#rr').value=100; };
+  $('#op').onclick=()=>{ tgt=0; $('#rr').value=0; };
+  run(wrap,(ctx,w,h,dt,t)=>{
+    springTo(ring,tgt,34,7.5,dt); springTo(an,anT,60,9,dt);
+    if(eq){ eqT-=dt; if(eqT<=0){ anT=Math.random()<0.36?-1:1; eqT=0.7+Math.random()*1.6; } if(ring.x>0.9){ if(anT<0) tA+=dt; else tB+=dt; } }
+    const e=ring.x, ec=clamp(e,0,1), D=SUGDEF[sugar], g=D.ring();
+    const S=Math.min(w/7.8,h/4.4), cx=w/2, cy=h/2+S*0.1;
+    const P=(o,r)=>[cx+lerp(o[0],r[0],e)*S, cy+lerp(o[1],r[1],e)*S];
+    const C=[],Sb=[];
+    for(let i=0;i<6;i++){ const o=ZIG(i); C.push(P(o,g.C[i])); Sb.push(P([o[0],o[1]+OPENDIR[i]*0.95],g.S[i])); }
+    for(let i=0;i<5;i++){ const st=D.cst[i]; line(ctx,C[i][0],C[i][1],C[i+1][0],C[i+1][1],COL.ink,3);
+      if(st!=='p') wedge(ctx,C[i],C[i+1],st,ec,an.x); }
+    const ringS=Sb[4], anCp=C[D.anC];
+    if(ec>0.02) alphaDo(ctx,ec,()=>line(ctx,ringS[0],ringS[1],anCp[0],anCp[1],COL.green,4.5));
+    D.kinds.forEach((k,i)=>{
+      const c=C[i], s=Sb[i], st=D.st[i];
+      if(k==='carbonyl'){
+        const nx=-(s[1]-c[1]), ny=(s[0]-c[0]), L=Math.hypot(nx,ny)||1, off=0.07*S*(1-ec);
+        const col=mixCol(COL.red,COL.ink,ec);
+        line(ctx,c[0]+nx/L*off,c[1]+ny/L*off,s[0]+nx/L*off,s[1]+ny/L*off,col,3);
+        line(ctx,c[0]-nx/L*off,c[1]-ny/L*off,s[0]-nx/L*off,s[1]-ny/L*off,col,3);
+        wedge(ctx,c,s,'an',ec,an.x);
+      } else if(k==='ringO') line(ctx,c[0],c[1],s[0],s[1],COL.ink,3);
+      else { alphaDo(ctx,st==='p'?1:1-ec,()=>line(ctx,c[0],c[1],s[0],s[1],COL.ink,3)); if(st!=='p') wedge(ctx,c,s,st,ec,an.x); }
+    });
+    D.kinds.forEach((k,i)=>{
+      const s=Sb[i]; let tx,col;
+      if(k==='carbonyl'){ tx=ec>0.5?'OH':'O'; col=ec>0.5?COL.yellow:COL.red; }
+      else if(k==='ringO'){ tx=ec>0.5?'O':'OH'; col=ec>0.5?COL.blue:COL.ink; }
+      else { tx='OH'; col=COL.ink; }
+      lab(ctx,tx,s[0],s[1],col,Math.max(11,S*0.26));
+    });
+    for(let i=0;i<6;i++){
+      const oy=-OPENDIR[i]*0.34, rv=[C[i][0]-cx, C[i][1]-cy], L=Math.hypot(rv[0],rv[1])||1;
+      const rx=-rv[0]/L*0.34, ry=-rv[1]/L*0.34;
+      const fs=Math.max(10,S*0.2);
+      if(ec>0.5 && ((sugar==='glc'&&i===5)||(sugar==='fru'&&(i===0||i===5)))) textAt(ctx,String(i+1),C[i][0]+0.3*S,C[i][1]-0.1*S,{align:'center',size:fs,weight:700,color:COL.blue});
+      else textAt(ctx,String(i+1),C[i][0]+lerp(0,rx,ec)*S,C[i][1]+lerp(oy,ry,ec)*S+4,{align:'center',size:fs,weight:700,color:COL.blue});
+    }
+    const pulse=1+0.12*Math.sin(t*4), sAn=Sb[D.anS];
+    circ(ctx,anCp[0],anCp[1],S*0.19*pulse,COL.yellow,null,2.6);
+    textAt(ctx,ec>0.6?(an.x<0?'α':'β'):'C=O',sAn[0]+S*0.5,sAn[1]+5,{size:Math.max(12,S*0.28),weight:700,color:COL.yellow});
+    textAt(ctx,ec>0.6?(sugar==='glc'?'pyranose (6-membered)':'furanose (5-membered)'):'',cx,cy+S*2.2,{align:'center',size:Math.max(11,S*0.24),weight:600,color:COL.mid});
+    if(eq && ring.x>0.9){ const tot=tA+tB||1, bw=Math.min(w*0.4,260), bx=cx-bw/2, by=h-26;
+      rect(ctx,bx,by,bw,10,'#dbe4f0','#fff',1);
+      ctx.fillStyle=COL.yellow; ctx.fillRect(bx,by,bw*tA/tot,10); ctx.fillStyle=COL.blue; ctx.fillRect(bx+bw*tA/tot,by,bw*tB/tot,10);
+      textAt(ctx,'α '+Math.round(100*tA/tot)+'%',bx,by-4,{size:11,weight:700,color:COL.yellow});
+      textAt(ctx,'β '+Math.round(100*tB/tot)+'%',bx+bw,by-4,{size:11,weight:700,color:COL.blue,align:'right'}); }
+    setT(wrap,'rv',Math.round(ec*100)+'%');
+    setT(wrap,'c1',ec<0.5?'Open chain':(an.x<0?'α-D-':'β-D-')+D.name);
+    setT(wrap,'c2',ec<0.5?'—':String(D.ringN),COL.blue);
+    setT(wrap,'c3',ec<0.5?'Yes':'No', ec<0.5?COL.red:COL.green);
+    setT(wrap,'c4',eq&&ring.x>0.9?Math.round(100*tA/((tA+tB)||1))+' : '+Math.round(100*tB/((tA+tB)||1)):'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.2  REDUCING-SUGAR TEST  (Fehling's / Tollens')
+   Free aldehyde / ketone (hemiacetal) sugars reduce Cu²⁺ → Cu₂O (red),
+   Ag⁺ → Ag (mirror). Sucrose and starch do not — unless hydrolysed first.
+   ===================================================================== */
+function buildA2(){
+  const SUG=[{n:'Glucose',r:1},{n:'Fructose',r:1},{n:'Sucrose',r:0,ac:1},{n:'Maltose',r:1},{n:'Starch',r:0,ac:1}];
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Reagent</label>
+      <div class="toggle-group" id="rg"><button class="toggle-btn active" data-k="feh">Fehling's</button><button class="toggle-btn" data-k="tol">Tollens'</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Samples</label>
+      <button class="toggle-btn navy" id="addB" style="margin-top:0">Add 5 sugars</button>
+      <button class="toggle-btn" id="acB" style="width:100%;margin-top:7px">Boil sample with dil. HCl first: OFF</button></div>
+    <div class="control-group"><label>Burner <span class="val" id="fv">0%</span></label><input type="range" id="fl" min="0" max="100" value="0">
+      <div class="hint">Heat the water bath to about 90 °C</div></div>
+    <div class="control-group"><button class="toggle-btn" id="rs" style="width:100%">Reset</button></div>
+    ${cardsHTML([['c1','Bath'],['c2','Reducing']])}`);
+  const $=s=>wrap.querySelector(s);
+  let reag='feh', acid=false, Tb=22, drops=[], bub=[];
+  const tubes=SUG.map(()=>({has:false,p:0,tHot:0,seed:Math.random()}));
+  const R=rng(11), prec=Array.from({length:70},()=>[R()*2-1,R(),R()]);
+  toggleWire([...$('#rg').children], b=>{ reag=b.dataset.k; tubes.forEach(x=>{x.p=0;x.tHot=0;}); });
+  $('#addB').onclick=()=>{ tubes.forEach((x,i)=>{ if(!x.has && !drops.some(d=>d.i===i)) drops.push({i,delay:i*0.2,y:null,vy:0,sp:0}); }); };
+  $('#acB').onclick=()=>{ acid=!acid; $('#acB').textContent='Boil sample with dil. HCl first: '+(acid?'ON':'OFF'); $('#acB').classList.toggle('active',acid); tubes.forEach(x=>{x.p=0;x.tHot=0;}); };
+  $('#rs').onclick=()=>{ tubes.forEach(x=>{x.has=false;x.p=0;x.tHot=0;}); drops=[]; $('#fl').value=0; Tb=22; };
+  const stops=[[0,'#2f8fe0'],[0.4,'#1f9d55'],[0.7,'#d9a017'],[1,'#d9432b']];
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const inten=$('#fl').value/100; setT(wrap,'fv',Math.round(inten*100)+'%');
+    Tb=approach(Tb,20+78*inten,0.6,dt);
+    const tw=Math.min(w*0.1,74), r=tw/2, yT=h*0.26, yB=h*0.66, yC=yB-r;
+    const bx0=w*0.04, bx1=w*0.96, by0=h*0.4, by1=h*0.76;
+    // water bath
+    rect(ctx,bx0,by0,bx1-bx0,by1-by0,COL.ink,mixCol('#ffffff','#2f8fe0',0.07),2.4);
+    line(ctx,bx0+8,by0+8,bx1-8,by0+8,COL.blue,1.4,[8,6]);
+    // thermometer
+    thermo(ctx,w*0.075,h*0.2,h*0.62,(Tb-20)/80,COL.ink,COL.red);
+    textAt(ctx,Math.round(Tb)+' °C',w*0.075,h*0.17,{align:'center',size:12,weight:700,color:COL.red});
+    // tripod + burner + flame
+    line(ctx,w*0.2,by1,w*0.12,h*0.97,COL.mid,2); line(ctx,w*0.8,by1,w*0.88,h*0.97,COL.mid,2); line(ctx,w*0.3,by1,w*0.3,by1,COL.mid,1);
+    line(ctx,w*0.14,by1+4,w*0.86,by1+4,COL.mid,3);
+    rect(ctx,w*0.42,h*0.955,w*0.16,h*0.03,COL.ink,'#fff',2);
+    if(inten>0.02){ flame(ctx,w*0.5,h*0.955,w*0.15,inten,t);
+      for(let k=0;k<6;k++) wavy(ctx,w*(0.3+k*0.08),h*0.93,by1+8,3,t,COL.red,1.4,k); ctx.globalAlpha=1; }
+    // bubbles
+    if(Tb>82 && Math.random()<dt*14) bub.push({x:bx0+20+Math.random()*(bx1-bx0-40),y:by1-6,v:40+Math.random()*40});
+    bub=bub.filter(b=>{ b.y-=b.v*dt; b.x+=Math.sin(b.y*0.1)*0.4; if(b.y<by0+8) return false; circ(ctx,b.x,b.y,2.5,COL.blue,null,1.2); return true; });
+    // tubes
+    SUG.forEach((sg,i)=>{
+      const tb=tubes[i], x=w*(0.18+0.17*i);
+      const reduces=sg.r || (acid&&sg.ac);
+      if(tb.has){ const rate=clamp((Tb-45)/45,0,1); if(reduces) tb.p=Math.min(1,tb.p+dt*0.2*rate); if(Tb>82) tb.tHot+=dt; }
+      const lvl=yT+(yB-yT)*(tb.has?0.26:0.3);
+      const path=()=>{ ctx.beginPath(); ctx.moveTo(x-r,yT-10); ctx.lineTo(x-r,yC); ctx.arc(x,yC,r,Math.PI,0,true); ctx.lineTo(x+r,yT-10); };
+      ctx.save(); path(); ctx.clip();
+      let fill;
+      if(reag==='feh') fill=rampCol(stops,tb.p*(reduces?1:0)); else fill='#8195ab';
+      ctx.globalAlpha=reag==='feh'?0.34:0.12; ctx.fillStyle=fill; ctx.fillRect(x-r,lvl,tw,yB-lvl); ctx.globalAlpha=1;
+      if(reag==='feh' && tb.p>0.5){ const k=smooth01(0.5,1,tb.p);
+        prec.forEach((q,j)=>{ if(j>=70*k) return; const sett=smooth01(0.5,1,tb.p); const py=yC+r*0.6 - q[1]*(yB-lvl-r)*0.6*(1-sett*0.85) - q[1]*r*0.2; const px=x+q[0]*r*0.8;
+          ctx.fillStyle=COL.red; ctx.fillRect(px-1.5,py-1.5,3,3); }); }
+      if(reag==='tol' && tb.p>0.02){ ctx.globalAlpha=Math.min(1,tb.p*1.2); ctx.strokeStyle='#8195ab'; ctx.lineWidth=7;
+        ctx.beginPath(); ctx.moveTo(x-r+2,lvl); ctx.lineTo(x-r+2,yC); ctx.arc(x,yC,r-2,Math.PI,0,true); ctx.lineTo(x+r-2,lvl); ctx.stroke();
+        ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.globalAlpha=Math.min(1,tb.p)*(0.5+0.5*Math.sin(t*3+i));
+        ctx.beginPath(); ctx.moveTo(x-r+4,lvl+8); ctx.lineTo(x-r+4,lvl+(yC-lvl)*0.6); ctx.stroke(); }
+      ctx.restore();
+      path(); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+      line(ctx,x-r-4,yT-10,x+r+4,yT-10,COL.ink,2.6);
+      line(ctx,x-r,lvl,x+r,lvl,COL.blue,1.4);
+      // name
+      textAt(ctx,sg.n,x,h*0.21,{align:'center',size:Math.max(11,tw*0.17),weight:700,color:COL.ink});
+      if(acid&&sg.ac) textAt(ctx,'(hydrolysed)',x,h*0.235,{align:'center',size:10,weight:600,color:COL.green});
+      // verdict
+      if(tb.has){
+        if(reduces && tb.p>0.92) lab(ctx,reag==='feh'?'Red ppt ✓':'Mirror ✓',x,yB+h*0.045,COL.green,12,'rgba(255,255,255,0.9)');
+        else if(!reduces && tb.tHot>4) lab(ctx,'No change',x,yB+h*0.045,COL.red,12,'rgba(255,255,255,0.9)');
+      }
+    });
+    // dropper drops (projectile)
+    drops=drops.filter(d=>{
+      const x=w*(0.18+0.17*d.i), yT0=h*0.04, tw2=tw;
+      d.delay-=dt;
+      const ox=x, yTop=yT0, yHit=yT+(yB-yT)*0.3;
+      if(d.delay>0){ // squeeze bulb
+        line(ctx,ox,yTop-6,ox,yTop+14,COL.ink,2.4); circ(ctx,ox,yTop-12,7,COL.ink,'#fff',2.2); return true; }
+      if(d.y===null){ d.y=yTop+22; d.vy=0; }
+      line(ctx,ox,yTop-6,ox,yTop+14,COL.ink,2.4); circ(ctx,ox,yTop-12,7,COL.ink,'#fff',2.2);
+      if(d.sp>0){ d.sp+=dt; const rr=d.sp*70; ctx.save(); ctx.globalAlpha=Math.max(0,1-d.sp*2); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; ctx.beginPath(); ctx.ellipse(ox,yHit,rr,rr*0.25,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); return d.sp<0.5; }
+      d.vy+=900*dt; d.y+=d.vy*dt;
+      if(d.y>=yHit){ d.sp=0.001; tubes[d.i].has=true; return true; }
+      ctx.save(); ctx.fillStyle=COL.blue; ctx.beginPath(); ctx.ellipse(ox,d.y,3.5,5.5,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      return true;
+    });
+    setT(wrap,'c1',Math.round(Tb)+' °C',Tb>80?COL.red:COL.ink);
+    setT(wrap,'c2',reag==='feh'?'Cu₂O ppt':'Ag mirror',COL.blue);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3  GLYCOSIDIC LINKAGE — condensation (–H₂O) and hydrolysis (+H₂O)
+   ===================================================================== */
+const DISAC={
+  suc:{name:'Sucrose', L:{n:'α-D-Glucose',ring:['C1','C2','C3','C4','C5','O'],link:'C1',an:'C1',col:COL.green},
+                         R:{n:'β-D-Fructose',ring:['C2','C3','C4','C5','O'],link:'C2',an:'C2',col:COL.yellow}, bond:'α-1,2 (C1→C2)', prod:'Glucose + Fructose'},
+  mal:{name:'Maltose', L:{n:'α-D-Glucose',ring:['C1','C2','C3','C4','C5','O'],link:'C1',an:'C1',col:COL.green},
+                         R:{n:'α-D-Glucose',ring:['C1','C2','C3','C4','C5','O'],link:'C4',an:'C1',col:COL.green}, bond:'α-1,4 (C1→C4)', prod:'2 × Glucose'},
+  lac:{name:'Lactose', L:{n:'β-D-Galactose',ring:['C1','C2','C3','C4','C5','O'],link:'C1',an:'C1',col:COL.blue},
+                         R:{n:'β-D-Glucose',ring:['C1','C2','C3','C4','C5','O'],link:'C4',an:'C1',col:COL.green}, bond:'β-1,4 (C1→C4)', prod:'Galactose + Glucose'}
+};
+function buildA3(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Disaccharide</label>
+      <div class="toggle-group" id="ds"><button class="toggle-btn active" data-k="suc">Sucrose</button><button class="toggle-btn" data-k="mal">Maltose</button><button class="toggle-btn" data-k="lac">Lactose</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Reaction</label>
+      <div class="toggle-group"><button class="toggle-btn play" id="cd">Join  (– H₂O)</button><button class="toggle-btn" id="hy">Split  (+ H₂O)</button></div></div>
+    ${cardsHTML([['c1','Linkage',DISAC.suc.bond,1],['c2','Free C1/C2?'],['c3','Sugar type',null],['c4','Hydrolysis gives']])}`);
+  const $=s=>wrap.querySelector(s);
+  let key='suc', joined=false, goal='apart', gapS={x:1,v:0}, water=[], pend=null;
+  toggleWire([...$('#ds').children], b=>{ key=b.dataset.k; joined=false; goal='apart'; water=[]; pend=null; });
+  $('#cd').onclick=()=>{ if(joined||goal==='joined') return; goal='joined'; };
+  $('#hy').onclick=()=>{ if(!joined||pend) return; water.push({x:null,y:null,vx:0,vy:0,k:'in',t:0}); pend={t:0.85}; };
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const D=DISAC[key], R0=Math.min(w*0.125,h*0.26), cy=h*0.46;
+    const tg = goal==='joined'?0:1;   // 0 = bonded gap, 1 = apart
+    springTo(gapS,tg,60,goal==='joined'?7:5,dt);
+    const bondLen=R0*0.95, apart=R0*3.4;
+    const d=lerp(bondLen*2,apart,clamp(gapS.x,0,1.25)) + (gapS.x>1?(gapS.x-1)*apart:0);
+    const mid=w*0.5, lx=mid-d/2-R0, rx=mid+d/2+R0;
+    // joining trigger
+    if(goal==='joined' && !joined && d<bondLen*2+R0*0.25){ joined=true; water.push({x:mid,y:cy-4,vx:(Math.random()-0.5)*120,vy:-330,k:'out',t:0}); }
+    if(pend){ pend.t-=dt; if(pend.t<=0){ pend=null; joined=false; goal='apart'; gapS.v+=3; } }
+    const drawUnit=(U,cx,facing)=>{
+      const n=U.ring.length, li=U.ring.indexOf(U.link), ai=U.ring.indexOf(U.an);
+      const rot=(facing===0?0:Math.PI)-li*2*Math.PI/n;
+      const pts=ngon(cx,cy,R0,n,rot,1);
+      poly(ctx,pts,U.col,3.2,true,'rgba(255,255,255,0.0)');
+      pts.forEach((p,i)=>{ if(U.ring[i]==='O') lab(ctx,'O',p[0],p[1],COL.blue,12); });
+      const lp=pts[li], ap=pts[ai];
+      textAt(ctx,U.link,lp[0]+(facing===0?-1:1)*R0*0.0,lp[1]+(R0*0.0)+ (lp[1]<cy? -12:20),{align:'center',size:12,weight:700,color:COL.blue});
+      // free anomeric carbon → yellow halo + OH stub
+      if(U.an!==U.link || !joined){
+        const px=ap[0], py=ap[1], ang=Math.atan2(py-cy,px-cx), ex=px+Math.cos(ang)*R0*0.55, ey=py+Math.sin(ang)*R0*0.55;
+        circ(ctx,px,py,R0*0.16*(1+0.1*Math.sin(t*4)),COL.yellow,null,2.6);
+        if(U.an!==U.link){ line(ctx,px,py,ex,ey,COL.ink,2.6); lab(ctx,'OH',ex+Math.cos(ang)*8,ey+Math.sin(ang)*8,COL.ink,11); }
+      }
+      textAt(ctx,U.n,cx,cy+R0*1.55,{align:'center',size:13,weight:700,color:U.col});
+      return lp;
+    };
+    const lpL=drawUnit(D.L,lx,0), lpR=drawUnit(D.R,rx,1);
+    // bridge or stubs
+    if(joined){
+      line(ctx,lpL[0],lpL[1],mid,cy,COL.green,5); line(ctx,mid,cy,lpR[0],lpR[1],COL.green,5);
+      lab(ctx,'O',mid,cy,COL.green,14);
+      textAt(ctx,'glycosidic',mid,cy-R0*0.55,{align:'center',size:12,weight:700,color:COL.green});
+    } else {
+      const sg=Math.min(1,d/(bondLen*2.4));
+      line(ctx,lpL[0],lpL[1],lpL[0]+R0*0.5,cy,COL.ink,2.6); lab(ctx,'OH',lpL[0]+R0*0.62,cy,COL.ink,11);
+      line(ctx,lpR[0],lpR[1],lpR[0]-R0*0.5,cy,COL.ink,2.6); lab(ctx,'HO',lpR[0]-R0*0.62,cy,COL.ink,11);
+    }
+    // water molecule (projectile out / falling in)
+    water=water.filter(m=>{
+      m.t+=dt;
+      if(m.k==='in'){ if(m.x===null){ m.x=mid; m.y=cy-h*0.42; m.vy=0; }
+        m.vy+=700*dt; m.y+=m.vy*dt; if(m.y>=cy-6){ return false; } }
+      else { m.vy+=650*dt; m.x+=m.vx*dt; m.y+=m.vy*dt; if(m.y>h+30) return false; }
+      ctx.save(); ctx.translate(m.x,m.y); ctx.rotate(m.t*(m.k==='in'?0:3));
+      line(ctx,0,0,-9,8,COL.blue,2.4); line(ctx,0,0,9,8,COL.blue,2.4); circ(ctx,0,0,7,COL.blue,'#fff',2.4);
+      textAt(ctx,'',0,0); ctx.restore(); textAt(ctx,'H₂O',m.x+12,m.y-8,{size:12,weight:700,color:COL.blue}); return true;
+    });
+    const freeAn = joined ? (D.L.an===D.L.link?0:1)+(D.R.an===D.R.link?0:1) : 2;
+    setT(wrap,'c1',joined?D.bond:'—',joined?COL.green:COL.ink);
+    setT(wrap,'c2',joined?(freeAn===0?'None':freeAn+' free'):'Both free',freeAn===0&&joined?COL.red:COL.green);
+    setT(wrap,'c3',joined?(freeAn===0?'Non-reducing':'Reducing'):'Reducing (mono)',joined&&freeAn===0?COL.red:COL.green);
+    setT(wrap,'c4',D.prod);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.4  INVERSION OF SUCROSE — POLARIMETER
+   α = [α]·l·c   with  [sucrose] = +66.5°, [D-glucose] = +52.5°, [D-fructose] = −92.4°
+   Sucrose 342 g → glucose 180 g + fructose 180 g (per mole). Mixture ≈ ½(52.5 − 92.4) = −19.95° → laevo.
+   ===================================================================== */
+function buildA4(){
+  const wrap=mkShell(`
+    <div class="control-group"><label>Hydrolysed <span class="val" id="xv">0%</span></label><input type="range" id="xr" min="0" max="100" value="0">
+      <div class="toggle-group"><button class="toggle-btn play" id="hb">Boil with dil. acid</button><button class="toggle-btn" id="rb">Reset</button></div></div>
+    <div class="control-group"><label>Sucrose <span class="val" id="cv">10 g/100 mL</span></label><input type="range" id="cr" min="5" max="20" value="10"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Tube length</label>
+      <div class="toggle-group" id="lg"><button class="toggle-btn" data-l="1">1 dm</button><button class="toggle-btn active" data-l="2">2 dm</button></div>
+      <div class="hint">Rotation drawn ×3 so it is visible</div></div>
+    ${cardsHTML([['c1','Observed α','+13.3°'],['c2','Rotation'],['c3','Glucose'],['c4','Fructose']])}`);
+  const $=s=>wrap.querySelector(s);
+  let x=0, runH=false, L=2;
+  toggleWire([...$('#lg').children], b=>{ L=+b.dataset.l; });
+  $('#xr').oninput=()=>{ x=$('#xr').value/100; runH=false; };
+  $('#hb').onclick=()=>{ runH=true; };
+  $('#rb').onclick=()=>{ runH=false; x=0; $('#xr').value=0; };
+  const needle={x:0,v:0}, ang={x:0,v:0};
+  const Rn=rng(5), mol=Array.from({length:30},()=>({x:Rn(),y:Rn(),a:Rn()*6.28,bx:Rn(),by:Rn(),split:false}));
+  run(wrap,(ctx,w,h,dt,t)=>{
+    if(runH){ x=Math.min(1,x+(1-x)*0.35*dt+0.0006); if(x>0.999) runH=false; $('#xr').value=Math.round(x*100); }
+    const c=+$('#cr').value; setT(wrap,'cv',c+' g/100 mL'); setT(wrap,'xv',Math.round(x*100)+'%');
+    const g=c*x*180/342, f=g, s=c*(1-x);
+    const alpha=L*(66.5*s+52.5*g-92.4*f)/100;
+    springTo(needle,alpha,45,6.5,dt); springTo(ang,alpha*3,45,6.5,dt);
+    const by=h*0.3, tx0=w*0.3, tx1=w*0.7, th=h*0.2, ty0=by-th/2, ty1=by+th/2;
+    // source
+    circ(ctx,w*0.07,by,h*0.05,COL.yellow,'#fff',2.6);
+    for(let k=0;k<8;k++){ const a=k*Math.PI/4+t*0.5; line(ctx,w*0.07+Math.cos(a)*h*0.065,by+Math.sin(a)*h*0.065,w*0.07+Math.cos(a)*h*0.085,by+Math.sin(a)*h*0.085,COL.yellow,2); }
+    textAt(ctx,'Light',w*0.07,by+h*0.14,{align:'center',size:11,weight:600,color:COL.mid});
+    // polariser
+    const px=w*0.2; ctx.save(); ctx.beginPath(); ctx.ellipse(px,by,h*0.035,h*0.09,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.clip();
+    for(let k=-4;k<=4;k++) line(ctx,px+k*5,by-h*0.1,px+k*5,by+h*0.1,COL.mid,1.4); ctx.restore();
+    textAt(ctx,'Polariser',px,by+h*0.14,{align:'center',size:11,weight:600,color:COL.mid});
+    // tube
+    rect(ctx,tx0,ty0,tx1-tx0,th,COL.ink,'rgba(47,143,224,0.06)',2.6);
+    rect(ctx,tx0-8,ty0-4,8,th+8,COL.ink,'#fff',2); rect(ctx,tx1,ty0-4,8,th+8,COL.ink,'#fff',2);
+    // molecules
+    const nSplit=Math.round(x*mol.length);
+    mol.forEach((m,i)=>{
+      const sp=i<nSplit;
+      if(sp&&!m.split){ m.split=true; m.bx=m.x+0.01; m.by=m.y; }
+      if(!sp&&m.split) m.split=false;
+      m.x=clamp(m.x+gauss()*0.12*Math.sqrt(dt),0.04,0.96); m.y=clamp(m.y+gauss()*0.22*Math.sqrt(dt),0.12,0.88); m.a+=gauss()*1.2*Math.sqrt(dt);
+      const X=tx0+m.x*(tx1-tx0), Y=ty0+m.y*th, r=Math.max(3,th*0.055);
+      if(!m.split){ const X2=X+Math.cos(m.a)*r*1.9, Y2=Y+Math.sin(m.a)*r*1.9; line(ctx,X,Y,X2,Y2,COL.blue,2); circ(ctx,X,Y,r,COL.green,'#fff',2); circ(ctx,X2,Y2,r,COL.yellow,'#fff',2); m.bx=m.x; m.by=m.y; }
+      else { m.bx=clamp(m.bx+gauss()*0.16*Math.sqrt(dt),0.04,0.96); m.by=clamp(m.by+gauss()*0.28*Math.sqrt(dt),0.12,0.88);
+        circ(ctx,X,Y,r,COL.green,'#fff',2); circ(ctx,tx0+m.bx*(tx1-tx0),ty0+m.by*th,r,COL.yellow,'#fff',2); }
+    });
+    // polarisation planes travelling along the beam
+    const span=(w*0.9-w*0.2), sp=34;
+    ctx.save();
+    for(let k=-1;k<span/sp+1;k++){
+      const xx=w*0.2+((k*sp+t*80)%(span+sp));
+      if(xx<w*0.22||xx>w*0.8) continue;
+      const u=clamp((xx-tx0)/(tx1-tx0),0,1), phi=ang.x*u*Math.PI/180;
+      const Lh=h*0.075;
+      line(ctx,xx-Math.sin(phi)*Lh,by-Math.cos(phi)*Lh*(-1)*(-1),xx+Math.sin(phi)*Lh,by+Math.cos(phi)*Lh,COL.yellow,2.6);
+    }
+    ctx.restore();
+    line(ctx,px,by,w*0.82,by,'rgba(217,160,23,0.35)',1.4,[5,5]);
+    // analyser (turned by α to restore brightness)
+    const ax=w*0.82; ctx.save(); ctx.beginPath(); ctx.ellipse(ax,by,h*0.035,h*0.09,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.clip();
+    ctx.translate(ax,by); ctx.rotate(ang.x*Math.PI/180); for(let k=-4;k<=4;k++) line(ctx,k*5,-h*0.1,k*5,h*0.1,COL.blue,1.4); ctx.restore();
+    textAt(ctx,'Analyser',ax,by+h*0.14,{align:'center',size:11,weight:600,color:COL.mid});
+    // eye
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.beginPath(); ctx.ellipse(w*0.93,by,h*0.05,h*0.032,0,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    circ(ctx,w*0.93,by,h*0.016,COL.ink,COL.ink,1);
+    // gauge
+    const gx=w*0.5, gy=h*0.97, gr=Math.min(h*0.34,w*0.2);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(gx,gy,gr,-Math.PI/2-1.4,-Math.PI/2+1.4); ctx.stroke(); ctx.restore();
+    for(let d=-30;d<=30;d+=5){ const a=-Math.PI/2+d/30*1.4, major=d%10===0;
+      line(ctx,gx+Math.cos(a)*gr,gy+Math.sin(a)*gr,gx+Math.cos(a)*(gr-(major?14:8)),gy+Math.sin(a)*(gr-(major?14:8)),COL.ink,major?2:1.2);
+      if(major) textAt(ctx,(d>0?'+':'')+d,gx+Math.cos(a)*(gr-28),gy+Math.sin(a)*(gr-28)+4,{align:'center',size:11,weight:600,color:COL.muted}); }
+    const na=-Math.PI/2+clamp(needle.x,-32,32)/30*1.4;
+    line(ctx,gx,gy,gx+Math.cos(na)*(gr-6),gy+Math.sin(na)*(gr-6),alpha<0?COL.blue:COL.red,3.6);
+    circ(ctx,gx,gy,6,COL.ink,COL.ink,1);
+    textAt(ctx,'dextro (+)',gx+gr+8,gy-6,{size:12,weight:700,color:COL.red});
+    textAt(ctx,'laevo (−)',gx-gr-8,gy-6,{size:12,weight:700,color:COL.blue,align:'right'});
+    if(alpha<0 && x>0.5) textAt(ctx,'INVERT SUGAR',gx,gy-gr-10,{align:'center',size:14,weight:700,color:COL.blue});
+    const sg=a=>(a>=0?'+':'−')+Math.abs(a).toFixed(1)+'°';
+    setT(wrap,'c1',sg(alpha),alpha<0?COL.blue:COL.red);
+    setT(wrap,'c2',alpha<0?'Laevo (−)':'Dextro (+)',alpha<0?COL.blue:COL.red);
+    setT(wrap,'c3',fmt(g,2)+' g',COL.green); setT(wrap,'c4',fmt(f,2)+' g',COL.yellow);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.5  POLYSACCHARIDES — grow the chain
+   ===================================================================== */
+const POLY={
+  amylose:{ n:'Amylose', link:'α-1,4', shape:'Unbranched coil', sol:'Water-soluble', fnd:'15–20 % of starch' },
+  amylopectin:{ n:'Amylopectin', link:'α-1,4 + α-1,6', shape:'Branched chain', sol:'Insoluble', fnd:'80–85 % of starch' },
+  glycogen:{ n:'Glycogen', link:'α-1,4 + α-1,6', shape:'Highly branched', sol:'Animal starch', fnd:'Liver, muscle' },
+  cellulose:{ n:'Cellulose', link:'β-1,4', shape:'Straight, H-bonded', sol:'Insoluble', fnd:'Plant cell wall' }
+};
+function treeLayout(b,Lb,cap){
+  const pts=[]; let m=0, prev=-1;
+  while(pts.length<cap){
+    pts.push({x:m,y:0,par:prev,br:false}); const mi=pts.length-1; prev=mi;
+    if(m%b===b-1){ const sgn=((m/b|0)%2)?1:-1; for(let j=1;j<=Lb&&pts.length<cap;j++) pts.push({x:m+0.38*j*sgn*0+0.3*j,y:sgn*j*0.95,par:j===1?mi:pts.length-1,br:j===1}); }
+    m++;
+  }
+  return pts;
+}
+function hexU(ctx,x,y,r,rot,col,lwd,fill){ poly(ctx,ngon(x,y,r,6,rot,1),col,lwd,true,fill); }
+function buildA5(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Polysaccharide</label>
+      <div class="toggle-group" id="pt"><button class="toggle-btn active" data-k="amylose">Amylose</button><button class="toggle-btn" data-k="amylopectin">Amylo-pectin</button><button class="toggle-btn" data-k="glycogen">Glycogen</button><button class="toggle-btn" data-k="cellulose">Cellulose</button></div></div>
+    <div class="control-group"><label>Glucose units <span class="val" id="nv">20</span></label><input type="range" id="nr" min="3" max="48" value="20"></div>
+    <div class="control-group"><div class="hint" style="margin-top:0"><b style="color:var(--f-green)">━</b> C1–C4 link &nbsp; <b style="color:var(--f-red)">━</b> C1–C6 branch &nbsp; <b style="color:var(--f-blue)">┅</b> H-bond</div></div>
+    ${cardsHTML([['c1','Linkage'],['c2','Shape'],['c3','Solubility'],['c4','Found in']])}`);
+  const $=s=>wrap.querySelector(s);
+  let kind='amylose'; const shown={x:3,v:0}, view={s:30,ox:0,oy:0,init:false};
+  const lay={amylopectin:treeLayout(6,6,60),glycogen:treeLayout(3,4,60)};
+  toggleWire([...$('#pt').children], b=>{ kind=b.dataset.k; shown.x=3; shown.v=0; view.init=false; });
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const N=+$('#nr').value; setT(wrap,'nv',String(N));
+    shown.x=approach(shown.x,N,3.2,dt);
+    const P=POLY[kind], cx=w/2, cy=h/2, n=shown.x, nf=Math.floor(n), fr=n-nf;
+    const sc=i=>i<nf?1:(i===nf?fr:0);
+    if(kind==='amylose'){
+      const pitch=Math.min(w*0.84/48,40), R=h*0.2, r=Math.min(pitch*1.1,h*0.07), x0=cx-(Math.min(n,48)-1)*pitch/2, sp=t*1.1;
+      const pts=[]; for(let i=0;i<Math.ceil(n);i++){ const th=i*0.9+sp; pts.push({x:x0+i*pitch,y:cy+R*Math.sin(th),z:Math.cos(th),i,th}); }
+      const segs=[]; for(let i=1;i<pts.length;i++) segs.push([pts[i-1],pts[i]]);
+      segs.sort((a,b)=>(a[0].z+a[1].z)-(b[0].z+b[1].z)).forEach(s=>{ alphaDo(ctx,0.35+0.65*((s[0].z+s[1].z)/2+1)/2,()=>line(ctx,s[0].x,s[0].y,s[1].x,s[1].y,COL.green,3.4)); });
+      pts.slice().sort((a,b)=>a.z-b.z).forEach(p=>{ const k=sc(p.i)*(0.65+0.35*(p.z+1)/2); alphaDo(ctx,0.4+0.6*(p.z+1)/2,()=>hexU(ctx,p.x,p.y,r*k,p.th*0.5,COL.ink,2.2,'#fff')); });
+    } else if(kind==='cellulose'){
+      const cnt=Math.min(Math.ceil(n),48), pitch=Math.min(w*0.86/Math.max(cnt,6),Math.min(h*0.1,60)), r=pitch*0.42, gapY=Math.min(h*0.2,pitch*2.1), x0=cx-(cnt-1)*pitch/2;
+      for(let j=0;j<3;j++){ const y=cy+(j-1)*gapY;
+        for(let i=1;i<cnt;i++) line(ctx,x0+(i-1)*pitch,y,x0+i*pitch,y,COL.green,3.4);
+        for(let i=0;i<cnt;i++){ const k=sc(i); hexU(ctx,x0+i*pitch,y,r*k,(i%2?Math.PI/6:Math.PI/6+Math.PI),COL.ink,2.2,'#fff'); }
+        if(j<2) for(let i=0;i<cnt;i+=1){ if(i%2===0){ const k=sc(i); if(k>0.5){ ctx.save(); ctx.globalAlpha=k; line(ctx,x0+i*pitch,y+r,x0+i*pitch,y+gapY-r,COL.blue,1.8,[4,4]); ctx.restore(); } } }
+      }
+    } else {
+      const L=lay[kind], cnt=Math.ceil(n);
+      let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9; for(let i=0;i<cnt;i++){ minx=Math.min(minx,L[i].x); maxx=Math.max(maxx,L[i].x); miny=Math.min(miny,L[i].y); maxy=Math.max(maxy,L[i].y); }
+      const spanX=Math.max(maxx-minx,4)+1.4, spanY=Math.max(maxy-miny,2)+1.4, tsc=Math.min(w*0.92/spanX,h*0.92/spanY,60), tox=(minx+maxx)/2, toy=(miny+maxy)/2;
+      if(!view.init){ view.s=tsc; view.ox=tox; view.oy=toy; view.init=true; }
+      view.s=approach(view.s,tsc,3,dt); view.ox=approach(view.ox,tox,3,dt); view.oy=approach(view.oy,toy,3,dt);
+      const X=p=>cx+(p.x-view.ox)*view.s, Y=p=>cy+(p.y-view.oy)*view.s, r=view.s*0.4;
+      for(let i=0;i<cnt;i++){ const p=L[i]; if(p.par>=0){ const q=L[p.par], k=sc(i); alphaDo(ctx,k,()=>line(ctx,X(q),Y(q),X(p),Y(p),p.br?COL.red:COL.green,Math.max(2,view.s*0.1))); } }
+      for(let i=0;i<cnt;i++){ const p=L[i], k=sc(i), j=Math.sin(t*2+i)*0.03*view.s; hexU(ctx,X(p)+j,Y(p)+j,r*k,Math.PI/6,L[i].br?COL.red:COL.ink,2.2,'#fff'); }
+    }
+    setT(wrap,'c1',P.link); setT(wrap,'c2',P.shape); setT(wrap,'c3',P.sol); setT(wrap,'c4',P.fnd);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.6  AMINO ACID — zwitterion, net charge and electrophoresis
+   ===================================================================== */
+const AAD={
+  gly:{n:'Glycine',R:'H',pkC:2.34,pkN:9.60},
+  ala:{n:'Alanine',R:'CH₃',pkC:2.34,pkN:9.69},
+  glu:{n:'Glutamic acid',R:'(CH₂)₂COOH',R2:'(CH₂)₂COO⁻',pkC:2.19,pkN:9.67,acid:4.25},
+  lys:{n:'Lysine',R:'(CH₂)₄NH₂',R2:'(CH₂)₄NH₃⁺',pkC:2.18,pkN:8.95,base:10.53}
+};
+function aaFr(A,pH){
+  const fN=1/(1+Math.pow(10,pH-A.pkN)), fC=1/(1+Math.pow(10,A.pkC-pH));
+  const fS=A.acid?1/(1+Math.pow(10,A.acid-pH)):(A.base?1/(1+Math.pow(10,pH-A.base)):0);
+  const Z=fN-fC-(A.acid?fS:0)+(A.base?fS:0);
+  return {fN,fC,fS,Z};
+}
+function aaPI(A){ let lo=0,hi=14; for(let i=0;i<40;i++){ const m=(lo+hi)/2; if(aaFr(A,m).Z>0) lo=m; else hi=m; } return (lo+hi)/2; }
+function buildA6(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Amino acid</label>
+      <div class="toggle-group" id="aa"><button class="toggle-btn active" data-k="gly">Gly</button><button class="toggle-btn" data-k="ala">Ala</button><button class="toggle-btn" data-k="glu">Glu</button><button class="toggle-btn" data-k="lys">Lys</button></div></div>
+    <div class="control-group"><label>pH <span class="val" id="pv">7.0</span></label><input type="range" id="pr" min="0" max="14" step="0.05" value="7"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Electric field</label>
+      <div class="toggle-group"><button class="toggle-btn play" id="fb">Field ON</button><button class="toggle-btn" id="rb">Re-centre</button></div></div>
+    ${cardsHTML([['c1','Net charge'],['c2','Form'],['c3','pI'],['c4','Moves to']])}`);
+  const $=s=>wrap.querySelector(s);
+  let key='gly', field=true; const pH={x:7,v:0};
+  const Rr=rng(9), pa=Array.from({length:42},()=>({x:0,y:Rr(),dx:Rr()*2-1}));
+  const recentre=()=>pa.forEach(p=>{ p.x=0.5+p.dx*0.012; });
+  recentre();
+  toggleWire([...$('#aa').children], b=>{ key=b.dataset.k; recentre(); });
+  $('#fb').onclick=()=>{ field=!field; $('#fb').textContent=field?'Field ON':'Field OFF'; $('#fb').classList.toggle('play',field); };
+  $('#rb').onclick=recentre;
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const A=AAD[key]; pH.x=approach(pH.x,+$('#pr').value,5,dt); setT(wrap,'pv',(+$('#pr').value).toFixed(1));
+    const F=aaFr(A,pH.x), Z=F.Z, pI=aaPI(A);
+    // --- molecule
+    const S=Math.min(w*0.085,h*0.115), mx=w*0.27, my=h*0.22;
+    const N=[mx-S*0.95,my+S*0.55], Cc=[mx+S*0.95,my+S*0.55], Ro=[mx,my-S*0.95], Oo=[Cc[0],Cc[1]+S*0.95], Oh=[Cc[0]+S*0.95,Cc[1]-S*0.5];
+    line(ctx,N[0],N[1],mx,my,COL.ink,3); line(ctx,mx,my,Cc[0],Cc[1],COL.ink,3); line(ctx,mx,my,Ro[0],Ro[1],COL.ink,3);
+    line(ctx,Cc[0]-3,Cc[1],Oo[0]-3,Oo[1],COL.red,3); line(ctx,Cc[0]+3,Cc[1],Oo[0]+3,Oo[1],COL.red,3); line(ctx,Cc[0],Cc[1],Oh[0],Oh[1],COL.ink,3);
+    const fs=Math.max(12,S*0.3);
+    lab(ctx,'O',Oo[0],Oo[1]+4,COL.red,fs);
+    alphaDo(ctx,F.fC,()=>lab(ctx,'OH',Oh[0]+6,Oh[1]-2,COL.ink,fs));
+    alphaDo(ctx,1-F.fC,()=>lab(ctx,'O⁻',Oh[0]+6,Oh[1]-2,COL.blue,fs));
+    alphaDo(ctx,F.fN,()=>lab(ctx,'H₃N⁺',N[0]-6,N[1],COL.red,fs));
+    alphaDo(ctx,1-F.fN,()=>lab(ctx,'H₂N',N[0]-6,N[1],COL.ink,fs));
+    textAt(ctx,'Cα',mx,my+S*0.55,{align:'center',size:fs*0.9,weight:700,color:COL.yellow});
+    if(A.R2){ const isAcid=!!A.acid; alphaDo(ctx,isAcid?F.fS:1-F.fS,()=>lab(ctx,A.R,Ro[0],Ro[1]-6,COL.ink,fs)); alphaDo(ctx,isAcid?1-F.fS:F.fS,()=>lab(ctx,A.R2,Ro[0],Ro[1]-6,isAcid?COL.blue:COL.red,fs)); }
+    else lab(ctx,A.R,Ro[0],Ro[1]-6,COL.ink,fs);
+    textAt(ctx,A.n,mx,my+S*2.4,{align:'center',size:14,weight:700,color:COL.ink});
+    // --- Z vs pH chart
+    const gx0=w*0.55,gx1=w*0.95,gy0=h*0.08,gy1=h*0.46, zmin=-2.4, zmax=2.4;
+    const GX=p=>gx0+(p/14)*(gx1-gx0), GY=z=>gy1-(z-zmin)/(zmax-zmin)*(gy1-gy0);
+    rect(ctx,gx0,gy0,gx1-gx0,gy1-gy0,COL.ink,'#fff',1.6);
+    line(ctx,gx0,GY(0),gx1,GY(0),COL.mid,1.2,[4,4]);
+    const pts=[]; for(let p=0;p<=14;p+=0.2) pts.push([GX(p),GY(aaFr(A,p).Z)]);
+    poly(ctx,pts,COL.blue,3,false);
+    line(ctx,GX(pI),gy0,GX(pI),gy1,COL.yellow,1.8,[5,4]);
+    textAt(ctx,'pI '+pI.toFixed(2),GX(pI)+5,gy0+14,{size:11,weight:700,color:COL.yellow});
+    const cp=[GX(pH.x),GY(Z)]; circ(ctx,cp[0],cp[1],7,Z>0.05?COL.red:Z<-0.05?COL.blue:COL.green,'#fff',3);
+    textAt(ctx,'net charge',gx0+6,gy0+14,{size:11,weight:600,color:COL.muted}); textAt(ctx,'pH',gx1-4,gy1+14,{size:11,weight:600,color:COL.muted,align:'right'});
+    textAt(ctx,'0',gx0,gy1+14,{size:11,weight:600,color:COL.muted,align:'center'}); textAt(ctx,'14',gx1,gy1+14,{size:11,weight:600,color:COL.muted,align:'center'});
+    // --- pH strip
+    const sx0=gx0,sx1=gx1,sy=h*0.53,sh=h*0.035;
+    const gr=ctx.createLinearGradient(sx0,0,sx1,0); ['#d9432b','#e8782b','#d9a017','#7ac143','#1f9d55','#2f8fe0','#6f4fb5'].forEach((c,i)=>gr.addColorStop(i/6,c));
+    ctx.fillStyle=gr; ctx.fillRect(sx0,sy,sx1-sx0,sh); rect(ctx,sx0,sy,sx1-sx0,sh,COL.ink,null,1.6);
+    const px=GX(pH.x); ctx.fillStyle=COL.ink; ctx.beginPath(); ctx.moveTo(px,sy-1); ctx.lineTo(px-6,sy-11); ctx.lineTo(px+6,sy-11); ctx.closePath(); ctx.fill();
+    // --- electrophoresis tank
+    const tx0=w*0.05, tx1=w*0.95, ty0=h*0.66, ty1=h*0.9;
+    rect(ctx,tx0,ty0,tx1-tx0,ty1-ty0,COL.ink,'rgba(47,143,224,0.05)',2.4);
+    rect(ctx,tx0,ty0-6,10,ty1-ty0+12,COL.ink,COL.ink,0); rect(ctx,tx1-10,ty0-6,10,ty1-ty0+12,COL.red,COL.red,0);
+    lab(ctx,'−',tx0+5,ty0-18,COL.ink,16); lab(ctx,'+',tx1-5,ty0-18,COL.red,16);
+    textAt(ctx,'cathode',tx0+16,ty0-10,{size:11,weight:600,color:COL.muted}); textAt(ctx,'anode',tx1-16,ty0-10,{size:11,weight:600,color:COL.muted,align:'right'});
+    const x0=tx0+16, x1=tx1-16; line(ctx,(x0+x1)/2,ty0,(x0+x1)/2,ty1,COL.mid,1.4,[5,5]); textAt(ctx,'start',(x0+x1)/2,ty1+14,{align:'center',size:11,weight:600,color:COL.muted});
+    const col=Z>0.08?COL.red:Z<-0.08?COL.blue:COL.green;
+    pa.forEach(p=>{
+      if(field) p.x+= Z*0.14*dt; p.x+=gauss()*0.012*Math.sqrt(dt)*8; p.x=clamp(p.x,0.01,0.99);
+      p.y=clamp(p.y+gauss()*0.5*Math.sqrt(dt)*0.3,0.06,0.94);
+      circ(ctx,x0+p.x*(x1-x0),ty0+p.y*(ty1-ty0),5,col,'#fff',2.4);
+    });
+    // field arrows
+    if(field){ vec(ctx,(x0+x1)/2-60,ty1+30,(x0+x1)/2+60,ty1+30,COL.red,2.4); textAt(ctx,'E',(x0+x1)/2+70,ty1+34,{size:12,weight:700,color:COL.red}); }
+    setT(wrap,'c1',(Z>=0?'+':'−')+Math.abs(Z).toFixed(2),col);
+    setT(wrap,'c2',Math.abs(Z)<0.2?'Zwitterion':Z>0?'Cation':'Anion',col);
+    setT(wrap,'c3',pI.toFixed(2),COL.yellow);
+    setT(wrap,'c4',!field?'—':Math.abs(Z)<0.1?'Stays':Z>0?'Cathode (−)':'Anode (+)',col);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.7  PROTEIN STRUCTURE — from amino acids to quaternary
+   ===================================================================== */
+function buildA7(){
+  const NB=26, LV=['Amino acids','Primary','Secondary','Tertiary','Quaternary'];
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Structure level</label>
+      <div class="toggle-group" id="lv" style="flex-direction:column;"><button class="toggle-btn active" data-l="0">0 · Free amino acids</button><button class="toggle-btn" data-l="1">1° · Primary</button><button class="toggle-btn" data-l="2">2° · Secondary</button><button class="toggle-btn" data-l="3">3° · Tertiary</button><button class="toggle-btn" data-l="4">4° · Quaternary</button></div>
+      <button class="toggle-btn navy" id="ap">▶ Play all levels</button></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Secondary type</label>
+      <div class="toggle-group" id="sc"><button class="toggle-btn active" data-k="0">α-helix</button><button class="toggle-btn" data-k="1">β-sheet</button></div></div>
+    ${cardsHTML([['c1','Held by',null,1],['c2','H₂O released']])}`);
+  const $=s=>wrap.querySelector(s);
+  let tgt=0, play=0, secT=0, lastLev=0; const lev={x:0,v:0}, secM={x:0,v:0}, btns=[...$('#lv').children];
+  const R=rng(23), s0=Array.from({length:NB*2},()=>[(R()-0.5)*3.8,(R()-0.5)*2.1]);
+  const s1=i=>{ const u=i/(NB-1); return [(u-0.5)*3.6,0.28*Math.sin(i*0.8)+0.14*Math.sin(i*2.3)]; };
+  const s3=i=>{ const u=i/(NB-1)*Math.PI*2; return [0.8*Math.sin(1.6*u+0.5)+0.16*Math.sin(3.2*u), 0.58*Math.cos(1.3*u)+0.16*Math.cos(2.9*u+1)]; };
+  const sheetPos=i=>{ const sl=[9,9,8]; let k=0,j=i; while(j>=sl[k]){ j-=sl[k]; k++; } const u=(sl[k]===9?j/8:j/7); const x=(k%2? (0.5-u):(u-0.5))*2.8; return [x,(k-1)*0.52+(j%2?0.07:-0.07)]; };
+  const helixPos=(i,sp)=>[(i-NB/2)*0.115*1.35, 0.42*Math.sin(i*1.745+sp)];
+  const CYS=[[4,21],[8,17]];
+  let water=[];
+  toggleWire(btns, b=>{ tgt=+b.dataset.l; play=0; });
+  toggleWire([...$('#sc').children], b=>{ secT=+b.dataset.k; });
+  $('#ap').onclick=()=>{ play=1; tgt=0; btns.forEach(x=>x.classList.toggle('active',x.dataset.l==='0')); };
+  let playT=0;
+  run(wrap,(ctx,w,h,dt,t)=>{
+    if(play){ playT+=dt; if(playT>3.2 && lev.x>tgt-0.05){ playT=0; if(tgt<4) tgt++; else play=0; btns.forEach(x=>x.classList.toggle('active',+x.dataset.l===tgt)); } }
+    springTo(lev,tgt,16,6.5,dt); springTo(secM,secT,40,8,dt);
+    const L=clamp(lev.x,0,4);
+    if(lastLev<0.55 && L>=0.55) for(let i=0;i<NB-1;i++){ water.push({i,t:0,vx:(Math.random()-0.5)*120,vy:-160-Math.random()*160}); }
+    lastLev=L;
+    const S=Math.min(w*0.3,h*0.33), cx=w/2, cy=h/2, sp=t*0.9;
+    const stage=(i)=>{ // position (unit coords) of chain-A bead i at the current level
+      const A=s0[i], B=s1(i), hlx=helixPos(i,sp), sh=sheetPos(i), C=[lerp(hlx[0],sh[0],secM.x),lerp(hlx[1],sh[1],secM.x)], D=s3(i), E=[D[0]*0.6-0.8,D[1]*0.6];
+      const arr=[A,B,C,D,E]; const f=Math.floor(Math.min(L,3.9999)), u=smooth01(0,1,L-f);
+      return [lerp(arr[f][0],arr[f+1][0],u),lerp(arr[f][1],arr[f+1][1],u)];
+    };
+    const posA=[],posB=[];
+    for(let i=0;i<NB;i++){
+      const p=stage(i); posA.push([p[0],p[1]]);
+      const D=s3(i), Eb=[-D[0]*0.6+0.8,-D[1]*0.6], mixB=smooth01(2.8,4,L);
+      const pa=posA[i]; posB.push([lerp(pa[0],Eb[0],mixB),lerp(pa[1],Eb[1],mixB)]);
+    }
+    const jit=(i,k)=>[Math.sin(t*3+i*1.7+k)*0.012,Math.cos(t*2.6+i*2.1+k)*0.012];
+    const X=(p,i,k)=>cx+(p[0]+jit(i,k)[0])*S, Y=(p,i,k)=>cy+(p[1]+jit(i,k)[1])*S;
+    const aB=smooth01(2.9,3.9,L);
+    const drawChain=(pos,k,alpha,tint)=>{
+      alphaDo(ctx,alpha,()=>{
+        const pe=smooth01(0.4,1.0,L);
+        for(let i=0;i<NB-1;i++){ if(pe>0.01) alphaDo(ctx,pe,()=>line(ctx,X(pos[i],i,k),Y(pos[i],i,k),X(pos[i+1],i+1,k),Y(pos[i+1],i+1,k),COL.green,3.6)); }
+        const helixA=smooth01(1.4,2,L)*(1-smooth01(2.6,3,L));
+        const hbH=helixA*(1-secM.x), hbS=helixA*secM.x;
+        if(hbH>0.02) alphaDo(ctx,hbH,()=>{ for(let i=0;i+4<NB;i++) line(ctx,X(pos[i],i,k),Y(pos[i],i,k),X(pos[i+4],i+4,k),Y(pos[i+4],i+4,k),COL.blue,1.8,[4,4]); });
+        if(hbS>0.02) alphaDo(ctx,hbS,()=>{ for(let j=0;j<8;j++){ const a=j,b=17-j; line(ctx,X(pos[a],a,k),Y(pos[a],a,k),X(pos[b],b,k),Y(pos[b],b,k),COL.blue,1.8,[4,4]);
+            const m=j, c=9+m, d=18+Math.round((8-m)/8*7); line(ctx,X(pos[c],c,k),Y(pos[c],c,k),X(pos[d],d,k),Y(pos[d],d,k),COL.blue,1.8,[4,4]); } });
+        const ds=smooth01(2.5,3,L); if(ds>0.02) alphaDo(ctx,ds,()=>CYS.forEach(c=>line(ctx,X(pos[c[0]],c[0],k),Y(pos[c[0]],c[0],k),X(pos[c[1]],c[1],k),Y(pos[c[1]],c[1],k),COL.yellow,4)));
+        for(let i=0;i<NB;i++){ const cy_=CYS.some(c=>c.includes(i)); circ(ctx,X(pos[i],i,k),Y(pos[i],i,k),Math.max(5,S*0.045),cy_&&L>2.4?COL.yellow:(tint||COL.ink),cy_&&L>2.4?'#fff6d6':'#fff',2.4); }
+      });
+    };
+    drawChain(posA,0,1,COL.ink);
+    if(aB>0.01){ drawChain(posB,1,aB,COL.blue);
+      alphaDo(ctx,smooth01(3.4,4,L),()=>{ [3,8,13,18,23].forEach(i=>line(ctx,X(posA[i],i,0),Y(posA[i],i,0),X(posB[i],i,1),Y(posB[i],i,1),COL.red,1.6,[3,5])); }); }
+    // water leaving at each new peptide bond
+    water=water.filter(m=>{ m.t+=dt; m.vy+=520*dt; const i=m.i, mxp=(posA[i][0]+posA[i+1][0])/2, myp=(posA[i][1]+posA[i+1][1])/2;
+      if(m.x===undefined){ m.x=cx+mxp*S; m.y=cy+myp*S; }
+      m.x+=m.vx*dt; m.y+=m.vy*dt; if(m.t>1.8) return false;
+      alphaDo(ctx,1-m.t/1.8,()=>{ circ(ctx,m.x,m.y,4,COL.blue,'#fff',2); }); return true; });
+    textAt(ctx,['Free amino acids','Primary — sequence of residues','Secondary — '+(secT?'β-pleated sheet':'α-helix'),'Tertiary — folded globule','Quaternary — two sub-units'][Math.round(clamp(L,0,4))],cx,h*0.08,{align:'center',size:15,weight:700,color:COL.ink});
+    const lvI=Math.round(clamp(L,0,4));
+    setT(wrap,'c1',['—','Peptide bonds (–CO–NH–)',secT?'H-bonds between strands':'H-bonds (C=O···H–N)','H-bonds · S–S · ionic · van der Waals','Contacts between sub-units'][lvI]);
+    setT(wrap,'c2',lvI>=1?String(NB-1):'0',COL.blue);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.8  DENATURATION — cooking an egg white (irreversible)
+   Heat or a pH change breaks H-bonds; 2° and 3° structure are lost,
+   the globular protein uncoils and the chains tangle (coagulate).
+   ===================================================================== */
+function buildA8(){
+  const wrap=mkShell(`
+    <div class="control-group"><label>Burner <span class="val" id="hv">0%</span></label><input type="range" id="hr" min="0" max="100" value="0"></div>
+    <div class="control-group"><label>pH of egg white <span class="val" id="pv">7.0</span></label><input type="range" id="pr" min="1" max="13" step="0.1" value="7">
+      <div class="toggle-group"><button class="toggle-btn small" id="ac">Add lemon (acid)</button><button class="toggle-btn small" id="al">Add soda (base)</button></div></div>
+    <div class="control-group"><button class="toggle-btn navy" id="ne" style="margin-top:0">Break a fresh egg</button></div>
+    ${cardsHTML([['c1','Temperature'],['c2','Denatured'],['c3','Egg white',null,1]])}`);
+  const $=s=>wrap.querySelector(s);
+  let T=22, D=0; const R=rng(41), NM=9, NBd=16;
+  const mol=Array.from({length:NM},(_,m)=>({x:(R()-0.5)*1.4,y:(R()-0.5)*1.4,vx:0,vy:0,th:0.15+0.7*m/(NM-1)+R()*0.05,
+    unf:Array.from({length:NBd},()=>{ const a=R()*6.28; return [Math.cos(a),Math.sin(a)]; }),ph:R()*6}));
+  $('#ac').onclick=()=>{ $('#pr').value=3; }; $('#al').onclick=()=>{ $('#pr').value=11; };
+  $('#ne').onclick=()=>{ D=0; T=22; $('#hr').value=0; $('#pr').value=7; };
+  const bub=[];
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const knob=$('#hr').value/100, pH=+$('#pr').value; setT(wrap,'hv',Math.round(knob*100)+'%'); setT(wrap,'pv',pH.toFixed(1));
+    T=approach(T,20+80*knob,0.22,dt);
+    const Tm=62-3.6*Math.abs(pH-7), Deq=1/(1+Math.exp(-(T-Tm)/2.2));
+    D=Math.max(D,D+(Deq-D)*(1-Math.exp(-0.9*dt)));
+    // ---- pan + egg (left)
+    const px=w*0.3, py=h*0.5, rx=Math.min(w*0.21,h*0.42), ry=rx*0.3, dh=h*0.12;
+    thermo(ctx,w*0.06,h*0.2,h*0.62,(T-20)/80,COL.ink,COL.red);
+    textAt(ctx,Math.round(T)+' °C',w*0.06,h*0.17,{align:'center',size:12,weight:700,color:COL.red});
+    ctx.save(); ctx.beginPath(); ctx.ellipse(px,py,rx,ry,0,0,Math.PI*2); ctx.fillStyle='#e6ecf4'; ctx.fill(); ctx.restore();
+    // egg white blob
+    const blob=[]; for(let k=0;k<48;k++){ const a=k/48*Math.PI*2, rr=1+0.1*Math.sin(a*3+1)+0.06*Math.sin(a*5+2); blob.push([px+Math.cos(a)*rx*0.8*rr,py+Math.sin(a)*ry*0.8*rr+ry*0.06]); }
+    ctx.save(); ctx.globalAlpha=0.5+0.5*D; poly(ctx,blob,mixCol('#9bc9f2','#ffffff',D),2.2,true,mixCol('#bfe0fa','#ffffff',D)); ctx.restore();
+    if(D>0.5) alphaDo(ctx,(D-0.5)*2,()=>poly(ctx,blob.map(p=>[p[0]+(p[0]>px?-3:3),p[1]]),COL.yellow,1.6,true));
+    // yolk
+    const yx=px+rx*0.12, yy=py+ry*0.02;
+    ctx.save(); ctx.beginPath(); ctx.ellipse(yx,yy,rx*0.2,ry*0.5,0,0,Math.PI*2); ctx.fillStyle='#f4c542'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    arcHL(ctx,yx-rx*0.07,yy-ry*0.12,rx*0.06);
+    // pan rim + body
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(px,py,rx,ry,0,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px-rx,py); ctx.lineTo(px-rx*0.88,py+dh); ctx.ellipse(px,py+dh,rx*0.88,ry*0.88,0,Math.PI,0,true); ctx.lineTo(px+rx,py); ctx.stroke(); ctx.restore();
+    line(ctx,px+rx,py,px+rx+w*0.12,py-h*0.03,COL.ink,6);
+    // burner + flame
+    const fy=py+dh+ry*0.95+22; rect(ctx,px-rx*0.5,fy+10,rx,h*0.03,COL.ink,'#fff',2);
+    if(knob>0.02){ flame(ctx,px,fy+10,rx*0.8,knob,t); }
+    // sizzle + steam
+    if(T>82 && Math.random()<dt*10*knob){ const a=Math.random()*6.28, rr=Math.sqrt(Math.random())*0.7; bub.push({x:px+Math.cos(a)*rx*rr,y:py+Math.sin(a)*ry*rr,r:1,life:0}); }
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.life+=dt*2.2; b.r=1+b.life*5; if(b.life>1){ bub.splice(i,1); continue; } alphaDo(ctx,1-b.life,()=>circ(ctx,b.x,b.y,b.r,COL.blue,null,1.4)); }
+    if(T>78) for(let k=0;k<4;k++) alphaDo(ctx,clamp((T-78)/20,0,0.7),()=>wavy(ctx,px-rx*0.5+k*rx*0.33,py-ry-6,py-ry-h*0.2,5,t,COL.mid,1.4,k));
+    // ---- zoom circle (right)
+    const zx=w*0.77, zy=h*0.45, ZR=Math.min(w*0.2,h*0.38);
+    line(ctx,yx+rx*0.25,py-ry*0.2,zx-ZR*0.8,zy-ZR*0.6,COL.mid,1.4,[5,5]); line(ctx,yx+rx*0.25,py+ry*0.4,zx-ZR*0.8,zy+ZR*0.6,COL.mid,1.4,[5,5]);
+    ctx.save(); ctx.beginPath(); ctx.arc(zx,zy,ZR,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.clip();
+    mol.forEach((m,i)=>{
+      const d=smooth01(m.th-0.15,m.th+0.15,D);
+      m.vx+=gauss()*0.5*dt-0.8*m.x*dt*(0.3+d*2.2)*0+(-m.x*0.6*d)*dt; m.vy+=gauss()*0.5*dt-m.y*0.6*d*dt; m.vx*=0.97; m.vy*=0.97;
+      const spd=0.12+ (T-20)/80*0.5; m.x=clamp(m.x+m.vx*spd*6*dt+gauss()*0.03*Math.sqrt(dt)*spd*4,-0.65,0.65); m.y=clamp(m.y+m.vy*spd*6*dt+gauss()*0.03*Math.sqrt(dt)*spd*4,-0.65,0.65);
+      const pts=[]; for(let b=0;b<NBd;b++){
+        const a=b/NBd*Math.PI*2+m.ph+t*0.6, rr=0.065*(0.7+0.3*((b%2)?1:0.5)); const nat=[Math.cos(a)*rr*(1+0.5*Math.sin(b*1.7)),Math.sin(a)*rr];
+        const un=m.unf.slice(0,b+1).reduce((s,v)=>[s[0]+v[0]*0.052,s[1]+v[1]*0.052],[-0.2,0]);
+        const wob=[Math.sin(t*4+b+i)*0.004*(1+d*3),Math.cos(t*3.7+b*1.3+i)*0.004*(1+d*3)];
+        pts.push([zx+(m.x+lerp(nat[0],un[0]*0.9,d)+wob[0])*ZR*1.35,zy+(m.y+lerp(nat[1],un[1]*0.9,d)+wob[1])*ZR*1.35]);
+      }
+      poly(ctx,pts,mixCol(COL.blue,COL.red,d),2.6+d*0.8,d<0.1);
+      if(d<0.6){ alphaDo(ctx,1-d/0.6,()=>{ for(let b=0;b<NBd-4;b+=3) line(ctx,pts[b][0],pts[b][1],pts[b+4][0],pts[b+4][1],COL.blue,1.4,[3,3]); }); }
+    });
+    ctx.restore(); circ(ctx,zx,zy,ZR,COL.ink,null,2.6);
+    textAt(ctx,D<0.15?'Native protein':D>0.85?'Denatured · coagulated':'Unfolding…',zx,zy+ZR+20,{align:'center',size:13,weight:700,color:D>0.5?COL.red:COL.blue});
+    setT(wrap,'c1',Math.round(T)+' °C',T>60?COL.red:COL.ink); setT(wrap,'c2',Math.round(D*100)+' %',D>0.5?COL.red:COL.blue);
+    setT(wrap,'c3',D<0.1?'Clear, runny':D<0.6?'Turning cloudy':'White, solid — cannot be reversed',D>0.6?COL.red:COL.ink);
+  });
+  return wrap;
+}
+function arcHL(ctx,x,y,r){ ctx.save(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x,y,r,Math.PI*1.1,Math.PI*1.6); ctx.stroke(); ctx.restore(); }
+
+/* =====================================================================
+   5.9  ENZYME ACTION — lock-and-key / induced fit
+   Textbook: Ea of sucrose hydrolysis = 6.22 kJ/mol (acid), 2.15 kJ/mol (sucrase).
+   ===================================================================== */
+function buildA9(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Catalyst</label>
+      <div class="toggle-group" id="ct"><button class="toggle-btn active" data-k="enz">Sucrase</button><button class="toggle-btn" data-k="acid">Acid (H⁺)</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Substrate</label>
+      <div class="toggle-group" id="sb"><button class="toggle-btn active" data-k="fit">Sucrose</button><button class="toggle-btn" data-k="wrong">Maltose</button></div></div>
+    <div class="control-group"><label>Substrate <span class="val" id="sv">14</span></label><input type="range" id="sr" min="2" max="36" value="14"></div>
+    <div class="control-group"><label>Temperature <span class="val" id="tv">37 °C</span></label><input type="range" id="tr" min="0" max="70" value="37"></div>
+    <div class="control-group"><button class="toggle-btn" id="ib" style="width:100%;margin-top:0">Competitive inhibitor: OFF</button></div>
+    ${cardsHTML([['c1','Products'],['c2','Rate / s'],['c3','Active enzymes'],['c4','Faster than acid']])}`);
+  const $=s=>wrap.querySelector(s);
+  let cat='enz', subK='fit', inh=false, products=0, rateHist=[], stamps=[], hT=0, ballU=0;
+  toggleWire([...$('#ct').children], b=>{ cat=b.dataset.k; reset(); });
+  toggleWire([...$('#sb').children], b=>{ subK=b.dataset.k; reset(); });
+  $('#ib').onclick=()=>{ inh=!inh; $('#ib').textContent='Competitive inhibitor: '+(inh?'ON':'OFF'); $('#ib').classList.toggle('active',inh); reset(true); };
+  const R=rng(77);
+  const enz=[0,1,2].map(i=>({fx:0.2+0.3*i,fy:0.6,jaw:0.95,jawV:0,state:'free',tm:0,sub:null,th:52+(R()-0.5)*9,den:false,ph:R()*6}));
+  let parts=[], prods=[], box={x0:0,y0:0,x1:1,y1:1,Re:50};
+  function reset(keep){ parts.length=0; prods.length=0; enz.forEach(e=>{ e.state='free'; e.sub=null; e.jaw=0.95; }); if(!keep){ products=0; stamps=[]; rateHist=[]; } }
+  function spawn(kind){ const r=box.Re*0.28; const side=Math.random()*4|0; const x=lerp(box.x0+r,box.x1-r,Math.random()), y=lerp(box.y0+r,box.y1-r,Math.random()); const a=Math.random()*6.28;
+    parts.push({k:kind,x,y,vx:Math.cos(a)*50,vy:Math.sin(a)*50,r,bound:null,a:Math.random()*6.28,w:(Math.random()-0.5)*3}); }
+  function rateF(T){ return Math.pow(2,(T-37)/10); }
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const S=+$('#sr').value, T=+$('#tr').value; setT(wrap,'sv',String(S)); setT(wrap,'tv',T+' °C');
+    box.x0=w*0.03; box.x1=w*0.62; box.y0=h*0.07; box.y1=h*0.93; box.Re=Math.min((box.x1-box.x0)/7.2,(box.y1-box.y0)/4.5);
+    const Re=box.Re, nat=1/(1+Math.exp((T-52)/2.5));
+    enz.forEach(e=>{ if(T>e.th) e.den=true; if(T<30 && e.den && false) e.den=false; });
+    // maintain populations
+    const wantS=S, curS=parts.filter(p=>p.k===subK).length; if(curS<wantS) spawn(subK); else if(curS>wantS){ const i=parts.findIndex(p=>p.k===subK&&!p.bound); if(i>=0) parts.splice(i,1); }
+    const wantI=(inh&&cat==='enz')?6:0, curI=parts.filter(p=>p.k==='inh').length; if(curI<wantI) spawn('inh'); else if(curI>wantI){ const i=parts.findIndex(p=>p.k==='inh'&&!p.bound); if(i>=0) parts.splice(i,1); }
+    const v0=35+T*1.3;
+    // background
+    rect(ctx,box.x0,box.y0,box.x1-box.x0,box.y1-box.y0,COL.ink,'rgba(47,143,224,0.04)',2.4);
+    // enzymes
+    enz.forEach((e,i)=>{
+      const cx=lerp(box.x0,box.x1,e.fx), cy=lerp(box.y0,box.y1,e.fy);
+      e.cx=cx; e.cy=cy;
+      if(cat==='acid') return;
+      let jawT=0.95; if(e.state==='bound') jawT=0.38; if(e.state==='blocked') jawT=0.6; if(e.den) jawT=0;
+      const acc=(jawT-e.jaw)*90-e.jawV*11; e.jawV+=acc*dt; e.jaw+=e.jawV*dt;
+      if(e.state==='bound'){ e.tm-=dt*rateF(T)*(e.den?0:1); if(e.tm<=0){ // catalysis done
+          const s=e.sub; if(s){ prods.push({x:s.x,y:s.y,vx:-90-Math.random()*40,vy:-120-Math.random()*60,c:COL.green,t:0},{x:s.x,y:s.y,vx:90+Math.random()*40,vy:-120-Math.random()*60,c:COL.yellow,t:0}); parts.splice(parts.indexOf(s),1); products++; stamps.push(hT); }
+          e.state='free'; e.sub=null; } }
+      else if(e.state==='blocked'){ e.tm-=dt; if(e.tm<=0){ const s=e.sub; if(s){ s.bound=null; s.vx=(Math.random()-0.5)*160; s.vy=-100; } e.state='free'; e.sub=null; } }
+      const wob=e.den?Math.sin(t*5+e.ph)*3:0;
+      const th=clamp(e.jaw,0,1)*0.95+0.05;
+      ctx.save(); ctx.translate(cx,cy+wob); ctx.beginPath();
+      if(e.den){ for(let k=0;k<=40;k++){ const a=k/40*Math.PI*2, rr=Re*(0.9+0.1*Math.sin(a*5+t*4+e.ph)); k?ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr); } ctx.closePath(); ctx.fillStyle='rgba(129,149,171,0.15)'; ctx.fill(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=2.4; ctx.stroke(); }
+      else { ctx.arc(0,0,Re,-Math.PI/2+th,-Math.PI/2-th+Math.PI*2); ctx.lineTo(0,Re*0.1); ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.stroke(); }
+      ctx.restore();
+      textAt(ctx,e.den?'denatured':'enzyme',cx,cy+Re+16,{align:'center',size:11,weight:600,color:e.den?COL.mid:COL.blue});
+    });
+    // particles
+    parts.forEach(p=>{
+      if(p.bound){ const e=p.bound, tx=e.cx, ty=e.cy-Re*0.36; p.x=approach(p.x,tx,14,dt); p.y=approach(p.y,ty,14,dt); }
+      else {
+        p.vx+=gauss()*140*dt; p.vy+=gauss()*140*dt; const sp=Math.hypot(p.vx,p.vy)||1; const k=v0/sp; p.vx=lerp(p.vx,p.vx*k,0.1); p.vy=lerp(p.vy,p.vy*k,0.1);
+        p.x+=p.vx*dt; p.y+=p.vy*dt; p.a+=p.w*dt;
+        if(p.x<box.x0+p.r){ p.x=box.x0+p.r; p.vx=Math.abs(p.vx); } if(p.x>box.x1-p.r){ p.x=box.x1-p.r; p.vx=-Math.abs(p.vx); }
+        if(p.y<box.y0+p.r){ p.y=box.y0+p.r; p.vy=Math.abs(p.vy); } if(p.y>box.y1-p.r){ p.y=box.y1-p.r; p.vy=-Math.abs(p.vy); }
+        // enzymes: bounce off body, bind in the notch
+        if(cat==='enz') enz.forEach(e=>{
+          const dx=p.x-e.cx, dy=p.y-e.cy, d=Math.hypot(dx,dy);
+          const canFit=(p.k==='fit'||p.k==='inh');
+          const inNotch=dy<-Re*0.15 && Math.abs(dx)<Re*0.5 && d<Re*0.95;
+          if(canFit && inNotch && e.state==='free' && !e.den && !p.bound){ p.bound=e; e.sub=p; if(p.k==='fit'){ e.state='bound'; e.tm=1.0; } else { e.state='blocked'; e.tm=1.8+Math.random()*1.4; } return; }
+          if(d<Re+p.r && !(canFit && dy<0 && Math.abs(dx)<Re*0.55)){ const nx=dx/d, ny=dy/d, dot=p.vx*nx+p.vy*ny; if(dot<0){ p.vx-=2*dot*nx; p.vy-=2*dot*ny; } p.x=e.cx+nx*(Re+p.r); p.y=e.cy+ny*(Re+p.r); }
+        });
+        // acid: spontaneous hydrolysis
+        if(cat==='acid' && p.k!=='inh' && Math.random()<0.022*rateF(T)*dt){ prods.push({x:p.x,y:p.y,vx:-80,vy:-110,c:COL.green,t:0},{x:p.x,y:p.y,vx:80,vy:-110,c:COL.yellow,t:0}); parts.splice(parts.indexOf(p),1); products++; stamps.push(hT); }
+      }
+    });
+    // draw particles
+    parts.forEach(p=>{
+      if(p.k==='fit'){ circ(ctx,p.x,p.y,p.r,COL.green,'#fff',2.8); line(ctx,p.x,p.y-p.r,p.x,p.y+p.r,COL.yellow,2.2); }
+      else if(p.k==='wrong'){ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); rect(ctx,-p.r,-p.r,p.r*2,p.r*2,COL.red,'#fff',2.8); line(ctx,0,-p.r,0,p.r,COL.yellow,2.2); ctx.restore(); }
+      else { circ(ctx,p.x,p.y,p.r,COL.red,'#fff',2.8); line(ctx,p.x-p.r*0.5,p.y-p.r*0.5,p.x+p.r*0.5,p.y+p.r*0.5,COL.red,2.2); line(ctx,p.x-p.r*0.5,p.y+p.r*0.5,p.x+p.r*0.5,p.y-p.r*0.5,COL.red,2.2); }
+    });
+    for(let i=prods.length-1;i>=0;i--){ const q=prods[i]; q.t+=dt; q.vy+=420*dt; q.x+=q.vx*dt; q.y+=q.vy*dt; if(q.t>1.4){ prods.splice(i,1); continue; }
+      alphaDo(ctx,1-q.t/1.4,()=>{ ctx.save(); ctx.beginPath(); ctx.arc(q.x,q.y,Re*0.2,0,Math.PI*2); ctx.strokeStyle=q.c; ctx.lineWidth=3; ctx.stroke(); ctx.restore(); }); }
+    // legend
+    textAt(ctx,'Active site is a pocket → only the matching shape fits',box.x0+10,box.y1-10,{size:11,weight:600,color:COL.muted});
+    // ---- rate strip chart (top right)
+    hT+=dt; while(stamps.length&&stamps[0]<hT-6) stamps.shift();
+    const rate=stamps.length/6; if(Math.floor(hT*2)!==Math.floor((hT-dt)*2)){ rateHist.push(rate); if(rateHist.length>60) rateHist.shift(); }
+    const gx0=w*0.67, gx1=w*0.96, gy0=h*0.08, gy1=h*0.36;
+    rect(ctx,gx0,gy0,gx1-gx0,gy1-gy0,COL.ink,'#fff',1.6); textAt(ctx,'products / s (last 6 s)',gx0+6,gy0+14,{size:11,weight:600,color:COL.muted});
+    const pts=rateHist.map((r,i)=>[gx0+(i/59)*(gx1-gx0),gy1-clamp(r/2.5,0,1)*(gy1-gy0-22)-4]); if(pts.length>1) poly(ctx,pts,COL.blue,2.6,false);
+    // ---- energy profile (bottom right)
+    const ex0=w*0.67, ex1=w*0.96, ey0=h*0.5, ey1=h*0.9;
+    textAt(ctx,'Energy',ex0,ey0-8,{size:11,weight:600,color:COL.muted}); textAt(ctx,'reaction →',ex1,ey1+14,{size:11,weight:600,color:COL.muted,align:'right'});
+    line(ctx,ex0,ey0,ex0,ey1,COL.ink,2); line(ctx,ex0,ey1,ex1,ey1,COL.ink,2);
+    const EaA=6.22, EaE=2.15, base=h*0.2, scaleY=(ey1-ey0-30)/8;
+    const prof=(Ea,x)=>{ const sig=1/(1+Math.exp(-(x-0.5)*9)); const bump=Math.exp(-Math.pow((x-0.45)/0.14,2)); return ey1-18-base*0.7-(Ea*scaleY*bump) + sig*base*0.55; };
+    const curve=(Ea,col,dash,lwid)=>{ const q=[]; for(let k=0;k<=60;k++){ const x=k/60; q.push([ex0+6+x*(ex1-ex0-12),prof(Ea,x)]); } ctx.save(); if(dash) ctx.setLineDash(dash); poly(ctx,q,col,lwid,false); ctx.restore(); };
+    curve(EaA,COL.red,cat==='acid'?null:[6,5],cat==='acid'?3.2:1.8); curve(EaE,COL.green,cat==='enz'?null:[6,5],cat==='enz'?3.2:1.8);
+    const peakX=ex0+6+0.45*(ex1-ex0-12);
+    textAt(ctx,'Ea 6.22 (acid)',peakX+16,prof(EaA,0.45)+14,{size:11,weight:700,color:COL.red}); textAt(ctx,'Ea 2.15 (sucrase)',ex0+10,prof(EaE,0.45)+34,{size:11,weight:700,color:COL.green});
+    // ball moving over the active barrier
+    const act=cat==='enz'?EaE:EaA; ballU=(ballU+dt*(0.15+rate*0.5)*(cat==='enz'?1.4:1))%1; const bx=ex0+6+ballU*(ex1-ex0-12);
+    circ(ctx,bx,prof(act,ballU)-6,6,COL.blue,'#fff',2.6);
+    const ratio=Math.exp((6220-2150)/(8.314*(T+273.15)));
+    const nAct=enz.filter(e=>!e.den).length;
+    setT(wrap,'c1',String(products),COL.blue); setT(wrap,'c2',fmt(rate,2),COL.blue); setT(wrap,'c3',cat==='enz'?nAct+' / 3':'—',nAct<3&&cat==='enz'?COL.red:COL.green); setT(wrap,'c4','×'+fmt(ratio,1),COL.green);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.10  VITAMINS — fat-soluble vs water-soluble
+   ===================================================================== */
+const VIT={
+  A:{fat:1,src:'Fish liver oil, carrots, butter, milk',def:'Xerophthalmia, night blindness'},
+  B1:{fat:0,src:'Yeast, milk, green vegetables, cereals',def:'Beri-beri'},
+  B2:{fat:0,src:'Milk, egg white, liver, kidney',def:'Cheilosis'},
+  B6:{fat:0,src:'Yeast, milk, egg yolk, cereals',def:'Convulsions'},
+  B12:{fat:0,store:1,src:'Meat, fish, egg, curd',def:'Pernicious anaemia'},
+  C:{fat:0,src:'Citrus fruits, amla, green leafy veg.',def:'Scurvy (bleeding gums)'},
+  D:{fat:1,src:'Sunlight, fish, egg yolk',def:'Rickets, osteomalacia'},
+  E:{fat:1,src:'Vegetable oils (wheat germ, sunflower)',def:'Fragile RBCs, muscle weakness'},
+  K:{fat:1,src:'Green leafy vegetables',def:'Slow blood clotting'}
+};
+function buildA10(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Vitamin</label>
+      <div class="chip-wrap" id="vc">${Object.keys(VIT).map((k,i)=>`<button class="chip-btn${i===0?' active':''}" data-k="${k}">${k}</button>`).join('')}</div>
+      <button class="toggle-btn navy" id="tk">Drop the pill in</button></div>
+    <div class="control-group"><label>Dose <span class="val" id="dv">5</span></label><input type="range" id="dr" min="1" max="10" value="5"></div>
+    <div class="control-group"><button class="toggle-btn" id="rs" style="width:100%;margin-top:0">Empty beaker &amp; body</button></div>
+    ${cardsHTML([['c1','Dissolves in'],['c2','Body keeps it'],['c3','Source',null,1],['c4','Lack causes',null,1]])}`);
+  const $=s=>wrap.querySelector(s);
+  let sel='A', pills=[], dots=[], store=0, blood=0, urine=[], ring=[], consume=[], pool=0;
+  toggleWire([...$('#vc').children], b=>{ sel=b.dataset.k; });
+  $('#tk').onclick=()=>{ pills.push({k:sel,x:0,y:null,vy:0,ph:'fall',rest:0,jit:(Math.random()-0.5)*0.5}); };
+  $('#rs').onclick=()=>{ dots=[]; store=0; blood=0; pills=[]; urine=[]; pool=0; };
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const dose=+$('#dr').value; setT(wrap,'dv',String(dose));
+    const bx=w*0.25, bw=w*0.24, bTop=h*0.3, bBot=h*0.88, bh=bBot-bTop, yS=bTop+bh*0.1, yI=yS+(bBot-yS)*0.4, oilMid=(yS+yI)/2, watMid=(yI+bBot)/2;
+    // liquids
+    const wob=(y,a)=>{ const q=[]; for(let k=0;k<=24;k++){ q.push([bx-bw/2+bw*k/24,y+Math.sin(k*0.9+t*2.2+a)*2]); } return q; };
+    ctx.save(); ctx.beginPath(); ctx.rect(bx-bw/2,yS-4,bw,bBot-yS+4); ctx.clip();
+    ctx.fillStyle='rgba(217,160,23,0.20)'; ctx.fillRect(bx-bw/2,yS-4,bw,yI-yS+4); ctx.fillStyle='rgba(47,143,224,0.18)'; ctx.fillRect(bx-bw/2,yI,bw,bBot-yI); ctx.restore();
+    poly(ctx,wob(yS,0),COL.yellow,2,false); poly(ctx,wob(yI,2),COL.blue,2,false);
+    line(ctx,bx-bw/2,bTop,bx-bw/2,bBot,COL.ink,3); line(ctx,bx+bw/2,bTop,bx+bw/2,bBot,COL.ink,3); line(ctx,bx-bw/2,bBot,bx+bw/2,bBot,COL.ink,3);
+    line(ctx,bx-bw/2-8,bTop,bx-bw/2,bTop,COL.ink,3); line(ctx,bx+bw/2,bTop,bx+bw/2+8,bTop,COL.ink,3);
+    textAt(ctx,'Oil',bx-bw/2-8,oilMid+4,{align:'right',size:13,weight:700,color:COL.yellow}); textAt(ctx,'Water',bx-bw/2-8,watMid+4,{align:'right',size:13,weight:700,color:COL.blue});
+    // pills
+    pills=pills.filter(p=>{
+      const V=VIT[p.k], tgtY=V.fat?oilMid:watMid, px=bx+p.jit*bw*0.5;
+      if(p.y===null){ p.y=h*0.06; p.vy=0; }
+      if(p.ph==='fall'){ p.vy+=950*dt; p.y+=p.vy*dt; if(p.y>=yS){ p.ph='sink'; ring.push({x:px,y:yS,t:0}); p.vy*=0.45; } }
+      else { const acc=(tgtY-p.y)*(V.fat?26:10)-p.vy*(V.fat?8:5.2); p.vy+=acc*dt; p.y+=p.vy*dt; if(Math.abs(tgtY-p.y)<2.5&&Math.abs(p.vy)<8){ p.rest+=dt; if(p.rest>0.6){ for(let i=0;i<16;i++) dots.push({x:px+(Math.random()-0.5)*8,y:p.y+(Math.random()-0.5)*8,fat:V.fat,vx:0,vy:0}); if(dots.length>200) dots.splice(0,dots.length-200);
+          consume.push(p.k); return false; } } }
+      circ(ctx,px,p.y,11,V.fat?COL.yellow:COL.blue,'#fff',3); textAt(ctx,p.k,px,p.y+4,{align:'center',size:p.k.length>1?9:11,weight:700,color:V.fat?COL.yellow:COL.blue}); return true; });
+    ring=ring.filter(r=>{ r.t+=dt; alphaDo(ctx,1-r.t*1.6,()=>{ ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.6; ctx.beginPath(); ctx.ellipse(r.x,r.y,r.t*60,r.t*12,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); }); return r.t<0.65; });
+    dots.forEach(d=>{ const y0=d.fat?yS+4:yI+4, y1=d.fat?yI-4:bBot-4; d.vx+=gauss()*60*dt; d.vy+=gauss()*60*dt; d.vx*=0.94; d.vy*=0.94; d.x=clamp(d.x+d.vx*dt,bx-bw/2+6,bx+bw/2-6); d.y=clamp(d.y+d.vy*dt,y0,y1); circ(ctx,d.x,d.y,2.6,d.fat?COL.yellow:COL.blue,d.fat?COL.yellow:COL.blue,1); });
+    // body store (right)
+    consume.splice(0).forEach(k=>{ const V=VIT[k], amt=dose*9; if(V.fat||V.store) store=Math.min(130,store+amt); else blood=Math.min(130,blood+amt); });
+    store-=store*0.012*dt; blood-=blood*0.45*dt; if(blood<0.3) blood=0;
+    const exc=blood*0.45*dt; pool+=exc; while(pool>3){ pool-=3; urine.push({x:w*0.87+(Math.random()-0.5)*6,y:h*0.63,vy:0}); }
+    const ty0=h*0.12, ty1=h*0.62, tw=w*0.1, sx=w*0.66, wx=w*0.82;
+    [[sx,store,COL.yellow,'Liver & fat store'],[wx,blood,COL.blue,'Blood']].forEach(([x,v,c,nm])=>{
+      rect(ctx,x,ty0,tw,ty1-ty0,COL.ink,'#fff',2.4);
+      const hh=(ty1-ty0)*clamp(v/130,0,1); ctx.save(); ctx.globalAlpha=0.35; ctx.fillStyle=c; ctx.fillRect(x+1.5,ty1-hh,tw-3,hh-1); ctx.restore(); line(ctx,x+1.5,ty1-hh,x+tw-1.5,ty1-hh,c,2.4);
+      textAt(ctx,nm,x+tw/2,ty0-8,{align:'center',size:11,weight:700,color:c});
+    });
+    const hy=ty1-(ty1-ty0)*(80/130); line(ctx,sx-6,hy,sx+tw+6,hy,COL.red,1.6,[5,4]); textAt(ctx,'too much',sx-8,hy-4,{align:'right',size:10,weight:700,color:COL.red});
+    if(store>80) textAt(ctx,'Excess is harmful',sx+tw/2,ty1+18,{align:'center',size:12,weight:700,color:COL.red});
+    // drain + urine
+    line(ctx,wx+tw/2,ty1,wx+tw/2,h*0.63,COL.ink,2.4); rect(ctx,w*0.78,h*0.82,w*0.18,h*0.1,COL.ink,'rgba(217,160,23,0.12)',2.2); textAt(ctx,'Urine',w*0.87,h*0.97,{align:'center',size:11,weight:700,color:COL.yellow});
+    urine=urine.filter(u=>{ u.vy+=800*dt; u.y+=u.vy*dt; if(u.y>h*0.83) return false; ctx.save(); ctx.fillStyle=COL.yellow; ctx.beginPath(); ctx.ellipse(u.x,u.y,2.6,4,0,0,Math.PI*2); ctx.fill(); ctx.restore(); return true; });
+    const V=VIT[sel];
+    setT(wrap,'c1',V.fat?'Oil / fat':'Water',V.fat?COL.yellow:COL.blue);
+    setT(wrap,'c2',V.fat?'Yes — stored':V.store?'Yes (only B12)':'No — excreted',V.fat||V.store?COL.yellow:COL.blue);
+    setT(wrap,'c3',V.src); setT(wrap,'c4',V.def,COL.red);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.11  DNA & RNA — double helix, base pairing, replication fork
+   A=T (2 H-bonds), G≡C (3 H-bonds). RNA: single strand, U replaces T.
+   ===================================================================== */
+const BASEC={A:COL.red,T:COL.yellow,U:COL.yellow,G:COL.green,C:COL.blue}, COMP={A:'T',T:'A',G:'C',C:'G'};
+function baseShape(ctx,x,y,r,purine,col,letter,dir){
+  const hex=ngon(x,y,r,6,Math.PI/6,1); poly(ctx,hex,col,3,true,'#fff');
+  if(purine){ const px=x+dir*r*1.55; poly(ctx,ngon(px,y,r*0.82,5,dir>0?Math.PI:0,1),col,3,true,'#fff'); }
+  textAt(ctx,letter,x,y+r*0.34,{align:'center',size:r*0.95,weight:700,color:col});
+}
+function buildA11(){
+  const wrap=mkShell(`
+    <div class="control-group"><label style="margin-bottom:6px;">Nucleic acid</label>
+      <div class="toggle-group" id="na"><button class="toggle-btn active" data-k="dna">DNA</button><button class="toggle-btn" data-k="rna">RNA</button></div></div>
+    <div class="control-group"><label>Unzip (replication fork) <span class="val" id="uv">0%</span></label><input type="range" id="ur" min="0" max="100" value="0">
+      <div class="toggle-group"><button class="toggle-btn play" id="rp">Replicate</button><button class="toggle-btn" id="rz">Re-zip</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Base pair</label>
+      <div class="toggle-group" id="bp"><button class="toggle-btn active" data-k="A">A – T</button><button class="toggle-btn" data-k="G">G – C</button></div></div>
+    <div class="control-group"><label>Spin <span class="val" id="sv">1.0×</span></label><input type="range" id="sr" min="0" max="30" value="10"></div>
+    ${cardsHTML([['c1','Strands'],['c2','Sugar'],['c3','H-bonds in pair'],['c4','Bases']])}`);
+  const $=s=>wrap.querySelector(s);
+  let kind='dna', pairSel='A', phase=0, go=0; const unz={x:0,v:0};
+  const NR=30, R=rng(3), seq=Array.from({length:NR},()=>'ATGC'[R()*4|0]);
+  toggleWire([...$('#na').children], b=>{ kind=b.dataset.k; $('#bp').children[0].textContent=kind==='dna'?'A – T':'A – U'; if(kind==='rna'){ $('#ur').value=0; go=0; } });
+  toggleWire([...$('#bp').children], b=>{ pairSel=b.dataset.k; });
+  $('#rp').onclick=()=>{ if(kind==='dna') go=1; }; $('#rz').onclick=()=>{ go=-1; };
+  $('#ur').oninput=()=>{ go=0; };
+  run(wrap,(ctx,w,h,dt,t)=>{
+    const spin=$('#sr').value/10; setT(wrap,'sv',spin.toFixed(1)+'×'); phase+=dt*spin*1.1;
+    let target=$('#ur').value/100; if(go===1){ target=1; } else if(go===-1) target=0;
+    if(go!==0){ const cur=+$('#ur').value/100; const nv=clamp(cur+go*dt*0.14,0,1); $('#ur').value=Math.round(nv*100); if(nv===target) go=0; target=nv; }
+    if(kind==='rna') target=0;
+    springTo(unz,target,18,8.5,dt); const f=clamp(unz.x,0,1); setT(wrap,'uv',Math.round(f*100)+'%');
+    const cx=w*0.34, y0=h*0.07, y1=h*0.93, Hh=y1-y0, A=Math.min(w*0.085,h*0.1), kk=Math.PI*2*3.4/Hh, maxSep=w*0.15;
+    const forkY=y1-f*Hh;
+    const sep=y=>y<forkY?maxSep*smooth01(0,0.4*Hh,forkY-y):0;
+    const amp=y=>A*(1-0.3*sep(y)/maxSep);
+    const th=y=>phase+(y-y0)*kk;
+    const S1=y=>cx-sep(y)+amp(y)*Math.cos(th(y)), S2=y=>cx+sep(y)-amp(y)*Math.cos(th(y));
+    const nv=y=>y<forkY?smooth01(0,0.12*Hh,forkY-y):0;
+    const N1=y=>cx-sep(y)-amp(y)*Math.cos(th(y))-(1-nv(y))*50, N2=y=>cx+sep(y)+amp(y)*Math.cos(th(y))+(1-nv(y))*50;
+    const z1=y=>Math.sin(th(y));
+    const strands=kind==='dna'?[{fn:S1,z:y=>z1(y),c:COL.blue,al:1},{fn:S2,z:y=>-z1(y),c:COL.green,al:1},{fn:N1,z:y=>-z1(y),c:COL.ink,al:y=>nv(y)},{fn:N2,z:y=>z1(y),c:COL.ink,al:y=>nv(y)}]:[{fn:S1,z:y=>z1(y),c:COL.blue,al:1}];
+    const drawStrand=(s,front)=>{
+      for(let y=y0;y<y1;y+=3){ const ya=y+3, a=typeof s.al==='function'?s.al((y+ya)/2):s.al; if(a<0.02) continue; const zz=(s.z(y)+s.z(ya))/2; if((zz>0)!==front) continue;
+        alphaDo(ctx,a*(front?1:0.4),()=>line(ctx,s.fn(y),y,s.fn(ya),ya,s.c,front?4:3)); } };
+    // back strands, rungs, front strands
+    strands.forEach(s=>drawStrand(s,false));
+    const half=(xa,xb,y,c)=>{ line(ctx,xa,y,(xa+xb)/2,y,BASEC[c],4); };
+    for(let k=0;k<NR;k++){
+      const y=y0+Hh*(k+0.5)/NR, b1=kind==='dna'?seq[k]:seq[k].replace('T','U');
+      if(kind==='rna'){ const xs=S1(y), xe=cx-(Math.cos(th(y))>0?-1:1)*0; const ax=cx+(xs-cx)*0.0; alphaDo(ctx,0.5+0.5*z1(y)*0+0.3,()=>{ line(ctx,xs,y,lerp(xs,cx,0.62),y,BASEC[b1],4); }); lab(ctx,b1,lerp(xs,cx,0.78),y,BASEC[b1],11); continue; }
+      const b2=COMP[b1];
+      if(y>=forkY){ const xa=S1(y),xb=S2(y); half(xa,xb,y,b1); line(ctx,xb,y,(xa+xb)/2,y,BASEC[b2],4); }
+      else { const n=nv(y);
+        // left daughter: parent strand 1 + new complement
+        const la=S1(y), lb=N1(y); half(la,lb,y,b1); alphaDo(ctx,n,()=>line(ctx,lb,y,(la+lb)/2,y,BASEC[b2],4));
+        const ra=S2(y), rb=N2(y); half(ra,rb,y,b2); alphaDo(ctx,n,()=>line(ctx,rb,y,(ra+rb)/2,y,BASEC[b1],4)); }
+    }
+    strands.forEach(s=>drawStrand(s,true));
+    for(let k=0;k<NR;k++){ const y=y0+Hh*(k+0.5)/NR; strands.forEach(s=>{ const a=typeof s.al==='function'?s.al(y):s.al; if(a<0.05) return; alphaDo(ctx,a,()=>circ(ctx,s.fn(y),y,3.6,s.c,'#fff',2)); }); }
+    if(f>0.02){ const py=forkY; alphaDo(ctx,Math.min(1,f*5),()=>{ line(ctx,cx-26,py,cx+26,py,COL.yellow,1.6,[4,4]); textAt(ctx,'fork',cx+30,py+4,{size:11,weight:700,color:COL.yellow}); }); }
+    // ---- base-pair inset
+    const ix=w*0.78, iy=h*0.5, r=Math.min(w*0.035,h*0.07);
+    const b1=pairSel==='A'?'A':'G', b2=pairSel==='A'?(kind==='dna'?'T':'U'):'C', n=pairSel==='A'?2:3;
+    textAt(ctx,'Base pair',ix,iy-r*4.2,{align:'center',size:14,weight:700,color:COL.ink});
+    const lx=ix-r*2.6, rx=ix+r*2.6;
+    baseShape(ctx,lx,iy,r,true,BASEC[b1],b1,-1); baseShape(ctx,rx,iy,r,false,BASEC[b2],b2,1);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.setLineDash([5,4]); ctx.lineDashOffset=-t*18;
+    for(let q=0;q<n;q++){ const yy=iy+(q-(n-1)/2)*r*0.62; ctx.beginPath(); ctx.moveTo(lx+r*0.87,yy); ctx.lineTo(rx-r*0.87,yy); ctx.stroke(); } ctx.restore();
+    textAt(ctx,n+' H-bonds',ix,iy+r*2.6,{align:'center',size:13,weight:700,color:COL.blue});
+    textAt(ctx,'purine',lx-r*0.6,iy+r*1.9,{align:'center',size:11,weight:600,color:COL.mid}); textAt(ctx,'pyrimidine',rx,iy+r*1.9,{align:'center',size:11,weight:600,color:COL.mid});
+    // legend of bases
+    ['A','T','G','C'].forEach((c,i)=>{ const x=w*0.62+i*w*0.08; circ(ctx,x,h*0.9,6,BASEC[c],BASEC[c],1); textAt(ctx,kind==='rna'&&c==='T'?'U':c,x+11,h*0.9+4,{size:12,weight:700,color:BASEC[c]}); });
+    setT(wrap,'c1',kind==='dna'?(f>0.5?'2 → 4 (replicating)':'2 (double helix)'):'1 (single)'); setT(wrap,'c2',kind==='dna'?'2-deoxyribose':'Ribose'); setT(wrap,'c3',String(n),COL.blue); setT(wrap,'c4',kind==='dna'?'A  T  G  C':'A  U  G  C');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   NAVIGATION / INIT
+   --------------------------------------------------------------------- */
+const activities=[
+  { num:'5.1',  title:'Glucose Ring',    desc:'Open chain closes into a ring', build:buildA1 },
+  { num:'5.2',  title:'Reducing Test',   desc:'Fehling’s and Tollens’ tests', build:buildA2 },
+  { num:'5.3',  title:'Glycosidic Link', desc:'Join and split disaccharides', build:buildA3 },
+  { num:'5.4',  title:'Invert Sugar',    desc:'Sucrose flips the rotation', build:buildA4 },
+  { num:'5.5',  title:'Polysaccharides', desc:'Grow starch, glycogen, cellulose', build:buildA5 },
+  { num:'5.6',  title:'Amino Acid & pH', desc:'Zwitterion and electrophoresis', build:buildA6 },
+  { num:'5.7',  title:'Protein Folding', desc:'Primary to quaternary structure', build:buildA7 },
+  { num:'5.8',  title:'Denaturation',    desc:'Cook an egg white', build:buildA8 },
+  { num:'5.9',  title:'Enzyme Action',   desc:'Lock, key and induced fit', build:buildA9 },
+  { num:'5.10', title:'Vitamins',        desc:'Fat- or water-soluble?', build:buildA10 },
+  { num:'5.11', title:'DNA & RNA',       desc:'Helix, base pairs, replication', build:buildA11 },
+];
+let currentIndex=0;
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn=document.createElement('button'); btn.className='nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML=`<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick=()=>{ currentIndex=i; render(); }; nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc||'';
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML=`<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

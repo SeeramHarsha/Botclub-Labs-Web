@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 12 — Limits and Derivatives | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">f′</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 12</div>
+      <h1>Limits and Derivatives</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>The function</span>
+      <span><i style="background:var(--f-red)"></i>Left · Secant</span>
+      <span><i style="background:var(--f-green)"></i>Right · Tangent</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">12.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 12: LIMITS AND DERIVATIVES
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases or springs toward it every frame.
+   Real formulas drive the motion (s = 4.9t² free fall, secant → tangent,
+   sin x / x on the unit circle) — checked against the textbook's tables.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+
+/* ---- animation engine ---- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+/** frame-rate-independent exponential ease */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** spring-damper: overshoots a little, then settles */
+function springTo(s,target,k,damping,dt){
+  const steps=Math.max(1,Math.ceil(dt/0.008)), h=dt/steps;
+  for(let i=0;i<steps;i++){ s.v += ((target-s.x)*k - s.v*damping)*h; s.x += s.v*h; }
+  return s.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---- plotting helpers ---- */
+function mkPlot(L,T,W,H,xr,yr){
+  return {L,T,W,H,xr,yr, X:x=>L+(x-xr[0])/(xr[1]-xr[0])*W, Y:y=>T+H-(y-yr[0])/(yr[1]-yr[0])*H};
+}
+function niceStep(range,target){
+  const raw=range/target, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p;
+  return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;
+}
+function drawAxes(ctx,P,o){
+  o=o||{};
+  const sx=o.sx||niceStep(P.xr[1]-P.xr[0],8), sy=o.sy||niceStep(P.yr[1]-P.yr[0],6);
+  ctx.save(); ctx.beginPath(); ctx.rect(P.L-1,P.T-1,P.W+2,P.H+2); ctx.clip();
+  for(let x=Math.ceil(P.xr[0]/sx)*sx; x<=P.xr[1]+1e-9; x+=sx) line(ctx,P.X(x),P.T,P.X(x),P.T+P.H,COL.grid,1);
+  for(let y=Math.ceil(P.yr[0]/sy)*sy; y<=P.yr[1]+1e-9; y+=sy) line(ctx,P.L,P.Y(y),P.L+P.W,P.Y(y),COL.grid,1);
+  const ax=clamp(P.X(0),P.L,P.L+P.W), ay=clamp(P.Y(0),P.T,P.T+P.H);
+  line(ctx,P.L,ay,P.L+P.W,ay,COL.mid,1.6); line(ctx,ax,P.T,ax,P.T+P.H,COL.mid,1.6);
+  ctx.restore();
+  const dx=o.dx===undefined?(sx<1?2:0):o.dx, dy=o.dy===undefined?(sy<1?2:0):o.dy;
+  for(let x=Math.ceil(P.xr[0]/sx)*sx; x<=P.xr[1]+1e-9; x+=sx){ if(Math.abs(x)<1e-9&&P.xr[0]<0) continue; textAt(ctx,fmt(x,dx),P.X(x),ay+14,{align:'center',size:10.5,color:COL.mid}); }
+  for(let y=Math.ceil(P.yr[0]/sy)*sy; y<=P.yr[1]+1e-9; y+=sy){ if(Math.abs(y)<1e-9) continue; textAt(ctx,fmt(y,dy),ax-5,P.Y(y)+4,{align:'right',size:10.5,color:COL.mid}); }
+  if(o.xl) textAt(ctx,o.xl,P.L+P.W,clamp(ay+28,P.T+10,P.T+P.H+22),{align:'right',size:12,weight:700,color:COL.muted});
+  if(o.yl) textAt(ctx,o.yl,ax+6,P.T+12,{size:12,weight:700,color:COL.muted});
+}
+/** draw y=f(x) clipped to the plot; breaks at NaN / off-screen jumps */
+function plotFn(ctx,P,f,color,lw,x0,x1,dash){
+  x0=x0===undefined?P.xr[0]:x0; x1=x1===undefined?P.xr[1]:x1;
+  ctx.save(); ctx.beginPath(); ctx.rect(P.L,P.T-4,P.W,P.H+8); ctx.clip();
+  ctx.strokeStyle=color; ctx.lineWidth=lw||3; ctx.lineJoin='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); let pen=false; const N=Math.max(2,Math.round(P.W/2));
+  for(let i=0;i<=N;i++){
+    const x=lerp(x0,x1,i/N), y=f(x);
+    if(!isFinite(y)){ pen=false; continue; }
+    const px=P.X(x), py=P.Y(y);
+    if(!pen){ ctx.moveTo(px,py); pen=true; } else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.restore();
+}
+/** infinite straight line through (x,y) with slope m, clipped to plot */
+function plotLine(ctx,P,x,y,m,color,lw,dash){
+  const xa=P.xr[0], xb=P.xr[1];
+  ctx.save(); ctx.beginPath(); ctx.rect(P.L,P.T,P.W,P.H); ctx.clip();
+  line(ctx,P.X(xa),P.Y(y+m*(xa-x)),P.X(xb),P.Y(y+m*(xb-x)),color,lw||2.4,dash);
+  ctx.restore();
+}
+function panel(ctx,P){ ctx.save(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.strokeRect(P.L,P.T,P.W,P.H); ctx.restore(); }
+
+/* ---- shared UI helpers ---- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+/** log slider 0..100 → value hi…lo  (0 = hi, 100 = lo) */
+function logVal(s,hi,lo){ return Math.pow(10, lerp(Math.log10(hi),Math.log10(lo),s/100)); }
+/** auto-run for a 0..100 slider: sweeps (dir +1 up / -1 down), holds, restarts */
+function autoRunner(range,btn,onLabel,offLabel,dir){
+  dir=dir||1; const A={on:false,hold:0};
+  const start=dir>0?0:100, end=dir>0?100:0;
+  btn.onclick=()=>{ A.on=!A.on; if(A.on&&Math.abs(+range.value-end)<0.5) range.value=start; A.hold=0; btn.textContent=A.on?onLabel:offLabel; btn.classList.toggle("play",!A.on); };
+  A.step=(dt,speed)=>{
+    if(!A.on) return;
+    if(A.hold>0){ A.hold-=dt; if(A.hold<=0) range.value=start; return; }
+    const v=+range.value+dir*speed*dt;
+    if((dir>0&&v>=end)||(dir<0&&v<=end)){ range.value=end; A.hold=1.4; } else range.value=v;
+  };
+  return A;
+}
+
+/* =====================================================================
+   12.1 THE FALLING STONE — average velocity → instantaneous velocity
+   s = 4.9t².  Average velocity on [2, 2+d]:  4.9((2+d)² − 4)/d = 4.9(4 + d)
+   Textbook check: t1 = 1.9 → 19.11 m/s, t2 = 2.1 → 20.09, t2 = 4 → 29.4.
+   The stone really falls with s = 4.9t² (1 s of motion = 1 s of clock).
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Interval</label>
+      <div class="toggle-group" id="sideB"><button class="toggle-btn active" data-d="-1">Ends at t = 2</button><button class="toggle-btn" data-d="1">Starts at t = 2</button></div></div>
+    <div class="control-group"><label>Interval h <span class="val" id="hV"></span></label><input type="range" id="hR" min="0" max="100" step="0.05" value="0"></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="auto">▶ Shrink h → 0</button><button class="toggle-btn" id="drop">↻ Drop again</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Distance Δs</div><div class="rval" id="dsV" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Time Δt</div><div class="rval" id="dtV" style="color:var(--f-yellow)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Average velocity Δs ÷ Δt</div><div class="rval" id="avV" style="color:var(--f-red)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Velocity at t = 2</div><div class="rval" id="v2V" style="color:var(--f-green)">19.6 m/s</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), hR=$('#hR');
+  const g=t=>4.9*t*t;
+  let dir=-1, tc=0, paused=false;
+  const D={x:-2,v:0};                       // signed interval, springs to dir·h
+  const auto=autoRunner(hR,$('#auto'),'❚❚ Pause','▶ Shrink h → 0');
+  toggleWire(wrap.querySelectorAll('#sideB button'),b=>dir=+b.dataset.d);
+  $('#drop').onclick=()=>{ tc=0; paused=false; };
+
+  animLoop(dt=>{
+    auto.step(dt,9);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const hh=logVal(+hR.value,2,0.01);
+    $('#hV').textContent=fmt(hh,hh<0.1?3:2)+' s';
+    springTo(D,dir*hh,150,19,dt);
+    const d=D.x, t2=2+d;
+    if(!paused){ tc+=dt; if(tc>5.2){ tc=0; } }
+    const tf=Math.min(tc,4);
+
+    /* ---------- left: the cliff and the stone ---------- */
+    const pw=w*0.3, top=48, bot=h-34, sc=(bot-top)/80, px=pw*0.62;
+    const Ys=s=>top+s*sc;
+    // cliff (line art)
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath();
+    ctx.moveTo(6,top); ctx.lineTo(px-26,top); ctx.lineTo(px-26,top+18); ctx.lineTo(px-34,top+60);
+    ctx.lineTo(px-24,top+120); ctx.lineTo(px-36,top+190); ctx.lineTo(px-28,bot); ctx.stroke(); ctx.restore();
+    for(let i=0;i<9;i++){ const yy=top+i*26; line(ctx,6+((i*17)%30),yy+10,22+((i*17)%30),yy+2,COL.grid,1.5); }
+    textAt(ctx,'top of cliff',10,top-12,{size:11,color:COL.mid,weight:600});
+    // metre ruler on the right of the path
+    line(ctx,px+26,top,px+26,bot,COL.mid,1.4);
+    for(let s=0;s<=80;s+=10){ line(ctx,px+26,Ys(s),px+33,Ys(s),COL.mid,1.4); textAt(ctx,s+' m',px+37,Ys(s)+4,{size:10,color:COL.mid}); }
+    // stroboscopic marks: where the stone is at t = 1,2,3,4 s — gaps grow
+    for(let k=1;k<=4;k++){ line(ctx,px-18,Ys(g(k)),px-8,Ys(g(k)),COL.mid,1.4); textAt(ctx,k+' s',px-22,Ys(g(k))+4,{size:10,color:COL.mid,align:'right'}); }
+    // ghost stones at t = 2 (green) and t = t2 (red)
+    const yA=Ys(g(2)), yC=Ys(g(t2));
+    circ(ctx,px,yA,9,COL.green,null,2); circ(ctx,px,yC,9,COL.red,null,2);
+    if(Math.abs(yC-yA)>3){
+      const bx=px+16; line(ctx,bx,yA,bx,yC,COL.yellow,4);
+      line(ctx,bx-4,yA,bx+4,yA,COL.yellow,2); line(ctx,bx-4,yC,bx+4,yC,COL.yellow,2);
+    }
+    // the falling stone
+    const sy=Ys(g(tf)), v=9.8*tf;
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; ctx.setLineDash([2,5]); ctx.beginPath(); ctx.moveTo(px,top); ctx.lineTo(px,sy); ctx.stroke(); ctx.restore();
+    circ(ctx,px,sy,10,COL.blue,'#dcecfb',3);
+    if(v>1) vec(ctx,px,sy+12,px,sy+12+v*1.15,COL.green,3);
+    textAt(ctx,'t = '+fmt(tf,2)+' s',px-16,Math.max(top+4,sy-14),{size:11.5,weight:700,color:COL.blue,align:'right'});
+
+    /* ---------- right: s–t graph ---------- */
+    const P=mkPlot(pw+58,34,w-pw-58-26,h-34-48,[0,4.2],[0,84]);
+    drawAxes(ctx,P,{sx:1,sy:20,xl:'t (s)',yl:'s (m)'});
+    plotFn(ctx,P,t=>g(t),COL.blue,3.6,0,4.2);
+    plotLine(ctx,P,2,g(2),19.6,COL.green,2,[7,6]);                  // tangent
+    const m=4.9*(4+d);                                              // secant slope
+    plotLine(ctx,P,2,g(2),m,COL.red,2.8);                            // secant
+    const A={x:P.X(2),y:P.Y(g(2))}, C={x:P.X(t2),y:P.Y(g(t2))};
+    if(Math.abs(C.x-A.x)>14){                                        // run / rise
+      line(ctx,A.x,A.y,C.x,A.y,COL.yellow,3.4); line(ctx,C.x,A.y,C.x,C.y,COL.blue,3.4);
+      if(Math.abs(C.x-A.x)>46) textAt(ctx,'Δt',(A.x+C.x)/2,A.y+(C.y<A.y?16:-8),{size:12,weight:700,color:COL.yellow,align:'center'});
+      if(Math.abs(C.y-A.y)>30) textAt(ctx,'Δs',C.x+(C.x>A.x?8:-8),(A.y+C.y)/2,{size:12,weight:700,color:COL.blue,align:C.x>A.x?'left':'right'});
+    }
+    circ(ctx,A.x,A.y,7,COL.green,'#fff',3); circ(ctx,C.x,C.y,6,COL.red,COL.red,2);
+    // live cursor tied to the falling stone
+    line(ctx,P.X(tf),P.Y(0),P.X(tf),P.Y(g(tf)),COL.blue,1.4,[3,4]);
+    circ(ctx,P.X(tf),P.Y(g(tf)),5,COL.blue,COL.blue,1);
+    textAt(ctx,'secant slope = average velocity',P.L+70,P.T+34,{size:11.5,weight:600,color:COL.red});
+    textAt(ctx,'tangent slope = velocity at t = 2',P.L+70,P.T+51,{size:11.5,weight:600,color:COL.green});
+
+    $('#dsV').textContent=fmt(Math.abs(g(t2)-g(2)),Math.abs(d)<0.1?4:2)+' m';
+    $('#dtV').textContent=fmt(Math.abs(d),Math.abs(d)<0.1?3:2)+' s';
+    $('#avV').textContent=fmt(m,3)+' m/s';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12.2 LIMIT FROM BOTH SIDES — x → a⁻ and x → a⁺
+   Textbook: (x²−4)/(x−2) → 4 at 2 (Fig 12.2);  x³ → 1 at 1 (Table 12.5);
+   x + 10 → 15 at 5 (Table 12.4).
+   ===================================================================== */
+const LIMFN=[
+  {k:'h', name:'(x²−4)/(x−2)', a:2, L:4,  f:x=>(x*x-4)/(x-2), hole:true,  xr:[0,4], yr:[0,7],  sy:1},
+  {k:'c', name:'x³',          a:1, L:1,  f:x=>x*x*x,          hole:false, xr:[0,2], yr:[0,8],  sy:2},
+  {k:'l', name:'x + 10',      a:5, L:15, f:x=>x+10,           hole:false, xr:[3,7], yr:[12,18], sy:1},
+];
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Function</label>
+      <div class="toggle-group" id="fnB">${LIMFN.map((o,i)=>`<button class="toggle-btn small${i?'':' active'}" style="min-width:0;white-space:normal" data-i="${i}">${o.name}</button>`).join('')}</div>
+      <div class="hint" id="aH"></div></div>
+    <div class="control-group"><label>Distance from a, δ <span class="val" id="dV"></span></label><input type="range" id="dR" min="0" max="100" step="0.05" value="0"></div>
+    <div class="control-group"><button class="toggle-btn play" id="auto" style="width:100%">▶ Close in on a</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Left x</div><div class="rval" id="xl" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Right x</div><div class="rval" id="xr" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">f(left)</div><div class="rval" id="fl" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">f(right)</div><div class="rval" id="fr" style="color:var(--f-green)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Limit</div><div class="rval" id="lim" style="color:var(--f-green)">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), dR=$('#dR');
+  let F=LIMFN[0];
+  const Q={x:Math.log10(1.5),v:0};
+  const auto=autoRunner(dR,$('#auto'),'❚❚ Pause','▶ Close in on a');
+  const setF=()=>{ $('#aH').textContent='x → '+F.a+'   (f is not evaluated at '+F.a+')'; };
+  setF();
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{ F=LIMFN[+b.dataset.i]; setF(); });
+
+  animLoop(dt=>{
+    auto.step(dt,12);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const dT=logVal(+dR.value,1.5,0.001);
+    $('#dV').textContent=fmt(dT,dT<0.01?4:3);
+    springTo(Q,Math.log10(dT),90,13,dt);
+    const dl=Math.pow(10,Q.x), a=F.a;
+    const P=mkPlot(66,30,w-66-34,h-30-46,F.xr,F.yr);
+    drawAxes(ctx,P,{sx:F.k==='c'?0.5:1,sy:F.sy,xl:'x',yl:'f(x)',dx:F.k==='c'?1:0});
+    // limit level
+    line(ctx,P.L,P.Y(F.L),P.L+P.W,P.Y(F.L),COL.ink,1.4,[8,6]);
+    textAt(ctx,'L = '+F.L,P.L+P.W-4,P.Y(F.L)-7,{align:'right',size:12,weight:700,color:COL.ink});
+    plotFn(ctx,P,F.f,COL.blue,3.8);
+    if(F.hole) circ(ctx,P.X(a),P.Y(F.L),7,COL.blue,'#fff',3); else circ(ctx,P.X(a),P.Y(F.L),5,COL.blue,COL.blue,1);
+    // gap on the x-axis between the two walkers
+    const xl=a-dl, xr=a+dl, yl=F.f(xl), yr=F.f(xr), ay=P.Y(P.yr[0]);
+    line(ctx,P.X(xl),ay,P.X(xr),ay,COL.yellow,5);
+    [[xl,yl,COL.red],[xr,yr,COL.green]].forEach(([x,y,c])=>{
+      line(ctx,P.X(x),ay,P.X(x),P.Y(y),c,1.6,[4,4]);
+      line(ctx,P.X(x),P.Y(y),P.L,P.Y(y),c,1.6,[4,4]);
+      arrowHead(ctx,P.L+1,P.Y(y),Math.PI,c,9);
+      circ(ctx,P.X(x),P.Y(y),8,c,c==COL.red?'#fbe3de':'#dcf3e5',3);
+    });
+    textAt(ctx,'x → '+a+'⁻',P.X(a)-18,P.T+22,{align:'right',size:12.5,weight:700,color:COL.red});
+    textAt(ctx,a+'⁺ ← x',P.X(a)+18,P.T+22,{size:12.5,weight:700,color:COL.green});
+    const dd=dl<0.01?5:dl<0.1?4:3;
+    $('#xl').textContent=fmt(xl,dd+1); $('#xr').textContent=fmt(xr,dd+1);
+    $('#fl').textContent=fmt(yl,dd+1); $('#fr').textContent=fmt(yr,dd+1);
+    $('#lim').textContent='f(x) → '+F.L+'   (both sides)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12.3 WHEN THE LIMIT DOES NOT EXIST — Fig 12.3
+   f(x) = 1 for x ≤ 0, f(x) = R for x > 0.  Textbook: R = 2 → left limit 1,
+   right limit 2, so the limit does not exist.  Slide R to 1 to join them.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Right-hand level R <span class="val" id="rV"></span></label><input type="range" id="rR" min="0.4" max="3.2" step="0.05" value="2"></div>
+    <div class="control-group"><label>Distance from 0, δ <span class="val" id="dV"></span></label><input type="range" id="dR" min="0" max="100" step="0.05" value="0"></div>
+    <div class="control-group"><button class="toggle-btn play" id="auto" style="width:100%">▶ Close in on 0</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Left limit</div><div class="rval" id="ll" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Right limit</div><div class="rval" id="rl" style="color:var(--f-green)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Limit at 0</div><div class="rval" id="ver">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), dR=$('#dR'), rR=$('#rR');
+  const Q={x:Math.log10(1.5),v:0}, Rs={x:2,v:0};
+  const auto=autoRunner(dR,$('#auto'),'❚❚ Pause','▶ Close in on 0');
+  animLoop(dt=>{
+    auto.step(dt,12);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const dT=logVal(+dR.value,1.5,0.001);
+    $('#dV').textContent=fmt(dT,dT<0.01?4:3);
+    $('#rV').textContent=fmt(+rR.value,2);
+    springTo(Q,Math.log10(dT),90,13,dt);
+    springTo(Rs,+rR.value,70,9,dt);       // the right piece physically slides, overshoots, settles
+    const dl=Math.pow(10,Q.x), R=Rs.x;
+    const P=mkPlot(66,30,w-66-34,h-30-46,[-2,2],[0,3.6]);
+    drawAxes(ctx,P,{sx:0.5,sy:0.5,dx:1,dy:1,xl:'x',yl:'f(x)'});
+    plotFn(ctx,P,x=>1,COL.blue,4,-2,0);
+    plotFn(ctx,P,x=>R,COL.blue,4,0,2);
+    const joined=Math.abs(R-1)<0.03;
+    circ(ctx,P.X(0),P.Y(1),6.5,COL.blue,COL.blue,1);
+    if(!joined) circ(ctx,P.X(0),P.Y(R),6.5,COL.blue,'#fff',3);
+    // yellow jump bracket on the y-axis
+    if(!joined){
+      const bx=P.X(0)-16; line(ctx,bx,P.Y(1),bx,P.Y(R),COL.yellow,5);
+      textAt(ctx,'jump '+fmt(Math.abs(R-1),2),bx-8,(P.Y(1)+P.Y(R))/2+4,{align:'right',size:12,weight:700,color:COL.yellow});
+    }
+    const ay=P.Y(0);
+    line(ctx,P.X(-dl),ay,P.X(dl),ay,COL.yellow,5);
+    [[-dl,1,COL.red],[dl,R,COL.green]].forEach(([x,y,c])=>{
+      line(ctx,P.X(x),ay,P.X(x),P.Y(y),c,1.6,[4,4]);
+      const tx=P.L; line(ctx,P.X(x),P.Y(y),tx,P.Y(y),c,1.6,[4,4]); arrowHead(ctx,tx+1,P.Y(y),Math.PI,c,9);
+      circ(ctx,P.X(x),P.Y(y),8,c,c==COL.red?'#fbe3de':'#dcf3e5',3);
+    });
+    $('#ll').textContent='1'; $('#rl').textContent=fmt(+rR.value,2);
+    const ok=Math.abs(+rR.value-1)<0.03, el=$('#ver');
+    el.textContent=ok?'Exists = 1':'Does not exist'; el.style.color=ok?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12.4 SQUEEZING sin x / x — Sandwich Theorem, Fig 12.9 / 12.10
+   Areas:  ½ sin x  <  ½ x  <  ½ tan x   ⇒   cos x < sin x / x < 1
+   so  lim sin x / x = 1  and  lim (1 − cos x)/x = 0 (Theorem 5).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Angle x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0" max="100" step="0.05" value="100"></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="auto" style="flex:1">▶ Squeeze x → 0</button></div>
+      <div class="toggle-group"><button class="toggle-btn" id="also">Show (1 − cos x) ÷ x</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">sin x</div><div class="rval" id="sV" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">x (arc)</div><div class="rval" id="aV" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">tan x</div><div class="rval" id="tV" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">cos x</div><div class="rval" id="cV" style="color:var(--f-red)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">sin x ÷ x</div><div class="rval" id="rV" style="color:var(--f-blue)">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR');
+  let both=false;
+  const auto=autoRunner(xR,$('#auto'),'❚❚ Pause','▶ Squeeze x → 0',-1);
+  $('#also').onclick=function(){ both=!both; this.classList.toggle('active',both); };
+  const X={x:1.1,v:0};
+  const xOf=s=>logVal(100-s,1.1,0.01);
+  animLoop(dt=>{
+    auto.step(dt,14);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tx=xOf(+xR.value);
+    // spring in log-space so the angle never overshoots through 0
+    const LX={x:Math.log(X.x),v:X.lv||0};
+    springTo(LX,Math.log(tx),110,15,dt); X.x=Math.exp(LX.x); X.lv=LX.v;
+    const x=X.x;
+    $('#xV').textContent=fmt(x,x<0.1?3:2)+' rad';
+
+    /* ---- unit circle ---- */
+    const cw=w*0.5, R=Math.min((h-100)/2.25, cw*0.42), ox=44, oy=h-46;
+    const pP={x:ox+R*Math.cos(x), y:oy-R*Math.sin(x)}, pQ={x:pP.x,y:oy}, pA={x:ox+R,y:oy}, pT={x:ox+R,y:oy-R*Math.tan(x)};
+    line(ctx,ox-12,oy,ox+R*1.3,oy,COL.mid,1.5); line(ctx,ox,oy+10,ox,oy-R*2.1,COL.mid,1.5);
+    // sector (blue) and triangle OAP (red) fills
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.beginPath(); ctx.moveTo(ox,oy); ctx.arc(ox,oy,R,0,-x,true); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle='rgba(217,67,43,0.16)'; ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(pA.x,pA.y); ctx.lineTo(pP.x,pP.y); ctx.closePath(); ctx.fill(); ctx.restore();
+    // quarter circle guide and the swept arc
+    ctx.save(); ctx.strokeStyle=COL.grid; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(ox,oy,R,0,-Math.PI/2,true); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=5; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(ox,oy,R,0,-x,true); ctx.stroke(); ctx.restore();
+    line(ctx,ox,oy,pT.x,pT.y,COL.ink,1.6,[6,5]);                 // radius extended to T
+    line(ctx,ox,oy,pP.x,pP.y,COL.ink,2.2);                       // OP
+    line(ctx,pA.x,pA.y,pT.x,pT.y,COL.green,4.5);                 // tan x
+    line(ctx,pQ.x,pQ.y,pP.x,pP.y,COL.red,4.5);                   // sin x
+    line(ctx,ox,oy,pQ.x,pQ.y,COL.ink,1.4);                       // cos x
+    circ(ctx,pP.x,pP.y,6.5,COL.ink,'#fff',2.6); circ(ctx,pT.x,pT.y,5,COL.green,COL.green,1);
+    textAt(ctx,'O',ox-6,oy+16,{size:12,weight:700,align:'right'}); textAt(ctx,'A',pA.x+6,oy+16,{size:12,weight:700});
+    textAt(ctx,'P',pP.x-8,pP.y-8,{size:12,weight:700,align:'right'}); textAt(ctx,'T',pT.x+9,pT.y+4,{size:12,weight:700,color:COL.green});
+    if(R*Math.sin(x)>16) textAt(ctx,'sin x',pQ.x-8,(pP.y+oy)/2,{size:12,weight:700,color:COL.red,align:'right'});
+    if(R*Math.tan(x)>16) textAt(ctx,'tan x',pA.x+10,(pA.y+pT.y)/2,{size:12,weight:700,color:COL.green});
+    if(x>0.12) textAt(ctx,'x',ox+R*Math.cos(x/2)*1.08,oy-R*Math.sin(x/2)*1.08,{size:12,weight:700,color:COL.blue});
+    textAt(ctx,'Area  ½ sin x  <  ½ x  <  ½ tan x',ox,28,{size:12.5,weight:700,color:COL.ink});
+
+    /* ---- sandwich graph ---- */
+    const P=mkPlot(cw+60,36,w-cw-60-26,h-36-50,[0,1.1],[0,1.08]);
+    drawAxes(ctx,P,{sx:0.2,sy:0.2,dx:1,dy:1,xl:'x',yl:''});
+    const sinc=t=>t<1e-9?1:Math.sin(t)/t;
+    plotFn(ctx,P,t=>1,COL.green,2.6,0,1.1,[8,6]);
+    plotFn(ctx,P,Math.cos,COL.red,3.2,0,1.1);
+    plotFn(ctx,P,sinc,COL.blue,4,0,1.1);
+    if(both) plotFn(ctx,P,t=>t<1e-9?0:(1-Math.cos(t))/t,COL.yellow,3.2,0,1.1);
+    textAt(ctx,'1',P.X(1.1)-4,P.Y(1)-7,{align:'right',size:12,weight:700,color:COL.green});
+    textAt(ctx,'cos x',P.X(1.1)-4,P.Y(Math.cos(1.1))+18,{align:'right',size:12,weight:700,color:COL.red});
+    textAt(ctx,'sin x ÷ x',P.X(0.55),P.Y(sinc(0.55))-12,{size:12,weight:700,color:COL.blue});
+    line(ctx,P.X(x),P.Y(0),P.X(x),P.Y(1),COL.ink,1.4,[3,4]);
+    circ(ctx,P.X(x),P.Y(1),5,COL.green,COL.green,1);
+    circ(ctx,P.X(x),P.Y(Math.cos(x)),5,COL.red,COL.red,1);
+    circ(ctx,P.X(x),P.Y(sinc(x)),7,COL.blue,'#fff',3);
+    if(both) circ(ctx,P.X(x),P.Y((1-Math.cos(x))/x),6,COL.yellow,'#fff',3);
+    if(both) textAt(ctx,'(1 − cos x) ÷ x',P.X(0.5),P.Y((1-Math.cos(0.5))/0.5)-12,{size:12,weight:700,color:COL.yellow});
+
+    $('#sV').textContent=fmt(Math.sin(x),5); $('#aV').textContent=fmt(x,5);
+    $('#tV').textContent=fmt(Math.tan(x),5); $('#cV').textContent=fmt(Math.cos(x),5);
+    $('#rV').textContent=fmt(sinc(x),6);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12.5 SECANT → TANGENT — derivative from first principles
+   f′(x₀) = lim h→0 [f(x₀ + h) − f(x₀)] / h
+   ===================================================================== */
+const FUNS=[
+  {n:'x²',    f:x=>x*x,   df:x=>2*x,        dt:'2x',     xr:[-3,3],  yr:[-1,9],    x0:1.5, sx:1,   sy:2},
+  {n:'x³',    f:x=>x*x*x, df:x=>3*x*x,      dt:'3x²',    xr:[-2,2],  yr:[-8,8],    x0:1,   sx:0.5, sy:2},
+  {n:'sin x', f:Math.sin,  df:Math.cos,      dt:'cos x',  xr:[-4,4],  yr:[-1.6,1.6],x0:1,   sx:1,   sy:0.5},
+  {n:'cos x', f:Math.cos,  df:x=>-Math.sin(x),dt:'−sin x',xr:[-4,4],  yr:[-1.6,1.6],x0:1,   sx:1,   sy:0.5},
+];
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Function f(x)</label>
+      <div class="toggle-group" id="fnB">${FUNS.slice(0,3).map((o,i)=>`<button class="toggle-btn${i?'':' active'}" data-i="${i}">${o.n}</button>`).join('')}</div></div>
+    <div class="control-group"><label>Point x₀ <span class="val" id="xV"></span></label><input type="range" id="xR" min="0" max="100" step="0.1" value="50"></div>
+    <div class="control-group"><label>Step h <span class="val" id="hV"></span></label><input type="range" id="hR" min="0" max="100" step="0.05" value="0"></div>
+    <div class="control-group"><button class="toggle-btn play" id="auto" style="width:100%">▶ Shrink h → 0</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">Secant slope  [f(x₀+h) − f(x₀)] ÷ h</div><div class="rval" id="sec" style="color:var(--f-red)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Tangent slope  f′(x₀)</div><div class="rval" id="tan" style="color:var(--f-green)">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR'), hR=$('#hR');
+  let F=FUNS[0];
+  const auto=autoRunner(hR,$('#auto'),'❚❚ Pause','▶ Shrink h → 0');
+  const X0={x:F.x0,v:0}, Hq={x:Math.log10(2),v:0}; let rot=0, prevPx=null;
+  const x0Of=()=>lerp(F.xr[0]*0.8,F.xr[1]*0.62,+xR.value/100);
+  const setX=()=>{ xR.value=100*(F.x0-F.xr[0]*0.8)/(F.xr[1]*0.62-F.xr[0]*0.8); };
+  setX(); X0.x=F.x0;
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{ F=FUNS[+b.dataset.i]; setX(); prevPx=null; });
+
+  animLoop(dt=>{
+    auto.step(dt,10);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const hT=logVal(+hR.value,2,0.001);
+    springTo(X0,x0Of(),70,12,dt); springTo(Hq,Math.log10(hT),90,13,dt);
+    const x0=X0.x, hh=Math.pow(10,Hq.x), f=F.f;
+    $('#xV').textContent=fmt(x0,2); $('#hV').textContent=fmt(hh,hh<0.01?4:3);
+    const P=mkPlot(60,30,w-60-30,h-30-44,F.xr,F.yr);
+    drawAxes(ctx,P,{sx:F.sx,sy:F.sy,xl:'x',yl:'y',dx:F.sx<1?1:0,dy:F.sy<1?1:0});
+    plotFn(ctx,P,f,COL.blue,4);
+    const y0=f(x0), x1=x0+hh, y1=f(x1), ms=(y1-y0)/hh, mt=F.df(x0);
+    plotLine(ctx,P,x0,y0,mt,COL.green,2.4,[8,6]);
+    plotLine(ctx,P,x0,y0,ms,COL.red,3);
+    const Pp={x:P.X(x0),y:P.Y(y0)}, Qp={x:P.X(x1),y:P.Y(y1)};
+    if(Math.abs(Qp.x-Pp.x)>12){
+      line(ctx,Pp.x,Pp.y,Qp.x,Pp.y,COL.yellow,3.6); line(ctx,Qp.x,Pp.y,Qp.x,Qp.y,COL.blue,3.6);
+      if(Qp.x-Pp.x>40) textAt(ctx,'h',(Pp.x+Qp.x)/2,Pp.y+(Qp.y<Pp.y?16:-8),{align:'center',size:12.5,weight:700,color:COL.yellow});
+      if(Math.abs(Qp.y-Pp.y)>26) textAt(ctx,'f(x₀+h) − f(x₀)',Qp.x+8,(Pp.y+Qp.y)/2,{size:11.5,weight:700,color:COL.blue});
+    }
+    circ(ctx,Qp.x,Qp.y,6,COL.red,COL.red,2);
+    // a ball rolling along the curve, carried to x₀ — spokes turn with the arc length
+    const eps=0.02, tpx=P.X(x0+eps)-P.X(x0), tpy=P.Y(f(x0+eps))-P.Y(f(x0)), tl=Math.hypot(tpx,tpy);
+    const nx=tpy/tl, ny=-tpx/tl, r=11, bc={x:Pp.x+nx*r, y:Pp.y+ny*r};
+    if(prevPx!==null){ const dx=Pp.x-prevPx.x, dy=Pp.y-prevPx.y; rot+=Math.sign(dx||0.0001)*Math.hypot(dx,dy)/r; }
+    prevPx={x:Pp.x,y:Pp.y};
+    circ(ctx,bc.x,bc.y,r,COL.ink,'#fff',2.4);
+    for(let k=0;k<3;k++){ const a=rot+k*Math.PI/3; line(ctx,bc.x-Math.cos(a)*r,bc.y-Math.sin(a)*r,bc.x+Math.cos(a)*r,bc.y+Math.sin(a)*r,COL.ink,1.2); }
+    circ(ctx,Pp.x,Pp.y,6,COL.green,'#fff',3);
+    textAt(ctx,'secant',P.L+14,P.T+18,{size:12,weight:700,color:COL.red});
+    textAt(ctx,'tangent',P.L+14,P.T+36,{size:12,weight:700,color:COL.green});
+    $('#sec').textContent=fmt(ms,hh<0.01?5:4); $('#tan').textContent=fmt(mt,5);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12.6 THE DERIVATIVE AS A FUNCTION — slope at every x draws f′(x)
+   Textbook: (x²)′ = 2x, (x³)′ = 3x², (sin x)′ = cos x  (Thm 6, Ex 16)
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Function f(x)</label>
+      <div class="toggle-group" id="fnB">${FUNS.map((o,i)=>`<button class="toggle-btn small${i?'':' active'}" data-i="${i}">${o.n}</button>`).join('')}</div></div>
+    <div class="control-group"><label>Point x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0" max="100" step="0.05" value="0"></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="sweep" style="flex:1">▶ Sweep</button><button class="toggle-btn" id="clr" style="flex:1">Clear trace</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Slope at x</div><div class="rval" id="sl" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">f′(x)</div><div class="rval" id="fd" style="color:var(--f-green)">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR');
+  let F=FUNS[0], sweeping=false, sd=1;
+  const NB=300; let seen=new Array(NB).fill(false), prevS=null;
+  const X={x:0,v:0};
+  const reset=()=>{ seen.fill(false); prevS=null; xR.value=0; X.x=0; X.v=0; };
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{ F=FUNS[+b.dataset.i]; reset(); });
+  $('#clr').onclick=()=>{ seen.fill(false); prevS=null; };
+  $('#sweep').onclick=function(){ sweeping=!sweeping; this.textContent=sweeping?'❚❚ Pause':'▶ Sweep'; this.classList.toggle('play',!sweeping); };
+
+  animLoop(dt=>{
+    if(sweeping){ let v=+xR.value+sd*16*dt; if(v>=100){v=100;sd=-1;} if(v<=0){v=0;sd=1;} xR.value=v; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(X,+xR.value,160,22,dt);
+    const s=clamp(X.x,0,100), x=lerp(F.xr[0],F.xr[1],s/100);
+    if(prevS!==null){ const a=Math.min(prevS,s), b=Math.max(prevS,s); for(let i=Math.floor(a/100*(NB-1)); i<=Math.ceil(b/100*(NB-1)); i++) seen[i]=true; }
+    else seen[Math.round(s/100*(NB-1))]=true;
+    prevS=s;
+    $('#xV').textContent=fmt(x,2);
+    const gap=46, ph=(h-30-gap-40)/2, L=60, pw=w-L-30;
+    // derivative range
+    let dmin=Infinity,dmax=-Infinity; for(let i=0;i<=80;i++){ const v=F.df(lerp(F.xr[0],F.xr[1],i/80)); dmin=Math.min(dmin,v); dmax=Math.max(dmax,v); }
+    const pad=(dmax-dmin)*0.15||1;
+    const P1=mkPlot(L,26,pw,ph,F.xr,F.yr), P2=mkPlot(L,26+ph+gap,pw,ph,F.xr,[dmin-pad,dmax+pad]);
+    drawAxes(ctx,P1,{sx:F.sx,sy:F.sy,dx:F.sx<1?1:0,dy:F.sy<1?1:0,xl:'x',yl:'f(x) = '+F.n});
+    drawAxes(ctx,P2,{sx:F.sx,dx:F.sx<1?1:0,xl:'x',yl:'f′(x)'});
+    plotFn(ctx,P1,F.f,COL.blue,4);
+    // traced derivative (only where the point has been)
+    ctx.save(); ctx.beginPath(); ctx.rect(P2.L,P2.T-4,P2.W,P2.H+8); ctx.clip();
+    ctx.strokeStyle=COL.green; ctx.lineWidth=4; ctx.lineJoin='round'; ctx.beginPath(); let pen=false;
+    for(let i=0;i<NB;i++){ if(!seen[i]){ pen=false; continue; } const xv=lerp(F.xr[0],F.xr[1],i/(NB-1)), px=P2.X(xv), py=P2.Y(F.df(xv)); if(!pen){ctx.moveTo(px,py);pen=true;} else ctx.lineTo(px,py); }
+    ctx.stroke(); ctx.restore();
+    const y=F.f(x), m=F.df(x), A={x:P1.X(x),y:P1.Y(y)}, B={x:P2.X(x),y:P2.Y(m)};
+    // tangent segment of fixed on-screen length (rotates smoothly as the point moves)
+    const ang=Math.atan2(P1.Y(y+m*0.01)-P1.Y(y),P1.X(x+0.01)-P1.X(x)), Lh=Math.min(90,pw*0.1);
+    ctx.save(); ctx.beginPath(); ctx.rect(P1.L,P1.T,P1.W,P1.H); ctx.clip();
+    line(ctx,A.x-Math.cos(ang)*Lh,A.y-Math.sin(ang)*Lh,A.x+Math.cos(ang)*Lh,A.y+Math.sin(ang)*Lh,COL.green,3.6); ctx.restore();
+    line(ctx,A.x,A.y,A.x,B.y,COL.yellow,1.6,[4,5]); line(ctx,B.x,B.y,B.x,P2.T+P2.H,COL.yellow,1.6,[4,5]);
+    line(ctx,A.x,P1.T+P1.H,A.x,A.y,COL.yellow,1.6,[4,5]);
+    circ(ctx,A.x,A.y,7,COL.blue,'#fff',3); circ(ctx,B.x,B.y,7,COL.green,'#fff',3);
+    textAt(ctx,'slope = '+fmt(m,2),Math.min(A.x+14,P1.L+P1.W-100),Math.max(P1.T+16,A.y-16),{size:12,weight:700,color:COL.green});
+    $('#sl').textContent=fmt(m,3); $('#fd').textContent=F.dt+' = '+fmt(m,3);
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   NAVIGATION
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'12.1', title:'The Falling Stone',   desc:'Average → instantaneous velocity', build: buildA1 },
+  { num:'12.2', title:'Limit from Both Sides', desc:'Squeeze in on x = a',            build: buildA2 },
+  { num:'12.3', title:'Limit That Fails',    desc:'Left ≠ right',                     build: buildA3 },
+  { num:'12.4', title:'Squeezing sin x ÷ x', desc:'Sandwich theorem',                 build: buildA4 },
+  { num:'12.5', title:'Secant to Tangent',   desc:'Derivative from first principles', build: buildA5 },
+  { num:'12.6', title:'Tracing f′(x)',       desc:'Slope at every point',             build: buildA6 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

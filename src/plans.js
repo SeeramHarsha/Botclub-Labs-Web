@@ -10,8 +10,8 @@ const DEFAULT_PLANS = [
     features: ['All chapters of the class you choose', 'Every simulation, unlimited use', 'Progress tracking and streaks', 'Works on phone, tablet and computer'], active: true, sort: 1 },
   { _id: 'two-classes-year', name: 'Two Classes', tagline: 'Any two classes you choose, for a year', priceInr: 1799, durationDays: 365, scope: 'multi-class', classCount: 2, badge: '',
     features: ['Any 2 classes you choose', 'Every chapter, every simulation', 'Progress tracking and streaks', 'Works on phone, tablet and computer'], active: true, sort: 2 },
-  { _id: 'all-year', name: 'All Classes', tagline: 'Classes 6 to 10, for a year', priceInr: 2999, durationDays: 365, scope: 'all-classes', badge: 'Best value',
-    features: ['All 5 classes (6, 7, 8, 9, 10)', 'Every chapter, every simulation', 'Switch classes any time', 'Progress tracking and streaks'], active: true, sort: 3 },
+  { _id: 'all-year', name: 'All Classes', tagline: 'Classes 6 to 12, for a year', priceInr: 2999, durationDays: 365, scope: 'all-classes', badge: 'Best value',
+    features: ['All 7 classes (6 to 12)', 'Every chapter, every simulation', 'Switch classes any time', 'Progress tracking and streaks'], active: true, sort: 3 },
 ];
 
 async function seed() {

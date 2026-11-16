@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 5 — Three Dimensional Geometry | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.srow{display:flex; align-items:center; gap:8px; margin-top:6px;}
+.srow .sn{flex:0 0 26px; font-size:var(--fs-sm); font-weight:700; color:var(--text-2); text-align:center;}
+.srow input[type=range]{flex:1; min-width:0; accent-color:var(--navy-2); cursor:pointer;}
+.srow .sv{flex:0 0 44px; text-align:right; font-size:var(--fs-sm); font-weight:700; color:var(--accent);}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2); transition:all .12s;}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:8px;}
+.toggle-btn.navy:hover{background:var(--navy-3);}
+.result-cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;}
+.result-cards.two{grid-template-columns:1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.badge{display:inline-block; padding:2px 8px; border-radius:6px; font-size:var(--fs-xs); font-weight:700;}
+.badge.ok{background:#e4f7ec; color:#1f6b3d;} .badge.no{background:#eef2f8; color:var(--text-2);}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:170px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📐</div>
+    <div>
+      <div class="chip">Grade 12 · Ch 5</div>
+      <h1>Three Dimensional Geometry</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Line · Vector</span>
+      <span><i style="background:var(--f-green)"></i>Component · Perpendicular</span>
+      <span><i style="background:var(--f-red)"></i>Angle · Distance</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 5: THREE DIMENSIONAL GEOMETRY (NCERT Ch 11, lines)
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; points, vectors and the camera spring toward it each frame.
+   The 3D scene is always gently swaying so depth is always readable.
+
+   Formulas used (all checked against the textbook's worked examples):
+     DC of PQ        : (x2−x1, y2−y1, z2−z1)/PQ        Ex 3 → 3/√77, −2/√77, 8/√77
+     r = a + λb      : (x−x1)/a = (y−y1)/b = (z−z1)/c   Ex 6
+     cos θ           : b1·b2 / (|b1||b2|)               Ex 7 → 19/21 ; Ex 8 → 8√3/15
+     skew distance   : |(b1×b2)·(a2−a1)| / |b1×b2|      Ex 9 → 10/√59
+     parallel dist   : |b×(a2−a1)| / |b|                Ex 10 → √293/7
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', axis:'#6f839a'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS + MATH HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,dash){
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.6,dash); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7+(width||2.6)*0.8);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||600)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.halo){ ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineJoin='round'; ctx.strokeText(txt,x,y); }
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; const s=Number(x.toFixed(d)); return (Object.is(s,-0)?0:s).toString(); }
+function sgnTerm(v,name){ return name+(v>=0?' − ':' + ')+fmt(Math.abs(v),1); }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Spring-damper — natural overshoot and settle. */
+function springTo(s,target,k,damping,dt){
+  s.v += ((target-s.x)*k - s.v*damping)*dt;
+  s.x += s.v*dt;
+  return s.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. 3D VECTORS, SPRING POINTS, CAMERA
+   --------------------------------------------------------------------- */
+const v3={
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+  sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+  mul:(a,k)=>[a[0]*k,a[1]*k,a[2]*k],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+  len:a=>Math.hypot(a[0],a[1],a[2]),
+  norm:a=>{const l=Math.hypot(a[0],a[1],a[2]); return l<1e-9?[0,0,0]:[a[0]/l,a[1]/l,a[2]/l];},
+  maxAbs:a=>Math.max(Math.abs(a[0]),Math.abs(a[1]),Math.abs(a[2]))
+};
+/** A 3-vector whose three coordinates are independent spring-dampers. */
+function Sp3(init){
+  const s=init.map(x=>({x,v:0}));
+  return {
+    s, get:()=>s.map(q=>q.x),
+    to(t,dt,k,d){ s.forEach((q,i)=>springTo(q,t[i],k||42,d||9.5,dt)); return s.map(q=>q.x); },
+    kick(off){ s.forEach((q,i)=>{ q.x+=off[i]; }); }
+  };
+}
+/** Camera: yaw/tilt/scale all spring toward slider targets, with a slow auto-sway. */
+function makeView(wrap){
+  const yaw={x:-0.75,v:0}, pit={x:0.5,v:0}, Rs={x:6,v:0};
+  const vR=wrap.querySelector('#vR'), tR=wrap.querySelector('#tR'), sw=wrap.querySelector('#sway');
+  let sway=true, t=0;
+  sw.onclick=()=>{ sway=!sway; sw.classList.toggle('active',sway); };
+  return {
+    get R(){ return Rs.x; },
+    step(dt,Rtgt){
+      t+=dt;
+      springTo(yaw,parseFloat(vR.value)+(sway?0.34*Math.sin(t*0.55):0),16,7.5,dt);
+      springTo(pit,parseFloat(tR.value)+(sway?0.07*Math.sin(t*0.37+1):0),16,7.5,dt);
+      springTo(Rs,Rtgt,9,6.5,dt);
+    },
+    proj(w,h){
+      const R=Math.max(3,Rs.x), s=Math.min(h*0.5,w*0.42)/(R*1.18);
+      const cy=Math.cos(yaw.x), sy=Math.sin(yaw.x), cp=Math.cos(pit.x), sp=Math.sin(pit.x);
+      const cx0=w*0.5, cy0=h*0.54;
+      const p=P=>{ const x1=P[0]*cy-P[1]*sy, y1=P[0]*sy+P[1]*cy; return [cx0+x1*s, cy0-(P[2]*cp+y1*sp)*s, y1*cp-P[2]*sp]; };
+      p.s=s; return p;
+    }
+  };
+}
+/* nice axis range from the biggest coordinate on screen */
+function niceR(m){ return m<=5.5?6:m<=7.5?8:m<=9.5?10:m<=11.5?12:Math.ceil(m*1.1/2)*2; }
+
+/* ---- 3D drawing primitives (p = projector from makeView.proj) ---- */
+function L3(ctx,p,a,b,col,wd,dash){ const A=p(a),B=p(b); line(ctx,A[0],A[1],B[0],B[1],col,wd,dash); }
+function V3(ctx,p,a,b,col,wd,dash){ const A=p(a),B=p(b); vec(ctx,A[0],A[1],B[0],B[1],col,wd,dash); }
+function D3(ctx,p,a,r,stroke,fill,lw){ const A=p(a); circ(ctx,A[0],A[1],r,stroke,fill,lw); }
+function T3(ctx,p,a,txt,col,dx,dy,size){ const A=p(a); textAt(ctx,txt,A[0]+(dx===undefined?9:dx),A[1]+(dy===undefined?-9:dy),{size:size||13,weight:700,color:col,halo:true}); }
+function poly3(ctx,p,pts,col,wd,dash,fill){
+  ctx.save(); ctx.lineWidth=wd||2; ctx.strokeStyle=col; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); pts.forEach((q,i)=>{ const A=p(q); i?ctx.lineTo(A[0],A[1]):ctx.moveTo(A[0],A[1]); });
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); } ctx.stroke(); ctx.restore();
+}
+/** arc from unit vector u to unit vector v about centre c, radius r. returns mid-point. */
+function arc3(ctx,p,c,u,v,r,col,wd){
+  const th=Math.acos(clamp(v3.dot(u,v),-1,1)), s=Math.sin(th);
+  if(th<0.02 || s<1e-3) return null;
+  const pts=[]; const n=28;
+  for(let i=0;i<=n;i++){ const f=i/n, k1=Math.sin((1-f)*th)/s, k2=Math.sin(f*th)/s;
+    pts.push(v3.add(c,v3.mul(v3.add(v3.mul(u,k1),v3.mul(v,k2)),r))); }
+  poly3(ctx,p,pts,col,wd||2.4);
+  return pts[Math.floor(n/2)];
+}
+/** floor grid (z=0), axes with arrow tips, tick numbers */
+function frame3(ctx,p,R){
+  const st=R<=8?1:2;
+  for(let i=-R;i<=R;i+=st){
+    L3(ctx,p,[i,-R,0],[i,R,0],'#e8eef6',1); L3(ctx,p,[-R,i,0],[R,i,0],'#e8eef6',1);
+  }
+  const lab=R<=8?2:4;
+  [[0,'x'],[1,'y'],[2,'z']].forEach(([ax,nm])=>{
+    const e=[0,0,0]; e[ax]=1;
+    L3(ctx,p,v3.mul(e,-R),v3.mul(e,R),COL.axis,1.6);
+    const A=p(v3.mul(e,R)), B=p(v3.mul(e,R*0.9));
+    arrowHead(ctx,A[0],A[1],Math.atan2(A[1]-B[1],A[0]-B[0]),COL.axis,9);
+    T3(ctx,p,v3.mul(e,R*1.07),nm,COL.ink,-4,5,15);
+    for(let k=-R;k<=R;k+=lab){ if(k===0) continue; const q=v3.mul(e,k), Q=p(q);
+      circ(ctx,Q[0],Q[1],2,COL.axis,'#fff',1);
+      if(R<=10) textAt(ctx,String(k),Q[0]+5,Q[1]+12,{size:9.5,weight:500,color:COL.mid}); }
+  });
+  D3(ctx,p,[0,0,0],3,COL.ink,COL.ink,1); T3(ctx,p,[0,0,0],'O',COL.ink,-14,14,12);
+}
+function ptLabel(v){ return '('+fmt(v[0],1)+', '+fmt(v[1],1)+', '+fmt(v[2],1)+')'; }
+
+/* ---------------------------------------------------------------------
+   0d. CONTROL BUILDERS
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function trioHTML(id,title,min,max,step,vals,names,cols){
+  return `<div class="control-group"><label><span id="${id}T">${title}</span></label>`+
+    [0,1,2].map(i=>`<div class="srow"><span class="sn" id="${id}N${i}" style="color:${cols?cols[i]:'var(--text-2)'}">${names[i]}</span><input type="range" id="${id}${i}" min="${min}" max="${max}" step="${step}" value="${vals[i]}"><span class="sv" id="${id}V${i}"></span></div>`).join('')+`</div>`;
+}
+function trioCtl(w,id){
+  const el=[0,1,2].map(i=>w.querySelector('#'+id+i)), vv=[0,1,2].map(i=>w.querySelector('#'+id+'V'+i));
+  return {
+    get:()=>el.map(e=>parseFloat(e.value)),
+    set(v){ el.forEach((e,i)=>e.value=v[i]); },
+    show(v){ vv.forEach((e,i)=>e.textContent=fmt(v[i],2)); },
+    title(s){ w.querySelector('#'+id+'T').textContent=s; },
+    onInput(cb){ el.forEach(e=>e.addEventListener('input',cb)); }
+  };
+}
+function rangeHTML(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><div class="srow" style="margin-top:4px"><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div></div>`;
+}
+function cardsHTML(list,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">`+list.map(c=>`<div class="rcard ${c.wide?'wide':''}"><div class="rlabel">${c.label}</div><div class="rval" id="${c.id}" style="color:${c.col||'var(--text-1)'}">—</div></div>`).join('')+`</div></div>`;
+}
+function viewHTML(){
+  return `<div class="control-group"><label>View</label>
+    <div class="srow"><span class="sn">↻</span><input type="range" id="vR" min="-3.14" max="3.14" step="0.01" value="-0.75"></div>
+    <div class="srow"><span class="sn">⤒</span><input type="range" id="tR" min="0.05" max="1.45" step="0.01" value="0.5"></div>
+    <div class="toggle-group"><button class="toggle-btn active" id="sway">Auto-sway</button></div></div>`;
+}
+function chipsHTML(id,items){
+  return `<div class="toggle-group" id="${id}">`+items.map((t,i)=>`<button class="toggle-btn ${i===0?'active':''}" data-k="${t[0]}">${t[1]}</button>`).join('')+`</div>`;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'5.1', title:'Direction Cosines',   desc:'Tilt the line · read its angles with the axes', build: buildA1 },
+  { num:'5.2', title:'Line Through Two Points', desc:'Move P and Q · test if R lies on the line', build: buildA2 },
+  { num:'5.3', title:'Equation of a Line',  desc:'r = a + λb · slide λ along the line', build: buildA3 },
+  { num:'5.4', title:'Angle Between Lines', desc:'Swing one line · watch θ and cos θ', build: buildA4 },
+  { num:'5.5', title:'Skew Lines',          desc:'Find the shortest link between two skew lines', build: buildA5 },
+  { num:'5.6', title:'Parallel Lines',      desc:'Slide a point · the shortest link is perpendicular', build: buildA6 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+
+/* =====================================================================
+   5.1 DIRECTION COSINES   (11.2)
+   l = a/√(a²+b²+c²) … , l²+m²+n² = 1.  Ex 2: (2,−1,−2) → 2/3, −1/3, −2/3
+   The directed line swings on the unit sphere with an angular spring.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    trioHTML('r','Direction ratios',-8,8,0.01,[2,-1,-2],['a','b','c']) +
+    `<div class="control-group"><label>Try</label>
+       <div class="toggle-group" id="pre"><button class="toggle-btn" data-r="2,-1,-2">2, −1, −2</button><button class="toggle-btn" data-r="1,1,1">1, 1, 1</button><button class="toggle-btn" data-r="0,1,1.732">0, 1, √3</button></div>
+       <button class="toggle-btn navy" id="rev">⟲ Reverse direction</button></div>` +
+    cardsHTML([{id:'cl',label:'l',col:COL.green},{id:'cm',label:'m',col:COL.green},{id:'cn',label:'n',col:COL.green},
+               {id:'ca',label:'α',col:COL.red},{id:'cb',label:'β',col:COL.red},{id:'cg',label:'γ',col:COL.red},
+               {id:'cs',label:'l² + m² + n²',col:COL.blue,wide:true}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'r');
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>T.set(b.dataset.r.split(',').map(Number)));
+  $('#rev').onclick=()=>T.set(T.get().map(x=>-x));
+
+  let u=v3.norm([2,-1,-2]), om=0;
+  animLoop(dt=>{
+    view.step(dt,6.4);
+    const r=T.get(); T.show(r);
+    const tg=v3.len(r)<0.02?u:v3.norm(r);
+    // angular spring on the unit sphere: swings the direction, never teleports it
+    const th=Math.acos(clamp(v3.dot(u,tg),-1,1));
+    if(th>1e-4){
+      let ax=v3.cross(u,tg);
+      if(v3.len(ax)<1e-4) ax=Math.abs(u[0])<0.9?v3.cross(u,[1,0,0]):v3.cross(u,[0,1,0]);
+      ax=v3.norm(ax);
+      om+=(th*70-om*12)*dt; let step=Math.min(Math.max(om*dt,0),th); if(step>=th) om*=0.3;
+      const c=Math.cos(step), s=Math.sin(step), kx=v3.cross(ax,u);
+      u=v3.norm(v3.add(v3.mul(u,c),v3.mul(kx,s)));
+    } else om=0;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=view.R, V=4.4;
+    frame3(ctx,p,Math.round(R));
+    // unit sphere (faint great circles)
+    for(let k=0;k<3;k++){ const pts=[]; for(let i=0;i<=48;i++){ const a=i/48*Math.PI*2, c=Math.cos(a)*V, s=Math.sin(a)*V; pts.push(k===0?[c,s,0]:k===1?[0,c,s]:[c,0,s]); } poly3(ctx,p,pts,'#d5e0ee',1.2); }
+    const tip=v3.mul(u,V);
+    L3(ctx,p,v3.mul(u,-R*1.5),v3.mul(u,R*1.5),COL.mid,1.3,[7,5]);
+    // components l, m, n  (walk along x, then y, then z)
+    const c1=[tip[0],0,0], c2=[tip[0],tip[1],0];
+    L3(ctx,p,[0,0,0],c1,COL.green,2.6); L3(ctx,p,c1,c2,COL.green,2.6); L3(ctx,p,c2,tip,COL.green,2.6);
+    L3(ctx,p,[0,0,0],c2,COL.green,1.2,[4,4]);
+    // direction arrow
+    V3(ctx,p,[0,0,0],tip,COL.blue,4);
+    // angle arcs with the three axes
+    [[0,'α',1.7],[1,'β',2.2],[2,'γ',2.7]].forEach(([ax,nm,rad])=>{
+      const e=[0,0,0]; e[ax]=1; const mid=arc3(ctx,p,[0,0,0],e,u,rad,COL.red,2.6);
+      if(mid) T3(ctx,p,v3.add(mid,v3.mul(v3.add(e,u),0.12)),nm,COL.red,2,2,15);
+    });
+    D3(ctx,p,tip,6,COL.blue,'#fff',2.6);
+    T3(ctx,p,v3.mul(tip,1.0),'L',COL.blue,10,-6,15);
+    T3(ctx,p,v3.mul(c1,0.5),'l',COL.green,-4,16,14);
+    T3(ctx,p,v3.mul(v3.add(c1,c2),0.5),'m',COL.green,8,14,14);
+    T3(ctx,p,v3.mul(v3.add(c2,tip),0.5),'n',COL.green,10,4,14);
+    textAt(ctx,'l² + m² + n² = '+fmt(v3.dot(u,u),2),16,28,{size:16,weight:700,color:COL.blue});
+    const deg=x=>fmt(Math.acos(clamp(x,-1,1))*180/Math.PI,1)+'°';
+    $('#cl').textContent=fmt(u[0],3); $('#cm').textContent=fmt(u[1],3); $('#cn').textContent=fmt(u[2],3);
+    $('#ca').textContent=deg(u[0]); $('#cb').textContent=deg(u[1]); $('#cg').textContent=deg(u[2]);
+    $('#cs').textContent=fmt(v3.dot(u,u),3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.2 LINE THROUGH TWO POINTS   (11.2.1)
+   DC = (x2−x1, y2−y1, z2−z1)/PQ.   Ex 3: P(−2,4,−5) Q(1,2,3) → PQ = √77
+   Ex 5: A(2,3,−4) B(1,−2,3) C(3,8,−11) are collinear.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Move point</label>${chipsHTML('sel',[['P','P'],['Q','Q'],['R','R']])}</div>` +
+    trioHTML('c','Coordinates of P',-12,12,0.5,[-2,4,-5],['x','y','z']) +
+    `<div class="control-group"><label>Try</label>
+       <div class="toggle-group" id="pre"><button class="toggle-btn" data-k="3">Example 3</button><button class="toggle-btn" data-k="5">Example 5 · collinear</button></div>
+       <button class="toggle-btn" id="showR" style="width:100%;margin-top:8px">Test third point R</button></div>` +
+    cardsHTML([{id:'cpq',label:'PQ',col:COL.red},{id:'cl',label:'l',col:COL.green},{id:'cm',label:'m',col:COL.green},{id:'cn',label:'n',col:COL.green},{id:'ctest',label:'R on line PQ?',wide:true}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'c');
+  const S={P:Sp3([-2,4,-5]),Q:Sp3([1,2,3]),R:Sp3([4,0,8])};
+  const G={P:[-2,4,-5],Q:[1,2,3],R:[4,0,8]};
+  let sel='P', showR=false, t=0;
+  function pick(k){ sel=k; T.title('Coordinates of '+k); T.set(G[k]); }
+  toggleWire(wrap.querySelectorAll('#sel button'),b=>pick(b.dataset.k));
+  $('#showR').onclick=()=>{ showR=!showR; $('#showR').classList.toggle('active',showR); };
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.k==='3'){ G.P=[-2,4,-5]; G.Q=[1,2,3]; }
+    else { G.P=[2,3,-4]; G.Q=[1,-2,3]; G.R=[3,8,-11]; showR=true; $('#showR').classList.add('active'); }
+    T.set(G[sel]);
+  });
+  animLoop(dt=>{
+    t+=dt; G[sel]=T.get(); T.show(G[sel]);
+    const P=S.P.to(G.P,dt), Q=S.Q.to(G.Q,dt), Rp=S.R.to(G.R,dt);
+    const vis=showR?[P,Q,Rp]:[P,Q];
+    view.step(dt,niceR(Math.max(...vis.map(v3.maxAbs))*1.12));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=Math.round(view.R);
+    frame3(ctx,p,R);
+    const d=v3.sub(Q,P), L=v3.len(d), dn=v3.norm(d);
+    if(L>1e-3) L3(ctx,p,v3.sub(P,v3.mul(dn,60)),v3.add(Q,v3.mul(dn,60)),COL.mid,1.4,[8,5]);
+    // staircase of components Δx, Δy, Δz from P to Q
+    const s1=[Q[0],P[1],P[2]], s2=[Q[0],Q[1],P[2]];
+    L3(ctx,p,P,s1,COL.green,2.4,[6,4]); L3(ctx,p,s1,s2,COL.green,2.4,[6,4]); L3(ctx,p,s2,Q,COL.green,2.4,[6,4]);
+    T3(ctx,p,v3.mul(v3.add(P,s1),0.5),'Δx = '+fmt(Q[0]-P[0],1),COL.green,-10,16,12);
+    T3(ctx,p,v3.mul(v3.add(s1,s2),0.5),'Δy = '+fmt(Q[1]-P[1],1),COL.green,8,14,12);
+    T3(ctx,p,v3.mul(v3.add(s2,Q),0.5),'Δz = '+fmt(Q[2]-P[2],1),COL.green,10,4,12);
+    V3(ctx,p,P,Q,COL.blue,4);
+    let ok=false, dist=0;
+    if(showR && L>1e-3){
+      const F=v3.add(P,v3.mul(dn,v3.dot(v3.sub(Rp,P),dn))); dist=v3.len(v3.sub(Rp,F)); ok=dist<0.06;
+      L3(ctx,p,Rp,F,ok?COL.green:COL.red,2.2,[5,4]); D3(ctx,p,F,3.5,COL.red,COL.red,1);
+      D3(ctx,p,Rp,7,ok?COL.green:COL.red,'#fff',3); T3(ctx,p,Rp,'R '+ptLabel(Rp),ok?COL.green:COL.red,10,-8,12);
+    }
+    [['P',P,COL.blue],['Q',Q,COL.blue]].forEach(([nm,pt,c])=>{
+      D3(ctx,p,pt,7,c,'#fff',3); T3(ctx,p,pt,nm+' '+ptLabel(pt),COL.ink,10,-8,12);
+    });
+    [['P',P],['Q',Q],['R',Rp]].forEach(([nm,pt])=>{ if(nm===sel && (nm!=='R'||showR)){
+      const A=p(pt); circ(ctx,A[0],A[1],12+2.5*Math.sin(t*5),COL.yellow,null,3); } });
+    textAt(ctx,'(l, m, n) = (Δx, Δy, Δz) ÷ PQ',16,28,{size:15,weight:700,color:COL.blue});
+    $('#cpq').textContent=fmt(L,3); $('#cl').textContent=fmt(d[0]/(L||1),3); $('#cm').textContent=fmt(d[1]/(L||1),3); $('#cn').textContent=fmt(d[2]/(L||1),3);
+    $('#ctest').innerHTML=!showR?'<span class="badge no">R is hidden</span>':ok?'<span class="badge ok">Yes · collinear ✓</span>':'<span class="badge no">No · '+fmt(dist,2)+' away</span>';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3 EQUATION OF A LINE   (11.3)
+   r = a + λb  →  (x−x1)/a = (y−y1)/b = (z−z1)/c = λ.   Ex 6: a=(5,2,−4) b=(3,2,−8)
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Edit</label>${chipsHTML('sel',[['a','Point  a'],['b','Direction  b']])}</div>` +
+    trioHTML('c','Position vector  a',-8,8,0.5,[5,2,-4],['x₁','y₁','z₁']) +
+    rangeHTML('lam','λ ',-1.2,1.2,0.01,0.5) +
+    `<div class="control-group"><button class="toggle-btn active" id="play" style="width:100%">▶ Slide λ</button></div>` +
+    cardsHTML([{id:'cx',label:'x',col:COL.red},{id:'cy',label:'y',col:COL.red},{id:'cz',label:'z',col:COL.red},{id:'cl',label:'λ',col:COL.yellow},{id:'cb',label:'|λb|',col:COL.red}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'c');
+  const G={a:[5,2,-4],b:[3,2,-8]}, S={a:Sp3(G.a),b:Sp3(G.b)}, lamS={x:0.5,v:0};
+  let sel='a', play=true, t=0;
+  toggleWire(wrap.querySelectorAll('#sel button'),b=>{ sel=b.dataset.k; T.title(sel==='a'?'Position vector  a':'Direction vector  b'); T.set(G[sel]); });
+  $('#play').onclick=()=>{ play=!play; $('#play').classList.toggle('active',play); };
+  $('#lam').addEventListener('input',()=>{ play=false; $('#play').classList.remove('active'); });
+  animLoop(dt=>{
+    t+=dt; G[sel]=T.get(); T.show(G[sel]);
+    const a=S.a.to(G.a,dt), b=S.b.to(G.b,dt);
+    if(play) $('#lam').value=(1.05*Math.sin(t*0.75)).toFixed(3);
+    const lamT=parseFloat($('#lam').value); $('#lamV').textContent=' = '+fmt(lamT,2);
+    const lam=springTo(lamS,lamT,50,9,dt);
+    view.step(dt,niceR(Math.max(v3.maxAbs(a),v3.maxAbs(v3.add(a,v3.mul(b,1.25))))*1.05));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=Math.round(view.R);
+    frame3(ctx,p,R);
+    const bn=v3.norm(b), Pp=v3.add(a,v3.mul(b,lam));
+    if(v3.len(b)>1e-3){
+      L3(ctx,p,v3.sub(a,v3.mul(bn,80)),v3.add(a,v3.mul(bn,80)),COL.mid,1.5,[8,5]);
+      for(let k=-1;k<=1;k++){ const q=v3.add(a,v3.mul(b,k)); D3(ctx,p,q,2.5,COL.mid,'#fff',1.4); T3(ctx,p,q,'λ='+k,COL.mid,6,14,10); }
+    }
+    V3(ctx,p,[0,0,0],a,COL.blue,3.2);                        // a
+    T3(ctx,p,v3.mul(a,0.5),'a',COL.blue,-14,-4,16);
+    V3(ctx,p,a,v3.add(a,b),COL.green,3.2);                    // b
+    T3(ctx,p,v3.add(a,v3.mul(b,0.5)),'b',COL.green,10,10,16);
+    V3(ctx,p,a,Pp,COL.red,4.2);                               // λb
+    V3(ctx,p,[0,0,0],Pp,COL.ink,2.4,[7,4]);                   // r
+    T3(ctx,p,v3.mul(Pp,0.5),'r',COL.ink,-14,-4,16);
+    D3(ctx,p,a,5.5,COL.blue,'#fff',3); T3(ctx,p,a,'A '+ptLabel(a),COL.ink,10,16,12);
+    D3(ctx,p,Pp,8,COL.yellow,'#fff8e1',3.4); T3(ctx,p,Pp,'P '+ptLabel(Pp),COL.ink,12,-10,12);
+    textAt(ctx,'r = a + λ b',16,28,{size:16,weight:700,color:COL.blue});
+    textAt(ctx,'('+sgnTerm(a[0],'x')+') / '+fmt(b[0],1)+'  =  ('+sgnTerm(a[1],'y')+') / '+fmt(b[1],1)+'  =  ('+sgnTerm(a[2],'z')+') / '+fmt(b[2],1)+'  =  '+fmt(lam,2),16,52,{size:12.5,weight:600,color:COL.muted});
+    $('#cx').textContent=fmt(Pp[0],2); $('#cy').textContent=fmt(Pp[1],2); $('#cz').textContent=fmt(Pp[2],2);
+    $('#cl').textContent=fmt(lam,2); $('#cb').textContent=fmt(Math.abs(lam)*v3.len(b),2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.4 ANGLE BETWEEN TWO LINES   (11.4)
+   cos θ = |b1·b2| / (|b1||b2|).   Ex 7: 19/21 → 25.2°   Ex 8: 8√3/15 → 22.5°
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Edit</label>${chipsHTML('sel',[['1','Line 1'],['2','Line 2']])}</div>` +
+    trioHTML('c','Direction ratios of line 1',-8,8,0.5,[1,2,2],['a₁','b₁','c₁']) +
+    `<div class="control-group"><label>Try</label>
+       <div class="toggle-group" id="pre"><button class="toggle-btn" data-k="7">Ex 7</button><button class="toggle-btn" data-k="8">Ex 8</button><button class="toggle-btn" data-k="p">⟂ 90°</button></div>
+       <button class="toggle-btn active" id="swing" style="width:100%;margin-top:8px">⟳ Swing line 2</button></div>` +
+    cardsHTML([{id:'cdot',label:'b₁ · b₂',col:COL.blue},{id:'ccos',label:'cos θ',col:COL.green},{id:'cth',label:'θ',col:COL.red},{id:'cbad',label:'Relation',wide:true}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'c');
+  const G={1:[1,2,2],2:[3,2,6]}, S={1:Sp3(G[1]),2:Sp3(G[2])};
+  let sel='1', swing=true, t=0;
+  toggleWire(wrap.querySelectorAll('#sel button'),b=>{ sel=b.dataset.k; T.title('Direction ratios of line '+sel); T.set(G[sel]); });
+  $('#swing').onclick=()=>{ swing=!swing; $('#swing').classList.toggle('active',swing); };
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;
+    if(k==='7'){ G[1]=[1,2,2]; G[2]=[3,2,6]; } else if(k==='8'){ G[1]=[3,5,4]; G[2]=[1,1,2]; } else { G[1]=[7,-5,1]; G[2]=[1,2,3]; }
+    swing=false; $('#swing').classList.remove('active'); T.set(G[sel]);
+  });
+  animLoop(dt=>{
+    t+=dt; G[sel]=T.get(); T.show(G[sel]);
+    const b1=S[1].to(G[1],dt);
+    const sw=swing?[2.6*Math.sin(t*0.9),2.6*Math.cos(t*0.7),1.8*Math.sin(t*0.5+1)]:[0,0,0];
+    const b2=S[2].to(v3.add(G[2],sw),dt,22,7);
+    view.step(dt,6.6);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=Math.round(view.R);
+    frame3(ctx,p,R);
+    const n1=v3.norm(b1), n2=v3.norm(b2), V=4.6;
+    if(v3.len(n1)>0.5) L3(ctx,p,v3.mul(n1,-R*2),v3.mul(n1,R*2),COL.blue,1.6,[8,5]);
+    if(v3.len(n2)>0.5) L3(ctx,p,v3.mul(n2,-R*2),v3.mul(n2,R*2),COL.green,1.6,[8,5]);
+    const dotn=v3.dot(n1,n2), n2a=dotn<0?v3.mul(n2,-1):n2;     // work with the acute angle
+    const cosT=Math.abs(dotn), th=Math.acos(clamp(cosT,0,1));
+    if(v3.len(n1)>0.5 && v3.len(n2)>0.5){
+      poly3(ctx,p,[[0,0,0],v3.mul(n1,V),v3.mul(n2a,V)],'rgba(217,67,43,0.5)',1,[3,3],'rgba(217,67,43,0.07)');
+      const mid=arc3(ctx,p,[0,0,0],n1,n2a,2.4,COL.red,3.2);
+      if(mid) T3(ctx,p,v3.mul(mid,1.18),'θ = '+fmt(th*180/Math.PI,1)+'°',COL.red,4,0,15);
+    }
+    V3(ctx,p,[0,0,0],v3.mul(n1,V),COL.blue,3.6); T3(ctx,p,v3.mul(n1,V),'b₁',COL.blue,8,-6,16);
+    V3(ctx,p,[0,0,0],v3.mul(n2a,V),COL.green,3.6); T3(ctx,p,v3.mul(n2a,V),'b₂',COL.green,8,-6,16);
+    const tipS=sel==='1'?v3.mul(n1,V):v3.mul(n2a,V); const A=p(tipS); circ(ctx,A[0],A[1],10+2*Math.sin(t*5),COL.yellow,null,3);
+    const dot=v3.dot(b1,b2), den=v3.len(b1)*v3.len(b2);
+    textAt(ctx,'cos θ = |b₁·b₂| ÷ (|b₁| |b₂|) = '+fmt(cosT,3),16,28,{size:15,weight:700,color:COL.blue});
+    $('#cdot').textContent=fmt(dot,1); $('#ccos').textContent=fmt(cosT,3); $('#cth').textContent=fmt(th*180/Math.PI,1)+'°';
+    $('#cbad').innerHTML=Math.abs(dot)<0.04*Math.max(1,den/10)?'<span class="badge ok">Perpendicular · b₁·b₂ = 0</span>':(th<0.01?'<span class="badge ok">Parallel</span>':'<span class="badge no">Oblique</span>');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.5 SKEW LINES — SHORTEST DISTANCE   (11.5.1)
+   d = |(b1×b2)·(a2−a1)| / |b1×b2|.   Ex 9: 10/√59 = 1.302
+   P on l1 and Q on l2 slide (springs, with overshoot) to the feet of the
+   common perpendicular; PQ ⟂ both lines.
+   ===================================================================== */
+function feet(a1,b1,a2,b2){
+  const w=v3.sub(a1,a2), A=v3.dot(b1,b1), B=v3.dot(b1,b2), C=v3.dot(b2,b2), D=v3.dot(b1,w), E=v3.dot(b2,w);
+  const det=B*B-A*C;
+  if(Math.abs(det)<1e-6*Math.max(1,A*C)) return [0, E/(C||1)];      // parallel: foot of a1
+  return [(D*C-B*E)/det, (B*D-A*E)/det];
+}
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Edit</label>${chipsHTML('sel',[['a1','a₁'],['b1','b₁'],['a2','a₂'],['b2','b₂']])}</div>` +
+    trioHTML('c','Point a₁ on line 1',-8,8,0.5,[1,1,0],['x','y','z']) +
+    `<div class="control-group"><label>Try</label>
+       <div class="toggle-group" id="pre"><button class="toggle-btn" data-k="9">Example 9</button><button class="toggle-btn" data-k="e">Edges</button><button class="toggle-btn" data-k="x">Intersect</button></div>
+       <button class="toggle-btn navy" id="go">⟳ Search again</button></div>` +
+    cardsHTML([{id:'cd',label:'Shortest distance d',col:COL.red},{id:'cnow',label:'|PQ| now',col:COL.yellow},{id:'cnum',label:'(b₁×b₂)·(a₂−a₁)',col:COL.blue},{id:'cden',label:'|b₁×b₂|',col:COL.blue},{id:'ctyp',label:'Lines are',wide:true}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'c');
+  const G={a1:[1,1,0],b1:[2,-1,1],a2:[2,1,-1],b2:[3,-5,2]};
+  const S={a1:Sp3(G.a1),b1:Sp3(G.b1),a2:Sp3(G.a2),b2:Sp3(G.b2)};
+  const lamS={x:-3,v:0}, muS={x:3,v:0};
+  const NM={a1:'Point a₁ on line 1',b1:'Direction b₁ of line 1',a2:'Point a₂ on line 2',b2:'Direction b₂ of line 2'};
+  let sel='a1', t=0;
+  const search=()=>{ lamS.x-=3.4; muS.x+=3.4; lamS.v=0; muS.v=0; };
+  toggleWire(wrap.querySelectorAll('#sel button'),b=>{ sel=b.dataset.k; T.title(NM[sel]); T.set(G[sel]); });
+  $('#go').onclick=search;
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;
+    if(k==='9') Object.assign(G,{a1:[1,1,0],b1:[2,-1,1],a2:[2,1,-1],b2:[3,-5,2]});
+    else if(k==='e') Object.assign(G,{a1:[0,0,0],b1:[1,0,0],a2:[0,0,3],b2:[0,1,0]});
+    else Object.assign(G,{a1:[0,0,0],b1:[1,1,0],a2:[0,2,0],b2:[1,-1,0]});
+    T.set(G[sel]); search();
+  });
+  animLoop(dt=>{
+    t+=dt; G[sel]=T.get(); T.show(G[sel]);
+    const a1=S.a1.to(G.a1,dt), b1=S.b1.to(G.b1,dt), a2=S.a2.to(G.a2,dt), b2=S.b2.to(G.b2,dt);
+    const [lt,mt]=feet(a1,b1,a2,b2);
+    const lam=springTo(lamS,lt,26,3.4,dt), mu=springTo(muS,mt,26,3.4,dt);   // under-damped → visible overshoot
+    view.step(dt,niceR(Math.max(v3.maxAbs(a1),v3.maxAbs(a2),v3.maxAbs(v3.add(a1,v3.mul(b1,Math.min(3,Math.abs(lt)))))*0.8)*1.1));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=Math.round(view.R);
+    frame3(ctx,p,R);
+    const n1=v3.norm(b1), n2=v3.norm(b2);
+    if(v3.len(n1)>0.5) L3(ctx,p,v3.sub(a1,v3.mul(n1,80)),v3.add(a1,v3.mul(n1,80)),COL.blue,2.8);
+    if(v3.len(n2)>0.5) L3(ctx,p,v3.sub(a2,v3.mul(n2,80)),v3.add(a2,v3.mul(n2,80)),COL.green,2.8);
+    V3(ctx,p,a1,v3.add(a1,b1),COL.blue,2.2); V3(ctx,p,a2,v3.add(a2,b2),COL.green,2.2);
+    D3(ctx,p,a1,4.5,COL.blue,'#fff',2.6); T3(ctx,p,a1,'a₁',COL.blue,8,-8,13);
+    D3(ctx,p,a2,4.5,COL.green,'#fff',2.6); T3(ctx,p,a2,'a₂',COL.green,8,-8,13);
+    const Pp=v3.add(a1,v3.mul(b1,lam)), Qp=v3.add(a2,v3.mul(b2,mu)), now=v3.len(v3.sub(Qp,Pp));
+    const cr=v3.cross(b1,b2), crl=v3.len(cr), par=crl<1e-4*Math.max(1,v3.len(b1)*v3.len(b2));
+    const num=par?v3.len(v3.cross(b1,v3.sub(a2,a1))):Math.abs(v3.dot(cr,v3.sub(a2,a1))), den=par?v3.len(b1):crl, d=num/(den||1);
+    const settled=Math.abs(lam-lt)+Math.abs(mu-mt)<0.04;
+    L3(ctx,p,Pp,Qp,COL.red,4.2);
+    // right-angle marks where PQ meets each line
+    if(now>0.12){
+      const nn=v3.norm(v3.sub(Qp,Pp)), s=0.38;
+      poly3(ctx,p,[v3.add(Pp,v3.mul(n1,s)),v3.add(v3.add(Pp,v3.mul(n1,s)),v3.mul(nn,s)),v3.add(Pp,v3.mul(nn,s))],COL.green,2);
+      poly3(ctx,p,[v3.add(Qp,v3.mul(n2,s)),v3.add(v3.add(Qp,v3.mul(n2,s)),v3.mul(nn,-s)),v3.add(Qp,v3.mul(nn,-s))],COL.green,2);
+    }
+    D3(ctx,p,Pp,6.5,COL.red,'#fff',3); D3(ctx,p,Qp,6.5,COL.red,'#fff',3);
+    T3(ctx,p,Pp,'P',COL.red,-14,-8,15); T3(ctx,p,Qp,'Q',COL.red,8,-8,15);
+    const mp=v3.mul(v3.add(Pp,Qp),0.5);
+    T3(ctx,p,mp,'|PQ| = '+fmt(now,2),COL.red,14,4,14);
+    const A=p(Pp); if(!settled) circ(ctx,A[0],A[1],11+2*Math.sin(t*9),COL.yellow,null,2.6);
+    textAt(ctx,'d = |(b₁×b₂)·(a₂−a₁)| ÷ |b₁×b₂|',16,28,{size:15,weight:700,color:COL.blue});
+    $('#cd').textContent=fmt(d,3); $('#cnow').textContent=fmt(now,3);
+    $('#cnum').textContent=par?'—':fmt(num,2); $('#cden').textContent=par?'—':fmt(crl,2);
+    $('#ctyp').innerHTML=par?'<span class="badge no">Parallel</span>':(d<0.01?'<span class="badge ok">Intersecting · d = 0</span>':'<span class="badge ok">Skew · d &gt; 0</span>');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.6 PARALLEL LINES — DISTANCE   (11.5.2)
+   d = |b×(a2−a1)| / |b| = |ST| sin φ.   Ex 10: √293/7 = 2.445
+   A point X slides along l1; |XT| dips to its minimum exactly at the foot P.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Edit</label>${chipsHTML('sel',[['a1','a₁'],['a2','a₂'],['b','b']])}</div>` +
+    trioHTML('c','Point a₁ on line 1',-8,8,0.5,[1,2,-4],['x','y','z']) +
+    rangeHTML('xs','Slide X along line 1','-6','6',0.01,0) +
+    `<div class="control-group"><button class="toggle-btn active" id="play" style="width:100%">▶ Slide X</button>
+       <button class="toggle-btn" id="ex" style="width:100%;margin-top:8px">Example 10</button></div>` +
+    cardsHTML([{id:'cst',label:'|ST|',col:COL.blue},{id:'cph',label:'φ',col:COL.yellow},{id:'cd',label:'d = |ST| sin φ',col:COL.red},{id:'cx',label:'|XT| now',col:COL.yellow,wide:true}]) + viewHTML();
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), view=makeView(wrap), T=trioCtl(wrap,'c');
+  const G={a1:[1,2,-4],a2:[3,3,-5],b:[2,3,6]}, S={a1:Sp3(G.a1),a2:Sp3(G.a2),b:Sp3(G.b)}, xS={x:0,v:0};
+  const NM={a1:'Point a₁ on line 1  (S)',a2:'Point a₂ on line 2  (T)',b:'Common direction b'};
+  let sel='a1', play=true, t=0;
+  toggleWire(wrap.querySelectorAll('#sel button'),b=>{ sel=b.dataset.k; T.title(NM[sel]); T.set(G[sel]); });
+  $('#play').onclick=()=>{ play=!play; $('#play').classList.toggle('active',play); };
+  $('#xs').addEventListener('input',()=>{ play=false; $('#play').classList.remove('active'); });
+  $('#ex').onclick=()=>{ Object.assign(G,{a1:[1,2,-4],a2:[3,3,-5],b:[2,3,6]}); T.set(G[sel]); };
+  animLoop(dt=>{
+    t+=dt; G[sel]=T.get(); T.show(G[sel]);
+    const a1=S.a1.to(G.a1,dt), a2=S.a2.to(G.a2,dt), b=S.b.to(G.b,dt);
+    if(play) $('#xs').value=(5*Math.sin(t*0.85)).toFixed(3);
+    const xT=parseFloat($('#xs').value); $('#xsV').textContent=' = '+fmt(xT,2);
+    const xo=springTo(xS,xT,45,9,dt);
+    view.step(dt,niceR(Math.max(v3.maxAbs(a1),v3.maxAbs(a2))*1.08));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const p=view.proj(w,h), R=Math.round(view.R);
+    frame3(ctx,p,R);
+    const bn=v3.norm(b), ST=v3.sub(a2,a1), stL=v3.len(ST);
+    const sFoot=v3.dot(ST,bn), Pf=v3.add(a1,v3.mul(bn,sFoot)), dvec=v3.sub(a2,Pf), d=v3.len(dvec);
+    const Xp=v3.add(Pf,v3.mul(bn,xo));
+    if(v3.len(bn)>0.5){
+      L3(ctx,p,v3.sub(a1,v3.mul(bn,80)),v3.add(a1,v3.mul(bn,80)),COL.blue,2.8);
+      L3(ctx,p,v3.sub(a2,v3.mul(bn,80)),v3.add(a2,v3.mul(bn,80)),COL.green,2.8);
+      V3(ctx,p,a1,v3.add(a1,v3.mul(bn,2)),COL.blue,2.2); V3(ctx,p,a2,v3.add(a2,v3.mul(bn,2)),COL.green,2.2);
+    }
+    // S→T and its projection onto line 1
+    L3(ctx,p,a1,a2,COL.mid,1.6,[5,4]);
+    L3(ctx,p,a1,Pf,COL.mid,1.6,[5,4]);
+    // perpendicular PT
+    L3(ctx,p,Pf,a2,COL.red,4.2);
+    if(d>0.12){
+      const nn=v3.norm(dvec), s=0.4;
+      poly3(ctx,p,[v3.add(Pf,v3.mul(bn,s)),v3.add(v3.add(Pf,v3.mul(bn,s)),v3.mul(nn,s)),v3.add(Pf,v3.mul(nn,s))],COL.green,2.2);
+    }
+    // moving point X and its link to T
+    L3(ctx,p,Xp,a2,COL.yellow,2.6,[7,4]);
+    D3(ctx,p,Xp,7.5,COL.yellow,'#fff8e1',3.2); T3(ctx,p,Xp,'X',COL.yellow,8,-8,15);
+    D3(ctx,p,a1,5,COL.blue,'#fff',2.8);  T3(ctx,p,a1,'S',COL.blue,-14,-8,15);
+    D3(ctx,p,a2,5,COL.green,'#fff',2.8); T3(ctx,p,a2,'T',COL.green,8,-8,15);
+    D3(ctx,p,Pf,5,COL.red,COL.red,1);    T3(ctx,p,Pf,'P',COL.red,-14,14,15);
+    T3(ctx,p,v3.mul(v3.add(Pf,a2),0.5),'d = '+fmt(d,2),COL.red,12,4,14);
+    const xt=v3.len(v3.sub(a2,Xp)), phi=Math.acos(clamp(v3.dot(v3.norm(ST),bn),-1,1));
+    textAt(ctx,'d = |b × (a₂ − a₁)| ÷ |b|',16,28,{size:15,weight:700,color:COL.blue});
+    textAt(ctx,'|XT|² = d² + (XP)²  →  smallest when X = P',16,50,{size:12.5,weight:600,color:COL.muted});
+    $('#cst').textContent=fmt(stL,3); $('#cph').textContent=fmt(phi*180/Math.PI,1)+'°'; $('#cd').textContent=fmt(d,3); $('#cx').textContent=fmt(xt,3);
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

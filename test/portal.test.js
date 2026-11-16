@@ -42,7 +42,7 @@ test('status, public pages and plans', async () => {
   assert.equal(p.length, 3); assert.ok(p.every((x) => x.priceInr > 0 && x.id));
   assert.equal(p.find((x) => x.scope === 'multi-class').classCount, 2);
   const c = (await b.call('/api/config')).json;
-  assert.equal(c.paymentMode, 'demo'); assert.equal(c.totalChapters, 61);
+  assert.equal(c.paymentMode, 'demo'); assert.equal(c.totalChapters, 134);
   assert.equal(c.razorpayKeyId, '');                                  // the key id is only ever sent in razorpay mode
 });
 
@@ -79,7 +79,7 @@ test('free trial opens only the trial chapters; the rest is locked and never sen
   await b.call('/api/auth/register', { method: 'POST', body: student(2) });
   const cat = (await b.call('/api/catalog')).json;
   const open = cat.classes.flatMap((c) => c.chapters.filter((x) => x.access).map((x) => `${c.cls}/${x.chapter}`));
-  assert.deepEqual(open.sort(), ['10/1', '6/1', '7/1', '8/1', '9/1'].sort());
+  assert.deepEqual(open.sort(), ['10/1', '11/1', '12/1', '6/1', '7/1', '8/1', '9/1'].sort());
   const free = await b.call('/learn/' + encodeURI('Class - 8/Chapter - 1/index.html'));
   assert.equal(free.status, 200); assert.match(free.text, /<script src="\/js\/chapter\.js"/); assert.doesNotMatch(free.text, /activity-tracker/);
   const locked = await b.call('/learn/' + encodeURI('Class - 8/Chapter - 2/index.html'));
@@ -256,7 +256,7 @@ test('ADMIN_RESET creates or resets an admin with a known password even when adm
 test('Talk to sales: a school can leave its details; the admin sees them; activity counts are public', async () => {
   const b = browser();
   const c = (await b.call('/api/config')).json;
-  assert.equal(c.totalChapters, 61); assert.equal(c.totalActivities, 421); assert.equal(c.classActivities['8'], 94);
+  assert.equal(c.totalChapters, 134); assert.equal(c.totalActivities, 1158); assert.equal(c.classActivities['8'], 94);
   const good = { institute: 'Hill Public School', name: 'Ravi', role: 'Principal / Head', email: 'ravi@hill.edu', phone: '+91 98765 43210', city: 'Pune', students: '100 to 500', classes: [8, 9, 99], message: 'Smart boards' };
   assert.equal((await b.call('/api/enquiry', { method: 'POST', body: { ...good, email: 'nope' } })).status, 400);
   assert.equal((await b.call('/api/enquiry', { method: 'POST', body: { ...good, website: 'http://spam.example' } })).status, 201);      // a bot: pretended ok, not saved
@@ -294,6 +294,26 @@ test('"any two classes" plan: the student must pick exactly two; only those open
   assert.equal((await co({ classes: [6, 8] })).status, 400);
   assert.equal((await a.call('/api/admin/plans/' + two._id, { method: 'PATCH', body: { active: true } })).status, 200);
   assert.ok((await browser().call('/api/plans')).json.plans.some((x) => x.id === two._id));
+});
+
+test('Class 11 and 12: syllabus by subject, free first chapter, lessons served from this site, class-11 sign-up', async () => {
+  const b = browser();
+  const sy = (await b.call('/api/syllabus')).json.classes;
+  assert.equal(sy['11'].chapters, 36); assert.equal(sy['12'].chapters, 37);
+  assert.deepEqual(sy['11'].subjects.map((x) => x.name), ['Physics', 'Chemistry', 'Mathematics']);
+  assert.equal(sy['12'].subjects[0].groups.length, 2);                                     // Physics Part 1 and Part 2
+  assert.ok(sy['12'].subjects.every((x) => x.activities > 0));
+  const reg = await b.call('/api/auth/register', { method: 'POST', body: { ...student(30), cls: 11 } });
+  assert.equal(reg.status, 201); assert.equal(reg.json.user.cls, 11);
+  assert.equal((await b.call('/api/me', { method: 'PATCH', body: { cls: 13 } })).status, 400); assert.equal((await b.call('/api/me', { method: 'PATCH', body: { cls: 12 } })).status, 200); await b.call('/api/me', { method: 'PATCH', body: { cls: 11 } });
+  const ch1 = await b.call('/learn/' + encodeURI('Class - 11/Chapter - 1/index.html'));
+  assert.equal(ch1.status, 200); assert.match(ch1.text, /<script src="\/js\/chapter\.js"/);
+  assert.doesNotMatch(ch1.text, /fonts\.googleapis|SkolAR/); assert.match(ch1.text, /vendor\/fonts\/fonts\.css/); assert.match(ch1.text, /nav\/back-button\.js/);
+  assert.equal((await b.call('/learn/' + encodeURI('Class - 11/Chapter - 2/index.html'))).status, 302);          // not in the free trial
+  assert.equal((await b.call('/learn/' + encodeURI('Class - 12/Chapter - 1/index.html'))).status, 200);
+  assert.equal((await b.call('/learn/' + encodeURI('Class - 12/Chapter - 38/index.html'))).status, 404);
+  const cat = (await b.call('/api/catalog')).json, c11 = cat.classes.find((x) => x.cls === 11);
+  assert.equal(c11.chapters.length, 36); assert.equal(c11.chapters[0].group, 'Physics · Part 1'); assert.ok(c11.chapters.every((x) => x.activities > 0));
 });
 
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 2 · Chapter 1 — Integrals | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+.lab-side > .toggle-btn, .lab-side > .toggle-group, .lab-side > .control-group{flex:none;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">∫</div>
+    <div>
+      <div class="chip">Grade 12 · Part 2 · Ch 1</div>
+      <h1>Integrals</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Function · total F</span>
+      <span><i style="background:var(--f-green)"></i>Area gained</span>
+      <span><i style="background:var(--f-red)"></i>Rate · slope · area lost</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">7.2</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* GRADE 12 · PART 2 · CHAPTER 1 — INTEGRALS. Every activity runs a continuous animation loop; sliders/buttons only set TARGETS that springs and integrators chase. */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+
+/* ---------------------------------------------------------------------
+   CHAPTER-1 (INTEGRALS) HELPERS — plots, numeric integration
+   --------------------------------------------------------------------- */
+function mkPlot(x,y,w,h,xr,yr){
+  return {x,y,w,h,xr,yr, X:v=>x+(v-xr[0])/(xr[1]-xr[0])*w, Y:v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h};
+}
+function niceStep(span,target){
+  const raw=span/target, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p;
+  return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;
+}
+function axes(ctx,P,xl,yl,noY){
+  ctx.save(); ctx.fillStyle='#fbfdff'; ctx.fillRect(P.x,P.y,P.w,P.h);
+  const sx=niceStep(P.xr[1]-P.xr[0],8), sy=niceStep(P.yr[1]-P.yr[0],5);
+  ctx.strokeStyle='#e6edf6'; ctx.lineWidth=1; ctx.beginPath();
+  for(let v=Math.ceil(P.xr[0]/sx)*sx; v<=P.xr[1]+1e-9; v+=sx){ ctx.moveTo(P.X(v),P.y); ctx.lineTo(P.X(v),P.y+P.h); }
+  for(let v=Math.ceil(P.yr[0]/sy)*sy; v<=P.yr[1]+1e-9; v+=sy){ ctx.moveTo(P.x,P.Y(v)); ctx.lineTo(P.x+P.w,P.Y(v)); }
+  ctx.stroke();
+  if(P.yr[0]<0&&P.yr[1]>0) line(ctx,P.x,P.Y(0),P.x+P.w,P.Y(0),COL.mid,1.6);
+  if(P.xr[0]<0&&P.xr[1]>0) line(ctx,P.X(0),P.y,P.X(0),P.y+P.h,COL.mid,1.6);
+  ctx.font='500 10.5px Poppins, sans-serif'; ctx.fillStyle=COL.mid; ctx.textAlign='center';
+  for(let v=Math.ceil(P.xr[0]/sx)*sx; v<=P.xr[1]+1e-9; v+=sx) ctx.fillText(fmt(v,2),P.X(v),P.y+P.h+14);
+  if(!noY){ ctx.textAlign='right'; for(let v=Math.ceil(P.yr[0]/sy)*sy; v<=P.yr[1]+1e-9; v+=sy) ctx.fillText(fmt(v,2),P.x-5,P.Y(v)+3.5); }
+  ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.strokeRect(P.x,P.y,P.w,P.h);
+  if(xl) textAt(ctx,xl,P.x+P.w-4,P.y+P.h-6,{align:'right',size:11.5,weight:700,color:COL.muted});
+  if(yl) textAt(ctx,yl,P.x+8,P.y+16,{size:11.5,weight:700,color:COL.muted});
+  ctx.restore();
+}
+function clipP(ctx,P){ ctx.beginPath(); ctx.rect(P.x,P.y,P.w,P.h); ctx.clip(); }
+function plotFn(ctx,P,fn,xa,xb,col,lwid,dash,alpha){
+  ctx.save(); clipP(ctx,P);
+  if(alpha!==undefined) ctx.globalAlpha=alpha;
+  ctx.strokeStyle=col; ctx.lineWidth=lwid||2.6; ctx.setLineDash(dash||[]); ctx.lineJoin='round'; ctx.lineCap='round'; ctx.beginPath();
+  const n=Math.max(60,Math.round(P.w/2.5)); let pen=false;
+  for(let i=0;i<=n;i++){ const x=xa+(xb-xa)*i/n, y=fn(x);
+    if(!isFinite(y)||Math.abs(y)>1e5){ pen=false; continue; }
+    const px=P.X(x), py=P.Y(y); pen?ctx.lineTo(px,py):ctx.moveTo(px,py); pen=true; }
+  ctx.stroke(); ctx.restore();
+}
+function fillArea(ctx,P,fn,xa,xb,col,alpha,xmap,base){
+  if(Math.abs(xb-xa)<1e-9) return;
+  base=base||0; xmap=xmap||(x=>x);
+  ctx.save(); clipP(ctx,P); ctx.globalAlpha=alpha; ctx.fillStyle=col; ctx.beginPath();
+  ctx.moveTo(P.X(xmap(xa)),P.Y(base)); const n=Math.max(30,Math.round(P.w/4));
+  for(let i=0;i<=n;i++){ const x=xa+(xb-xa)*i/n; ctx.lineTo(P.X(xmap(x)),P.Y(fn(x))); }
+  ctx.lineTo(P.X(xmap(xb)),P.Y(base)); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function integ(fn,a,b,n){ n=n||240; if(n%2) n++; const h=(b-a)/n; let s=fn(a)+fn(b); for(let i=1;i<n;i++) s+=fn(a+i*h)*(i%2?4:2); return s*h/3; }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,col,'#fff',2.6); circ(ctx,x,y,r*0.35,col,col,1); }
+function dashV(ctx,x,y1,y2,col){ line(ctx,x,y1,x,y2,col,1.3,[4,4]); }
+function pill(ctx,txt,x,y,col,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width;
+  const bx=align==='right'?x-tw-12:align==='center'?x-tw/2-6:x; rrect(ctx,bx,y-12,tw+12,22,7); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+6,y+4,{size:12,weight:700,color:col});
+}
+function sw(v,max){ return v/max; }
+const sgnCol=v=>v>=0?COL.green:COL.red;
+
+const sl=(id,label,min,max,step,val)=>`<div class="control-group"><label>${label} <span class="val" id="${id.replace(/R$/,"")}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+const chips=(id,items)=>`<div class="control-group"><div class="toggle-group" id="${id}">${items.map((s,i)=>`<button class="toggle-btn small${i?'':' active'}" data-k="${i}">${s}</button>`).join('')}</div></div>`;
+const rc=(label,id,col)=>`<div class="rcard"><div class="rlabel">${label}</div><div class="rval" id="${id}"${col?` style="color:${col}"`:''}>—</div></div>`;
+
+/* =====================================================================
+   7.2  FAMILY OF ANTIDERIVATIVES
+   d/dx [F(x) + C] = f(x). A bead rides on y = F(x)+C; its tangent slope is
+   f(x) for every C. C moves the whole curve (spring-damped), slope is untouched.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['f = cos x','f = x²','f = eˣ'])+
+    sl('cR','Constant C',-3,3,0.1,0)+sl('xR','Bead position x',-4.2,4.2,0.01,1)+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px;">▶ Roll the bead</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Slope at bead','sV',COL.red)}${rc('f(x) there','fV',COL.red)}</div>
+    <p class="hint">slope of F + C = f(x) · every C</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), cR=$('#cR'), xR=$('#xR');
+  const CF=[
+    {f:x=>Math.cos(x),F:x=>Math.sin(x),xr:[-4.5,4.5],yr:[-4.6,4.6],fr:[-1.5,1.5],fs:'cos x',Fs:'sin x'},
+    {f:x=>x*x,F:x=>x*x*x/3,xr:[-2.6,2.6],yr:[-9,9],fr:[-0.8,7.5],fs:'x²',Fs:'x³/3'},
+    {f:x=>Math.exp(x),F:x=>Math.exp(x),xr:[-3,2],yr:[-4,11],fr:[-0.5,8],fs:'eˣ',Fs:'eˣ'}];
+  let k=0, t=0, run=false, fade=1, rot=0, lastX=1;
+  const Cs={x:0,v:0}, Xs={x:1,v:0};
+  function setRange(){ const c=CF[k]; xR.min=c.xr[0]+0.15; xR.max=c.xr[1]-0.15; xR.value=Math.min(1,c.xr[1]-0.3); }
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; fade=0; setRange(); });
+  $('#go').onclick=()=>{ run=!run; $('#go').textContent=run?'❚❚ Pause':'▶ Roll the bead'; };
+  setRange();
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k];
+    if(run){ const mid=(c.xr[0]+c.xr[1])/2, half=(c.xr[1]-c.xr[0])/2-0.4; xR.value=mid+half*Math.sin(t*0.55); }
+    $('#cV').textContent=(+cR.value>0?'+':'')+(+cR.value).toFixed(1); $('#xV').textContent=(+xR.value).toFixed(2);
+    springTo(Cs,+cR.value,55,6.5,dt); springTo(Xs,+xR.value,60,13,dt);
+    fade=approach(fade,1,5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pad=58, Pw=w-pad-24, hm=h*0.56;
+    const Pm=mkPlot(pad,16,Pw,hm,c.xr,c.yr), Pf=mkPlot(pad,hm+62,Pw,h-hm-90,c.xr,c.fr);
+    axes(ctx,Pm,'x','y = '+c.Fs+' + C'); axes(ctx,Pf,'x','f(x) = '+c.fs);
+    for(let ci=-3;ci<=3;ci++) plotFn(ctx,Pm,x=>c.F(x)+ci,c.xr[0],c.xr[1],COL.blue,1.3,null,0.2*fade);
+    plotFn(ctx,Pm,x=>c.F(x)+Cs.x,c.xr[0],c.xr[1],COL.blue,3.6,null,fade);
+    plotFn(ctx,Pf,c.f,c.xr[0],c.xr[1],COL.red,3.2,null,fade);
+    // C: how far the whole curve is lifted at x = 0 (yellow)
+    const x0=Pm.X(0), y0a=Pm.Y(c.F(0)), y0b=Pm.Y(c.F(0)+Cs.x);
+    if(Math.abs(Cs.x)>0.05){ dimArrow(ctx,x0+10,y0a,y0b,COL.yellow); pill(ctx,'C = '+fmt(Cs.x,1),x0+20,(y0a+y0b)/2,COL.yellow); }
+    // bead on the curve
+    const X=clamp(Xs.x,c.xr[0]+0.05,c.xr[1]-0.05), Y=c.F(X)+Cs.x, px=Pm.X(X), py=Pm.Y(Y), sp=c.f(X);
+    const sxp=Pm.w/(c.xr[1]-c.xr[0]), syp=Pm.h/(c.yr[1]-c.yr[0]);
+    let dx=1, dy=-sp*syp/sxp; const dl=Math.hypot(dx,dy); dx/=dl; dy/=dl;
+    ctx.save(); clipP(ctx,Pm); line(ctx,px-dx*100,py-dy*100,px+dx*100,py+dy*100,COL.red,3.2);
+    const run1=(c.xr[1]-c.xr[0])/9, rpx=run1*sxp, rise=-sp*run1*syp;
+    line(ctx,px,py,px+rpx,py,COL.mid,1.6,[5,4]); line(ctx,px+rpx,py,px+rpx,py+rise,COL.red,3);
+    ctx.restore();
+    rot+=(X-lastX)*sxp/9; lastX=X;
+    circ(ctx,px,py,10,COL.yellow,'#fff8e1',3);
+    for(let i=0;i<4;i++){ const a=rot+i*Math.PI/2; line(ctx,px,py,px+Math.cos(a)*10,py+Math.sin(a)*10,COL.yellow,1.6); }
+    // link bead → the same x on the f-plot
+    const fy=clamp(Pf.Y(sp),Pf.y+3,Pf.y+Pf.h-3);
+    dashV(ctx,px,py+11,fy,COL.mid);
+    dot(ctx,px,fy,7,COL.red);
+    pill(ctx,'slope = f(x) = '+fmt(sp,2),clamp(px+14,Pf.x+10,Pf.x+Pf.w-170),clamp(fy-22,Pf.y+16,Pf.y+Pf.h-12),COL.red);
+    $('#sV').textContent=fmt(sp,2); $('#fV').textContent=fmt(c.f(X),2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.3  INTEGRATION BY SUBSTITUTION
+   ∫ f(g(x))·g′(x) dx = ∫ f(u) du,  u = g(x).
+   Each strip of width dx becomes a strip of width g′(x)dx; area is preserved.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['2x·cos x²','cos x·e^(sin x)','2x ÷ (1+x⁴)'])+
+    sl('bR','Upper limit b',0.1,1.6,0.01,1.2)+
+    `<button class="toggle-btn navy" id="go" style="margin-top:0;padding:11px;">Substitute  u = g(x)  ▶</button>
+    <div class="control-group"><div class="result-cards">${rc('∫ h(x) dx','iX',COL.green)}${rc('∫ f(u) du','iU',COL.green)}</div>
+    <p class="hint" id="eq">u = x²</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), bR=$('#bR');
+  const CF=[
+    {g:x=>x*x,dg:x=>2*x,f:u=>Math.cos(u),xm:1.6,x0:1.2,xr:[0,1.75],hr:[-3,1.7],ur:[0,2.75],fr:[-1.1,1.3],gs:'u = x²',fs:'cos u',hs:'2x·cos x²'},
+    {g:x=>Math.sin(x),dg:x=>Math.cos(x),f:u=>Math.exp(u),xm:1.5,x0:1.2,xr:[0,1.6],hr:[-0.3,1.9],ur:[0,1.15],fr:[-0.3,3],gs:'u = sin x',fs:'eᵘ',hs:'cos x·e^(sin x)'},
+    {g:x=>x*x,dg:x=>2*x,f:u=>1/(1+u*u),xm:2,x0:1.5,xr:[0,2.1],hr:[-0.2,1.35],ur:[0,4.2],fr:[-0.2,1.3],gs:'u = x²',fs:'1/(1+u²)',hs:'2x/(1+x⁴)'}];
+  let k=0, mT=0, ms=0, t=0;
+  const N=30;
+  function setCfg(){ const c=CF[k]; bR.max=c.xm; bR.value=c.x0; $('#eq').textContent=c.gs+'  ·  du = g′(x) dx'; }
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; setCfg(); });
+  $('#go').onclick=()=>{ mT=mT?0:1; };
+  setCfg();
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k], b=+bR.value; $('#bV').textContent=b.toFixed(2);
+    ms=approach(ms,mT,1.7,dt);
+    $('#go').textContent=mT? '↺ Back to x' : 'Substitute  u = g(x)  ▶';
+    const h=x=>c.f(c.g(x))*c.dg(x), ub=c.g(b);
+    const {ctx,w,h:H}=fitCanvas(canvas); ctx.clearRect(0,0,w,H);
+    const gap=70, pw=(w-48-gap-24)/2, ph=H-96;
+    const P1=mkPlot(48,26,pw,ph,c.xr,c.hr), P2=mkPlot(48+pw+gap,26,pw,ph,c.ur,c.fr);
+    axes(ctx,P1,'x','h(x) = '+c.hs); axes(ctx,P2,'u','f(u) = '+c.fs);
+    plotFn(ctx,P1,h,c.xr[0],c.xr[1],COL.blue,3); plotFn(ctx,P2,c.f,c.ur[0],c.ur[1],COL.blue,3);
+    fillArea(ctx,P1,h,0,b,COL.green,0.1*(1-ms)); fillArea(ctx,P2,c.f,0,ub,COL.green,0.1*ms);
+    dashV(ctx,P1.X(b),P1.y,P1.y+P1.h,COL.yellow); dot(ctx,P1.X(b),P1.Y(0),6,COL.yellow);
+    textAt(ctx,'b = '+fmt(b,2),P1.X(b)+6,P1.y+14,{size:11.5,weight:700,color:COL.yellow});
+    if(ms>0.05){ dashV(ctx,P2.X(ub),P2.y,P2.y+P2.h,COL.yellow); dot(ctx,P2.X(ub),P2.Y(0),6,COL.yellow); textAt(ctx,'g(b) = '+fmt(ub,2),P2.X(ub)+6,P2.y+14,{size:11.5,weight:700,color:COL.yellow,alpha:ms}); }
+    // the strips — each flies from the x-plot to the u-plot, stretching by g′(x)
+    const dx=b/N;
+    for(let i=0;i<N;i++){
+      const xa=i*dx, xb=xa+dx, xm=xa+dx/2, hi=h(xm), fi=c.f(c.g(xm));
+      const q=smooth01(i/N*0.45,i/N*0.45+0.55,ms);
+      const L0=P1.X(xa), R0=P1.X(xb), T0=P1.Y(hi), B0=P1.Y(0);
+      const L1=P2.X(c.g(xa)), R1=P2.X(c.g(xb)), T1=P2.Y(fi), B1=P2.Y(0);
+      const lift=-Math.sin(Math.PI*q)*(50+60*i/N);
+      const L=lerp(L0,L1,q), R=lerp(R0,R1,q), T=lerp(T0,T1,q)+lift, B=lerp(B0,B1,q)+lift;
+      ctx.save(); ctx.globalAlpha=0.42; ctx.fillStyle=sgnCol(hi); ctx.fillRect(L,Math.min(T,B),Math.max(0.6,R-L),Math.abs(B-T)); ctx.globalAlpha=1;
+      ctx.strokeStyle=sgnCol(hi); ctx.lineWidth=1.2; ctx.strokeRect(L,Math.min(T,B),Math.max(0.6,R-L),Math.abs(B-T)); ctx.restore();
+    }
+    // arrow between the planes
+    const ax=P1.x+P1.w+8, ay=P1.y+P1.h*0.45;
+    line(ctx,ax,ay,ax+gap-30,ay,COL.yellow,2.4); arrowHead(ctx,ax+gap-30,ay,0,COL.yellow,9);
+    textAt(ctx,'u=g(x)',ax+(gap-30)/2,ay-9,{align:'center',size:11,weight:700,color:COL.yellow});
+    const Ix=integ(h,0,b), Iu=integ(c.f,0,ub);
+    $('#iX').textContent=fmt(Ix,3); $('#iU').textContent=fmt(Iu,3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.5  PARTIAL FRACTIONS
+   (px+q)/((x+a)(x+b)) = A/(x+a) + B/(x+b).
+   Textbook Example 11:  1/((x+1)(x+2)) = 1/(x+1) − 1/(x+2).
+   Stacked bars: A/(x+a) (red) on top of B/(x+b) (green) must reach the blue target.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['1 ÷ (x+1)(x+2)','x ÷ (x+1)(x+3)','(3x+5) ÷ (x+1)(x+2)'])+
+    sl('aR','A  (over the first factor)',-3,3,0.05,0)+sl('bR','B  (over the second factor)',-3,3,0.05,0)+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="solve" style="padding:10px;">Solve for A, B</button><button class="toggle-btn" id="rst" style="padding:10px;">Reset</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Biggest gap','eV',COL.red)}${rc('Match?','mV')}</div>
+    <p class="hint" id="res">—</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR'), bR=$('#bR');
+  const CF=[
+    {f:x=>1/((x+1)*(x+2)),yr:[-1.3,1.3],p:1,q:2,A:1,B:-1,lbl:'1/((x+1)(x+2))'},
+    {f:x=>x/((x+1)*(x+3)),yr:[-1,1],p:1,q:3,A:-0.5,B:1.5,lbl:'x/((x+1)(x+3))'},
+    {f:x=>(3*x+5)/((x+1)*(x+2)),yr:[-1.2,2.6],p:1,q:2,A:2,B:1,lbl:'(3x+5)/((x+1)(x+2))'}];
+  let k=0, t=0;
+  const As={x:0,v:0}, Bs={x:0,v:0}, NB=11;
+  const bar=Array.from({length:NB},()=>({a:{x:0,v:0},b:{x:0,v:0}}));
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; aR.value=0; bR.value=0; });
+  $('#solve').onclick=()=>{ aR.value=CF[k].A; bR.value=CF[k].B; };
+  $('#rst').onclick=()=>{ aR.value=0; bR.value=0; };
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k];
+    $('#aV').textContent=(+aR.value).toFixed(2); $('#bV').textContent=(+bR.value).toFixed(2);
+    springTo(As,+aR.value,70,9,dt); springTo(Bs,+bR.value,70,9,dt);
+    const p1=x=>As.x/(x+c.p), p2=x=>Bs.x/(x+c.q), sum=x=>p1(x)+p2(x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xr=[0,5], yr=c.yr, P=mkPlot(56,22,w-56-24,h-70,xr,yr);
+    axes(ctx,P,'x','f(x) = '+c.lbl);
+    plotFn(ctx,P,p1,0,5,COL.red,2,[7,5]); plotFn(ctx,P,p2,0,5,COL.green,2,[7,5]);
+    plotFn(ctx,P,c.f,0,5,COL.blue,3.8);
+    plotFn(ctx,P,sum,0,5,COL.yellow,3);
+    let worst=0;
+    const bw=Math.min(22,P.w/NB*0.42);
+    for(let i=0;i<NB;i++){
+      const x=0.25+i*0.45, bs=bar[i], tgt=c.f(x);
+      springTo(bs.a,p1(x),90+i*4,10,dt); springTo(bs.b,p2(x),90+i*4,10,dt);
+      const px=P.X(x), y0=P.Y(0), ya=P.Y(bs.a.x), yb=P.Y(bs.a.x+bs.b.x);
+      ctx.save(); clipP(ctx,P);
+      ctx.globalAlpha=0.5; ctx.fillStyle=COL.red; ctx.fillRect(px-bw/2,Math.min(y0,ya),bw,Math.abs(ya-y0));
+      ctx.fillStyle=COL.green; ctx.fillRect(px-bw/2,Math.min(ya,yb),bw,Math.abs(yb-ya)); ctx.globalAlpha=1;
+      ctx.restore();
+      const yt=P.Y(tgt), gap=Math.abs(bs.a.x+bs.b.x-tgt); worst=Math.max(worst,Math.abs(sum(x)-tgt));
+      line(ctx,px-bw/2-5,yt,px+bw/2+5,yt,COL.blue,3.6);
+      if(gap>0.02){ line(ctx,px,yb,px,yt,COL.yellow,2,[3,3]); }
+    }
+    const ok=worst<0.025;
+    pill(ctx,'target f(x)',P.X(4.6),P.Y(c.f(4.6))-18>P.y+20?P.Y(c.f(4.6))-20:P.y+30,COL.blue,'center');
+    textAt(ctx,'A/(x+'+c.p+')',P.x+P.w-12,P.y+40,{align:'right',size:12,weight:700,color:COL.red});
+    textAt(ctx,'B/(x+'+c.q+')',P.x+P.w-12,P.y+56,{align:'right',size:12,weight:700,color:COL.green});
+    textAt(ctx,'sum',P.x+P.w-12,P.y+72,{align:'right',size:12,weight:700,color:COL.yellow});
+    $('#eV').textContent=fmt(worst,3); $('#eV').style.color=ok?COL.green:COL.red; const m=$('#mV'); m.textContent=ok?'Yes ✓':'Not yet'; m.style.color=ok?COL.green:COL.red;
+    $('#res').textContent=ok?`∫ f dx = ${fmt(+aR.value,2)} ln|x+${c.p}| ${(+bR.value<0?'−':'+')} ${fmt(Math.abs(+bR.value),2)} ln|x+${c.q}| + C`:'Tune A and B until the yellow sum covers the blue target.';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.6  INTEGRATION BY PARTS
+   ∫ u dv = uv − ∫ v du.  Plot the path (v(x), u(x)): the area under the path is
+   ∫u dv, the area beside it is ∫v du, and the two tile the rectangle uv.
+   Check (textbook Ex.17): ∫₀^(π/2) x cos x dx = π/2 − 1 ≈ 0.571.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['x · cos x','x · eˣ','ln x'])+
+    sl('bR','Move along the curve',0.05,1,0.005,0.6)+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="sw" style="padding:10px;">▶ Sweep</button><button class="toggle-btn navy" id="pull" style="padding:10px;margin-top:0;">Pull apart</button></div>
+    <div class="control-group"><div class="result-cards">${rc('∫ u dv','r1',COL.green)}${rc('∫ v du','r2',COL.red)}${rc('u · v','r3',COL.blue)}${rc('∫u dv + ∫v du','r4')}</div>
+    <p class="hint" id="eq">u = x , dv = cos x dx</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), bR=$('#bR');
+  const CF=[
+    {u:x=>x,v:Math.sin,du:x=>1,dv:Math.cos,xa:0,xb:Math.PI/2,vr:[0,1.25],ur:[0,1.9],eq:'u = x ,  dv = cos x dx  →  v = sin x'},
+    {u:x=>x,v:Math.exp,du:x=>1,dv:Math.exp,xa:0,xb:1.5,vr:[0,5.2],ur:[0,1.8],eq:'u = x ,  dv = eˣ dx  →  v = eˣ'},
+    {u:Math.log,v:x=>x,du:x=>1/x,dv:x=>1,xa:1,xb:4,vr:[0,4.7],ur:[0,1.65],eq:'u = ln x ,  dv = dx  →  v = x'}];
+  let k=0, run=false, pulled=false, t=0, lastB=0.6;
+  const Bs={x:0.6,v:0}, Es={x:0,v:0};
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; $('#eq').textContent=CF[k].eq; });
+  $('#sw').onclick=()=>{ run=!run; $('#sw').textContent=run?'❚❚ Pause':'▶ Sweep'; };
+  $('#pull').onclick=()=>{ pulled=!pulled; $('#pull').textContent=pulled?'Put together':'Pull apart'; };
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k];
+    if(run) bR.value=0.55+0.43*Math.sin(t*0.7);
+    springTo(Bs,+bR.value,45,10,dt); springTo(Es,pulled?1:0,35,6,dt);
+    const s=clamp(Bs.x,0.02,1), xb=c.xa+(c.xb-c.xa)*s;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const P=mkPlot(60,24,w-60-30,h-72,c.vr,c.ur);
+    axes(ctx,P,'v','u'); 
+    const N=70, pts=[]; for(let i=0;i<=N;i++){ const x=c.xa+(xb-c.xa)*i/N; pts.push([c.v(x),c.u(x)]); }
+    const va=pts[0][0], ub=pts[N][1], vb=pts[N][0];
+    const e=Es.x, off=e*Math.min(26,P.w*0.04);
+    const poly=(arr,dx,dy,col,al)=>{ ctx.save(); clipP(ctx,P); ctx.globalAlpha=al; ctx.fillStyle=col; ctx.beginPath(); arr.forEach((p,i)=>i?ctx.lineTo(P.X(p[0])+dx,P.Y(p[1])+dy):ctx.moveTo(P.X(p[0])+dx,P.Y(p[1])+dy)); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1; ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke(); ctx.restore(); };
+    // R1 (∫u dv): under the path, down to u = 0
+    poly(pts.concat([[vb,0],[va,0]]),off,off,COL.green,0.32);
+    // R2 (∫v du): left of the path, back to v = 0
+    poly([[0,0],[va,0]].concat(pts,[[0,ub]]),-off,-off,COL.red,0.30);
+    // the full rectangle  v·u
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.setLineDash([8,5]); ctx.strokeRect(P.X(0),P.Y(ub),P.X(vb)-P.X(0),P.Y(0)-P.Y(ub)); ctx.restore();
+    ctx.save(); clipP(ctx,P); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.8; ctx.lineJoin='round'; ctx.beginPath();
+    const full=[]; for(let i=0;i<=120;i++){ const x=c.xa+(c.xb-c.xa)*i/120; full.push([c.v(x),c.u(x)]); }
+    full.forEach((p,i)=>i?ctx.lineTo(P.X(p[0]),P.Y(p[1])):ctx.moveTo(P.X(p[0]),P.Y(p[1]))); ctx.stroke(); ctx.restore();
+    // moving point with guide lines to both axes
+    const px=P.X(vb), py=P.Y(ub);
+    line(ctx,px,py,px,P.Y(0),COL.green,1.6,[4,4]); line(ctx,px,py,P.X(0),py,COL.red,1.6,[4,4]);
+    dot(ctx,px,py,9,COL.yellow);
+    if(e<0.4){
+      const gx=(P.X(va)+P.X(vb))/2, gy=(P.Y(0)+P.Y(Math.min(pts[N][1],pts[Math.floor(N/2)][1])))/2;
+      textAt(ctx,'∫ u dv',(P.X(va)+P.X(vb))/2+off,P.Y(0)-10+off,{align:'center',size:13,weight:700,color:COL.green});
+      textAt(ctx,'∫ v du',P.X(0)+14-off,py+24-off,{size:13,weight:700,color:COL.red});
+    }
+    pill(ctx,'u·v  =  rectangle',P.X(0)+P.w*0.04,P.y+18,COL.blue);
+    const I1=integ(x=>c.u(x)*c.dv(x),c.xa,xb), I2=integ(x=>c.v(x)*c.du(x),c.xa,xb), UV=c.u(xb)*c.v(xb)-c.u(c.xa)*c.v(c.xa);
+    $('#bV').textContent=fmt(xb,2);
+    $('#r1').textContent=fmt(I1,3); $('#r2').textContent=fmt(I2,3); $('#r3').textContent=fmt(UV,3); $('#r4').textContent=fmt(I1+I2,3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.7  DEFINITE INTEGRAL AS A LIMIT OF A SUM
+   S_n = Σ f(xᵢ*)·Δx,  Δx = (b−a)/n,  and  S_n → ∫ₐᵇ f(x) dx.
+   Exact values:  ∫₀³x²dx = 9,   ∫₀^2π(2+sin x)dx = 4π,   ∫₀³e^(x/2)dx = 2(e^1.5 − 1).
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['x²  on [0, 3]','2 + sin x  on [0, 2π]','e^(x/2)  on [0, 3]'])+
+    `<div class="control-group"><label style="margin-bottom:6px;">Sample height at</label><div class="toggle-group" id="mB"><button class="toggle-btn small active" data-k="0">Left end</button><button class="toggle-btn small" data-k="0.5">Middle</button><button class="toggle-btn small" data-k="1">Right end</button></div></div>`+
+    sl('nR','Rectangles  n',1,64,1,4)+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px;">▶ Keep refining</button><button class="toggle-btn" id="rst" style="padding:10px;">n = 1</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Sum  Sₙ','sV',COL.blue)}${rc('Exact ∫','xV',COL.green)}${rc('Error','eV',COL.red)}${rc('Δx','dV')}</div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nR=$('#nR');
+  const CF=[
+    {f:x=>x*x,a:0,b:3,ex:9,yr:[0,10.5]},
+    {f:x=>2+Math.sin(x),a:0,b:2*Math.PI,ex:4*Math.PI,yr:[0,3.5]},
+    {f:x=>Math.exp(x/2),a:0,b:3,ex:2*(Math.exp(1.5)-1),yr:[0,5]}];
+  let k=0, off=0, run=false, acc=0, sn=[];
+  const R=Array.from({length:64},()=>({l:{x:0,v:0},r:{x:0,v:0},h:{x:0,v:0}}));
+  function calc(){ const c=CF[k]; sn=[0]; for(let n=1;n<=64;n++){ const dx=(c.b-c.a)/n; let s=0; for(let i=0;i<n;i++) s+=c.f(c.a+(i+off)*dx)*dx; sn.push(s); } }
+  function snap(){ const c=CF[k]; R.forEach(r=>{ r.l.x=r.r.x=c.b; r.h.x=0; r.l.v=r.r.v=r.h.v=0; }); }
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; calc(); });
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ off=+b.dataset.k; calc(); });
+  $('#go').onclick=()=>{ run=!run; if(run&&+nR.value>=64) nR.value=1; $('#go').textContent=run?'❚❚ Pause':'▶ Keep refining'; };
+  $('#rst').onclick=()=>{ run=false; $('#go').textContent='▶ Keep refining'; nR.value=1; };
+  calc(); snap();
+  animLoop((dt)=>{
+    const c=CF[k];
+    if(run){ acc+=dt; if(acc>0.26){ acc=0; nR.value=Math.min(64,+nR.value+1); if(+nR.value>=64){ run=false; $('#go').textContent='▶ Keep refining'; } } }
+    const n=+nR.value; $('#nV').textContent=n;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const hm=h*0.62, P=mkPlot(56,20,w-80,hm,[c.a,c.b],c.yr), dx=(c.b-c.a)/n;
+    axes(ctx,P,'x','y = f(x)');
+    fillArea(ctx,P,c.f,c.a,c.b,COL.green,0.13);
+    R.forEach((r,i)=>{
+      const on=i<n, tl=on?c.a+i*dx:c.b, tr=on?c.a+(i+1)*dx:c.b, th=on?c.f(c.a+(i+off)*dx):0;
+      springTo(r.l,tl,150,17,dt); springTo(r.r,tr,150,17,dt); springTo(r.h,th,130,13,dt);
+      const x1=P.X(r.l.x), x2=P.X(r.r.x), yt=P.Y(r.h.x), y0=P.Y(0);
+      if(x2-x1<0.4) return;
+      ctx.save(); ctx.globalAlpha=0.27; ctx.fillStyle=COL.blue; ctx.fillRect(x1,yt,x2-x1,y0-yt); ctx.globalAlpha=1;
+      ctx.strokeStyle=COL.blue; ctx.lineWidth=n>30?1:1.8; ctx.strokeRect(x1,yt,x2-x1,y0-yt); ctx.restore();
+    });
+    plotFn(ctx,P,c.f,c.a,c.b,COL.red,3.6);
+    // the width Δx
+    if(n<=16){ const xa=P.X(c.a), xb=P.X(c.a+dx); line(ctx,xa,P.y+P.h+26,xb,P.y+P.h+26,COL.yellow,2); arrowHead(ctx,xa,P.y+P.h+26,Math.PI,COL.yellow,5); arrowHead(ctx,xb,P.y+P.h+26,0,COL.yellow,5); }
+    // convergence strip
+    const Pc=mkPlot(56,hm+66,w-80,h-hm-90,[0.5,64.5],[0,c.ex*1.9]);
+    axes(ctx,Pc,'n','Sₙ');
+    line(ctx,Pc.x,Pc.Y(c.ex),Pc.x+Pc.w,Pc.Y(c.ex),COL.green,2.4,[8,5]);
+    ctx.save(); clipP(ctx,Pc); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath(); for(let q=1;q<=64;q++){ q>1?ctx.lineTo(Pc.X(q),Pc.Y(sn[q])):ctx.moveTo(Pc.X(q),Pc.Y(sn[q])); } ctx.stroke(); ctx.restore();
+    dot(ctx,Pc.X(n),Pc.Y(sn[n]),6,COL.yellow);
+    textAt(ctx,'exact',Pc.x+Pc.w-6,Pc.Y(c.ex)-6,{align:'right',size:11.5,weight:700,color:COL.green});
+    $('#sV').textContent=fmt(sn[n],3); $('#xV').textContent=fmt(c.ex,3); $('#eV').textContent=fmt(Math.abs(sn[n]-c.ex),3); $('#dV').textContent=fmt(dx,3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8.1  AREA FUNCTION — A(x) = ∫ₐˣ f(t) dt  and  A′(x) = f(x)
+   f is the inflow rate into a tank; A(x) is the volume collected so far.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['f = 1 + sin x','f = x ÷ 2','f = 3e^(−x/2)'])+
+    sl('xR','Pour until x',0,6,0.01,0)+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px;">▶ Pour</button><button class="toggle-btn" id="rst" style="padding:10px;">Empty</button></div>
+    <div class="control-group"><div class="result-cards">${rc('Inflow  f(x)','fV',COL.red)}${rc('Collected  A(x)','aV',COL.green)}</div>
+    <p class="hint">A′(x) = f(x): the steeper the A-curve, the faster the flow</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xR=$('#xR');
+  const CF=[
+    {f:x=>1+Math.sin(x),F:x=>x+1-Math.cos(x),fr:[0,2.4]},
+    {f:x=>x/2,F:x=>x*x/4,fr:[0,3.4]},
+    {f:x=>3*Math.exp(-x/2),F:x=>6*(1-Math.exp(-x/2)),fr:[0,3.4]}];
+  let k=0, run=false, t=0, drops=[], ripples=[], spawn=0, valve=0;
+  const Xs={x:0,v:0}, Ls={x:0,v:0};
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; });
+  $('#go').onclick=()=>{ if(+xR.value>=5.99) xR.value=0; run=!run; $('#go').textContent=run?'❚❚ Pause':'▶ Pour'; };
+  $('#rst').onclick=()=>{ run=false; xR.value=0; $('#go').textContent='▶ Pour'; };
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k], Amax=c.F(6)*1.04;
+    if(run){ xR.value=Math.min(6,+xR.value+dt*0.75); if(+xR.value>=6){ run=false; $('#go').textContent='▶ Pour'; } }
+    $('#xV').textContent=(+xR.value).toFixed(2);
+    springTo(Xs,+xR.value,55,14,dt);
+    const X=clamp(Xs.x,0,6), fx=c.f(X), A=c.F(X);
+    springTo(Ls,A/Amax,26,3.4,dt);                          // water level sloshes on its way up
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Lw=w*0.57-56, hf=h*0.36;
+    const Pf=mkPlot(56,18,Lw,hf,[0,6],c.fr), Pa=mkPlot(56,18+hf+50,Lw,h-hf-92,[0,6],[0,Amax]);
+    axes(ctx,Pf,'x','f(x)  — flow rate'); axes(ctx,Pa,'x','A(x)  — collected');
+    fillArea(ctx,Pf,c.f,0,X,COL.green,0.34); plotFn(ctx,Pf,c.f,0,6,COL.red,3.2);
+    plotFn(ctx,Pa,c.F,0,X,COL.blue,3.8); plotFn(ctx,Pa,c.F,X,6,COL.blue,1.6,[5,5],0.35);
+    dashV(ctx,Pf.X(X),Pf.y,Pa.y+Pa.h,COL.yellow); dot(ctx,Pf.X(X),Pf.Y(fx),6,COL.red); dot(ctx,Pa.X(X),Pa.Y(A),7,COL.blue);
+    const sxp=Pa.w/6, syp=Pa.h/Amax, ddx=1, ddy=-fx*syp/sxp, dl=Math.hypot(ddx,ddy);
+    ctx.save(); clipP(ctx,Pa); line(ctx,Pa.X(X)-ddx/dl*80,Pa.Y(A)-ddy/dl*80,Pa.X(X)+ddx/dl*80,Pa.Y(A)+ddy/dl*80,COL.red,3); ctx.restore();
+    pill(ctx,'slope = f = '+fmt(fx,2),clamp(Pa.X(X)+16,Pa.x+6,Pa.x+Pa.w-130),clamp(Pa.Y(A)-24,Pa.y+16,Pa.y+Pa.h-12),COL.red);
+    // ---- tank + pipe ----
+    const tcx=w*0.8, tw=w*0.22, tt=h*0.36, tb=h*0.88, th=tb-tt, lvY=tb-clamp(Ls.x,0,1.02)*th;
+    const spY=h*0.2, pipeY=h*0.11;
+    ctx.save(); ctx.lineCap='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=7; ctx.beginPath(); ctx.moveTo(w-14,pipeY); ctx.lineTo(tcx,pipeY); ctx.lineTo(tcx,spY); ctx.stroke();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    valve+=fx*dt*3.2; const vx=tcx+tw*0.45, vy=pipeY; circ(ctx,vx,vy,12,COL.red,'#fff',2.4);
+    for(let q=0;q<3;q++){ const a=valve+q*Math.PI*2/3; line(ctx,vx,vy,vx+Math.cos(a)*12,vy+Math.sin(a)*12,COL.red,2); }
+    textAt(ctx,'f = '+fmt(fx,2),vx+16,vy+4,{size:12,weight:700,color:COL.red});
+    // stream: width ∝ f, falling to the surface
+    const sw2=1.5+fx*2.6;
+    if(fx>0.03){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; for(const s of [-1,1]){ ctx.beginPath(); for(let yy=spY;yy<=lvY;yy+=6){ const xx=tcx+s*sw2*(0.6+0.4*Math.min(1,(yy-spY)/40))+Math.sin(yy*0.12-t*14)*0.8; yy===spY?ctx.moveTo(xx,yy):ctx.lineTo(xx,yy); } ctx.stroke(); } ctx.restore(); }
+    spawn+=dt*fx*16; while(spawn>1){ spawn-=1; drops.push({x:tcx+(Math.random()-0.5)*sw2*2,y:spY,vy:30+Math.random()*60,vx:(Math.random()-0.5)*14}); }
+    drops=drops.filter(d=>{ d.vy+=800*dt; d.y+=d.vy*dt; d.x+=d.vx*dt;
+      if(d.y>=lvY){ ripples.push({x:d.x,l:0}); Ls.v+=0.0016*fx; return false; }
+      circ(ctx,d.x,d.y,2,COL.blue,'#fff',1.3); return true; });
+    // water (wavy surface)
+    const amp=0.6+fx*0.9; ctx.save(); ctx.beginPath(); ctx.rect(tcx-tw/2+2,tt-30,tw-4,th+28); ctx.clip();
+    ctx.beginPath(); ctx.moveTo(tcx-tw/2,tb); for(let xx=tcx-tw/2;xx<=tcx+tw/2;xx+=4){ ctx.lineTo(xx,lvY+Math.sin(xx*0.09+t*4)*amp+Math.sin(xx*0.05-t*2.3)*amp*0.6); } ctx.lineTo(tcx+tw/2,tb); ctx.closePath();
+    ctx.fillStyle='rgba(47,143,224,0.2)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.stroke();
+    ripples=ripples.filter(r=>{ r.l+=dt*2.2; if(r.l>1) return false; ctx.globalAlpha=1-r.l; ctx.strokeStyle=COL.blue; ctx.lineWidth=1.3; ctx.beginPath(); ctx.ellipse(r.x,lvY,4+r.l*16,1.5+r.l*3,0,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; return true; });
+    ctx.restore();
+    // tank outline + volume ticks
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(tcx-tw/2,tt); ctx.lineTo(tcx-tw/2,tb); ctx.lineTo(tcx+tw/2,tb); ctx.lineTo(tcx+tw/2,tt); ctx.stroke(); ctx.restore();
+    const tickStep=niceStep(Amax,5);
+    for(let v=0;v<=Amax*0.999;v+=tickStep){ const yy=tb-v/Amax*th; line(ctx,tcx+tw/2,yy,tcx+tw/2+8,yy,COL.ink,1.6); textAt(ctx,fmt(v,1),tcx+tw/2+11,yy+4,{size:10.5,weight:600,color:COL.muted}); }
+    textAt(ctx,'A = '+fmt(A,2),tcx,tb+22,{align:'center',size:13,weight:700,color:COL.green});
+    $('#fV').textContent=fmt(fx,2); $('#aV').textContent=fmt(A,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8.3  SECOND FUNDAMENTAL THEOREM —  ∫ₐᵇ f(x) dx = F(b) − F(a)
+   f is a car's speed; F is its odometer. Whatever the odometer started at (C),
+   the distance covered between a and b is F(b) − F(a) = area under f.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('fB',['v = t² ÷ 4','v = 3 sin(πt/6)','v = 1 + t ÷ 2'])+
+    sl('aR','From time a',0,5.6,0.05,1)+sl('bR','To time b',0.4,6,0.05,4)+sl('cR','Odometer started at C',0,50,1,0)+
+    `<button class="toggle-btn play" id="go" style="margin-top:0;padding:11px;">▶ Drive a → b</button>
+    <div class="control-group"><div class="result-cards">${rc('Odometer at a','r1')}${rc('Odometer at b','r2')}${rc('Difference','r3',COL.green)}${rc('Area ∫ₐᵇ f','r4',COL.green)}</div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR'), bR=$('#bR'), cR=$('#cR');
+  const CF=[
+    {f:t=>t*t/4,F:t=>t*t*t/12,fr:[0,9.5]},
+    {f:t=>3*Math.sin(Math.PI*t/6),F:t=>18/Math.PI*(1-Math.cos(Math.PI*t/6)),fr:[0,3.4]},
+    {f:t=>1+t/2,F:t=>t+t*t/4,fr:[0,4.4]}];
+  let k=0, tau=1, driving=false, t=0, vPrev=0, wheel=0;
+  const Cs={x:0,v:0}, pitch={x:0,v:0};
+  const rst=()=>{ if(+bR.value<+aR.value+0.35) bR.value=Math.min(6,+aR.value+0.35); tau=+aR.value; driving=false; $('#go').textContent='▶ Drive a → b'; };
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>{ k=+b.dataset.k; rst(); });
+  aR.oninput=rst; bR.oninput=rst;
+  $('#go').onclick=()=>{ tau=+aR.value; driving=true; $('#go').textContent='⏳ driving…'; };
+  animLoop((dt)=>{
+    t+=dt; const c=CF[k], a=+aR.value, b=+bR.value;
+    $('#aV').textContent=a.toFixed(2); $('#bV').textContent=b.toFixed(2); $('#cV').textContent=cR.value+' km';
+    if(driving){ tau+=dt*(b-a)/5.5; if(tau>=b){ tau=b; driving=false; $('#go').textContent='▶ Drive a → b'; } }
+    springTo(Cs,+cR.value,40,11,dt);
+    const v=c.f(tau), acc=(v-vPrev)/Math.max(dt,1e-3); vPrev=v;
+    springTo(pitch,driving?clamp(-acc*0.0009*(b-a),-0.07,0.07):0,70,6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- speed–time plot ----
+    const Pv=mkPlot(56,18,w-80,h*0.4,[0,6],c.fr); axes(ctx,Pv,'time t','speed f(t)');
+    fillArea(ctx,Pv,c.f,a,b,COL.green,0.22); fillArea(ctx,Pv,c.f,a,Math.min(tau,b),COL.green,0.45);
+    plotFn(ctx,Pv,c.f,0,6,COL.red,3.4);
+    for(const q of [a,b]){ dashV(ctx,Pv.X(q),Pv.y,Pv.y+Pv.h,COL.yellow); dot(ctx,Pv.X(q),Pv.Y(0),5,COL.yellow); }
+    textAt(ctx,'a',Pv.X(a)-4,Pv.y+14,{align:'right',size:12,weight:700,color:COL.yellow}); textAt(ctx,'b',Pv.X(b)+5,Pv.y+14,{size:12,weight:700,color:COL.yellow});
+    if(driving||tau>a) dot(ctx,Pv.X(tau),Pv.Y(v),6,COL.red);
+    // ---- road scene ----
+    const roadY=h*0.83, cx=w*0.5, ppk=46, s=Cs.x+c.F(tau);
+    line(ctx,0,roadY,w,roadY,COL.ink,3);
+    line(ctx,0,roadY+34,w,roadY+34,COL.ink,2.2);
+    for(let kk=Math.floor(s-cx/ppk)-1;kk<=s+(w-cx)/ppk+1;kk++){
+      const px=cx+(kk-s)*ppk;
+      line(ctx,px,roadY+34,px,roadY+46,COL.ink,2);
+      if(kk%5===0){ line(ctx,px,roadY+34,px,roadY+52,COL.blue,3); textAt(ctx,kk+'',px,roadY+68,{align:'center',size:11.5,weight:700,color:COL.blue}); }
+      for(const hf of [0.5]){ const dx=cx+(kk+hf-s)*ppk; line(ctx,dx-9,roadY+17,dx+9,roadY+17,COL.mid,2); }
+    }
+    // speed streaks
+    if(v>0.2) for(let q=0;q<5;q++){ const ln=clamp(v*5,0,60); const sy=roadY-18-q*9, sx=cx-75-((t*220*(0.5+0.12*q))%120); line(ctx,sx-ln,sy,sx,sy,COL.mid,1.4); }
+    // car (line diagram); suspension pitch
+    wheel=s*ppk/15;
+    ctx.save(); ctx.translate(cx,roadY); ctx.rotate(pitch.x);
+    ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.moveTo(-70,-12); ctx.lineTo(-70,-34); ctx.lineTo(-44,-38); ctx.lineTo(-24,-62); ctx.lineTo(24,-62); ctx.lineTo(46,-38); ctx.lineTo(72,-34); ctx.lineTo(72,-12); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-18,-58); ctx.lineTo(-38,-38); ctx.lineTo(40,-38); ctx.lineTo(22,-58); ctx.closePath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.stroke();
+    line(ctx,2,-58,2,-38,COL.blue,2);
+    ctx.restore();
+    for(const wx of [-40,42]){ const X=cx+wx, Y=roadY-15; circ(ctx,X,Y,15,COL.ink,'#fff',3);
+      for(let q=0;q<4;q++){ const an=wheel+q*Math.PI/2; line(ctx,X,Y,X+Math.cos(an)*13,Y+Math.sin(an)*13,COL.yellow,2); } }
+    // odometer display
+    const ox=Pv.x+6, oy=h*0.5, odo=Cs.x+c.F(tau);
+    rrect(ctx,ox,oy,190,56,9); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke();
+    textAt(ctx,'ODOMETER  (km)',ox+12,oy+19,{size:10.5,weight:700,color:COL.muted});
+    textAt(ctx,fmt(odo,2),ox+12,oy+46,{size:25,weight:700,color:COL.blue});
+    textAt(ctx,'speed '+fmt(v,2),ox+198,oy+24,{size:12,weight:700,color:COL.red});
+    const Fa=Cs.x+c.F(a), Fb=Cs.x+c.F(b), area=integ(c.f,a,b);
+    $('#r1').textContent=fmt(Fa,2); $('#r2').textContent=fmt(Fb,2); $('#r3').textContent=fmt(Fb-Fa,3); $('#r4').textContent=fmt(area,3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.10  PROPERTIES — SYMMETRY
+   P7: ∫₋ₐᵃ f = 2∫₀ᵃ f (even)  or  0 (odd).     P3: ∫ₐᵇ f(x)dx = ∫ₐᵇ f(a+b−x)dx.
+   The piece on one side is folded about a hinge; where it lands shows the result.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = chips('mB',['Even f','Odd f','f(a+b−x)'])+
+    sl('aR','a',0.5,4,0.05,2.5)+`<div id="bG">${sl('bR','b',3.2,6,0.05,5)}</div>`+
+    `<button class="toggle-btn play" id="fold" style="margin-top:0;padding:11px;">⤾ Fold it over</button>
+    <div class="control-group"><div class="result-cards">${rc('<span id="l1">Left half</span>','r1',COL.red)}${rc('<span id="l2">Right half</span>','r2',COL.green)}${rc('<span id="l3">Whole</span>','r3',COL.blue)}</div>
+    <p class="hint" id="note"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR'), bR=$('#bR');
+  const CF=[
+    {f:x=>0.25*x*x+0.5,xr:[-4.4,4.4],yr:[-0.6,5.8],a:[0.5,4],note:'f(−x) = f(x)  →  ∫₋ₐᵃ f = 2∫₀ᵃ f'},
+    {f:x=>0.12*x*x*x,xr:[-4.4,4.4],yr:[-8.6,8.6],a:[0.5,4],note:'f(−x) = −f(x)  →  ∫₋ₐᵃ f = 0'},
+    {f:x=>1+0.25*x+0.9*Math.sin(1.3*x),xr:[-0.3,6.4],yr:[-0.3,4.8],a:[0.3,3],note:'flip [a, b] about its middle: same area'}];
+  let k=0, fold=false;
+  const phi={x:0,v:0};
+  function setMode(){ const c=CF[k]; aR.min=c.a[0]; aR.max=c.a[1]; aR.value=k===2?1:2.5; bR.value=5; $('#bG').classList.toggle('hidden',k!==2); $('#note').textContent=c.note;
+    $('#aV').parentElement.firstChild.textContent=k===2?'a ':'a  (interval −a … a) '; }
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ k=+b.dataset.k; setMode(); });
+  $('#fold').onclick=()=>{ fold=!fold; $('#fold').textContent=fold?'⤿ Unfold':'⤾ Fold it over'; };
+  setMode();
+  animLoop((dt)=>{
+    const c=CF[k], f=c.f; let a=+aR.value, b=+bR.value; if(k===2&&b<a+0.4){ b=a+0.4; bR.value=b; }
+    $('#aV').textContent=a.toFixed(2); $('#bV').textContent=b.toFixed(2);
+    springTo(phi,fold?Math.PI:0,22,5.2,dt);
+    const cp=Math.cos(phi.x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const P=mkPlot(56,22,w-80,h-72,c.xr,c.yr); axes(ctx,P,'x','y = f(x)');
+    const pos=x=>Math.max(0,f(x)), neg=x=>Math.min(0,f(x));
+    let lo,hi,hinge;
+    if(k===2){ lo=a; hi=b; hinge=(a+b)/2; } else { lo=-a; hi=0; hinge=0; }
+    const xm=x=>hinge+(x-hinge)*cp;
+    // fixed pieces
+    if(k===2){
+      fillArea(ctx,P,pos,a,b,COL.green,0.3); fillArea(ctx,P,neg,a,b,COL.red,0.3);
+      plotFn(ctx,P,f,0,6.4,COL.blue,2,[6,5],0.6);
+      textAt(ctx,'original',P.X(a)+6,P.Y(0)-8,{size:11.5,weight:700,color:COL.green});
+    } else {
+      fillArea(ctx,P,pos,0,a,COL.green,0.3); fillArea(ctx,P,neg,0,a,COL.red,0.3);
+      plotFn(ctx,P,f,0,a,COL.blue,3.4);
+    }
+    // the moving (folding) piece
+    ctx.save(); clipP(ctx,P); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.4; ctx.beginPath();
+    for(let i=0;i<=120;i++){ const x=lo+(hi-lo)*i/120, X=P.X(xm(x)), Y=P.Y(f(x)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+    fillArea(ctx,P,pos,lo,hi,COL.green,k===2?0.28:0.3,xm); fillArea(ctx,P,neg,lo,hi,COL.red,0.3,xm);
+    // hinge
+    dashV(ctx,P.X(hinge),P.y,P.y+P.h,COL.yellow); dot(ctx,P.X(hinge),P.Y(0),6,COL.yellow);
+    if(k<2){ dashV(ctx,P.X(a),P.y,P.y+P.h,COL.yellow); dashV(ctx,P.X(-a),P.y,P.y+P.h,COL.yellow);
+      textAt(ctx,'a',P.X(a)+5,P.y+14,{size:12,weight:700,color:COL.yellow}); textAt(ctx,'−a',P.X(-a)-5,P.y+14,{align:'right',size:12,weight:700,color:COL.yellow}); }
+    else { dashV(ctx,P.X(a),P.y,P.y+P.h,COL.yellow); dashV(ctx,P.X(b),P.y,P.y+P.h,COL.yellow);
+      textAt(ctx,'a',P.X(a)-4,P.y+14,{align:'right',size:12,weight:700,color:COL.yellow}); textAt(ctx,'b',P.X(b)+5,P.y+14,{size:12,weight:700,color:COL.yellow});
+      if(phi.x>1.5) textAt(ctx,'f(a+b−x)',P.X(hinge),P.y+32,{align:'center',size:12,weight:700,color:COL.blue}); }
+    // readouts
+    if(k<2){
+      const L=integ(f,-a,0), Rr=integ(f,0,a);
+      $('#l1').textContent='∫₋ₐ⁰ f'; $('#l2').textContent='∫₀ᵃ f'; $('#l3').textContent='∫₋ₐᵃ f';
+      $('#r1').textContent=fmt(L,3); $('#r2').textContent=fmt(Rr,3); $('#r3').textContent=fmt(L+Rr,3);
+    } else {
+      const I1=integ(f,a,b), I2=integ(x=>f(a+b-x),a,b);
+      $('#l1').textContent='∫ f(x) dx'; $('#l2').textContent='∫ f(a+b−x) dx'; $('#l3').textContent='difference';
+      $('#r1').textContent=fmt(I1,3); $('#r2').textContent=fmt(I2,3); $('#r3').textContent=fmt(I1-I2,3);
+    }
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'7.2',  title:'Slope ↔ Antiderivative', desc:'Shift C · the slope never changes', build: buildA1 },
+  { num:'7.3',  title:'Substitution',           desc:'Strips stretch by g′(x) · area stays', build: buildA2 },
+  { num:'7.5',  title:'Partial Fractions',      desc:'Tune A and B until they stack to f', build: buildA3 },
+  { num:'7.6',  title:'Integration by Parts',   desc:'Two areas tile the rectangle uv', build: buildA4 },
+  { num:'7.7',  title:'Riemann Rectangles',     desc:'More rectangles · sum → integral', build: buildA5 },
+  { num:'7.8',  title:'Filling the Tank',       desc:'Area function A(x) · A′ = f', build: buildA6 },
+  { num:'7.8',  title:'Odometer Check',         desc:'∫ₐᵇ f = F(b) − F(a)', build: buildA7 },
+  { num:'7.10', title:'Fold Symmetry',          desc:'Even · odd · reflected limits', build: buildA8 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

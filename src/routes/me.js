@@ -12,13 +12,14 @@ router.use(auth.loadUser, auth.requireUser);
 const dayKey = (d) => d.toISOString().slice(0, 10);
 
 router.get('/me', wrap(async (req, res) => {
+  await ent.ensureTrial(req.user._id);
   res.json({ user: auth.publicUser(req.user), access: ent.summarize(await ent.current(req.user._id)) });
 }));
 
 router.patch('/me', wrap(async (req, res) => {
   const b = req.body || {}, set = {};
   if (b.name !== undefined) { const n = text(b.name, 80); if (n.length < 2) return res.status(400).json({ error: 'Please enter a name.' }); set.name = n; }
-  if (b.cls !== undefined) { const c = cls(b.cls); if (!c) return res.status(400).json({ error: 'Please choose a class from 6 to 10.' }); set.cls = c; }
+  if (b.cls !== undefined) { const c = cls(b.cls); if (!c) return res.status(400).json({ error: 'Please choose a class from 6 to 12.' }); set.cls = c; }
   if (b.school !== undefined) set.school = text(b.school, 100);
   if (b.phone !== undefined) set.phone = text(b.phone, 20).replace(/[^\d+ ()-]/g, '');
   if (Object.keys(set).length) await auth.users().updateOne({ _id: req.user._id }, { $set: set });
@@ -45,7 +46,7 @@ router.get('/catalog', wrap(async (req, res) => {
     cls: Number(c),
     chapters: chs.map((x) => {
       const p = prog.get(`${c}/${x.chapter}`);
-      return { chapter: x.chapter, title: x.title, activities: x.activities, access: ent.allows(ents, Number(c), x.chapter), sec: p ? Math.round(p.sec) : 0, opens: p ? p.opens || 0 : 0, done: !!(p && p.done), lastAt: p ? p.lastAt : null };
+      return { chapter: x.chapter, title: x.title, group: x.group, activities: x.activities, access: ent.allows(ents, Number(c), x.chapter), sec: p ? Math.round(p.sec) : 0, opens: p ? p.opens || 0 : 0, done: !!(p && p.done), lastAt: p ? p.lastAt : null };
     }),
   }));
   const days = await db.get().collection('daily_usage').find({ userId: uid }).sort({ date: -1 }).limit(120).toArray();

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 1 · Chapter 2 — Inverse Trigonometric Functions | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto; font-weight:700;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between; gap:8px;}
+.control-group label .val{color:var(--accent); font-weight:700; text-align:right;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--f-yellow); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{background:var(--surface-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%;}
+.toggle-btn.navy:hover{background:var(--navy-3);}
+.toggle-btn:disabled{opacity:.4; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn:hover{background:var(--surface-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.formula{font-size:var(--fs-md); font-weight:700; color:var(--navy-2); text-align:center; padding:2px 0;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">sin⁻¹</div>
+    <div>
+      <div class="chip">Grade 12 · Part 1 · Ch 2</div>
+      <h1>Inverse Trigonometric Functions</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Function · angle</span>
+      <span><i style="background:var(--f-red)"></i>Inverse · result</span>
+      <span><i style="background:var(--f-green)"></i>Principal branch · valid</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">2.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — PART 1 — CHAPTER 2: INVERSE TRIGONOMETRIC FUNCTIONS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or flips toward it every frame.
+   Angles swing on springs, graphs fold about y = x, rays fall back into the
+   principal branch — nothing ever jumps.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e6edf6'};
+const PI = Math.PI;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString().replace('-','−'); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+/* math-angle arc (counter-clockwise positive) on a y-down canvas */
+function arcMath(ctx,cx,cy,r,a0,a1,color,lw,alpha){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.beginPath(); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.stroke(); ctx.restore();
+}
+
+/* π-aware number formatting */
+function piStr(v){
+  if(!isFinite(v)) return '—';
+  if(Math.abs(v)<1e-9) return '0';
+  const r=v/PI;
+  for(const q of [1,2,3,4,5,6,8,10,12]){
+    const p=Math.round(r*q);
+    if(p!==0 && Math.abs(r*q-p)<1e-6){
+      const a=Math.abs(p);
+      return (p<0?'−':'')+(a===1?'':a)+'π'+(q===1?'':'/'+q);
+    }
+  }
+  return fmt(r,3)+'π';
+}
+const EXACT=[[0,'0'],[0.5,'½'],[Math.SQRT1_2,'√2/2'],[Math.sqrt(3)/2,'√3/2'],[1/Math.sqrt(3),'1/√3'],[1,'1'],[2/Math.sqrt(3),'2/√3'],[Math.SQRT2,'√2'],[Math.sqrt(3),'√3'],[2,'2'],[3,'3']];
+function exactStr(x){ for(const [v,s] of EXACT){ if(Math.abs(Math.abs(x)-v)<4e-4) return (x<0&&v!==0?'−':'')+s; } return fmt(x,3); }
+function ratStr(v){
+  if(!isFinite(v) || Math.abs(v)>1e4) return '∞';
+  for(let q=1;q<=400;q++){ const p=Math.round(v*q); if(Math.abs(v*q-p)<1e-9*q+1e-9) return (p<0?'−':'')+Math.abs(p)+(q===1?'':'/'+q); }
+  return fmt(v,3);
+}
+const deg=r=>fmt(r*180/PI,1)+'°';
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    try{ tick(dt); }catch(e){ console.error(e); }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* control builders */
+function ctrlSlider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function ctrlBtns(id,label,items,extra){
+  return `<div class="control-group ${extra||''}" id="${id}G"><label style="margin-bottom:0;">${label}</label><div class="toggle-group" id="${id}">`+
+    items.map(it=>`<button class="toggle-btn${it[2]?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')+`</div></div>`;
+}
+function ctrlCards(list){
+  return `<div class="control-group"><div class="result-cards">`+
+    list.map(c=>`<div class="rcard${c[3]?' wide':''}"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}"${c[2]?` style="color:${c[2]}"`:''}>—</div></div>`).join('')+`</div></div>`;
+}
+function ctrlChips(id,label,items){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">`+
+    items.map((it,i)=>`<button class="chip-btn" data-i="${i}">${it[0]}</button>`).join('')+`</div></div>`;
+}
+function setActive(btns,v){ btns.forEach(b=>b.classList.toggle('active', b.dataset.v===String(v))); }
+
+/* ---------------------------------------------------------------------
+   0c. GRAPH HELPERS
+   --------------------------------------------------------------------- */
+function viewOf(w,h,cx,cy,sx,sy){ return {cx,cy,sx,sy:sy||sx,X:x=>cx+x*sx,Y:y=>cy-y*(sy||sx)}; }
+function ptsOf(f,x0,x1,n,V,lim){
+  const a=[]; for(let i=0;i<=n;i++){ const x=x0+(x1-x0)*i/n, v=f(x); a.push((!isFinite(v)||Math.abs(v)>lim)?null:[V.X(x),V.Y(v)]); } return a;
+}
+function strokePts(ctx,pts,color,lw,alpha,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.lineJoin='round'; ctx.lineCap='round'; if(alpha!==undefined) ctx.globalAlpha=alpha; if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); let pen=false;
+  for(const p of pts){ if(!p){pen=false;continue;} if(pen) ctx.lineTo(p[0],p[1]); else{ ctx.moveTo(p[0],p[1]); pen=true; } }
+  ctx.stroke(); ctx.restore();
+}
+function gridAxes(ctx,V,w,h,opt){
+  opt=opt||{};
+  const xmin=(0-V.cx)/V.sx, xmax=(w-V.cx)/V.sx, ymax=V.cy/V.sy, ymin=(V.cy-h)/V.sy;
+  ctx.save(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.beginPath();
+  for(let k=Math.ceil(xmin/(PI/2)); k<=xmax/(PI/2); k++){ const x=V.X(k*PI/2); ctx.moveTo(x,0); ctx.lineTo(x,h); }
+  if(!opt.noHGrid) for(let k=Math.ceil(ymin/(PI/2)); k<=ymax/(PI/2); k++){ const y=V.Y(k*PI/2); ctx.moveTo(0,y); ctx.lineTo(w,y); }
+  ctx.stroke(); ctx.restore();
+  line(ctx,0,V.Y(0),w,V.Y(0),COL.ink,1.5); line(ctx,V.X(0),0,V.X(0),h,COL.ink,1.5);
+  if(!opt.noLabels){
+    for(let k=Math.ceil(xmin/(PI/2)); k<=xmax/(PI/2); k++){ if(k===0) continue; textAt(ctx,piStr(k*PI/2),V.X(k*PI/2),V.Y(0)+15,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    for(let k=Math.ceil(ymin/(PI/2)); k<=ymax/(PI/2); k++){ if(k===0) continue; textAt(ctx,piStr(k*PI/2),V.X(0)-6,V.Y(k*PI/2)+4,{align:'right',size:10.5,weight:600,color:COL.muted}); }
+    for(const v of [-2,-1,1,2]){ if(v<ymin||v>ymax) continue; textAt(ctx,String(v).replace('-','−'),V.X(0)+6,V.Y(v)+4,{size:10.5,weight:500,color:COL.mid}); }
+    textAt(ctx,'x',w-14,V.Y(0)-7,{size:12,weight:700,color:COL.muted}); textAt(ctx,'y',V.X(0)+8,14,{size:12,weight:700,color:COL.muted});
+  }
+}
+function circleAxes(ctx,cx,cy,R,w,h){
+  ctx.save(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.beginPath();
+  for(let k=-6;k<=6;k++){ ctx.moveTo(cx+k*R/2,0); ctx.lineTo(cx+k*R/2,h); ctx.moveTo(0,cy+k*R/2); ctx.lineTo(w,cy+k*R/2); }
+  ctx.stroke(); ctx.restore();
+  line(ctx,0,cy,w,cy,COL.ink,1.4); line(ctx,cx,0,cx,h,COL.ink,1.4);
+  circ(ctx,cx,cy,R,COL.ink,null,1.8);
+  [[1,0,'0'],[0,1,'π/2'],[-1,0,'π'],[0,-1,'3π/2']].forEach(([u,v,s])=>{
+    circ(ctx,cx+u*R,cy-v*R,2.6,COL.mid,COL.mid,1);
+  });
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'2.1', title:'Why Restrict the Domain?', desc:'Slide the window · a line must cut it once', build: buildA1 },
+  { num:'2.2', title:'sin⁻¹ and cos⁻¹ Graphs', desc:'Fold the graph across y = x', build: ()=>buildGraph(['sin','cos']) },
+  { num:'2.3', title:'cosec⁻¹ and sec⁻¹ Graphs', desc:'Fold the graph across y = x', build: ()=>buildGraph(['cosec','sec']) },
+  { num:'2.4', title:'tan⁻¹ and cot⁻¹ Graphs', desc:'Fold the graph across y = x', build: ()=>buildGraph(['tan','cot']) },
+  { num:'2.5', title:'Principal Value Finder', desc:'Pick x · the angle swings to its principal value', build: buildA5 },
+  { num:'2.6', title:'sin⁻¹(sin x) = x ?', desc:'Only inside the principal branch', build: buildA6 },
+  { num:'2.7', title:'Double & Triple Angle', desc:'n·sin⁻¹x = sin⁻¹(…) — where it holds', build: buildA7 },
+  { num:'2.8', title:'Complementary Pair', desc:'sin⁻¹x + cos⁻¹x = π/2', build: buildA8 },
+  { num:'2.9', title:'Adding Two Angles', desc:'Combine two inverse angles into one', build: buildA9 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   2.1 WHY RESTRICT THE DOMAIN?
+   A function has an inverse only if it is one-one and onto.
+   A horizontal line may cut the graph only once inside the chosen window.
+   sin: one-one on [−π/2 + kπ, π/2 + kπ];  cos: on [kπ, (k+1)π];
+   tan: on (−π/2 + kπ, π/2 + kπ). Principal windows: [−π/2, π/2], [0, π], (−π/2, π/2).
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    ctrlBtns('fnB','Function',[['sin','sin x',1],['cos','cos x'],['tan','tan x']])+
+    ctrlSlider('aR','Window of x (width π)',-24,12,1,-6)+
+    ctrlSlider('cR','Horizontal line  y = c',-1.5,1.5,0.01,0.5)+
+    ctrlCards([['hV','Line cuts window',COL.red],['stV','One-one & onto?'],['brV','Branch',COL.green,1]]);
+  const canvas=$('canvas'), aR=$('#aR'), cR=$('#cR');
+  const FN={
+    sin:{f:Math.sin,lim:1.5,ylim:1.6,labs:[-1,1]},
+    cos:{f:Math.cos,lim:1.5,ylim:1.6,labs:[-1,1]},
+    tan:{f:Math.tan,lim:4,ylim:4.2,labs:[-3,-2,-1,1,2,3]}
+  };
+  let fn='sin', t=0;
+  const A={x:-PI/2,v:0}, C={x:0.5,v:0}, okS={x:1}, flash={x:0};
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{
+    fn=b.dataset.v; const F=FN[fn]; cR.min=-F.lim; cR.max=F.lim; cR.value=clamp(+cR.value,-F.lim,F.lim); flash.x=1;
+  });
+  function hits(f,a,c){
+    const out=[]; const N=480; let px=a, pf=f(a)-c;
+    for(let i=1;i<=N;i++){ const x=a+PI*i/N, v=f(x)-c; if(pf*v<0 && Math.abs(f(x)-f(px))<1.2) out.push(px+(x-px)*pf/(pf-v)); px=x; pf=v; }
+    return out;
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const k=+aR.value, aT=k*PI/12, cT=+cR.value, F=FN[fn];
+    $('#aRV').textContent='['+piStr(aT)+', '+piStr(aT+PI)+']';
+    $('#cRV').textContent=fmt(cT,2);
+    springTo(A,aT,70,10,dt); springTo(C,cT,90,12,dt);
+    const m=((k%12)+12)%12;
+    const aligned = fn==='cos' ? m===0 : m===6;
+    const principal = fn==='cos' ? k===0 : k===-6;
+    okS.x=approach(okS.x,aligned?1:0,9,dt); flash.x=approach(flash.x,0,4,dt);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=w/15.4, cx=w/2, cy=h*0.5, ys=(h*0.46)/F.ylim;
+    const V=viewOf(w,h,cx,cy,sc,ys);
+    gridAxes(ctx,V,w,h,{noHGrid:true,noLabels:true});
+    for(let kk=-4;kk<=4;kk++){ if(kk===0) continue; textAt(ctx,piStr(kk*PI/2),V.X(kk*PI/2),V.Y(0)+15,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    F.labs.forEach(v=>textAt(ctx,String(v).replace('-','−'),V.X(0)+6,V.Y(v)+4,{size:10.5,color:COL.mid}));
+    textAt(ctx,'x',w-14,V.Y(0)-7,{size:12,weight:700,color:COL.muted});
+
+    // window band
+    const bandCol=mixCol(COL.red,COL.green,okS.x);
+    const bx=V.X(A.x), bw=PI*sc;
+    ctx.save(); ctx.globalAlpha=0.12+0.1*flash.x; ctx.fillStyle=bandCol; ctx.fillRect(bx,0,bw,h); ctx.restore();
+    line(ctx,bx,0,bx,h,bandCol,2.2); line(ctx,bx+bw,0,bx+bw,h,bandCol,2.2);
+    if(principal) textAt(ctx,'principal branch',bx+bw/2,22,{align:'center',size:12,weight:700,color:COL.green});
+
+    // curve: faint everywhere, bold in the window
+    const pts=ptsOf(F.f,-7.6,7.6,900,V,F.lim*4);
+    strokePts(ctx,pts,COL.blue,1.8,0.28);
+    ctx.save(); ctx.beginPath(); ctx.rect(bx,0,bw,h); ctx.clip(); strokePts(ctx,pts,COL.blue,3.6); ctx.restore();
+
+    // horizontal line + intersections
+    const yL=V.Y(C.x);
+    line(ctx,0,yL,w,yL,COL.yellow,2.4);
+    textAt(ctx,'y = '+fmt(C.x,2),10,yL-7,{size:12,weight:700,color:COL.yellow});
+    const hs=hits(F.f,A.x,C.x);
+    hs.forEach(x=>{ line(ctx,V.X(x),yL,V.X(x),V.Y(0),COL.red,1.4,[4,4]); circ(ctx,V.X(x),yL,6.5,COL.red,'#fff',2.6); circ(ctx,V.X(x),V.Y(0),3,COL.red,COL.red,1); });
+
+    $('#hV').textContent=hs.length+(hs.length===1?' point':' points');
+    $('#hV').style.color = hs.length===1?COL.green:COL.red;
+    $('#stV').textContent = aligned?'Yes ✓':'No ✗';
+    $('#stV').style.color = aligned?COL.green:COL.red;
+    $('#brV').textContent = aligned?(principal?'Principal branch':'Another branch'):(fn==='tan'?'Window contains a break':'Graph turns back in window');
+    $('#brV').style.color = aligned?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.2 – 2.4  GRAPH OF f AND f⁻¹ — reflection in y = x  (Fig 2.1 – 2.6)
+   A point (a, b) of f becomes (b, a) of f⁻¹. The principal branch is
+   physically flipped about y = x (perpendicular distance scaled by cos φ).
+   ===================================================================== */
+const E = 1e-3;
+const TR = {
+  sin:  {f:Math.sin,                label:'sin x',  inv:'sin⁻¹',  segs:[[-PI/2,PI/2]],            dom:'[−1, 1]',        rng:'[−π/2, π/2]',          domI:[[-1,1]],                      rngI:[[-PI/2,PI/2]],            asy:[]},
+  cos:  {f:Math.cos,                label:'cos x',  inv:'cos⁻¹',  segs:[[0,PI]],                  dom:'[−1, 1]',        rng:'[0, π]',               domI:[[-1,1]],                      rngI:[[0,PI]],                  asy:[]},
+  cosec:{f:x=>1/Math.sin(x),        label:'cosec x',inv:'cosec⁻¹',segs:[[-PI/2,0],[0,PI/2]],      dom:'ℝ − (−1, 1)',   rng:'[−π/2, π/2] − {0}',    domI:[[-Infinity,-1],[1,Infinity]], rngI:[[-PI/2,0],[0,PI/2]],      asy:[0]},
+  sec:  {f:x=>1/Math.cos(x),        label:'sec x',  inv:'sec⁻¹',  segs:[[0,PI/2],[PI/2,PI]],      dom:'ℝ − (−1, 1)',   rng:'[0, π] − {π/2}',       domI:[[-Infinity,-1],[1,Infinity]], rngI:[[0,PI/2],[PI/2,PI]],      asy:[PI/2]},
+  tan:  {f:Math.tan,                label:'tan x',  inv:'tan⁻¹',  segs:[[-PI/2,PI/2]],            dom:'ℝ',              rng:'(−π/2, π/2)',          domI:[[-Infinity,Infinity]],        rngI:[[-PI/2,PI/2]],            asy:[-PI/2,PI/2]},
+  cot:  {f:x=>1/Math.tan(x),        label:'cot x',  inv:'cot⁻¹',  segs:[[0,PI]],                  dom:'ℝ',              rng:'(0, π)',               domI:[[-Infinity,Infinity]],        rngI:[[0,PI]],                  asy:[0,PI]},
+};
+function flipPt(px,py,phi){ const s=(px-py)/2*(1-Math.cos(phi)); return [px-s,py+s]; }
+
+function buildGraph(names){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    ctrlBtns('fnB','Function',names.map((n,i)=>[n,TR[n].label,i===0]))+
+    `<div class="control-group"><label>Fold across y = x<span class="val" id="fRV"></span></label>
+       <input type="range" id="fR" min="0" max="100" step="1" value="0">
+       <div class="toggle-group"><button class="toggle-btn navy" id="flipB">Flip ⟲</button></div></div>`+
+    ctrlSlider('uR','Point P on the curve',0,1000,1,620)+
+    ctrlCards([['pV','P on f',COL.blue,1],['qV','Q on inverse',COL.red,1],['dV','Domain of inverse',COL.green,1],['rV','Range of inverse (principal)',COL.green,1]]);
+  const canvas=$('canvas'), fR=$('#fR'), uR=$('#uR');
+  let name=names[0], T=TR[name], t=0, data=null;
+  const Phi={x:0,v:0}, U={x:0.62,v:0};
+  function prep(){
+    T=TR[name];
+    const N=220;
+    data=T.segs.map(([lo,hi])=>{ const a=[]; for(let i=0;i<=N;i++){ const u=0.5-0.5*Math.cos(PI*i/N), x=lo+(hi-lo)*u, v=T.f(x); a.push((!isFinite(v)||Math.abs(v)>40)?null:[x,v]); } return a; });
+  }
+  prep();
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{ name=b.dataset.v; prep(); });
+  $('#flipB').onclick=()=>{ fR.value = +fR.value<50 ? 100 : 0; };
+  function mapU(u){
+    const L=T.segs.reduce((s,g)=>s+(g[1]-g[0]),0); let s=u*L;
+    for(const g of T.segs){ const len=g[1]-g[0]; if(s<=len+1e-9) return g[0]+clamp(s,E*2,len-E*2); s-=len; }
+    const g=T.segs[T.segs.length-1]; return g[1]-E*2;
+  }
+  function shadeIv(ctx,V,iv,axis,w,h,color,alpha){
+    if(alpha<=0.01) return;
+    ctx.save(); ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=7; ctx.lineCap='butt';
+    iv.forEach(([a,b])=>{
+      if(axis==='x'){ const x0=clamp(V.X(a),-20,w+20), x1=clamp(V.X(b),-20,w+20); ctx.beginPath(); ctx.moveTo(x0,V.Y(0)); ctx.lineTo(x1,V.Y(0)); ctx.stroke(); }
+      else { const y0=clamp(V.Y(a),-20,h+20), y1=clamp(V.Y(b),-20,h+20); ctx.beginPath(); ctx.moveTo(V.X(0),y0); ctx.lineTo(V.X(0),y1); ctx.stroke(); }
+    });
+    ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    springTo(Phi,+fR.value/100*PI,60,8.5,dt); springTo(U,+uR.value/1000,60,12,dt);
+    const phi=Phi.x, p=clamp(phi/PI,0,1);
+    $('#fRV').textContent = p<0.02?'f':(p>0.98?'f⁻¹':Math.round(p*100)+'%');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/11.8,h/8.6), V=viewOf(w,h,w/2,h/2,sc);
+    gridAxes(ctx,V,w,h);
+
+    // y = x mirror
+    line(ctx,V.X(-8),V.Y(-8),V.X(8),V.Y(8),COL.mid,1.6,[8,6]);
+    textAt(ctx,'y = x',V.X(3.2)+6,V.Y(3.2)+16,{size:12,weight:700,color:COL.mid});
+
+    // green domain / range markings on the axes — they swap during the fold
+    shadeIv(ctx,V,T.rngI,'x',w,h,COL.green,1-p);  shadeIv(ctx,V,T.domI,'y',w,h,COL.green,1-p);
+    shadeIv(ctx,V,T.domI,'x',w,h,COL.green,p);    shadeIv(ctx,V,T.rngI,'y',w,h,COL.green,p);
+
+    // faint full graph of f (all branches)
+    const full=ptsOf(T.f,-7.2,7.2,1200,V,45);
+    strokePts(ctx,full,COL.blue,1.8,0.22);
+
+    // asymptotes of the inverse (horizontal), fading in
+    T.asy.forEach(a=>{ line(ctx,0,V.Y(a),w,V.Y(a),COL.red,1.3,[3,5]); });
+
+    // the principal branch, physically flipped
+    const col=mixCol(COL.blue,COL.red,p);
+    data.forEach(seg=>{
+      const pts=seg.map(q=>{ if(!q) return null; const m=flipPt(q[0],q[1],phi); if(Math.abs(m[0])>60||Math.abs(m[1])>60) return null; return [V.X(m[0]),V.Y(m[1])]; });
+      strokePts(ctx,pts,col,4.2);
+    });
+
+    // tracer point P (yellow) → its mirror Q (red)
+    const tx=mapU(U.x), ty=T.f(tx), vis=isFinite(ty)&&Math.abs(ty)<5.2;
+    $('#pV').textContent = '('+piStr(tx)+', '+(Math.abs(ty)>99?'∞':fmt(ty,3))+')';
+    $('#qV').textContent = '('+(Math.abs(ty)>99?'∞':fmt(ty,3))+', '+piStr(tx)+')';
+    $('#dV').textContent = T.dom; $('#rV').textContent = T.rng;
+    if(vis){
+      const m=flipPt(tx,ty,phi);
+      line(ctx,V.X(tx),V.Y(ty),V.X(ty),V.Y(tx),COL.yellow,1.6,[5,5]);
+      circ(ctx,V.X(ty),V.Y(tx),6,COL.red,'#fff',2.2);
+      circ(ctx,V.X(tx),V.Y(ty),6,COL.yellow,'#fff',2.2);
+      circ(ctx,V.X(m[0]),V.Y(m[1]),7.5,mixCol(COL.yellow,COL.red,p),mixCol(COL.yellow,COL.red,p),1);
+      textAt(ctx,'P',V.X(tx)-14,V.Y(ty)-9,{size:13,weight:700,color:COL.yellow});
+      textAt(ctx,'Q',V.X(ty)+9,V.Y(tx)-9,{size:13,weight:700,color:COL.red});
+    }
+    // curve captions
+    textAt(ctx,T.label,12,h-34,{size:13,weight:700,color:COL.blue,alpha:1-p*0.6});
+    textAt(ctx,T.inv+' x',12,h-14,{size:13,weight:700,color:COL.red,alpha:0.4+0.6*p});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.5 PRINCIPAL VALUE FINDER
+   y = f⁻¹(x) is the angle on the unit circle that lies inside the principal arc.
+   Textbook checks:  sin⁻¹(½) = π/6   ·   cot⁻¹(−1/√3) = 2π/3
+   ===================================================================== */
+const PV = {
+  sin:  {label:'sin⁻¹',  y:x=>Math.asin(x),       ghost:y=>PI-y, arc:[-PI/2,PI/2], holes:[],            lo:-1,hi:1},
+  cos:  {label:'cos⁻¹',  y:x=>Math.acos(x),       ghost:y=>-y,   arc:[0,PI],       holes:[],            lo:-1,hi:1},
+  tan:  {label:'tan⁻¹',  y:x=>Math.atan(x),       ghost:y=>y+PI, arc:[-PI/2,PI/2], holes:[-PI/2,PI/2],  lo:-3,hi:3},
+  cot:  {label:'cot⁻¹',  y:x=>PI/2-Math.atan(x),  ghost:y=>y+PI, arc:[0,PI],       holes:[0,PI],        lo:-3,hi:3},
+  cosec:{label:'cosec⁻¹',y:x=>Math.asin(1/x),     ghost:y=>PI-y, arc:[-PI/2,PI/2], holes:[0],           lo:1,hi:4},
+  sec:  {label:'sec⁻¹',  y:x=>Math.acos(1/x),     ghost:y=>-y,   arc:[0,PI],       holes:[PI/2],        lo:1,hi:4},
+};
+function buildA5(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  const presets=[['sin⁻¹ ½','sin',0.5],['cot⁻¹ −1/√3','cot',-1/Math.sqrt(3)],['cos⁻¹ −½','cos',-0.5],['tan⁻¹ −√3','tan',-Math.sqrt(3)],['cosec⁻¹ 2','cosec',2],['sec⁻¹ −√2','sec',-Math.SQRT2]];
+  $('.lab-side').innerHTML =
+    ctrlBtns('fnB','Inverse function',[['sin','sin⁻¹',1],['cos','cos⁻¹'],['tan','tan⁻¹'],['cot','cot⁻¹'],['cosec','cosec⁻¹'],['sec','sec⁻¹']])+
+    ctrlSlider('xR','Value  x',-1,1,'any',0.5)+
+    ctrlBtns('sgB','Sign of x',[['1','x ≥ 1',1],['-1','x ≤ −1']],'hidden')+
+    ctrlChips('prC','Try these',presets)+
+    ctrlCards([['xV','x',COL.yellow],['yV','y = principal value',COL.blue],['dgV','In degrees'],['brV','Branch',COL.green]]);
+  const canvas=$('canvas'), xR=$('#xR');
+  let fn='sin', sgn=1, t=0;
+  const Y={x:PV.sin.y(0.5),v:0};
+  function xNow(){ return (fn==='cosec'||fn==='sec') ? sgn*(+xR.value) : +xR.value; }
+  function setFn(name,xv){
+    fn=name; const P=PV[name];
+    setActive(wrap.querySelectorAll('#fnB button'),name);
+    const two=(name==='cosec'||name==='sec');
+    $('#sgBG').classList.toggle('hidden',!two);
+    xR.min=P.lo; xR.max=P.hi;
+    if(xv!==undefined){ if(two){ sgn=xv<0?-1:1; setActive(wrap.querySelectorAll('#sgB button'),sgn); xR.value=Math.abs(xv);} else xR.value=xv; }
+    else { xR.value = two?2:clamp(+xR.value,P.lo,P.hi); }
+  }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(b.dataset.v));
+  toggleWire(wrap.querySelectorAll('#sgB button'),b=>{ sgn=+b.dataset.v; });
+  wrap.querySelectorAll('#prC button').forEach(b=>b.onclick=()=>{ const p=presets[+b.dataset.i]; setFn(p[1],p[2]); });
+  setFn('sin',0.5);
+
+  animLoop(dt=>{
+    t+=dt;
+    const P=PV[fn], x=xNow(); const yT=P.y(x);
+    springTo(Y,yT,60,9,dt);
+    const y=Y.x;
+    $('#xRV').textContent=exactStr(x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(w*0.3,h*0.34), cx=w*0.5, cy=h*0.5;
+    circleAxes(ctx,cx,cy,R,w,h);
+    const U=(u,v)=>[cx+u*R,cy-v*R];
+    // principal arc (green) with open ends
+    arcMath(ctx,cx,cy,R,P.arc[0],P.arc[1],COL.green,8,0.85);
+    P.holes.forEach(a=>{ const q=U(Math.cos(a),Math.sin(a)); circ(ctx,q[0],q[1],6,COL.green,'#fff',2.4); });
+    textAt(ctx,'principal branch',cx,cy+(P.arc[0]<0?R*1.0+22:-R*1.0-12),{align:'center',size:12,weight:700,color:COL.green});
+
+    // helper lines per function, and the measured value x (yellow)
+    const cy_=Math.cos(y), sy_=Math.sin(y), pt=U(cy_,sy_), o=U(0,0);
+    const dashRay=(u,v)=>{ const q=U(u,v); line(ctx,o[0],o[1],q[0],q[1],COL.mid,1.4,[6,5]); };
+    let m1,m2; // yellow segment endpoints
+    if(fn==='sin'){ m1=U(0,0); m2=U(0,sy_); const q=U(0,sy_); line(ctx,pt[0],pt[1],q[0],q[1],COL.yellow,1.4,[5,5]); }
+    else if(fn==='cos'){ m1=U(0,0); m2=U(cy_,0); const q=U(cy_,0); line(ctx,pt[0],pt[1],q[0],q[1],COL.yellow,1.4,[5,5]); }
+    else if(fn==='tan'){ line(ctx,U(1,-6)[0],U(1,-6)[1],U(1,6)[0],U(1,6)[1],COL.mid,1.2,[3,4]); m1=U(1,0); m2=U(1,Math.tan(y)); dashRay(1,Math.tan(y)); }
+    else if(fn==='cot'){ line(ctx,U(-8,1)[0],U(-8,1)[1],U(8,1)[0],U(8,1)[1],COL.mid,1.2,[3,4]); m1=U(0,1); m2=U(1/Math.tan(y),1); dashRay(1/Math.tan(y),1); }
+    else if(fn==='sec'){ const s=1/cy_; m1=U(0,0); m2=U(s,0); const q=U(s,0); line(ctx,pt[0],pt[1],q[0],q[1],COL.mid,1.4,[6,5]); }
+    else { const s=1/sy_; m1=U(0,0); m2=U(0,s); const q=U(0,s); line(ctx,pt[0],pt[1],q[0],q[1],COL.mid,1.4,[6,5]); }
+
+    // other angles with the same value (red, ghosted) — why a branch must be chosen
+    const g=P.ghost(y), gp=U(Math.cos(g),Math.sin(g));
+    line(ctx,o[0],o[1],gp[0],gp[1],COL.red,1.6,[4,5]); circ(ctx,gp[0],gp[1],5,COL.red,'#fff',2);
+    textAt(ctx,'same x, other branch',gp[0]+(gp[0]>cx?8:-8),gp[1]+(gp[1]>cy?16:-8),{align:gp[0]>cx?'left':'right',size:11,weight:600,color:COL.red});
+
+    // the angle y: blue ray + sweeping arc
+    line(ctx,o[0],o[1],pt[0],pt[1],COL.blue,3.4);
+    arcMath(ctx,cx,cy,R*0.28,0,y,COL.blue,4);
+    circ(ctx,pt[0],pt[1],7,COL.blue,'#fff',2.8);
+    const am=y/2, lp=U(Math.cos(am)*0.4,Math.sin(am)*0.4);
+    textAt(ctx,'y',lp[0],lp[1]+4,{align:'center',size:14,weight:700,color:COL.blue});
+
+    // yellow measure of x
+    ctx.save(); ctx.lineCap='round'; line(ctx,m1[0],m1[1],m2[0],m2[1],COL.yellow,5); ctx.restore();
+    circ(ctx,m2[0],m2[1],5,COL.yellow,COL.yellow,1);
+    textAt(ctx,'x = '+exactStr(x),clamp(m2[0]+(m2[0]>=m1[0]?10:-10),20,w-20),clamp(m2[1]-10,16,h-12),{align:m2[0]>=m1[0]?'left':'right',size:13,weight:700,color:COL.yellow});
+
+    // cards
+    $('#xV').textContent=exactStr(x);
+    $('#yV').textContent=piStr(yT);
+    $('#dgV').textContent=deg(yT);
+    $('#brV').textContent='Inside principal arc ✓';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.6 sin⁻¹(sin x) = x ?   (Example 6:  sin⁻¹(sin 3π/5) = 2π/5)
+   f⁻¹(f(x)) = x only when x lies in the principal branch; otherwise the
+   point drops horizontally onto the principal window and comes back as a different angle.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  const presets=[['sin⁻¹(sin 3π/5)','sin',3*PI/5],['sin⁻¹(sin 2π/3)','sin',2*PI/3],['cos⁻¹(cos 7π/6)','cos',7*PI/6],['tan⁻¹(tan 3π/4)','tan',3*PI/4]];
+  $('.lab-side').innerHTML =
+    ctrlBtns('fnB','Function',[['sin','sin',1],['cos','cos'],['tan','tan']])+
+    ctrlSlider('xR','Angle  x',-7,7,'any',3*PI/5)+
+    ctrlChips('prC','Textbook cases',presets)+
+    ctrlCards([['xV','x',COL.yellow],['fV','f(x)',COL.blue],['gV','f⁻¹(f(x))',COL.red],['eqV','Equals x?']]);
+  const canvas=$('canvas'), xR=$('#xR');
+  const FN={
+    sin:{f:Math.sin,inv:Math.asin,win:[-PI/2,PI/2],ym:1.25,lim:2,name:'sin'},
+    cos:{f:Math.cos,inv:Math.acos,win:[0,PI],ym:1.25,lim:2,name:'cos'},
+    tan:{f:Math.tan,inv:Math.atan,win:[-PI/2,PI/2],ym:3.2,lim:6,name:'tan'}
+  };
+  let fn='sin', t=0; const X={x:3*PI/5,v:0}, flash={x:0};
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>{ fn=b.dataset.v; });
+  wrap.querySelectorAll('#prC button').forEach(b=>b.onclick=()=>{ const p=presets[+b.dataset.i]; fn=p[1]; setActive(wrap.querySelectorAll('#fnB button'),fn); xR.value=p[2]; });
+  animLoop(dt=>{
+    t+=dt;
+    springTo(X,+xR.value,55,10,dt);
+    const F=FN[fn], x=X.x, fx=F.f(x), g=F.inv(fx);
+    const eq=Math.abs(g-x)<2e-3;
+    $('#xRV').textContent=piStr(+xR.value);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=(w-60)/15.2, cx=w/2;
+    const topC=h*0.25, topH=h*0.38, botC=h*0.74, botH=h*0.36;
+    const VT=viewOf(w,h,cx,topC,sc,(topH/2)/F.ym), VB=viewOf(w,h,cx,botC,sc,(botH/2)/(PI+0.25));
+    // top panel
+    ctx.save(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.beginPath();
+    for(let k=-4;k<=4;k++){ const xx=VT.X(k*PI/2); ctx.moveTo(xx,topC-topH/2-6); ctx.lineTo(xx,botC+botH/2+8); } ctx.stroke(); ctx.restore();
+    line(ctx,0,topC,w,topC,COL.ink,1.5); line(ctx,0,botC,w,botC,COL.ink,1.5);
+    for(let k=-4;k<=4;k++){ if(k===0) continue; textAt(ctx,piStr(k*PI/2),VT.X(k*PI/2),botC+botH/2+22,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    // principal window band
+    const wx0=VT.X(F.win[0]), wx1=VT.X(F.win[1]);
+    ctx.save(); ctx.globalAlpha=0.12; ctx.fillStyle=COL.green; ctx.fillRect(wx0,topC-topH/2-6,wx1-wx0,botC+botH/2+14-(topC-topH/2-6)); ctx.restore();
+    line(ctx,wx0,topC-topH/2-6,wx0,botC+botH/2+14,COL.green,1.6,[5,4]); line(ctx,wx1,topC-topH/2-6,wx1,botC+botH/2+14,COL.green,1.6,[5,4]);
+    textAt(ctx,'principal branch',(wx0+wx1)/2,topC-topH/2-12,{align:'center',size:12,weight:700,color:COL.green});
+    textAt(ctx,F.name+' x',12,topC-topH/2+8,{size:13,weight:700,color:COL.blue});
+    textAt(ctx,F.name+'⁻¹('+F.name+' x)',12,botC-botH/2+8,{size:13,weight:700,color:COL.red});
+    // f(x) curve
+    const pts=ptsOf(F.f,-7.6,7.6,1000,VT,F.lim);
+    strokePts(ctx,pts,COL.blue,2.2,0.9);
+    ctx.save(); ctx.beginPath(); ctx.rect(wx0,0,wx1-wx0,h); ctx.clip(); strokePts(ctx,pts,COL.green,4.2); ctx.restore();
+    // bottom: y = x guide and the output curve
+    const diag=[[VB.X(-7.6),VB.Y(-7.6)],[VB.X(7.6),VB.Y(7.6)]];
+    ctx.save(); ctx.beginPath(); ctx.rect(0,botC-botH/2-4,w,botH+8); ctx.clip();
+    line(ctx,diag[0][0],diag[0][1],diag[1][0],diag[1][1],COL.mid,1.5,[7,5]);
+    const gp=[]; for(let i=0;i<=1000;i++){ const xx=-7.6+15.2*i/1000, gg=F.inv(F.f(xx)); const prev=gp.length?gp[gp.length-1]:null; gp.push((!isFinite(gg)||(prev&&Math.abs(prev[2]-gg)>1.2))?null:[VB.X(xx),VB.Y(gg),gg]); }
+    // handle breaks: insert null where jump
+    const gp2=[]; for(let i=0;i<gp.length;i++){ if(i&&gp[i]&&gp[i-1]&&Math.abs(gp[i][2]-gp[i-1][2])>1.2) gp2.push(null); gp2.push(gp[i]); }
+    strokePts(ctx,gp2.map(q=>q?[q[0],q[1]]:null),COL.red,3.2,0.95);
+    ctx.save(); ctx.beginPath(); ctx.rect(wx0,0,wx1-wx0,h); ctx.clip(); strokePts(ctx,gp2.map(q=>q?[q[0],q[1]]:null),COL.green,4.6); ctx.restore();
+    ctx.restore();
+    // guides
+    const px=VT.X(x), py=VT.Y(fx), qx=VT.X(g);
+    const vis=Math.abs(fx)<F.lim;
+    line(ctx,px,topC-topH/2-6,px,botC+botH/2+8,COL.yellow,1.6,[5,5]);
+    if(vis){
+      line(ctx,px,py,qx,py,COL.red,1.8,[6,4]);
+      line(ctx,qx,py,qx,topC,COL.red,1.4,[3,4]);
+      circ(ctx,px,py,7,COL.blue,'#fff',2.8);
+      circ(ctx,qx,py,7,COL.green,COL.green,1);
+      textAt(ctx,'x*',qx,topC+(py<topC?16:-8),{align:'center',size:11,weight:700,color:COL.green});
+    }
+    circ(ctx,px,topC,4,COL.yellow,COL.yellow,1);
+    const by=VB.Y(g), byx=VB.Y(x);
+    circ(ctx,px,by,7.5,COL.red,'#fff',2.8);
+    line(ctx,px,VB.Y(0),px,by,COL.red,1.6);
+    textAt(ctx,'x',px,botC+botH/2+36,{align:'center',size:13,weight:700,color:COL.yellow});
+    // verdict banner
+    ctx.save(); rrect(ctx,w-196,12,184,28,8); ctx.fillStyle=eq?'#e4f7ec':'#fdece7'; ctx.fill(); ctx.restore();
+    textAt(ctx,eq?'f⁻¹(f(x)) = x  ✓':'f⁻¹(f(x)) ≠ x  ✗',w-104,31,{align:'center',size:13,weight:700,color:eq?COL.green:COL.red});
+
+    $('#xV').textContent=piStr(+xR.value);
+    const fN=F.f(+xR.value), gN=F.inv(fN), eqN=Math.abs(gN-(+xR.value))<2e-3;
+    $('#fV').textContent=Math.abs(fN)>99?'∞':fmt(fN,3);
+    $('#gV').textContent=piStr(gN);
+    $('#eqV').textContent=eqN?'Yes ✓':'No ✗'; $('#eqV').style.color=eqN?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.7 DOUBLE & TRIPLE ANGLE   (Example 3, Exercise 2.2 Q1–Q2)
+   sin⁻¹(2x√(1−x²)) = 2 sin⁻¹x  only while 2θ stays inside [−π/2, π/2]
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    ctrlBtns('mdB','Let',[['A','x = sin θ',1],['B','x = cos θ'],['C','x = cos θ, sin⁻¹']])+
+    ctrlBtns('nB','Multiple  n',[['2','2θ',1],['3','3θ']])+
+    ctrlSlider('xR','x',-1,1,0.005,0.4)+
+    `<div class="control-group"><div class="formula" id="fm"></div></div>`+
+    ctrlCards([['thV','θ',COL.blue],['ntV','n·θ',COL.red],['ouV','Right-hand side',COL.green],['eqV','Equal?']]);
+  const canvas=$('canvas'), xR=$('#xR');
+  let mode='A', n=2, t=0;
+  const Th={x:Math.asin(0.4),v:0};
+  const FM={A2:'sin⁻¹(2x√(1−x²)) = 2 sin⁻¹x',A3:'sin⁻¹(3x − 4x³) = 3 sin⁻¹x',B2:'cos⁻¹(2x² − 1) = 2 cos⁻¹x',B3:'cos⁻¹(4x³ − 3x) = 3 cos⁻¹x',C2:'sin⁻¹(2x√(1−x²)) = 2 cos⁻¹x'};
+  const thOf=x=>mode==='A'?Math.asin(clamp(x,-1,1)):Math.acos(clamp(x,-1,1));
+  const outOf=nt=>mode==='B'?Math.acos(Math.cos(nt)):Math.asin(Math.sin(nt));
+  const bn=wrap.querySelectorAll('#nB button');
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.v; if(mode==='C'){ n=2; setActive(bn,2); } bn[1].disabled=(mode==='C'); });
+  toggleWire(bn,b=>{ n=+b.dataset.v; });
+  animLoop(dt=>{
+    t+=dt;
+    const xT=+xR.value; springTo(Th,thOf(xT),60,9,dt);
+    const th=Th.x, nt=n*th, out=outOf(nt), eq=Math.abs(out-nt)<2e-3;
+    $('#xRV').textContent=fmt(xT,3);
+    $('#fm').textContent=FM[mode+n];
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(w*0.36,h*0.31), cx=w/2, cy=h*0.43;
+    circleAxes(ctx,cx,cy,R,w,h);
+    const U=(u,v)=>[cx+u*R,cy-v*R], o=U(0,0);
+    const sinType=(mode==='A'); // x measured vertically?
+    // the three rays
+    const tp=U(Math.cos(th),Math.sin(th)), np=U(Math.cos(nt),Math.sin(nt)), op=U(Math.cos(out),Math.sin(out));
+    // measure bars at the sides
+    const bar=(orient,val,off,color)=>{
+      if(orient==='v'){ const a=U(off,0), b=U(off,val); ctx.save(); ctx.lineCap='round'; line(ctx,a[0],a[1],b[0],b[1],color,6); ctx.restore(); return b; }
+      const a=U(0,-off), b=U(val,-off); ctx.save(); ctx.lineCap='round'; line(ctx,a[0],a[1],b[0],b[1],color,6); ctx.restore(); return b;
+    };
+    const o1=sinType?'v':'h', o2=(mode==='B')?'h':'v';
+    const v1=sinType?Math.sin(th):Math.cos(th);
+    const v2=(mode==='B')?Math.cos(nt):Math.sin(nt);
+    // leaders
+    const lead=(p,orient,off,color)=>{ const q=orient==='v'?U(off,(cy-p[1])/R):U((p[0]-cx)/R,-off); line(ctx,p[0],p[1],q[0],q[1],color,1.3,[4,5]); };
+    // x bar (yellow) — leader from blue tip
+    lead(tp,o1,-1.28,COL.yellow);
+    bar(o1,v1,-1.28,COL.yellow);
+    // rhs bar (red) — leaders from red tip and green tip
+    lead(np,o2,1.28,COL.red); if(!eq) lead(op,o2,1.28,COL.green);
+    bar(o2,v2,1.28,COL.red);
+    // rays
+    line(ctx,o[0],o[1],tp[0],tp[1],COL.blue,3.4);
+    arcMath(ctx,cx,cy,R*0.22,0,th,COL.blue,4);
+    line(ctx,o[0],o[1],np[0],np[1],COL.red,3.4);
+    arcMath(ctx,cx,cy,R*0.38,0,nt,COL.red,4);
+    if(!eq){ line(ctx,o[0],o[1],op[0],op[1],COL.green,3.4); arcMath(ctx,cx,cy,R*0.54,0,out,COL.green,4); circ(ctx,op[0],op[1],7,COL.green,'#fff',2.8); }
+    else { circ(ctx,np[0],np[1],11,COL.green,null,3); }
+    circ(ctx,tp[0],tp[1],6,COL.blue,'#fff',2.6); circ(ctx,np[0],np[1],7,COL.red,'#fff',2.8);
+    textAt(ctx,'θ',cx+Math.cos(th/2)*R*0.30-3,cy-Math.sin(th/2)*R*0.30+4,{size:14,weight:700,color:COL.blue});
+    textAt(ctx,n+'θ',cx+Math.cos(nt/2)*R*0.46,cy-Math.sin(nt/2)*R*0.46+4,{size:14,weight:700,color:COL.red});
+    if(!eq) textAt(ctx,'folds back',op[0]+(op[0]>cx?10:-10),op[1]-10,{align:op[0]>cx?'left':'right',size:12,weight:700,color:COL.green});
+
+    // validity strip: where does the identity hold along x ?
+    const sx0=w*0.2, sx1=w*0.8, sy=h-34, sw=sx1-sx0;
+    textAt(ctx,'Identity holds for x in',w/2,sy-14,{align:'center',size:12,weight:700,color:COL.muted});
+    const NS=240;
+    for(let i=0;i<NS;i++){
+      const xx=-1+2*(i+0.5)/NS, thx=thOf(xx), nth=n*thx, okk=Math.abs(outOf(nth)-nth)<1e-9;
+      ctx.fillStyle=okk?COL.green:'#f0c4bb'; ctx.fillRect(sx0+sw*i/NS,sy,sw/NS+0.6,12);
+    }
+    rrect(ctx,sx0,sy,sw,12,3); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    ['−1','0','1'].forEach((s,i)=>textAt(ctx,s,sx0+sw*i/2,sy+28,{align:'center',size:11,weight:600,color:COL.muted}));
+    const xs = mode==='A'?Math.sin(th):Math.cos(th);
+    const mk=sx0+sw*(xs+1)/2;
+    ctx.save(); ctx.fillStyle=COL.yellow; ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(mk,sy-2); ctx.lineTo(mk-7,sy-13); ctx.lineTo(mk+7,sy-13); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+
+    // cards
+    const thT=thOf(xT), ntT=n*thT, ouT=outOf(ntT), eqT=Math.abs(ouT-ntT)<2e-3;
+    $('#thV').textContent=piStr(thT); $('#ntV').textContent=piStr(ntT); $('#ouV').textContent=piStr(ouT);
+    $('#eqV').textContent=eqT?'Yes ✓':'No ✗'; $('#eqV').style.color=eqT?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.8 COMPLEMENTARY PAIR   sin⁻¹x + cos⁻¹x = π/2   ·   tan⁻¹x + cot⁻¹x = π/2
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    ctrlBtns('pB','Pair',[['sc','sin⁻¹ · cos⁻¹',1],['tc','tan⁻¹ · cot⁻¹']])+
+    ctrlSlider('xR','x',-1,1,'any',0.5)+
+    ctrlCards([['aV','First angle',COL.blue],['bV','Second angle',COL.red],['sV','Sum',COL.green,1]]);
+  const canvas=$('canvas'), xR=$('#xR');
+  let pair='sc', t=0;
+  const Ph={x:Math.acos(0.5),v:0};
+  const phOf=x=>pair==='sc'?Math.acos(clamp(x,-1,1)):PI/2-Math.atan(x);
+  toggleWire(wrap.querySelectorAll('#pB button'),b=>{ pair=b.dataset.v; const L=pair==='sc'?1:3; xR.min=-L; xR.max=L; xR.value=clamp(+xR.value,-L,L); });
+  animLoop(dt=>{
+    t+=dt;
+    const xT=+xR.value; springTo(Ph,phOf(xT),60,9,dt);
+    const phi=Ph.x, al=PI/2-phi; // al = blue (sin⁻¹ or tan⁻¹), phi = red (cos⁻¹ or cot⁻¹)
+    $('#xRV').textContent=fmt(xT,3);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(w*0.3,h*0.36), cx=w/2, cy=h*0.62;
+    circleAxes(ctx,cx,cy,R,w,h);
+    const U=(u,v)=>[cx+u*R,cy-v*R], o=U(0,0), pt=U(Math.cos(phi),Math.sin(phi));
+    // quarter reference (green)
+    arcMath(ctx,cx,cy,R*1.0,0,PI/2,COL.green,7,0.35);
+    // x measure (yellow)
+    if(pair==='sc'){ const q=U(Math.cos(phi),0); line(ctx,pt[0],pt[1],q[0],q[1],COL.yellow,1.4,[5,5]); ctx.save(); ctx.lineCap='round'; line(ctx,o[0],o[1],q[0],q[1],COL.yellow,6); ctx.restore(); circ(ctx,q[0],q[1],5,COL.yellow,COL.yellow,1); textAt(ctx,'x',(o[0]+q[0])/2,o[1]+22,{align:'center',size:13,weight:700,color:COL.yellow}); }
+    else { const xx=1/Math.tan(phi); line(ctx,U(-8,1)[0],U(-8,1)[1],U(8,1)[0],U(8,1)[1],COL.mid,1.2,[3,4]); const q=U(xx,1), a=U(0,1); line(ctx,o[0],o[1],q[0],q[1],COL.mid,1.4,[6,5]); ctx.save(); ctx.lineCap='round'; line(ctx,a[0],a[1],q[0],q[1],COL.yellow,6); ctx.restore(); circ(ctx,q[0],q[1],5,COL.yellow,COL.yellow,1); textAt(ctx,'x',(a[0]+q[0])/2,a[1]-10,{align:'center',size:13,weight:700,color:COL.yellow}); }
+    // rays and the two angles
+    line(ctx,o[0],o[1],pt[0],pt[1],COL.mid,3);
+    arcMath(ctx,cx,cy,R*0.30,0,phi,COL.red,5);
+    arcMath(ctx,cx,cy,R*0.46,phi,PI/2,COL.blue,5);
+    circ(ctx,pt[0],pt[1],7,COL.ink,'#fff',2.8);
+    textAt(ctx,pair==='sc'?'cos⁻¹x':'cot⁻¹x',cx+R*0.34,cy+18,{size:12,weight:700,color:COL.red});
+    textAt(ctx,pair==='sc'?'sin⁻¹x':'tan⁻¹x',cx+Math.cos((phi+PI/2)/2)*R*0.58,cy-Math.sin((phi+PI/2)/2)*R*0.58+4,{size:12,weight:700,color:COL.blue,align:'center'});
+    // stacked bar: red + blue always fill π/2
+    const bx0=w*0.12, bw=w*0.76, by=h*0.9;
+    const BX=a=>bx0+bw*(a/PI);
+    textAt(ctx,'angle added up',bx0,by-42,{size:12,weight:700,color:COL.muted});
+    line(ctx,BX(0),by-18,BX(PI/2),by-18,COL.green,3); line(ctx,BX(0),by-23,BX(0),by-13,COL.green,3); line(ctx,BX(PI/2),by-23,BX(PI/2),by-13,COL.green,3);
+    textAt(ctx,'π/2',BX(PI/4),by-26,{align:'center',size:12,weight:700,color:COL.green});
+    ctx.fillStyle=COL.red; ctx.fillRect(BX(0),by-8,BX(phi)-BX(0),11);
+    ctx.fillStyle=COL.blue; ctx.fillRect(Math.min(BX(phi),BX(PI/2)),by+4,Math.abs(BX(PI/2)-BX(phi)),11);
+    rrect(ctx,BX(0),by-8,bw,23,3); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    [[0,'0'],[PI/2,'π/2'],[PI,'π']].forEach(([a,s])=>textAt(ctx,s,BX(a),by+30,{align:'center',size:11,weight:600,color:COL.muted}));
+
+    const phT=phOf(xT), alT=PI/2-phT;
+    $('#aV').textContent=piStr(alT); $('#bV').textContent=piStr(phT); $('#sV').textContent=piStr(alT+phT)+'  (always)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.9 ADDING TWO ANGLES   (Miscellaneous Exercise Q3 – Q6)
+   2 sin⁻¹(3/5) = tan⁻¹(24/7)  ·  sin⁻¹(8/17) + sin⁻¹(3/5) = tan⁻¹(77/36)
+   cos⁻¹(4/5) + cos⁻¹(12/13) = cos⁻¹(33/65)  ·  cos⁻¹(12/13) + sin⁻¹(3/5) = sin⁻¹(56/65)
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell(); const $=s=>wrap.querySelector(s);
+  const presets=[['2 sin⁻¹ 3/5','sin',0.6,'sin',0.6],['sin⁻¹ 8/17 + sin⁻¹ 3/5','sin',8/17,'sin',0.6],['cos⁻¹ 4/5 + cos⁻¹ 12/13','cos',0.8,'cos',12/13],['cos⁻¹ 12/13 + sin⁻¹ 3/5','cos',12/13,'sin',0.6]];
+  $('.lab-side').innerHTML =
+    ctrlBtns('f1B','First angle  α',[['sin','sin⁻¹',1],['cos','cos⁻¹']])+
+    ctrlSlider('xR','Value for α',0.05,0.99,'any',0.6)+
+    ctrlBtns('f2B','Second angle  β',[['sin','sin⁻¹',1],['cos','cos⁻¹']])+
+    ctrlSlider('yR','Value for β',0.05,0.99,'any',0.6)+
+    ctrlChips('prC','Textbook cases',presets)+
+    ctrlCards([['aV','α',COL.blue],['bV','β',COL.green],['sV','α + β',COL.red,1],['siV','sin(α+β)'],['coV','cos(α+β)'],['taV','tan(α+β)',null,1]]);
+  const canvas=$('canvas'), xR=$('#xR'), yR=$('#yR');
+  let f1='sin', f2='sin', t=0;
+  const angOf=(f,v)=>f==='sin'?Math.asin(v):Math.acos(v);
+  const A={x:angOf('sin',0.6),v:0}, B={x:angOf('sin',0.6),v:0};
+  toggleWire(wrap.querySelectorAll('#f1B button'),b=>{ f1=b.dataset.v; });
+  toggleWire(wrap.querySelectorAll('#f2B button'),b=>{ f2=b.dataset.v; });
+  wrap.querySelectorAll('#prC button').forEach(b=>b.onclick=()=>{
+    const p=presets[+b.dataset.i]; f1=p[1]; xR.value=p[2]; f2=p[3]; yR.value=p[4];
+    setActive(wrap.querySelectorAll('#f1B button'),f1); setActive(wrap.querySelectorAll('#f2B button'),f2);
+  });
+  animLoop(dt=>{
+    t+=dt;
+    const aT=angOf(f1,+xR.value), bT=angOf(f2,+yR.value);
+    springTo(A,aT,60,9,dt); springTo(B,bT,60,9,dt);
+    const al=A.x, be=B.x, sm=al+be;
+    $('#xRV').textContent=ratStr(+xR.value); $('#yRV').textContent=ratStr(+yR.value);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(w*0.30,h*0.36), cx=w*0.36, cy=h*0.62;
+    circleAxes(ctx,cx,cy,R,w,h);
+    const U=(u,v)=>[cx+u*R,cy-v*R], o=U(0,0);
+    const p1=U(Math.cos(al),Math.sin(al)), p2=U(Math.cos(sm),Math.sin(sm));
+    // tangent line x = 1 and the two intercepts
+    line(ctx,U(1,-9)[0],U(1,-9)[1],U(1,9)[0],U(1,9)[1],COL.mid,1.2,[3,4]);
+    const t1=Math.tan(al), t2=Math.tan(sm);
+    if(isFinite(t1)){ line(ctx,o[0],o[1],U(1,t1)[0],U(1,t1)[1],COL.blue,1.3,[6,5]); }
+    if(isFinite(t2)){ line(ctx,o[0],o[1],U(1,t2)[0],U(1,t2)[1],COL.red,1.3,[6,5]); }
+    ctx.save(); ctx.lineCap='round';
+    line(ctx,U(1,0)[0],U(1,0)[1],U(1,t1)[0],U(1,t1)[1],COL.blue,5);
+    line(ctx,U(1,t1)[0],U(1,t1)[1],U(1,t2)[0],U(1,t2)[1],COL.green,5);
+    ctx.restore();
+    circ(ctx,U(1,t1)[0],U(1,t1)[1],4.5,COL.blue,'#fff',2); circ(ctx,U(1,t2)[0],U(1,t2)[1],4.5,COL.red,'#fff',2);
+    // rays + angle arcs
+    line(ctx,o[0],o[1],p1[0],p1[1],COL.blue,3.4);
+    line(ctx,o[0],o[1],p2[0],p2[1],COL.red,3.4);
+    arcMath(ctx,cx,cy,R*0.30,0,al,COL.blue,5);
+    arcMath(ctx,cx,cy,R*0.30,al,sm,COL.green,5);
+    arcMath(ctx,cx,cy,R*0.50,0,sm,COL.red,3.4);
+    // drops from the sum point
+    const dx=U(Math.cos(sm),0), dy=U(0,Math.sin(sm));
+    line(ctx,p2[0],p2[1],dx[0],dx[1],COL.red,1.3,[4,4]); line(ctx,p2[0],p2[1],dy[0],dy[1],COL.red,1.3,[4,4]);
+    circ(ctx,p1[0],p1[1],6,COL.blue,'#fff',2.6); circ(ctx,p2[0],p2[1],7.5,COL.red,'#fff',2.8);
+    textAt(ctx,'α',cx+Math.cos(al/2)*R*0.40-2,cy-Math.sin(al/2)*R*0.40+4,{size:14,weight:700,color:COL.blue});
+    textAt(ctx,'β',cx+Math.cos(al+be/2)*R*0.40-2,cy-Math.sin(al+be/2)*R*0.40+4,{size:14,weight:700,color:COL.green});
+    textAt(ctx,'α + β',cx+Math.cos(sm/2)*R*0.62,cy-Math.sin(sm/2)*R*0.62+18,{size:13,weight:700,color:COL.red});
+    textAt(ctx,'x = 1',U(1,0)[0]+8,clamp(U(1,3.4)[1],16,h-10),{size:11,weight:600,color:COL.mid});
+
+    const a2=aT, b2=bT, s2=a2+b2;
+    $('#aV').textContent=piStr(a2); $('#bV').textContent=piStr(b2); $('#sV').textContent=piStr(s2)+'  ('+deg(s2)+')';
+    $('#siV').textContent=ratStr(Math.sin(s2)); $('#coV').textContent=ratStr(Math.cos(s2));
+    $('#taV').textContent=Math.abs(Math.cos(s2))<1e-9?'undefined':ratStr(Math.tan(s2));
+  });
+  return wrap;
+}
+
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

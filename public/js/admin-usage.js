@@ -27,7 +27,7 @@
     var tabs = [['#/usage', 'Overview'], ['#/usage/schools', 'Schools'], ['#/usage/classes', 'Classes'], ['#/usage/screens', 'Screens'], ['#/usage/chapters', 'Chapters']];
     var flt = noFilters ? null : h('div', { class: 'filters' },
       sel([[7, 'Last 7 days'], [30, 'Last 30 days'], [90, 'Last 90 days'], [365, 'Last year']], F.days, function (v) { F.days = Number(v); A.routes.usage(location.hash.slice(1)); }, 'Period'),
-      sel([['', 'All classes'], [6, 'Class 6'], [7, 'Class 7'], [8, 'Class 8'], [9, 'Class 9'], [10, 'Class 10']], F.cls, function (v) { F.cls = v; A.routes.usage(location.hash.slice(1)); }, 'Class'),
+      sel([['', 'All classes'], [6, 'Class 6'], [7, 'Class 7'], [8, 'Class 8'], [9, 'Class 9'], [10, 'Class 10'], [11, 'Class 11'], [12, 'Class 12']], F.cls, function (v) { F.cls = v; A.routes.usage(location.hash.slice(1)); }, 'Class'),
       sel([['', 'All devices'], ['windows', 'Windows'], ['android', 'Android'], ['linux', 'Linux']], F.platform, function (v) { F.platform = v; A.routes.usage(location.hash.slice(1)); }, 'Platform'),
       h('a', { class: 'btn ghost small', href: '/api/admin/usage/export.csv' + qs(), text: 'Download CSV' }));
     A.show('#/usage', title, [h('div', { class: 'subnav', style: 'margin-top:0' }, tabs.map(function (t) { return h('a', { href: t[0], class: t[0] === active ? 'on' : '', text: t[1] }); })), flt].concat(nodes));

@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 2 · Chapter 2 — Mechanical Properties of Fluids | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.toggle-btn.red{background:var(--f-red); border-color:var(--f-red); color:#fff;}
+.toggle-btn.row{flex:0 0 auto; width:100%; padding:10px; margin-top:0;}
+.btn-row{display:flex; gap:6px;}
+.btn-row .toggle-btn{flex:1;}
+.rcard .rval.sm{font-size:var(--fs-sm);}
+.nav-item .n-num{min-width:22px;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">💧</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 2 · Ch 2</div>
+      <h1>Mechanical Properties of Fluids</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Fluid · Pressure</span>
+      <span><i style="background:var(--f-green)"></i>Speed · Result</span>
+      <span><i style="background:var(--f-red)"></i>Force · Weight</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    try{ tick(dt); }catch(e){ console.error(e); }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHAPTER-2 HELPERS — seeded random, eyepiece field, microscope,
+       living organisms (all line diagrams, all animated)
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function lw(k,base){ return clamp(k*base,1,3); }
+
+/* =====================================================================
+   1. PRESSURE = FORCE ÷ AREA            (§9.2, eq. 9.1, Example 9.1)
+   P = F/A.  Textbook check: F = 400 N on A = 20 cm² → P = 2×10⁵ Pa.
+   Foam dents with P (saturating), and a sharp tip pierces above ~2 MPa.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('f','Force F',10,1000,10,400) +
+    slider('a','Contact area A',0,100,1,89) +
+    group('Try', seg('pre',[['needle','Needle'],['spoon','Spoon'],['femur','Femurs']],-1)) +
+    cards([{l:'Pressure P = F/A',id:'rp',col:'var(--f-blue)',wide:true},{l:'Area A',id:'ra'},{l:'Foam',id:'rs'}]) +
+    hintBox('P = F ÷ A &nbsp;·&nbsp; same force, smaller area → greater pressure');
+  const canvas=$('canvas');
+  const areaOf=s=>Math.pow(10,-2+3.7*s/100);              // cm²
+  const seg1=wireSeg(wrap,'pre',k=>{
+    const pr={needle:[20,0],spoon:[20,67],femur:[400,89]}[k]; K.setSlider('f',pr[0]); K.setSlider('a',pr[1]);
+  });
+  ['f','a'].forEach(id=>$('#'+id).addEventListener('input',()=>seg1.set('none')));
+  const dep={x:-95,v:0}; let bar=3, t=0;
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const F=K.v('f'), Acm=areaOf(K.v('a')), P=F/(Acm*1e-4);
+    const pf=smoothstep(1.3e6,3.2e6,P);
+    const bt=h*0.3, y0=h*0.58, bx0=w*0.08, bx1=w*0.8, cx=(bx0+bx1)/2;
+    const Dmax=bt*0.42, dBlunt=Dmax*(1-Math.exp(-P/3.2e5));
+    const target=lerp(dBlunt,bt*0.9,pf);
+    springTo(dep,target,95,11,dt);
+    const d=dep.x;
+    const fw=2.5+15*Math.sqrt(Acm);                          // foot width, px
+    K.put('fV',F+' N'); K.put('aV',fmt(Acm,Acm<1?2:1)+' cm²');
+    K.put('rp',fmtP(P)); K.put('ra',fmt(Acm,Acm<1?2:1)+' cm²'); K.put('rs',pf>0.5?'Pierced':'Dents');
+    $('#rs').style.color=pf>0.5?'var(--f-red)':'var(--text-1)';
+    // dent profile: foam layers sag under the foot and recover with depth
+    const dentAt=(x,j)=>{
+      const u=Math.abs(x-cx), hw=fw/2, dec=Math.exp(-(j*bt/6)/(20+fw*0.9));
+      const spr=12+hw*0.45+j*bt/6*0.7;
+      const s=u<=hw?1:Math.exp(-Math.pow((u-hw)/spr,2));
+      return Math.max(d,0)*s*dec;
+    };
+    const lines=[];
+    for(let j=0;j<=6;j++){ const pts=[]; for(let x=bx0;x<=bx1;x+=4) pts.push([x,y0+bt*j/6+dentAt(x,j)]); lines.push(pts); }
+    // foam body
+    ctx.save(); ctx.beginPath();
+    lines[0].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+    ctx.lineTo(bx1,y0+bt); ctx.lineTo(bx0,y0+bt); ctx.closePath();
+    ctx.fillStyle='#eef6fe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    for(let j=1;j<=5;j++){ ctx.save(); ctx.beginPath(); lines[j].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.55; ctx.lineWidth=1.3; ctx.stroke(); ctx.restore(); }
+    for(let k=1;k<9;k++){ const x=bx0+(bx1-bx0)*k/9; ctx.save(); ctx.beginPath();
+      for(let j=0;j<=6;j++){ const yy=y0+bt*j/6+dentAt(x,j); j?ctx.lineTo(x,yy):ctx.moveTo(x,yy); }
+      ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.3; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); }
+    if(pf>0.25){ // cracks
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2; ctx.globalAlpha=Math.min(1,pf*1.3);
+      for(let k=-2;k<=2;k++){ ctx.beginPath(); ctx.moveTo(cx+k*3,y0+d*0.1); ctx.lineTo(cx+k*9,y0+d*0.35); ctx.lineTo(cx+k*13+4,y0+d*0.5); ctx.stroke(); }
+      ctx.restore();
+    }
+    // plunger (yellow outline = the area you chose)
+    const foot=y0+d, top=foot-h*0.36, rw=Math.min(15,fw);
+    ctx.save(); ctx.lineJoin='round'; ctx.fillStyle='#fff'; ctx.strokeStyle=COL.yellow; ctx.lineWidth=3;
+    ctx.beginPath();
+    if(fw<=15){ ctx.moveTo(cx-7.5,top); ctx.lineTo(cx+7.5,top); ctx.lineTo(cx+fw/2,foot-18); ctx.lineTo(cx,foot); ctx.lineTo(cx-fw/2,foot-18); }
+    else { ctx.moveTo(cx-7.5,top); ctx.lineTo(cx+7.5,top); ctx.lineTo(cx+7.5,foot-16); ctx.lineTo(cx+fw/2,foot-16); ctx.lineTo(cx+fw/2,foot); ctx.lineTo(cx-fw/2,foot); ctx.lineTo(cx-fw/2,foot-16); ctx.lineTo(cx-7.5,foot-16); }
+    ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    rrect(ctx,cx-26,top-12,52,12,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke();
+    // force arrow (red) — length follows F, throbs while the foam is still sagging
+    const al=26+h*0.17*(F/1000), thr=Math.abs(dep.v)*0.04;
+    vec(ctx,cx,top-12-al-thr,cx,top-14,COL.red,4.2);
+    textAt(ctx,'F = '+F+' N',cx+16,top-12-al*0.6,{size:13,weight:700,color:COL.red});
+    // area label
+    pill(ctx,cx+fw/2+12,foot-28-Math.max(0,Math.min(d,0)),'A = '+fmt(Acm,Acm<1?2:1)+' cm²',COL.yellow);
+    // pressure bar (log scale 1 kPa … 100 MPa)
+    const bx=w*0.86, by0=h*0.14, by1=h*0.82, fr=clamp((Math.log10(P)-3)/5,0,1);
+    bar=approach(bar,fr,5,dt);
+    rrect(ctx,bx-9,by0,18,by1-by0,6); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke();
+    ctx.save(); rrect(ctx,bx-9,by0,18,by1-by0,6); ctx.clip(); ctx.fillStyle=COL.blue; ctx.fillRect(bx-9,by1-(by1-by0)*bar,18,(by1-by0)*bar+2); ctx.restore();
+    const ty=by1-(by1-by0)*(Math.log10(2e6)-3)/5;
+    line(ctx,bx-12,ty,bx+16,ty,COL.red,2.4,[4,3]); textAt(ctx,'pierces',bx+20,ty+4,{size:10,color:COL.red,weight:700});
+    [['1 kPa',3],['1 MPa',6],['100 MPa',8]].forEach(([l,e])=>{ const yy=by1-(by1-by0)*(e-3)/5; line(ctx,bx-14,yy,bx-9,yy,COL.ink,1.4); textAt(ctx,l,bx-18,yy+4,{size:9.5,align:'right',color:COL.muted,weight:600}); });
+    textAt(ctx,'P',bx,by0-10,{size:13,align:'center',weight:700,color:COL.blue});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2. PRESSURE WITH DEPTH               (§9.2.2, eq. 9.7, Example 9.2)
+   P = Pₐ + ρgh.   Check: water, h = 10 m → ≈ 2 atm (textbook: 2.01×10⁵ Pa
+   with g = 10; 1.99×10⁵ Pa with g = 9.8).
+   ===================================================================== */
+const LIQ = { water:{n:'Water',rho:1000}, sea:{n:'Sea water',rho:1030}, oil:{n:'Oil',rho:800}, hg:{n:'Mercury',rho:13600} };
+function buildA2(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('d','Depth h',0,10,0.1,3) +
+    group('Liquid', seg('liq',[['water','Water'],['sea','Sea'],['oil','Oil'],['hg','Hg']],0)) +
+    `<button class="toggle-btn row" id="spin">↻ Spin the probe</button>` +
+    cards([{l:'Absolute P',id:'r1',col:'var(--f-blue)'},{l:'In atm',id:'r2'},{l:'Gauge ρgh',id:'r3',wide:true}]) +
+    hintBox('P = Pₐ + ρ g h');
+  let liq='water', spin=false, depth={x:0,v:0}, Pn={x:PATM,v:0}, rot=0, t=0, first=true;
+  wireSeg(wrap,'liq',v=>liq=v);
+  $('#spin').onclick=e=>{ spin=!spin; e.currentTarget.classList.toggle('play',spin); };
+  const canvas=$('canvas');
+  const bub=Array.from({length:7},()=>({x:Math.random(),y:Math.random(),s:0.05+Math.random()*0.08}));
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const rho=LIQ[liq].rho, hT=K.v('d');
+    const tx0=w*0.1, tx1=w*0.5, ytop=h*0.1, ys=h*0.19, yb=h*0.94, sc=(yb-ys-34)/10, cx=(tx0+tx1)/2;
+    if(first){ depth.x=0; first=false; }
+    springTo(depth,hT,26,9.5,dt);
+    const hd=Math.max(0,depth.x), P=PATM+rho*G*hd;
+    springTo(Pn,P,90,16,dt);
+    K.put('dV',fmt(hT,1)+' m'); K.put('r1',fmtP(P)); K.put('r2',fmt(P/PATM,2)+' atm'); K.put('r3',fmtP(rho*G*hd)+'  ('+fmt(rho*G*hd/PATM,2)+' atm)');
+    // tank
+    const wall=()=>{ ctx.beginPath(); ctx.rect(tx0,ys-8,tx1-tx0,yb-ys+8); };
+    liquid(ctx,wall,tx0,tx1,ys,yb,t,1.6);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(tx0,ytop+10); ctx.lineTo(tx0,yb); ctx.lineTo(tx1,yb); ctx.lineTo(tx1,ytop+10); ctx.stroke(); ctx.restore();
+    // bubbles drifting up
+    ctx.save(); ctx.beginPath(); ctx.rect(tx0,ys,tx1-tx0,yb-ys); ctx.clip();
+    bub.forEach(b=>{ b.y-=b.s*dt; if(b.y<0) b.y=1; circ(ctx,tx0+8+b.x*(tx1-tx0-16),ys+b.y*(yb-ys),2.4,COL.blue,null,1.2); }); ctx.restore();
+    // depth ruler
+    for(let m=0;m<=10;m++){ const yy=ys+m*sc; line(ctx,tx0-12,yy,tx0,yy,COL.ink,m%5?1.2:2); if(m%2===0) textAt(ctx,m+' m',tx0-16,yy+4,{size:10.5,align:'right',color:COL.muted,weight:600}); }
+    // crane + rope
+    line(ctx,cx-90,ytop-2,cx+40,ytop-2,COL.ink,4); line(ctx,cx-90,ytop-2,cx-90,ytop+10,COL.ink,3);
+    const py=ys+depth.x*sc, r=19;
+    line(ctx,cx,ytop-2,cx,py-r,COL.ink,1.6);
+    // probe capsule (Fig 9.1b) + arrows normal to its skin
+    rot+=spin?dt*1.6:0;
+    const L=16+44*clamp(SQ(Math.max(0,Pn.x-PATM)/2e6),0,1);
+    for(let k=0;k<8;k++){ const a=rot+k*Math.PI/4, c=Math.cos(a), s=Math.sin(a);
+      vec(ctx,cx+c*(r+4+L),py+s*(r+4+L),cx+c*(r+3),py+s*(r+3),COL.blue,2.6); }
+    circ(ctx,cx,py,r,COL.ink,'#fff',2.6);
+    ctx.save(); ctx.translate(cx,py); ctx.rotate(rot);
+    line(ctx,-r+4,0,-5,0,COL.ink,1.8); rect(ctx,-5,-9,5,18,COL.yellow,'#fff',2.4);
+    ctx.beginPath(); ctx.moveTo(-r+4,0); for(let i=0;i<6;i++) ctx.lineTo(-r+4+(i+0.5)*(r-9)/6,(i%2?-5:5)); ctx.lineTo(-5,0); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; ctx.stroke();
+    ctx.restore();
+    // signal to dial
+    const dr=Math.min(82,w*0.1), dx=w*0.76, dy=h*0.3;
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.setLineDash([7,6]); ctx.lineDashOffset=-t*40;
+    ctx.beginPath(); ctx.moveTo(cx+r,py); ctx.lineTo(tx1+16,py); ctx.lineTo(tx1+16,dy); ctx.lineTo(dx-dr,dy); ctx.stroke(); ctx.restore();
+    dial(ctx,dx,dy,dr,(Pn.x/PATM)/15,15,'atm',fmt(Pn.x/PATM,2)+' atm',5);
+    // inset graph P vs h
+    const gx=w*0.6, gy=h*0.62, gw=w*0.34, gh=h*0.26;
+    const Pmax=PATM+rho*G*10;
+    line(ctx,gx,gy,gx,gy+gh,COL.ink,2); line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.ink,2);
+    textAt(ctx,'P',gx-8,gy+8,{size:12,align:'right',weight:700,color:COL.blue}); textAt(ctx,'h',gx+gw+4,gy+gh+4,{size:12,weight:700,color:COL.yellow});
+    const gp=(hh,pp)=>[gx+gw*hh/10, gy+gh-gh*(pp-0)/ (Pmax*1.05)];
+    const A=gp(0,PATM), B=gp(10,Pmax); line(ctx,A[0],A[1],B[0],B[1],COL.blue,2.6);
+    line(ctx,gx,A[1],gx-5,A[1],COL.ink,1.6); textAt(ctx,'Pₐ',gx-8,A[1]+4,{size:10.5,align:'right',color:COL.muted,weight:600});
+    const D=gp(Math.max(0,depth.x),Pn.x);
+    line(ctx,D[0],D[1],D[0],gy+gh,COL.yellow,1.4,[4,3]); line(ctx,gx,D[1],D[0],D[1],COL.blue,1.4,[4,3]);
+    circ(ctx,D[0],D[1],6,COL.red,COL.red,1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3. HYDROSTATIC PARADOX               (§9.2.2, Fig 9.4)
+   Three vessels joined at the base: the water finds ONE level.
+   Flow between them: q = c·(L − mean L)  — pressure ρgL drives it.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Pour into', seg('pv',[['0','A'],['1','B'],['2','C']],1)) +
+    `<div class="btn-row"><button class="toggle-btn play" id="pour">💧 Pour</button><button class="toggle-btn" id="drain">Drain</button></div>` +
+    `<button class="toggle-btn navy row" id="reset" style="margin-top:0">↺ Uneven start</button>` +
+    cards([{l:'Level A',id:'la'},{l:'Level B',id:'lb'},{l:'Level C',id:'lc'},{l:'Bottom pressure',id:'pp',col:'var(--f-blue)',wide:true}],'three') +
+    hintBox('P = Pₐ + ρ g h — depends on height only');
+  $('.result-cards').classList.add('three');
+  const canvas=$('canvas');
+  const SH=[{w0:112,k:0},{w0:38,k:0},{w0:48,k:0.46}], HB=300;
+  const Vof=(i,L)=>SH[i].w0*L+SH[i].k*L*L/2;
+  const Lof=(i,V)=>SH[i].k? (-SH[i].w0+SQ(SH[i].w0*SH[i].w0+2*SH[i].k*V))/SH[i].k : V/SH[i].w0;
+  let V=[0,1,2].map(i=>Vof(i,[55,235,115][i])), pv=1, pouring=false, draining=false, tilt=0, t=0;
+  const dots=Array.from({length:22},(_,i)=>({u:i/22,j:Math.random()}));
+  wireSeg(wrap,'pv',v=>pv=+v);
+  $('#pour').onclick=()=>{ pouring=!pouring; draining=false; };
+  $('#drain').onclick=()=>{ draining=!draining; pouring=false; };
+  $('#reset').onclick=()=>{ V=[0,1,2].map(i=>Vof(i,[55,235,115][i])); pouring=draining=false; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/800,h/560,1.25), yb=h*0.8, pipeH=22*sc, xs=[w*0.2,w*0.5,w*0.8];
+    // physics (a few sub-steps keeps the exchange smooth)
+    let q=[0,0,0];
+    for(let s=0;s<3;s++){
+      const L=V.map((v,i)=>Lof(i,v)), M=(L[0]+L[1]+L[2])/3, d=dt/3;
+      q=L.map(l=>120*(l-M));
+      for(let i=0;i<3;i++) V[i]-=q[i]*d;
+      if(pouring){ V[pv]+=3600*d; }
+      if(draining){ const tot=V[0]+V[1]+V[2]; if(tot>400) for(let i=0;i<3;i++) V[i]-=3200*d*V[i]/tot; }
+      V=V.map(v=>Math.max(30,v));
+    }
+    const L=V.map((v,i)=>Lof(i,v));
+    if(pouring && L[pv]>=HB*0.95) pouring=false;
+    $('#pour').textContent=pouring?'■ Stop':'💧 Pour'; $('#drain').classList.toggle('active',draining);
+    // vessels
+    const wAt=(i,Lb)=>(SH[i].w0+SH[i].k*Lb)*sc;
+    const mean=(L[0]+L[1]+L[2])/3;
+    for(let i=0;i<3;i++){
+      const x=xs[i], Lpx=L[i]*sc, Hv=HB*sc;
+      const poly=()=>{ ctx.beginPath(); ctx.moveTo(x-wAt(i,0)/2,yb+pipeH); ctx.lineTo(x-wAt(i,0)/2,yb); ctx.lineTo(x-wAt(i,HB)/2,yb-Hv); ctx.lineTo(x+wAt(i,HB)/2,yb-Hv); ctx.lineTo(x+wAt(i,0)/2,yb); ctx.lineTo(x+wAt(i,0)/2,yb+pipeH); ctx.closePath(); };
+      liquid(ctx,poly,x-wAt(i,HB)/2-2,x+wAt(i,HB)/2+2,yb-Lpx,yb+pipeH,t+i,1.2+Math.min(3,Math.abs(q[i])*0.02));
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+      ctx.moveTo(x-wAt(i,0)/2,yb+pipeH); ctx.lineTo(x-wAt(i,0)/2,yb); ctx.lineTo(x-wAt(i,HB)/2,yb-Hv);
+      ctx.moveTo(x+wAt(i,0)/2,yb+pipeH); ctx.lineTo(x+wAt(i,0)/2,yb); ctx.lineTo(x+wAt(i,HB)/2,yb-Hv); ctx.stroke(); ctx.restore();
+      textAt(ctx,'ABC'[i],x,yb+pipeH+22,{size:14,align:'center',weight:700,color:COL.ink});
+      const hcm=L[i]/HB*60;
+      pill(ctx,x,yb+pipeH+50,'h = '+fmt(hcm,0)+' cm  ·  ρgh = '+fmt(1000*G*hcm/100/1000,1)+' kPa','#2f8fe0','center');
+    }
+    // common level
+    line(ctx,xs[0]-wAt(0,0)/2-12,yb-mean*sc,xs[2]+wAt(2,mean)/2+12,yb-mean*sc,COL.yellow,1.8,[8,5]);
+    // base pipe
+    const pL=xs[0]-wAt(0,0)/2-14, pR=xs[2]+wAt(2,0)/2+14;
+    ctx.save(); ctx.fillStyle=FL_BLUE; ctx.fillRect(pL,yb,pR-pL,pipeH); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+    ctx.moveTo(pL,yb+pipeH); ctx.lineTo(pR,yb+pipeH); ctx.moveTo(pL,yb); ctx.lineTo(pL,yb+pipeH); ctx.moveTo(pR,yb); ctx.lineTo(pR,yb+pipeH);
+    ctx.moveTo(pL,yb); ctx.lineTo(xs[0]-wAt(0,0)/2,yb); ctx.moveTo(xs[0]+wAt(0,0)/2,yb); ctx.lineTo(xs[1]-wAt(1,0)/2,yb);
+    ctx.moveTo(xs[1]+wAt(1,0)/2,yb); ctx.lineTo(xs[2]-wAt(2,0)/2,yb); ctx.moveTo(xs[2]+wAt(2,0)/2,yb); ctx.lineTo(pR,yb); ctx.stroke(); ctx.restore();
+    // flow dots (green) — velocity follows the real q in each pipe section
+    dots.forEach(d=>{
+      let x=pL+8+d.u*(pR-pL-16); const qq=x<xs[1]?q[0]:-q[2];
+      x+=qq*0.012*dt*(1+0.0)+gauss()*3*dt; d.u=clamp((x-pL-8)/(pR-pL-16),0,1);
+      if(Math.abs(qq)>2 && (d.u>=1||d.u<=0)) d.u=qq>0?0:1;
+      circ(ctx,x,yb+pipeH/2+(d.j-0.5)*8,2.8,COL.green,COL.green,1);
+    });
+    // tap
+    const tx=w*0.35, ty=yb+pipeH;
+    line(ctx,tx,ty,tx,ty+10,COL.ink,3); rect(ctx,tx-9,ty+8,18,7,draining?COL.yellow:COL.ink,'#fff',2.2);
+    if(draining) for(let k=0;k<3;k++){ const p=((t*1.6+k/3)%1); circ(ctx,tx,ty+18+p*26,2.4,COL.blue,COL.blue,1); }
+    // jug
+    tilt=approach(tilt,pouring?0.95:0,5,dt);
+    const jc=Math.cos(tilt), js=Math.sin(tilt), jx=xs[pv]+(30*jc+26*js)*sc, jy=yb-HB*sc-(70+0)*sc;
+    ctx.save(); ctx.translate(jx,jy); ctx.rotate(-tilt); ctx.scale(sc,sc);
+    ctx.beginPath(); ctx.moveTo(-30,-26); ctx.lineTo(30,-26); ctx.lineTo(24,26); ctx.lineTo(-24,26); ctx.closePath();
+    ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(30,-18); ctx.quadraticCurveTo(52,-14,44,12); ctx.stroke();
+    ctx.beginPath(); ctx.rect(-26,-24+Math.max(0,28*(1-Math.min(1,tilt*0.4))),52,60); ctx.save(); ctx.clip(); ctx.fillStyle=FL_BLUE; ctx.fillRect(-28,-6,56,40); ctx.restore();
+    ctx.restore();
+    if(tilt>0.5){ const lx=jx+(-30*jc-26*js)*sc, ly=jy+(30*js-26*jc)*sc, ysurf=yb-L[pv]*sc;
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.setLineDash([9,5]); ctx.lineDashOffset=-t*90; ctx.beginPath(); ctx.moveTo(lx,ly+2); ctx.lineTo(lx,ysurf); ctx.stroke(); ctx.restore(); }
+    K.put('la',fmt(L[0]/HB*60,0)+' cm'); K.put('lb',fmt(L[1]/HB*60,0)+' cm'); K.put('lc',fmt(L[2]/HB*60,0)+' cm');
+    const spread=Math.max(...L)-Math.min(...L);
+    K.put('pp',spread<4?'Equal at the base':'Settling…');
+    $('#pp').style.color=spread<4?'var(--f-green)':'var(--f-blue)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4. BAROMETER & MANOMETER             (§9.2.3, Fig 9.5, eq. 9.8)
+   Barometer: Pₐ = ρ g h   (760 mm Hg ≈ 1.013×10⁵ Pa, column is vertical
+   height — tilting the tube only lengthens the column: h/cos θ).
+   Manometer: gauge pressure P − Pₐ = ρ g h.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Instrument', seg('mode',[['bar','Barometer'],['man','Manometer']],0)) +
+    `<div id="barCtl">` + slider('pa','Atmospheric pressure',680,790,1,760) + slider('tilt','Tilt the tube',0,60,1,0) +
+      group('Liquid', seg('bl',[['hg','Mercury'],['wa','Water']],0)) + `</div>` +
+    `<div id="manCtl" class="hidden">` + slider('pg','Gas pressure − Pₐ',-15,15,0.5,6) +
+      group('Liquid', seg('ml',[['hg','Mercury'],['wa','Water'],['oil','Oil']],0)) + `</div>` +
+    cards([{l:'Height h',id:'c1',col:'var(--f-yellow)'},{l:'Pressure',id:'c2',col:'var(--f-blue)'},{l:'Absolute',id:'c3',wide:true}]) +
+    hintBox('Barometer: Pₐ = ρ g h &nbsp;·&nbsp; Manometer: P − Pₐ = ρ g h');
+  let mode='bar', bl='hg', ml='hg', t=0;
+  const RHO={hg:13600,wa:1000,oil:800};
+  const lc={x:0.76,v:0}, dh={x:0,v:0}, piston={x:0.6,v:0}, tiltS={x:0,v:0};
+  const parts=Array.from({length:64},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-0.5)*160,vy:(Math.random()-0.5)*160}));
+  let nAct=30;
+  wireSeg(wrap,'mode',v=>{ mode=v; $('#barCtl').classList.toggle('hidden',v!=='bar'); $('#manCtl').classList.toggle('hidden',v!=='man'); });
+  wireSeg(wrap,'bl',v=>bl=v); wireSeg(wrap,'ml',v=>ml=v);
+  const canvas=$('canvas');
+  const lab=(id,tx)=>{ const e=$('#'+id); e.previousElementSibling.textContent=tx; };
+  function drawBar(ctx,w,h,dt){
+    const mm=K.v('pa'), th=K.v('tilt')*Math.PI/180, rho=RHO[bl], Lreal=bl==='hg'?1.0:12;
+    const Pa=mm*133.322, hm=Pa/(rho*G);
+    springTo(tiltS,th,70,11,dt); const T=tiltS.x;
+    const lcT=Math.min(Lreal, hm/Math.cos(th));
+    springTo(lc,lcT,85,11,dt);
+    const tr0=w*0.1, tr1=w*0.66, ys=h*0.84, yb=h*0.94, px=w*0.38, pxm=h*0.7/Lreal;
+    const colFill=bl==='hg'?'rgba(129,149,171,0.55)':FL_BLUE, colLn=bl==='hg'?'#5b6f86':COL.blue;
+    K.put('paV',mm+' mm Hg'); K.put('tiltV',Math.round(T*180/Math.PI)+'°');
+    lab('c1','Column height (vertical)'); lab('c2','Pressure'); lab('c3','Length along tube');
+    const hv=lc.x*Math.cos(T);
+    K.put('c1',hv>=1?fmt(hv,2)+' m':fmt(hv*100,1)+' cm'); K.put('c2',fmt(Pa/1000,1)+' kPa · '+mm+' mm Hg'); K.put('c3',lc.x>=1?fmt(lc.x,2)+' m':fmt(lc.x*100,1)+' cm');
+    // trough
+    const trPath=()=>{ ctx.beginPath(); ctx.rect(tr0,ys,tr1-tr0,yb-ys); };
+    liquid(ctx,trPath,tr0,tr1,ys,yb,t,1.2,colFill,colLn);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(tr0,ys-14); ctx.lineTo(tr0,yb); ctx.lineTo(tr1,yb); ctx.lineTo(tr1,ys-14); ctx.stroke(); ctx.restore();
+    // atmosphere pressing on the trough (blue)
+    const len=18+62*(mm-680)/110;
+    [tr0+28,tr0+80,tr0+132,px+78,px+130,px+182,tr1-24].forEach((x,i)=>{ if(x<tr1-6&&Math.abs(x-px)>40){ const p=Math.sin(t*3+i)*3; vec(ctx,x,ys-len-8+p,x,ys-6,COL.blue,3); } });
+    textAt(ctx,'Pₐ',tr1-40,ys-len-14,{size:15,weight:700,color:COL.blue});
+    // tube
+    ctx.save(); ctx.translate(px,ys); ctx.rotate(T);
+    const Lt=Lreal*pxm, lcp=lc.x*pxm;
+    ctx.fillStyle=colFill; ctx.fillRect(-9,-lcp,18,lcp+22);
+    ctx.beginPath(); ctx.moveTo(-9,22); ctx.lineTo(-9,-Lt+9); ctx.arc(0,-Lt+9,9,Math.PI,0); ctx.lineTo(9,22);
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke();
+    line(ctx,-9,-lcp,9,-lcp,colLn,2.4);
+    if(lc.x<Lreal-0.01) textAt(ctx,'vacuum',14,-(lcp+Lt)/2,{size:10,color:COL.mid,weight:600});
+    ctx.restore();
+    // h marker (yellow): vertical from trough surface to column top
+    const topX=px+Math.sin(T)*lcp, topY=ys-Math.cos(T)*lcp, mx=px+Math.max(60,Math.sin(T)*Lt+46);
+    line(ctx,topX+12,topY,mx+8,topY,COL.yellow,1.6,[5,4]); line(ctx,px+14,ys,mx+8,ys,COL.yellow,1.6,[5,4]);
+    dimArrow(ctx,mx,topY,ys,COL.yellow);
+    pill(ctx,mx+10,(topY+ys)/2,'h = '+(hv>=1?fmt(hv,2)+' m':fmt(hv*100,1)+' cm'),COL.yellow);
+    if(mm<=750) pill(ctx,tr1-120,ys-len-40,'low pressure → storm',COL.red);
+    // ruler
+    const step=bl==='hg'?0.1:1;
+    for(let k=0;k*step<=Lreal+1e-6;k++){ const yy=ys-k*step*pxm; line(ctx,tr0-4,yy,tr0+8,yy,COL.ink,1.2); if(bl==='hg'?k%2===0:true) textAt(ctx,bl==='hg'?(k*10)+' cm':k+' m',tr0-8,yy+4,{size:9.5,align:'right',color:COL.muted,weight:600}); }
+  }
+  function drawMan(ctx,w,h,dt){
+    const Pg=K.v('pg')*1000, rho=RHO[ml], hm=Pg/(rho*G);
+    const pxm=0.3*h/(15000/(rho*G));
+    springTo(dh,hm*pxm,95,13,dt);
+    const Pabs=PATM+Pg, tgtP=0.82*PATM/Pabs; springTo(piston,tgtP,120,14,dt);
+    K.put('pgV',fmt(Pg/1000,1)+' kPa');
+    lab('c1','Height difference h'); lab('c2','Gauge pressure'); lab('c3','Absolute pressure');
+    K.put('c1',Math.abs(hm)>=1?fmt(Math.abs(hm),2)+' m':fmt(Math.abs(hm)*100,1)+' cm'); K.put('c2',fmt(Pg/1000,1)+' kPa'); K.put('c3',fmt(Pabs/1000,1)+' kPa');
+    const lw_=Math.max(20,w*0.028), xl=w*0.56, xr=w*0.72, cyT=h*0.08, cyB=h*0.28, ybU=h*0.9, ym=h*0.58;
+    const x0=w*0.2, xe=xl+lw_/2;
+    const yl=ym+dh.x/2, yr=ym-dh.x/2;
+    const colFill=ml==='hg'?'#8195ab':ml==='wa'?COL.blue:COL.yellow;
+    // tube (outlined)
+    const centre=()=>{ ctx.beginPath(); ctx.moveTo(xl,cyB); ctx.lineTo(xl,ybU); ctx.lineTo(xr,ybU); ctx.lineTo(xr,cyB); };
+    ctx.save(); ctx.lineJoin='round'; ctx.lineCap='butt'; centre(); ctx.strokeStyle=COL.ink; ctx.lineWidth=lw_+6; ctx.stroke(); centre(); ctx.strokeStyle='#fff'; ctx.lineWidth=lw_; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xl,yl); ctx.lineTo(xl,ybU); ctx.lineTo(xr,ybU); ctx.lineTo(xr,yr); ctx.strokeStyle=colFill; ctx.globalAlpha=0.55; ctx.lineWidth=lw_-2; ctx.stroke(); ctx.restore();
+    line(ctx,xl-lw_/2+1,yl,xl+lw_/2-1,yl,colFill,3); line(ctx,xr-lw_/2+1,yr,xr+lw_/2-1,yr,colFill,3);
+    // cylinder + piston
+    ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(x0,cyT); ctx.lineTo(xe,cyT); ctx.lineTo(xe,cyB+4); ctx.moveTo(x0,cyB); ctx.lineTo(xl-lw_/2,cyB); ctx.stroke(); ctx.restore();
+    const xp=xe-(xe-x0)*piston.x;
+    rect(ctx,xp-8,cyT+2,8,cyB-cyT-4,COL.ink,'#fff',2.6);
+    line(ctx,xp-8,(cyT+cyB)/2,x0-26,(cyT+cyB)/2,COL.ink,3); rect(ctx,x0-34,cyT+4,8,cyB-cyT-8,COL.ink,'#fff',2.4);
+    const fa=Math.sign(Pg||1)*(14+Math.abs(Pg)/15000*50);
+    if(Math.abs(Pg)>200) vec(ctx,fa>0?x0-34-fa-12:x0-34-12+0,(cyT+cyB)/2,fa>0?x0-36:x0-34-12-Math.abs(fa),(cyT+cyB)/2,COL.red,4);
+    // gas molecules (green) bouncing in the connected space
+    const want=Math.round(16+38*clamp(Pabs/PATM-0.85,0,0.4)/0.4*1+ (Pabs>PATM?10:0)); nAct=approach(nAct,want,4,dt);
+    const inside=(x,y)=> y<cyB ? (x>xp+2&&x<xe-2&&y>cyT+3) : (x>xl-lw_/2+3&&x<xl+lw_/2-3&&y<yl-3);
+    parts.forEach((p,i)=>{
+      if(i>=nAct) return;
+      if(p.init!==true){ p.px=lerp(xp+4,xe-4,Math.random()); p.py=lerp(cyT+6,cyB-6,Math.random()); p.init=true; }
+      let nx=p.px+p.vx*dt, ny=p.py+p.vy*dt;
+      if(!inside(nx,ny)){ if(inside(nx,p.py)){ p.vy*=-1; ny=p.py; } else if(inside(p.px,ny)){ p.vx*=-1; nx=p.px; } else { p.vx*=-1; p.vy*=-1; nx=p.px; ny=p.py; } }
+      p.px=nx; p.py=ny; circ(ctx,p.px,p.py,2.6,COL.green,COL.green,1);
+    });
+    // pressure arrows on the two surfaces
+    const aL=14+26*clamp((Pabs-PATM*0.85)/(PATM*0.3),0,1.3), aR=14+26*clamp((PATM-PATM*0.85)/(PATM*0.3),0,1.3);
+    [-1,1].forEach(k=>vec(ctx,xl+k*lw_*0.22,yl-aL-4,xl+k*lw_*0.22,yl-6,COL.blue,2.4));
+    vec(ctx,xr,yr-aR-34,xr,yr-8,COL.blue,3); textAt(ctx,'Pₐ',xr+14,yr-aR-20,{size:14,weight:700,color:COL.blue});
+    textAt(ctx,'P',xl-lw_/2-18,cyB+20,{size:14,weight:700,color:COL.blue});
+    // h marker
+    line(ctx,xl+lw_/2+4,yl,xr+lw_/2+44,yl,COL.yellow,1.6,[5,4]); line(ctx,xr+lw_/2+4,yr,xr+lw_/2+44,yr,COL.yellow,1.6,[5,4]);
+    if(Math.abs(yl-yr)>3){ dimArrow(ctx,xr+lw_/2+34,yr,yl,COL.yellow); }
+    pill(ctx,xr+lw_/2+48,(yl+yr)/2,'h = '+(Math.abs(hm)>=1?fmt(Math.abs(hm),2)+' m':fmt(Math.abs(hm)*100,1)+' cm'),COL.yellow);
+  }
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='bar') drawBar(ctx,w,h,dt); else drawMan(ctx,w,h,dt);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5. HYDRAULIC LIFT                    (§9.2.4, Fig 9.6, Examples 9.5–9.6)
+   P = F₁/A₁ everywhere → F₂ = F₁·A₂/A₁ ;  d₂ = d₁·A₁/A₂ (volume conserved)
+   Check: r₁ = 5 cm, r₂ = 15 cm, car 1350 kg → F₁ = 1470 N.
+   ===================================================================== */
+function drawCar(ctx,cx,by,s,load){
+  const L=load>2000;
+  ctx.save(); ctx.translate(cx,by); ctx.scale(s,s); ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle=COL.ink; ctx.fillStyle='#fff'; ctx.lineWidth=2.6/s;
+  ctx.beginPath();
+  if(!L){ ctx.moveTo(-70,-12); ctx.lineTo(-70,-34); ctx.lineTo(-44,-38); ctx.lineTo(-28,-62); ctx.lineTo(24,-62); ctx.lineTo(46,-38); ctx.lineTo(70,-34); ctx.lineTo(70,-12); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-22,-58); ctx.lineTo(-36,-38); ctx.lineTo(0,-38); ctx.lineTo(0,-58); ctx.closePath(); ctx.moveTo(6,-58); ctx.lineTo(6,-38); ctx.lineTo(40,-38); ctx.lineTo(22,-58); ctx.closePath(); ctx.stroke(); }
+  else { ctx.rect(-90,-80,120,66); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(30,-14); ctx.lineTo(30,-60); ctx.lineTo(58,-60); ctx.lineTo(76,-36); ctx.lineTo(80,-14); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(36,-54); ctx.lineTo(54,-54); ctx.lineTo(68,-36); ctx.lineTo(36,-36); ctx.closePath(); ctx.stroke(); }
+  [L?[-60,-12]:[-40,-12],L?[-20,-12]:[0,-12],L?[54,-12]:[42,-12]].slice(0,L?3:2).forEach(([x,y])=>{ ctx.beginPath(); ctx.arc(x,y,12,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2); ctx.stroke(); });
+  ctx.restore();
+}
+function buildA5(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('f','Push on small piston F₁',0,3000,10,1600) +
+    slider('r','Large piston radius r₂',5,30,0.5,15) +
+    group('Load', seg('ld',[['1350','Car 1350 kg'],['4000','Truck 4000 kg']],0)) +
+    `<div class="btn-row"><button class="toggle-btn play" id="pump">⟳ Pump</button><button class="toggle-btn" id="rel">Release</button></div>` +
+    cards([{l:'F₁ needed',id:'c1',col:'var(--f-red)'},{l:'Lifting force F₂',id:'c2',col:'var(--f-red)'},{l:'Mechanical advantage',id:'c3'},{l:'Lift height',id:'c4',col:'var(--f-green)'}]) +
+    hintBox('F₂ = F₁ × A₂/A₁ &nbsp;·&nbsp; small r₁ = 5 cm');
+  let pumping=true, load=1350, rel=false, s=0, D2=0, phase='down', t=0, shake=0;
+  wireSeg(wrap,'ld',v=>load=+v);
+  $('#pump').onclick=()=>{ pumping=!pumping; };
+  $('#rel').onclick=()=>{ rel=true; };
+  const canvas=$('canvas');
+  const S1=12, DMAX=14;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const F1=K.v('f'), r2=K.v('r'), r1=5, ratio=r2/r1, A=ratio*ratio, need=load*G/A, can=F1>=need;
+    // pump physics
+    shake=approach(shake,0,6,dt);
+    if(rel){ D2-=6*dt; if(D2<=0){ D2=0; rel=false; } }
+    if(pumping && !rel){
+      if(phase==='down'){
+        if(can && D2<DMAX){ const ds=Math.min(26*dt,S1-s); s+=ds; D2=Math.min(DMAX,D2+ds/A); if(s>=S1-1e-6) phase='up'; }
+        else if(!can) shake=1;
+      } else { s-=45*dt; if(s<=0){ s=0; phase='down'; } }
+    } else { s=Math.max(0,s-45*dt); phase='down'; }
+    $('#pump').classList.toggle('red',pumping&&!can); $('#pump').textContent=pumping?'■ Stop pumping':'⟳ Pump';
+    K.put('fV',F1+' N'); K.put('rV',fmt(r2,1)+' cm');
+    K.put('c1',fmt(need,0)+' N'); K.put('c2',fmt(F1*A/1000,1)+' kN'); K.put('c3','× '+fmt(A,1)); K.put('c4',fmt(D2,1)+' cm');
+    $('#c1').style.color=can?'var(--f-green)':'var(--f-red)';
+    // geometry
+    const sc=Math.min(w/800,h/560,1.3), ws=44*sc, wb=ws*ratio, xS=w*0.16, xB=w*0.64+ (wb>200?-20:0);
+    const ycT=h*0.48, ycB=h*0.78, pH=24*sc, pxcm=6*sc;
+    const pS=ycT+16*sc+s*pxcm, pB=ycB-14*sc-D2*pxcm, th=12*sc;
+    // fluid
+    ctx.save(); ctx.fillStyle=FL_BLUE;
+    ctx.fillRect(xS-ws/2,pS+th,ws,ycB+pH-pS-th); ctx.fillRect(xS-ws/2,ycB,xB-xS+wb/2+ws/2,pH); ctx.fillRect(xB-wb/2,pB+th,wb,ycB+pH-pB-th); ctx.restore();
+    // walls
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+    ctx.moveTo(xS-ws/2,ycT); ctx.lineTo(xS-ws/2,ycB+pH); ctx.lineTo(xB+wb/2,ycB+pH); ctx.lineTo(xB+wb/2,ycT);
+    ctx.moveTo(xS+ws/2,ycT); ctx.lineTo(xS+ws/2,ycB); ctx.lineTo(xB-wb/2,ycB); ctx.lineTo(xB-wb/2,ycT); ctx.stroke(); ctx.restore();
+    // small piston + handle
+    const sh=(Math.random()-0.5)*5*shake;
+    rect(ctx,xS-ws/2+2,pS,ws-4,th,COL.ink,'#fff',2.6);
+    const hy=pS-h*0.2+sh; line(ctx,xS,pS,xS,hy,COL.ink,5); rect(ctx,xS-24*sc,hy-10,48*sc,10,COL.ink,'#fff',2.4);
+    const al=22+78*F1/3000; if(F1>0) vec(ctx,xS,hy-10-al,xS,hy-12,COL.red,4.5);
+    textAt(ctx,'F₁',xS+ws/2+14,hy-10-al*0.55,{size:15,weight:700,color:COL.red});
+    // big piston + platform + load
+    rect(ctx,xB-wb/2+2,pB,wb-4,th,COL.ink,'#fff',2.6);
+    const plat=pB-52*sc; line(ctx,xB,pB,xB,plat+8,COL.ink,6);
+    const pw=Math.max(wb,100*sc)+30*sc; rect(ctx,xB-pw/2,plat,pw,10,COL.ink,'#fff',2.6);
+    drawCar(ctx,xB,plat,1.05*sc*(load>2000?1.0:1.15),load);
+    const fl=14+Math.min(110,(F1*A/3000/6)*60+14); vec(ctx,xB-pw/2-14,pB+8,xB-pw/2-14,pB-fl,COL.red,4); textAt(ctx,'F₂',xB-pw/2-26,pB-fl*0.5,{size:15,weight:700,color:COL.red,align:'right'});
+    // pressure arrows inside (blue)
+    for(let k=0;k<3;k++){ const p=0.5+0.5*Math.sin(t*3+k); ctx.save(); ctx.globalAlpha=0.9; vec(ctx,xS-ws/2+6,ycB+pH/2,xB-wb/2-6+0*k, ycB+pH/2,COL.blue,1.8); ctx.restore(); break; }
+    textAt(ctx,'P',(xS+xB)/2,ycB+pH+22,{size:14,weight:700,color:COL.blue,align:'center'});
+    // strokes badge
+    pill(ctx,xS+ws/2+16,pS+th+22,'d₁ = '+fmt(s,1)+' cm',COL.yellow);
+    if(D2>0.05||s>0.05) pill(ctx,xB+pw/2-4,pB+th+22,'lifted '+fmt(D2,1)+' cm',COL.green,'right');
+    if(pumping&&!can) pill(ctx,xS,ycT-h*0.3,'push harder — F₁ < '+fmt(need,0)+' N',COL.red,'center');
+    // weight arrow (red) on the load
+    const wl=40+20*load/4000*3; vec(ctx,xB+pw/2+16,plat-40,xB+pw/2+16,plat-40+wl,COL.red,3.4); textAt(ctx,'mg',xB+pw/2+26,plat-40+wl*0.55,{size:13,weight:700,color:COL.red});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6. STREAMLINE FLOW & CONTINUITY      (§9.3, eq. 9.10–9.11, Fig 9.7–9.8)
+   A₁v₁ = A₂v₂ = constant  (A ∝ width in this line diagram).
+   Narrow → streamlines crowd → speed rises.  Very fast flow turns turbulent.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('v','Inlet speed v₀',0.2,3,0.1,1) +
+    slider('n','Narrow part: area ratio A_R / A_P',0.25,1,0.01,0.45) +
+    `<button class="toggle-btn row" id="dye">💧 Inject dye</button>` +
+    cards([{l:'Speed at P',id:'cp'},{l:'Speed at R',id:'cr',col:'var(--f-green)'},{l:'Speed at Q',id:'cq'},{l:'A × v (flow rate)',id:'cf',col:'var(--f-blue)'},{l:'Flow',id:'ct',wide:true}],'three') +
+    hintBox('A<sub>P</sub>v<sub>P</sub> = A<sub>R</sub>v<sub>R</sub> = A<sub>Q</sub>v<sub>Q</sub>');
+  $('.result-cards').classList.add('three');
+  const canvas=$('canvas'), FR=[-0.84,-0.56,-0.28,0,0.28,0.56,0.84], NP=15;
+  let dye=false, t=0, turbS=0;
+  const P=[]; FR.forEach((f,li)=>{ for(let i=0;i<NP;i++) P.push({li,f,u:(i+Math.random()*0.5)/NP,o:0,dye:false}); });
+  $('#dye').onclick=e=>{ dye=!dye; e.currentTarget.classList.toggle('play',dye); P.forEach(p=>p.dye=dye&&p.li>=2&&p.li<=4); };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const v0=K.v('v'), rr=K.v('n'), px0=w*0.04, px1=w*0.96, yc=h*0.46, hw0=h*0.2, hwR=hw0*rr, Lx=px1-px0;
+    const bump=u=>smoothstep(0.3,0.42,u)*(1-smoothstep(0.6,0.72,u));
+    const hwAt=u=>hw0-(hw0-hwR)*bump(u);
+    const vmax=v0/rr, turb=smoothstep(4,7,vmax); turbS=approach(turbS,turb,3,dt);
+    K.put('vV',fmt(v0,1)+' m/s'); K.put('nV',fmt(rr,2));
+    K.put('cp',fmt(v0,2)+' m/s'); K.put('cr',fmt(v0/rr,2)+' m/s'); K.put('cq',fmt(v0,2)+' m/s'); K.put('cf',fmt(v0,2)+' L/s');
+    K.put('ct',turbS>0.5?'Turbulent — streamlines break up':'Steady · streamlines')+0; $('#ct').style.color=turbS>0.5?'var(--f-red)':'var(--f-green)';
+    // pipe
+    ctx.save(); ctx.beginPath(); for(let x=px0;x<=px1;x+=6){ const u=(x-px0)/Lx; x===px0?ctx.moveTo(x,yc-hwAt(u)):ctx.lineTo(x,yc-hwAt(u)); }
+    for(let x=px1;x>=px0;x-=6){ const u=(x-px0)/Lx; ctx.lineTo(x,yc+hwAt(u)); } ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.07)'; ctx.fill(); ctx.restore();
+    // streamlines
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.5; ctx.globalAlpha=0.55*(1-turbS*0.85);
+    FR.forEach(f=>{ ctx.beginPath(); for(let x=px0;x<=px1;x+=6){ const u=(x-px0)/Lx, y=yc+f*hwAt(u); x===px0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke(); }); ctx.restore();
+    // walls
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.lineJoin='round';
+    [-1,1].forEach(s=>{ ctx.beginPath(); for(let x=px0;x<=px1;x+=6){ const u=(x-px0)/Lx, y=yc+s*hwAt(u); x===px0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke(); }); ctx.restore();
+    // eddies behind the constriction
+    if(turbS>0.2){ [-1,1].forEach(s=>{ const u=0.78, x=px0+u*Lx, y=yc+s*hwAt(u)*0.62, r=8+14*turbS;
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.7*turbS; ctx.lineWidth=1.8; ctx.beginPath(); for(let a=0;a<Math.PI*3.4;a+=0.2){ const rr2=r*(a/(Math.PI*3.4)); const th=a*s*1.0+t*5*s; a?ctx.lineTo(x+Math.cos(th)*rr2,y+Math.sin(th)*rr2):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore(); }); }
+    // particles
+    P.forEach(p=>{
+      const u=p.u, x=px0+u*Lx, hwx=hwAt(u), sp=v0*92*hw0/hwx;
+      p.u+=sp*dt/Lx; if(p.u>1){ p.u-=1; p.o=0; }
+      const ramp=smoothstep(0.42,0.62,u);
+      p.o+=(-p.o*1.6)*dt + turbS*ramp*gauss()*1.9*Math.sqrt(dt);
+      const fy=clamp(p.f+p.o,-0.93,0.93);
+      circ(ctx,x,yc+fy*hwx,3.2,p.dye?COL.red:COL.green,p.dye?COL.red:COL.green,1);
+    });
+    // cross-section planes P, R, Q (yellow) with speed arrows (green) + area bars (blue)
+    [['P',0.14,v0],['R',0.51,v0/rr],['Q',0.86,v0]].forEach(([nm,u,v])=>{
+      const x=px0+u*Lx, hh=hwAt(u);
+      line(ctx,x,yc-hh-4,x,yc+hh+4,COL.yellow,2.4,[6,4]);
+      pill(ctx,x,yc-hw0-26,nm,COL.yellow,'center');
+      dimArrow(ctx,x+14,yc-hh,yc+hh,COL.blue);
+      const ay=yc+hw0+36, al=8+9.5*v; vec(ctx,x-4,ay,x-4+al,ay,COL.green,3.4);
+      textAt(ctx,fmt(v,1)+' m/s',x-4,ay+19,{size:12,weight:700,color:COL.green});
+    });
+    textAt(ctx,'flow →',px0+6,yc-hw0-12,{size:11,weight:600,color:COL.muted});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7. BERNOULLI'S PRINCIPLE             (§9.4, eq. 9.12–9.13, Fig 9.9)
+   P + ½ρv² + ρgy = constant.   Open vertical tubes read the pressure.
+   P₁ = 40 kPa gauge at the inlet; A₃ = A₁ so v₃ = v₁.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('v','Inlet speed v₁',0.5,3,0.1,1.5) +
+    slider('r','Squeeze: A₁ / A₂',1,3,0.05,2) +
+    slider('z','Raise the outlet',0,1.5,0.05,0.5) +
+    cards([{l:'P₁ · v₁',id:'c1',col:'var(--f-blue)'},{l:'P₂ · v₂',id:'c2',col:'var(--f-blue)'},{l:'P₃ · v₃',id:'c3',col:'var(--f-blue)'},{l:'P + ½ρv² + ρgy',id:'c4',col:'var(--f-yellow)',wide:true}]) +
+    hintBox('Faster water → lower pressure');
+  const canvas=$('canvas'), RHO=1000, PIN=40e3, LN=[-0.55,0,0.55], NP=13;
+  const hs=[0,0,0].map(()=>({x:6,v:0}));
+  const P=[]; LN.forEach((f,li)=>{ for(let i=0;i<NP;i++) P.push({f,u:Math.random()}); });
+  let t=0, first=true;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const v1=K.v('v'), r=K.v('r'), dz=K.v('z');
+    const px0=w*0.05, px1=w*0.95, Lx=px1-px0, yP=h*0.62, hwW=h*0.075, hwN=hwW/r, pxm=h*0.5/6;
+    const bump=u=>smoothstep(0.3,0.38,u)*(1-smoothstep(0.48,0.56,u));
+    const hwAt=u=>hwW-(hwW-hwN)*bump(u);
+    const ycAt=u=>yP-dz*pxm*smoothstep(0.62,0.80,u);
+    const st=[0.16,0.43,0.88], vv=[v1,v1*r,v1], zz=[0,0,dz];
+    const E=PIN+0.5*RHO*v1*v1;
+    const Ps=vv.map((v,i)=>PIN+0.5*RHO*(v1*v1-v*v)-RHO*G*zz[i]);
+    const heads=Ps.map(p=>p/(RHO*G));
+    if(first){ first=false; }
+    hs.forEach((s,i)=>springTo(s,heads[i],110,12,dt));
+    K.put('vV',fmt(v1,1)+' m/s'); K.put('rV',fmt(r,2)); K.put('zV',fmt(dz,2)+' m');
+    [0,1,2].forEach(i=>K.put('c'+(i+1),fmt(Ps[i]/1000,1)+' kPa · '+fmt(vv[i],1)+' m/s'));
+    K.put('c4',fmt(E/1000,1)+' kPa  (same at 1, 2, 3)');
+    // pipe body
+    ctx.save(); ctx.beginPath(); for(let x=px0;x<=px1;x+=6){ const u=(x-px0)/Lx; x===px0?ctx.moveTo(x,ycAt(u)-hwAt(u)):ctx.lineTo(x,ycAt(u)-hwAt(u)); }
+    for(let x=px1;x>=px0;x-=6){ const u=(x-px0)/Lx; ctx.lineTo(x,ycAt(u)+hwAt(u)); } ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.fill(); ctx.restore();
+    // piezometer tubes
+    const tt=h*0.06;
+    st.forEach((u,i)=>{
+      const x=px0+u*Lx, yc=ycAt(u), topWall=yc-hwAt(u), surf=yc-hs[i].x*pxm;
+      ctx.save(); ctx.fillStyle='rgba(47,143,224,0.30)'; ctx.fillRect(x-6,surf,12,topWall-surf+2); ctx.restore();
+      line(ctx,x-6,surf,x+6,surf+Math.sin(t*3+i)*1.1,COL.blue,2.6);
+      line(ctx,x-6,tt,x-6,topWall,COL.ink,2.6); line(ctx,x+6,tt,x+6,topWall,COL.ink,2.6);
+      pill(ctx,x,Math.max(tt-12,12),(['P₁','P₂','P₃'][i])+' '+fmt(Ps[i]/1000,0)+' kPa',COL.blue,'center');
+    });
+    // total-head line (yellow) = what Bernoulli keeps constant
+    const yE=yP-(E/(RHO*G))*pxm;
+    line(ctx,px0,yE,px1,yE,COL.yellow,1.8,[8,6]); textAt(ctx,'total',px1-6,yE-6,{size:11,weight:700,color:COL.yellow,align:'right'});
+    // walls
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.lineJoin='round';
+    [-1,1].forEach(s=>{ ctx.beginPath(); for(let x=px0;x<=px1;x+=6){ const u=(x-px0)/Lx, y=ycAt(u)+s*hwAt(u); x===px0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke(); }); ctx.restore();
+    // particles
+    P.forEach(p=>{ const u=p.u, x=px0+u*Lx, hwx=hwAt(u), sp=v1*58*hwW/hwx; p.u+=sp*dt/Lx; if(p.u>1) p.u-=1; circ(ctx,x,ycAt(u)+p.f*hwx,3,COL.green,COL.green,1); });
+    // speed arrows (green) + height guide (red)
+    st.forEach((u,i)=>{ const x=px0+u*Lx, yc=ycAt(u), ay=yc+hwW+20; vec(ctx,x-4,ay,x-4+6+8*vv[i],ay,COL.green,3.2); textAt(ctx,fmt(vv[i],1)+' m/s',x-4,ay+17,{size:11.5,weight:700,color:COL.green}); });
+    if(dz>0.02){ const x=px0+0.9*Lx+hwW*0.0+30; const xx=px0+0.95*Lx-4; dimArrow(ctx,xx-6,yP,yP-dz*pxm,COL.red); pill(ctx,xx-14,yP-dz*pxm*0.5,'Δy '+fmt(dz,2)+' m',COL.red,'right'); }
+    // energy bars: pressure (blue) + ½ρv² (green) + ρgy (red) always add to the same height
+    const base=h*0.97, bh=h*0.2, k=bh/50e3;
+    st.forEach((u,i)=>{
+      const x=px0+u*Lx-18, pe=RHO*G*zz[i], ke=0.5*RHO*vv[i]*vv[i], pp=Ps[i];
+      let y=base; [[pp,COL.blue],[ke,COL.green],[pe,COL.red]].forEach(([val,col])=>{ const bhh=Math.max(0,val*k); ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(x,y-bhh,36,bhh); ctx.globalAlpha=1; y-=bhh; });
+      rect(ctx,x,base-E*k,36,E*k,COL.ink,null,1.6);
+    });
+    line(ctx,px0+st[0]*Lx-30,base-E*k,px0+st[2]*Lx+30,base-E*k,COL.yellow,1.6,[6,5]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8. SPEED OF EFFLUX — TORRICELLI      (§9.4.1, eq. 9.15, Fig 9.10)
+   v = √(2 g h),  fall time = √(2y/g),  range R = v·√(2y/g) = 2√(h·y)
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('L','Water level L',0.2,1,0.01,0.8) +
+    slider('y','Hole height y',0.05,0.95,0.01,0.4) +
+    `<div class="btn-row"><button class="toggle-btn" id="best">Best hole</button><button class="toggle-btn" id="drain">Drain</button></div>` +
+    group('Speed', seg('sm',[['1','Real time'],['0.4','Slow-mo']],1)) +
+    cards([{l:'Hole depth h',id:'c1',col:'var(--f-yellow)'},{l:'Speed v',id:'c2',col:'var(--f-green)'},{l:'Range R',id:'c3',col:'var(--f-red)',wide:true}]) +
+    hintBox('v = √(2gh) &nbsp;·&nbsp; R = 2√(h·y₀) — longest when the hole is halfway between the surface and the ground');
+  const canvas=$('canvas'); let sm=0.4, Lc=0.8, draining=false, t=0, drops=[], acc=0, rings=[];
+  wireSeg(wrap,'sm',v=>sm=+v);
+  $('#best').onclick=()=>{ draining=false; $('#drain').classList.remove('active'); K.setSlider('y',Math.max(0.05,(K.v('L')-0.4)/2).toFixed(2)); };
+  $('#drain').onclick=e=>{ draining=!draining; e.currentTarget.classList.toggle('active',draining); if(!draining) return; if(Lc<K.v('y')+0.1) K.setSlider('L',0.9); };
+  $('#L').addEventListener('input',()=>{ draining=false; $('#drain').classList.remove('active'); });
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const yg=h*0.93, pxm=Math.min(h*0.55,(w*0.6)/2.5), Z0=0.4;
+    const yt0=yg-Z0*pxm, x0=w*0.22, tw=0.5*pxm, x1=x0+tw;
+    let yh=K.v('y');
+    if(draining){ const h_=Math.max(0,Lc-yh); Lc-=0.075*SQ(2*G*h_)*dt; if(Lc<yh+0.02){ Lc=yh+0.02; draining=false; $('#drain').classList.remove('active'); } K.setSlider('L',Lc.toFixed(3)); }
+    else Lc=approach(Lc,K.v('L'),6,dt);
+    yh=Math.min(yh,Lc-0.03); if(+K.v('y')>Lc-0.03) K.setSlider('y',Math.max(0.05,Lc-0.03));
+    const hd=Math.max(0.0001,Lc-yh), v=SQ(2*G*hd), yAbs=Z0+yh, R=v*SQ(2*yAbs/G);
+    K.put('LV',fmt(Lc,2)+' m'); K.put('yV',fmt(yh,2)+' m'); K.put('c1',fmt(hd,2)+' m'); K.put('c2',fmt(v,2)+' m/s'); K.put('c3',fmt(R,2)+' m');
+    // ground + stand
+    line(ctx,0,yg,w,yg,COL.ink,3);
+    line(ctx,x0-12,yt0,x1+12,yt0,COL.ink,4); line(ctx,x0+10,yt0,x0+10,yg,COL.ink,3); line(ctx,x1-10,yt0,x1-10,yg,COL.ink,3);
+    // tank
+    const Ht=1.05*pxm, tankPath=()=>{ ctx.beginPath(); ctx.rect(x0,yt0-Ht,tw,Ht); };
+    liquid(ctx,tankPath,x0,x1,yt0-Lc*pxm,yt0,t,1.4);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x0,yt0-Ht); ctx.lineTo(x0,yt0); ctx.lineTo(x1,yt0); ctx.lineTo(x1,yt0-Ht); ctx.stroke(); ctx.restore();
+    const hy=yt0-yh*pxm; rect(ctx,x1-2,hy-5,10,10,COL.yellow,'#fff',2.4);
+    // depth marker
+    const dxm=x0-16; dimArrow(ctx,dxm,yt0-Lc*pxm,hy,COL.yellow); line(ctx,dxm,hy,x1,hy,COL.yellow,1.2,[4,4]); pill(ctx,dxm-6,(yt0-Lc*pxm+hy)/2,'h = '+fmt(hd,2)+' m',COL.yellow,'right');
+    // jet: ideal path guide + real droplets that carry their own launch speed
+    const sx=x1+8, ctr=[]; ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.28; ctx.lineWidth=2; ctx.beginPath();
+    for(let tt=0;tt<=SQ(2*yAbs/G)+0.001;tt+=0.01){ const X=sx+v*tt*pxm, Y=hy+0.5*G*tt*tt*pxm; tt?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+    acc+=dt*110; while(acc>=1){ acc-=1; drops.push({a:0,v,y0:hy}); }
+    drops=drops.filter(d=>{
+      d.a+=dt*sm; const X=sx+d.v*d.a*pxm, Y=d.y0+0.5*G*d.a*d.a*pxm;
+      if(Y>=yg){ if(Math.random()<0.1) rings.push({x:X,a:0}); return false; }
+      circ(ctx,X,Y,2.7,COL.blue,COL.blue,1); return true; });
+    rings=rings.filter(r=>{ r.a+=dt*sm*2.2; if(r.a>1) return false; ctx.save(); ctx.globalAlpha=1-r.a; ctx.strokeStyle=COL.blue; ctx.lineWidth=1.8; ctx.beginPath(); ctx.ellipse(r.x,yg,6+r.a*18,2+r.a*4,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); return true; });
+    // velocity arrow at the hole (green) + range on the ground (red)
+    vec(ctx,sx+2,hy-12,sx+2+Math.min(100,14*v),hy-12,COL.green,3.6); textAt(ctx,'v',sx+Math.min(100,14*v)*0.5,hy-20,{size:14,weight:700,color:COL.green,align:'center'});
+    const rx=sx+R*pxm;
+    line(ctx,sx,yg+14,rx,yg+14,COL.red,2.4); line(ctx,sx,yg+8,sx,yg+20,COL.red,2.4); line(ctx,rx,yg+8,rx,yg+20,COL.red,2.4);
+    pill(ctx,(sx+rx)/2,yg-18,'R = '+fmt(R,2)+' m',COL.red,'center');
+    textAt(ctx,'y',x1+22,(hy+yt0)/2+4,{size:13,weight:700,color:COL.yellow}); dimArrow2(ctx,x1+14,hy,yt0,COL.yellow);
+  });
+  function dimArrow2(ctx,x,y1,y2,c){ line(ctx,x,y1,x,y2,c,1.4); arrowHead(ctx,x,y1,-Math.PI/2,c,5); arrowHead(ctx,x,y2,Math.PI/2,c,5); }
+  return wrap;
+}
+
+/* =====================================================================
+   9. DYNAMIC LIFT                      (§9.4.2, Fig 9.11, Example 9.7)
+   Aerofoil: potential flow past a Joukowski wing with the Kutta condition
+   (Γ = 4πUR sin α).  Pressure difference ΔP = ½ρ(v₂² − v₁²) = ρ v_av (v₂ − v₁).
+   Check (Ex 9.7): 960 km/h, wing 500 m², weight 3.3×10⁵ kg → ΔP ≈ 6.5 kPa
+   (v₂−v₁ ≈ 8 % of v_av); here the preset α = 1.2° gives lift ≈ weight.
+   Ball: Magnus push  a = κ·ω·v  perpendicular to the velocity.
+   ===================================================================== */
+const JK={mu:[-0.17,0], R:1.17, c:4.08};
+function cx_mul(a,b){ return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]]; }
+function cx_div(a,b){ const d=b[0]*b[0]+b[1]*b[1]; return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]; }
+function cx_sqrt(a){ const r=Math.hypot(a[0],a[1]); const re=Math.sqrt(Math.max(0,(r+a[0])/2)); let im=Math.sqrt(Math.max(0,(r-a[0])/2)); if(a[1]<0) im=-im; return [re,im]; }
+/* velocity (u,v) at a point z of the wing plane for unit free-stream at angle al to the chord */
+function joukV(x,y,al,Gam){
+  const z2=cx_mul([x,y],[x,y]); const s=cx_sqrt([z2[0]-4,z2[1]]);
+  const z1=[(x+s[0])/2,(y+s[1])/2], z3=[(x-s[0])/2,(y-s[1])/2];
+  const zeta=Math.hypot(z1[0],z1[1])>=Math.hypot(z3[0],z3[1])?z1:z3;
+  const d=[zeta[0]-JK.mu[0],zeta[1]-JK.mu[1]], dd=Math.hypot(d[0],d[1]);
+  if(dd<JK.R*1.002) return null;
+  const R2=JK.R*JK.R, ea=[Math.cos(al),-Math.sin(al)], eb=[Math.cos(al),Math.sin(al)];
+  const d2=cx_mul(d,d), t2=cx_div(eb,d2);
+  let dw=[ea[0]-R2*t2[0], ea[1]-R2*t2[1]];
+  const g=cx_div([0,Gam/(2*Math.PI)],d); dw=[dw[0]+g[0],dw[1]+g[1]];
+  const zz=cx_mul(zeta,zeta), dz=[1-cx_div([1,0],zz)[0], -cx_div([1,0],zz)[1]];
+  const cv=cx_div(dw,dz);
+  const m=Math.hypot(cv[0],cv[1]); const lim=3.2, f=m>lim?lim/m:1;
+  return [cv[0]*f,-cv[1]*f];
+}
+function rot2(x,y,th){ const c=Math.cos(th), s=Math.sin(th); return [x*c-y*s, x*s+y*c]; }
+
+function buildA9(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Show', seg('md',[['wing','Aerofoil'],['ball','Spinning ball']],0)) +
+    `<div id="wingCtl">` + slider('sp','Air speed',200,1100,10,960) + slider('al','Angle of attack α',0,12,0.1,1.2) +
+      `<button class="toggle-btn navy row" id="cruise" style="margin-top:0">✈ Cruise (Ex 9.7)</button></div>` +
+    `<div id="ballCtl" class="hidden">` + slider('bv','Throw speed',10,30,1,25) + slider('bw','Spin ω (+ back · − top)',-3000,3000,100,2000) +
+      group('Speed', seg('bsm',[['1','Real time'],['0.35','Slow-mo']],1)) + `</div>` +
+    cards([{l:'—',id:'c1',col:'var(--f-green)'},{l:'—',id:'c2',col:'var(--f-blue)'},{l:'—',id:'c3',wide:true}]) +
+    hintBox('Faster air → lower pressure → net push');
+  const canvas=$('canvas');
+  let mode='wing', t=0, cacheKey='', lines=[], bsm=0.35, wingY={x:0,v:0}, Gdraw=0;
+  const NL=12, PTS=[]; for(let i=0;i<NL;i++) for(let j=0;j<11;j++) PTS.push({i,s:Math.random()*0.99,x:0,y:0,init:false});
+  const seeds=Array.from({length:NL},(_,i)=>(i-(NL-1)/2)*0.36);
+  // ball
+  const B={x:1.2,y:2,vx:25,vy:0,alive:false,wait:0,trail:[],ang:0,t:0}; let relaunch=true;
+  wireSeg(wrap,'md',v=>{ mode=v; $('#wingCtl').classList.toggle('hidden',v!=='wing'); $('#ballCtl').classList.toggle('hidden',v!=='ball'); relaunch=true; });
+  wireSeg(wrap,'bsm',v=>bsm=+v);
+  ['bv','bw'].forEach(id=>$('#'+id).addEventListener('input',()=>relaunch=true));
+  $('#cruise').onclick=()=>{ K.setSlider('sp',960); K.setSlider('al',1.2); };
+  const lab=(id,tx)=>{ $('#'+id).previousElementSibling.textContent=tx; };
+  const WT=3.3e5*G, AW=500, RHOA=1.2;
+
+  function drawWing(ctx,w,h,dt){
+    const vk=K.v('sp'), al=K.v('al')*Math.PI/180, vms=vk/3.6;
+    const sinA=Math.sin(al), Gam=4*Math.PI*JK.R*sinA;
+    const Cl=2*Gam/JK.c, dP=0.5*RHOA*vms*vms*Cl, LW=dP*AW/WT;
+    const vav=vms, dv=dP/(RHOA*vav);
+    K.put('spV',vk+' km/h'); K.put('alV',fmt(K.v('al'),1)+'°');
+    lab('c1','Lift ÷ weight'); lab('c2','Pressure difference ΔP'); lab('c3','Speed over top · under bottom');
+    K.put('c1',fmt(LW,2)+(LW>1.03?'  ▲ climbs':LW<0.97?'  ▼ sinks':'  = level')); K.put('c2',fmtP(dP)); K.put('c3',fmt((vav+dv/2)*3.6,0)+' · '+fmt((vav-dv/2)*3.6,0)+' km/h');
+    // tunnel
+    const wl=18, wr=w-18, wt=h*0.1, wb=h*0.9;
+    line(ctx,wl,wt,wr,wt,COL.ink,3); line(ctx,wl,wb,wr,wb,COL.ink,3);
+    const k=w*0.42/JK.c, cx0=w*0.5, cy0=h*0.52;
+    springTo(wingY,clamp(-(LW-1)*52,-120,120),70,10,dt);
+    const cx=cx0, cy=cy0+wingY.x;
+    // streamlines (cached on α)
+    const key=al.toFixed(4);
+    if(key!==cacheKey){ cacheKey=key; lines=[];
+      const xL=-(cx-wl)/k, xR=(wr-cx)/k;
+      seeds.forEach(y0=>{ let p=[xL,y0], pts=[[p[0],p[1]]]; for(let n=0;n<700;n++){
+          const zp=rot2(p[0],p[1],al), V=joukV(zp[0],zp[1],al,Gam); if(!V) break;
+          const Vd=rot2(V[0],V[1],-al), m=Math.hypot(Vd[0],Vd[1]); if(m<1e-3) break;
+          const ds=0.07, mid=[p[0]+Vd[0]/m*ds*0.5,p[1]+Vd[1]/m*ds*0.5];
+          const zm=rot2(mid[0],mid[1],al), V2=joukV(zm[0],zm[1],al,Gam); if(!V2) break;
+          const V2d=rot2(V2[0],V2[1],-al), m2=Math.hypot(V2d[0],V2d[1]); p=[p[0]+V2d[0]/m2*ds,p[1]+V2d[1]/m2*ds]; pts.push([p[0],p[1]]);
+          if(p[0]>xR||Math.abs(p[1])>6) break; }
+        lines.push(pts); });
+    }
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.5; ctx.lineWidth=1.5;
+    lines.forEach(pts=>{ ctx.beginPath(); pts.forEach((q,i)=>{ const X=cx+q[0]*k, Y=cy-q[1]*k; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }); ctx.stroke(); }); ctx.restore();
+    // wing outline: circle → z = ζ + 1/ζ, then rotate by −α into the display frame
+    ctx.beginPath(); for(let i=0;i<=120;i++){ const th=i/120*Math.PI*2, zr=JK.mu[0]+JK.R*Math.cos(th), zi=JK.mu[1]+JK.R*Math.sin(th), dd=zr*zr+zi*zi;
+      const zx=zr+zr/dd, zy=zi-zi/dd, q=rot2(zx,zy,-al); const X=cx+q[0]*k, Y=cy-q[1]*k; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+    ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke();
+    // chord (yellow) + angle
+    const le=rot2(-(JK.c-2),0,-al), te=rot2(2,0,-al), tx0=cx+te[0]*k, ty0=cy-te[1]*k;
+    line(ctx,cx+le[0]*k-24,cy-le[1]*k+24*Math.tan(al),tx0+24,ty0-24*Math.tan(al),COL.yellow,1.6,[6,4]);
+    line(ctx,tx0,ty0,tx0+70,ty0,COL.yellow,1.2,[3,3]);
+    if(al>0.01){ ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(tx0,ty0,52,Math.PI-al,Math.PI); ctx.restore(); }
+    if(al>0.01) textAt(ctx,'α = '+fmt(K.v('al'),1)+'°',tx0+80,ty0+4,{size:12,weight:700,color:COL.yellow});
+    // particles advected through the same field
+    const Upx=70+vk/1100*260;
+    const xLeft=-(cx-wl)/k, xRight=(wr-cx)/k;
+    PTS.forEach(p=>{
+      if(!p.init){ p.x=xLeft+p.s*(xRight-xLeft); p.y=seeds[p.i]; p.init=true; }
+      else if(p.x>xRight||Math.abs(p.y)>6){ p.x=xLeft; p.y=seeds[p.i]; }
+      const zp=rot2(p.x,p.y,al), V=joukV(zp[0],zp[1],al,Gam); if(!V){ p.init=false; return; }
+      const Vd=rot2(V[0],V[1],-al); p.x+=Vd[0]*Upx/k*dt; p.y+=Vd[1]*Upx/k*dt;
+      circ(ctx,cx+p.x*k,cy-p.y*k,2.8,COL.green,COL.green,1);
+    });
+    // spring balance + force arrows
+    const topY=wt+4, wy=cy-0.2*k*1.0;
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(cx,topY); const n=12, len=wy-topY-70;
+    for(let i=0;i<=n;i++){ const yy=topY+14+(len-14)*i/n; ctx.lineTo(cx+(i%2?9:-9)*(i>0&&i<n?1:0),yy); } ctx.lineTo(cx,wy-56); ctx.stroke(); ctx.restore();
+    line(ctx,cx,wy-56,cx,wy-18,COL.ink,2);
+    const ll=Math.min(150,60*LW), wl2=60;
+    vec(ctx,cx+110,cy,cx+110,cy-ll,COL.green,4.5); textAt(ctx,'Lift',cx+122,cy-ll*0.55,{size:13,weight:700,color:COL.green});
+    vec(ctx,cx+110,cy,cx+110,cy+wl2,COL.red,4.5); textAt(ctx,'Weight',cx+122,cy+wl2*0.7,{size:13,weight:700,color:COL.red});
+    // low / high pressure tags
+    textAt(ctx,'faster · lower P',cx-0.9*k,cy-0.78*k,{size:11.5,weight:700,color:COL.blue,align:'center'});
+    textAt(ctx,'slower · higher P',cx-0.9*k,cy+0.78*k+10,{size:11.5,weight:700,color:COL.blue,align:'center'});
+    textAt(ctx,'wind →',wl+8,wt+18,{size:11,weight:600,color:COL.muted});
+  }
+
+  function drawBall(ctx,w,h,dt){
+    const v0=K.v('bv'), om=K.v('bw')*Math.PI/30, KAP=1.1e-3;
+    K.put('bvV',v0+' m/s'); K.put('bwV',(K.v('bw')>0?'back ':K.v('bw')<0?'top ':'')+Math.abs(K.v('bw'))+' rpm');
+    lab('c1','Spin push a = κωv'); lab('c2','Falls to ground in'); lab('c3','Lands at (no spin dashed)');
+    const x0=1.2, yTop=3.0, WORLD=28, pxm=(w*0.92)/WORLD, yg=h*0.86, X=m=>w*0.04+m*pxm, Y=m=>yg-m*pxm;
+    const aM=KAP*om*v0;
+    // launch
+    if(relaunch){ relaunch=false; B.x=x0; B.y=yTop; B.vx=v0; B.vy=0; B.alive=true; B.trail=[]; B.t=0; B.wait=0; }
+    // physics (real equations, played at the chosen time scale)
+    if(B.alive){ let rem=dt*bsm; while(rem>0){ const d=Math.min(0.004,rem); rem-=d;
+        const sp=Math.hypot(B.vx,B.vy), nx=-B.vy/sp, ny=B.vx/sp, a=KAP*om*sp;
+        B.vx+=a*nx*d; B.vy+=(a*ny-G)*d; B.x+=B.vx*d; B.y+=B.vy*d; B.t+=d;
+        if(B.y<=0||B.x>WORLD-1){ B.alive=false; B.y=Math.max(0,B.y); B.wait=0; break; } }
+      if(Math.floor(B.t*60)!==B.lastK){ B.lastK=Math.floor(B.t*60); if(B.lastK%2===0) B.trail.push([B.x,B.y]); }
+    } else { B.wait+=dt; if(B.wait>1.1) relaunch=true; }
+    B.ang+=-(om/ (2*Math.PI) )*0.9*dt*Math.sign(1); // visual only: 1 turn ≈ 1.1 s at 3000 rpm ×…
+    // no-spin reference
+    const tg=SQ(2*yTop/G), Rn=x0+v0*tg;
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath();
+    for(let tt=0;tt<=tg+0.001;tt+=0.01){ const xx=x0+v0*tt, yy=yTop-0.5*G*tt*tt; tt?ctx.lineTo(X(xx),Y(yy)):ctx.moveTo(X(xx),Y(yy)); } ctx.stroke(); ctx.restore();
+    line(ctx,0,yg,w,yg,COL.ink,3);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath(); B.trail.forEach((q,i)=>i?ctx.lineTo(X(q[0]),Y(q[1])):ctx.moveTo(X(q[0]),Y(q[1]))); ctx.lineTo(X(B.x),Y(B.y)); ctx.stroke(); ctx.restore();
+    // thrower
+    const hx=X(0.5); line(ctx,hx,yg,hx,Y(1.3),COL.ink,3); circ(ctx,hx,Y(1.65),9,COL.ink,'#fff',2.6); line(ctx,hx,Y(1.3),hx-14,yg,COL.ink,3); line(ctx,hx,Y(1.3),hx+10,yg,COL.ink,3); line(ctx,hx,Y(1.15),hx+22,Y(yTop-0.05),COL.ink,3);
+    // ball
+    const bx=X(B.x), by=Y(B.y), br=13; circ(ctx,bx,by,br,COL.ink,'#fff',2.8);
+    ctx.save(); ctx.translate(bx,by); ctx.rotate(B.ang); ctx.strokeStyle=COL.red; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(-br*1.0,0,br*0.9,-0.9,0.9); ctx.moveTo(br*1.0+br*0.9*0,0); ctx.arc(br*1.0,0,br*0.9,Math.PI-0.9,Math.PI+0.9); ctx.stroke(); ctx.restore();
+    // spin arrow (yellow) + vectors
+    if(Math.abs(om)>1){ const dir=om>0?-1:1; ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.beginPath(); ctx.arc(bx,by,br+8,-2.4,0.6,dir<0); ctx.stroke(); ctx.restore();
+      const ea=dir<0?-2.4:0.6; arrowHead(ctx,bx+Math.cos(ea)*(br+8),by+Math.sin(ea)*(br+8),ea+(dir<0?-Math.PI/2:Math.PI/2),COL.yellow,8); }
+    const sp=Math.hypot(B.vx,B.vy), vl=Math.min(80,sp*2.2);
+    if(B.alive){ vec(ctx,bx+br+10,by,bx+br+10+vl*B.vx/sp,by-vl*B.vy/sp,COL.blue,3);
+      const a=KAP*om*sp, nx=-B.vy/sp, ny=B.vx/sp; if(Math.abs(a)>0.2) vec(ctx,bx,by-br-10,bx+a*nx*-0+0,by-br-10-a*ny*6,COL.green,3.6);
+      vec(ctx,bx,by+br+8,bx,by+br+8+G*3.2,COL.red,3); }
+    // air faster over the top (backspin) or under (topspin)
+    textAt(ctx,om>50?'air faster on top → lift ↑':om<-50?'air faster below → push ↓':'no spin · plain arc',w*0.5,h*0.12,{size:13,weight:700,color:COL.blue,align:'center'});
+    // landing marker
+    const Rl=(B.alive?null:B.x);
+    if(Rl!==null){ line(ctx,X(Rl),yg-10,X(Rl),yg+10,COL.red,3); }
+    line(ctx,X(Rn),yg-6,X(Rn),yg+6,COL.mid,3);
+    // readouts
+    const tfall=B.alive?'…':fmt(B.t,2)+' s';
+    K.put('c1',fmt(Math.abs(aM),1)+' m/s²'+(om>0?' ↑':om<0?' ↓':'')); K.put('c2',tfall); K.put('c3',B.alive?'…':fmt(B.x,1)+' m   (plain: '+fmt(Rn,1)+' m)');
+  }
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='wing') drawWing(ctx,w,h,dt); else drawBall(ctx,w,h,dt);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   10. VISCOSITY                        (§9.5, Fig 9.12–9.13, Example 9.8)
+   η = (F/A)/(v/l).  Block pulled by a hanging mass:  (M+m)dv/dt = mg − (ηA/l)v
+   → v(t) = v_t(1 − e^{−t/τ}),  v_t = mgl/(ηA).
+   Check: A = 0.10 m², m = 10 g, l = 0.30 mm, η = 3.46×10⁻³ Pa s → v_t = 0.085 m/s.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Liquid film', seg('lq',[['0.001','Water'],['0.113','Oil'],['0.83','Glycerine'],['0.00346','Ex 9.8']],3)) +
+    slider('l','Film thickness l',0.1,1,0.05,0.3) + slider('m','Pulling mass m',5,100,1,10) + slider('A','Block area A',0.02,0.2,0.01,0.1) +
+    group('Time', seg('tl',[['1','×1'],['10','×10'],['100','×100']],0)) +
+    cards([{l:'Speed v',id:'c1',col:'var(--f-green)'},{l:'Shear stress F/A',id:'c2',col:'var(--f-red)'},{l:'Strain rate v/l',id:'c3'},{l:'η = (F/A) ÷ (v/l)',id:'c4',col:'var(--f-blue)'}]) +
+    hintBox('Thicker liquid → more drag → slower');
+  const canvas=$('canvas'); let eta=0.00346, TL=1, el=0, wait=0, t=0;
+  const dots=[]; for(let j=0;j<5;j++) for(let i=0;i<7;i++) dots.push({j,u:Math.random()});
+  const restart=()=>{ el=0; wait=0; };
+  wireSeg(wrap,'lq',v=>{ eta=parseFloat(v); restart(); }); wireSeg(wrap,'tl',v=>{ TL=+v; restart(); });
+  ['l','m','A'].forEach(id=>$('#'+id).addEventListener('input',restart));
+  const MB=0.4;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const lm=K.v('l')*1e-3, m=K.v('m')*1e-3, A=K.v('A');
+    K.put('lV',fmt(K.v('l'),2)+' mm'); K.put('mV',K.v('m')+' g'); K.put('AV',fmt(A,2)+' m²');
+    const Fw=m*G, cc=eta*A/lm, vt=Fw/cc, tau=(MB+m)/cc;
+    const D=Math.min(w*0.34,h*0.3), pxm=1500;
+    // time → closed-form motion
+    if(wait>0){ wait-=dt; if(wait<=0) el=0; }
+    else el+=dt;
+    const ts=el*TL, vNow=vt*(1-Math.exp(-ts/tau)), xm=vt*(ts-tau*(1-Math.exp(-ts/tau)));
+    let xpx=Math.min(D,xm*pxm); if(xm*pxm>=D && wait<=0) wait=0.8;
+    K.put('c1',(vNow<0.01?fmt(vNow*1000,2):fmt(vNow*1000,1))+' mm/s'); K.put('c2',fmt(Fw/A,2)+' Pa'); K.put('c3',fmt(vNow/lm,1)+' s⁻¹'); K.put('c4',fmt(vNow>1e-9?(Fw/A)/(vNow/lm):eta,5)+' Pa·s');
+    // layout
+    const s=Math.min(w/640,h/420,1.5), bw=clamp(60+700*A,70,210)*s, bh=56*s, lpx=(12+56*K.v('l'))*s, ty=h*0.56, ox=Math.max(18,(w-(D+bw+110*s))/2), bx0=ox+16, bx=bx0+xpx, xp=bx0+D+bw+34*s, by=ty-lpx-bh;
+    // table
+    rect(ctx,ox,ty,xp-ox-14,14,COL.ink,'#fff',2.8); line(ctx,ox+20,ty+14,ox+20,h*0.9,COL.ink,3); line(ctx,xp-40,ty+14,xp-40,h*0.9,COL.ink,3);
+    // film (blue) with a yellow outline (the thickness you set)
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.22)'; ctx.fillRect(ox+4,ty-lpx,xp-ox-22,lpx); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6; ctx.setLineDash([5,4]); ctx.strokeRect(ox+4,ty-lpx,xp-ox-22,lpx); ctx.restore();
+    dimArrow(ctx,ox-4,ty-lpx,ty,COL.yellow); textAt(ctx,'l',ox-14,ty-lpx/2+4,{size:13,weight:700,color:COL.yellow,align:'right'});
+    // shear layers: layer j moves at (j/4)·v, bottom layer sticks to the table
+    const rel=k=>k*vNow*pxm*TL*dt;
+    dots.forEach(d=>{ const yy=ty-lpx*(d.j+0.5)/5; const sp=((d.j+0.5)/5)*vNow*pxm*TL;
+      d.u+=sp*dt/bw; const xmin=bx, xx=xmin+((d.u%1)+1)%1*bw; circ(ctx,xx,yy,2.5,COL.blue,COL.blue,1); });
+    // velocity profile arrows (green) inside the film
+    const vlTop=clamp(8+360*vNow,8,110);
+    for(let j=1;j<=4;j++){ const yy=ty-lpx*j/4+0*0, L=vlTop*j/4; vec(ctx,bx+bw*0.5,yy+ (j===4?2:0)-0,bx+bw*0.5+L,yy+(j===4?2:0),COL.green,2.2); }
+    line(ctx,bx+bw*0.5,ty-lpx,bx+bw*0.5,ty,COL.green,1.2,[3,3]); line(ctx,bx+bw*0.5,ty,bx+bw*0.5+vlTop,ty-lpx,COL.green,1.2,[3,3]);
+    // block
+    rect(ctx,bx,by,bw,bh,COL.ink,'#fff',3); textAt(ctx,'M',bx+bw/2,by+bh/2+5,{size:15,weight:700,color:COL.ink,align:'center'});
+    dimArrow2h(ctx,bx,bx+bw,by-12,COL.yellow); textAt(ctx,'A = '+fmt(A,2)+' m²',bx+bw/2,by-20,{size:12,weight:700,color:COL.yellow,align:'center'});
+    // string, pulley, hanging mass
+    const ym=by+bh/2, pr=17*s, py=ym+pr, drop=xpx;
+    line(ctx,bx+bw,ym,xp,ym,COL.ink,2); circ(ctx,xp,py,pr,COL.ink,'#fff',2.8); circ(ctx,xp,py,3,COL.ink,COL.ink,1);
+    for(let k=0;k<4;k++){ const a=t*0+drop*0.06+k*Math.PI/2; line(ctx,xp,py,xp+Math.cos(a)*(pr-3),py+Math.sin(a)*(pr-3),COL.mid,1.4); }
+    const mt=py+34*s+drop, mh=(22+K.v('m')*0.3)*s;
+    line(ctx,xp+pr,py,xp+pr,mt,COL.ink,2); rect(ctx,xp+pr-16,mt,32,mh,COL.red,'#fff',3); textAt(ctx,'m',xp+pr,mt+mh/2+5,{size:14,weight:700,color:COL.red,align:'center'});
+    vec(ctx,xp+pr+30,mt+mh/2-6,xp+pr+30,mt+mh/2+34,COL.red,3.4); textAt(ctx,'mg',xp+pr+38,mt+mh/2+22,{size:12,weight:700,color:COL.red});
+    // F on block (red)
+    vec(ctx,bx+bw+4,ym-bh*0.22,bx+bw+4+36,ym-bh*0.22,COL.red,3.4); textAt(ctx,'F',bx+bw+14,ym-bh*0.22-8,{size:13,weight:700,color:COL.red});
+    // table ticks
+    for(let x=ox+10;x<xp-30;x+=24) line(ctx,x,ty+14,x,ty+19,COL.mid,1.2);
+  });
+  function dimArrow2h(ctx,x1,x2,y,c){ line(ctx,x1,y,x2,y,c,1.6); arrowHead(ctx,x1,y,Math.PI,c,5); arrowHead(ctx,x2,y,0,c,5); }
+  return wrap;
+}
+
+/* =====================================================================
+   11. STOKES' LAW — TERMINAL VELOCITY  (§9.5.1, eq. 9.17–9.18, Example 9.9)
+   m dv/dt = (ρ − σ)Vg − 6πηa v  →  v(t) = v_t(1 − e^{−t/τ}),
+   v_t = 2a²(ρ − σ)g / 9η ,  τ = 2a²ρ / 9η   (exact exponential step per frame)
+   Check: a = 2 mm, ρ = 8.9×10³, σ = 1.5×10³, η = 0.99 → v_t = 6.5×10⁻² m/s.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Liquid', seg('fl',[['0.113|900','Oil'],['0.83|1260','Glycerine'],['0.2|1420','Honey'],['0.99|1500','Ex 9.9']],3)) +
+    slider('a','Ball radius a',0.5,4,0.1,2) + slider('r','Ball density ρ',1600,9000,100,8900) +
+    `<div class="btn-row"><button class="toggle-btn play" id="drop">▼ Drop</button></div>` +
+    group('Speed', seg('sm',[['1','Real time'],['0.3','Slow-mo']],0)) +
+    cards([{l:'Terminal speed vₜ',id:'c1',col:'var(--f-green)'},{l:'Settling time τ',id:'c2'},{l:'Speed now',id:'c3',col:'var(--f-blue)',wide:true}]) +
+    hintBox('vₜ = 2a²(ρ − σ)g ÷ 9η');
+  const canvas=$('canvas'); let eta=0.99, sig=1500, sm=1, t=0;
+  const S={y:0.02,v:0,t:0,done:false,hist:[],bounce:{x:0,v:0},wait:0};
+  const HC=0.4;
+  const reset=()=>{ S.y=0.02; S.v=0; S.t=0; S.done=false; S.hist=[[0,0]]; S.bounce={x:0,v:0}; S.wait=0; };
+  reset();
+  wireSeg(wrap,'fl',v=>{ const p=v.split('|'); eta=+p[0]; sig=+p[1]; reset(); }); wireSeg(wrap,'sm',v=>sm=+v);
+  ['a','r'].forEach(id=>$('#'+id).addEventListener('input',reset)); $('#drop').onclick=reset;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const a=K.v('a')*1e-3, rho=K.v('r'), vt=2*a*a*(rho-sig)*G/(9*eta), tau=2*a*a*rho/(9*eta);
+    K.put('aV',fmt(K.v('a'),1)+' mm'); K.put('rV',rho+' kg/m³');
+    K.put('c1',fmt(vt,3)+' m/s'); K.put('c2',tau<0.1?fmt(tau*1000,1)+' ms':fmt(tau,2)+' s'); K.put('c3',fmt(S.v,3)+' m/s'+(S.done?'  (landed)':''));
+    if(!S.done){ let rem=dt*sm; const e=Math.exp(-rem/tau);
+      S.y+=vt*rem+(S.v-vt)*tau*(1-e); S.v=vt+(S.v-vt)*e; S.t+=rem;
+      if(S.hist.length===0||S.t-S.hist[S.hist.length-1][0]>0.01*Math.max(0.2,Math.min(8,HC/vt))) S.hist.push([S.t,S.v]);
+      if(S.y>=HC-0.02){ S.y=HC-0.02; S.done=true; S.bounce.v=-Math.min(60,S.v*160); S.hist.push([S.t,S.v]); S.wait=0; S.vEnd=S.v; S.v=0; } }
+    else { springTo(S.bounce,0,300,14,dt); S.wait+=dt; if(S.wait>1.8) reset(); }
+    // tank
+    const sc=Math.min(w/760,1.3), tx=w*0.2, tw=84*sc, ytop=h*0.07, ybot=h*0.93, pxm=(ybot-ytop-10)/HC;
+    liquid(ctx,()=>{ ctx.beginPath(); ctx.rect(tx-tw/2,ytop+10,tw,ybot-ytop-10); },tx-tw/2,tx+tw/2,ytop+14,ybot,t,1.2,'rgba(217,160,23,0.16)',COL.yellow);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(tx-tw/2,ytop); ctx.lineTo(tx-tw/2,ybot); ctx.lineTo(tx+tw/2,ybot); ctx.lineTo(tx+tw/2,ytop); ctx.stroke(); ctx.restore();
+    for(let k=0;k<=8;k++){ const yy=ytop+10+k*(ybot-ytop-10)/8; line(ctx,tx-tw/2-8,yy,tx-tw/2,yy,COL.ink,1.4); if(k%2===0) textAt(ctx,fmt(HC*k/8*100,0)+' cm',tx-tw/2-12,yy+4,{size:10,align:'right',color:COL.muted,weight:600}); }
+    // ball
+    const br=7+4.2*K.v('a'), by=ytop+10+S.y*pxm+(S.done?S.bounce.x:0);
+    circ(ctx,tx,by,br,COL.ink,mixCol('#ffffff','#8195ab',clamp((rho-1600)/7400,0,1)),2.8);
+    // wake lines show the drag layer
+    const vf=S.done?0:S.v/Math.max(vt,1e-9);
+    for(let k=0;k<3;k++){ const yy=by-br-8-k*10-(t*60*vf)%10; ctx.save(); ctx.globalAlpha=0.5*vf*(1-k*0.25); line(ctx,tx-6-k*3,yy,tx+6+k*3,yy,COL.blue,1.6); ctx.restore(); }
+    // force arrows: weight − buoyancy (red ↓), drag (blue ↑), velocity (green)
+    const fx=tx+tw/2+26, fl=46;
+    vec(ctx,fx,by,fx,by+fl,COL.red,3.8); textAt(ctx,'W − B',fx+8,by+fl*0.7,{size:12,weight:700,color:COL.red});
+    vec(ctx,fx,by,fx,by-Math.max(2,fl*vf),COL.blue,3.8); textAt(ctx,'drag',fx+8,by-fl*vf*0.5-2,{size:12,weight:700,color:COL.blue});
+    const gx=tx-tw/2-84; vec(ctx,gx,by-24,gx,by-24+Math.max(4,Math.min(90,S.v/Math.max(vt,1e-9)*60)),COL.green,3.8); textAt(ctx,'v',gx+8,by-8,{size:13,weight:700,color:COL.green});
+    // v–t graph
+    const gx0=w*0.5, gy0=h*0.12, gw=w*0.44, gh=h*0.62;
+    line(ctx,gx0,gy0,gx0,gy0+gh,COL.ink,2); line(ctx,gx0,gy0+gh,gx0+gw,gy0+gh,COL.ink,2);
+    textAt(ctx,'v',gx0-6,gy0+6,{size:13,weight:700,color:COL.green,align:'right'}); textAt(ctx,'t',gx0+gw+6,gy0+gh+4,{size:13,weight:700,color:COL.muted});
+    const Tmax=6*tau, Vmax=Math.max(vt*1.2,1e-6);
+    const GX=tt=>gx0+gw*clamp(tt/Tmax,0,1), GY=vv=>gy0+gh-gh*vv/Vmax;
+    line(ctx,gx0,GY(vt),gx0+gw,GY(vt),COL.yellow,1.8,[7,5]); pill(ctx,gx0+gw,GY(vt)-14,'vₜ = '+fmt(vt,3)+' m/s',COL.yellow,'right');
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=3; ctx.beginPath(); for(let k=0;k<=60;k++){ const tt=Tmax*k/60, X=GX(tt), Y=GY(vt*(1-Math.exp(-tt/tau))); k?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.restore();
+    { const tn=S.done?S.t:S.t, vn=S.done?S.vEnd:S.v; circ(ctx,GX(tn),GY(vn),6,COL.red,COL.red,1); }
+    line(ctx,GX(tau),gy0+gh,GX(tau),gy0+gh+8,COL.ink,2); textAt(ctx,'τ',GX(tau),gy0+gh+22,{size:12,weight:700,color:COL.muted,align:'center'});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12. SURFACE TENSION — SOAP FILM ON A FRAME   (§9.6.1–9.6.2, eq. 9.19–9.21)
+   A film has two surfaces → pull F = 2Sl, independent of how far it is stretched.
+   Net force F − mg moves the bar; speed settles with drag (exact exponential step).
+   Check: S = F/2l (eq. 9.20); soap S ≈ 0.025 N/m, water 0.0727 N/m (Table 9.3).
+   ===================================================================== */
+function buildA12(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Liquid film', seg('lq',[['0.025','Soap'],['0.0227','Ethanol'],['0.0727','Water']],0)) +
+    slider('l','Bar length l',1,8,0.5,5) + slider('m','Hanging mass m',0,1.5,0.01,0.2) +
+    `<button class="toggle-btn navy row" id="bal" style="margin-top:0">⚖ Balance it</button>` +
+    cards([{l:'Film pulls 2Sl',id:'c1',col:'var(--f-blue)'},{l:'Weight mg',id:'c2',col:'var(--f-red)'},{l:'Result',id:'c3',wide:true},{l:'Surface energy F·d',id:'c4',wide:true}]) +
+    hintBox('S = F ÷ 2l');
+  const canvas=$('canvas'); let S=0.025, t=0;
+  const st={d:0.06,u:0}; const HTOT=0.12, MB=0.0003;
+  wireSeg(wrap,'lq',v=>S=parseFloat(v));
+  $('#bal').onclick=()=>{ const F=2*S*K.v('l')*0.01; K.setSlider('m',clamp(F/G*1000,0,1.5).toFixed(2)); };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const lm=K.v('l')*0.01, m=K.v('m')*1e-3, F=2*S*lm, Wt=m*G, Fn=F-Wt;
+    // exact exponential relaxation to the drag-limited speed (up positive)
+    const CD=8*F+0.005, uInf=Fn/CD, tau=(m+MB)/CD, e=Math.exp(-dt/tau);
+    st.d-= uInf*dt+(st.u-uInf)*tau*(1-e); st.u=uInf+(st.u-uInf)*e;
+    if(st.d<0.004){ st.d=0.004; st.u=Math.max(0,st.u*-0.0); } if(st.d>HTOT){ st.d=HTOT; st.u=Math.min(0,st.u*-0.0); }
+    K.put('lV',fmt(K.v('l'),1)+' cm'); K.put('mV',fmt(K.v('m'),2)+' g');
+    K.put('c1',fmt(F*1000,2)+' mN'); K.put('c2',fmt(Wt*1000,2)+' mN');
+    const bal=Math.abs(Fn)<0.015*F;
+    K.put('c3',bal?'Balanced — bar stays':Fn>0?'Film wins → bar rises':'Weight wins → film stretches'); $('#c3').style.color=bal?'var(--f-green)':Fn>0?'var(--f-blue)':'var(--f-red)';
+    K.put('c4',fmt(F*st.d*1e6,0)+' µJ  (S × area)');
+    // geometry
+    const pxcm=h*0.062, lpx=lm*100*pxcm, cx=w*0.42, ytop=h*0.1, yb=ytop+st.d*100*pxcm;
+    // film
+    ctx.save(); ctx.beginPath(); ctx.rect(cx-lpx/2,ytop,lpx,yb-ytop); ctx.clip();
+    ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.fillRect(cx-lpx/2,ytop,lpx,yb-ytop);
+    for(let k=0;k<7;k++){ const yy=ytop+((k/7+t*0.05)%1)*(yb-ytop); ctx.strokeStyle=['rgba(47,143,224,.35)','rgba(31,157,85,.30)','rgba(217,160,23,.30)'][k%3]; ctx.lineWidth=2; ctx.beginPath(); for(let x=cx-lpx/2;x<=cx+lpx/2;x+=6) ctx.lineTo(x,yy+Math.sin(x*0.05+t*2+k)*3); ctx.stroke(); }
+    ctx.restore();
+    // frame (rails go down to the limit)
+    const yEnd=ytop+HTOT*100*pxcm+14;
+    line(ctx,cx-lpx/2,ytop,cx-lpx/2,yEnd,COL.ink,3.4); line(ctx,cx+lpx/2,ytop,cx+lpx/2,yEnd,COL.ink,3.4);
+    rect(ctx,cx-lpx/2-8,ytop-10,lpx+16,10,COL.ink,'#fff',2.8);
+    // sliding bar
+    rect(ctx,cx-lpx/2-10,yb-3,lpx+20,7,COL.ink,'#fff',2.8);
+    // film pull (blue ↑ at both ends) and weight (red ↓)
+    const fl=14+Math.min(80,F*1000*7);
+    [-1,1].forEach(s=>vec(ctx,cx+s*(lpx/2+22),yb,cx+s*(lpx/2+22),yb-fl,COL.blue,3.6)); textAt(ctx,'S',cx+lpx/2+34,yb-fl*0.6,{size:14,weight:700,color:COL.blue});
+    // pan + mass
+    const py=yb+34; line(ctx,cx,yb+4,cx,py,COL.ink,2); const pw=34+m*1000*0.022;
+    rect(ctx,cx-pw/2,py,pw,12+Math.min(34,m*1000*0.05),COL.red,'#fff',2.8); textAt(ctx,'m',cx,py+(12+Math.min(34,m*1000*0.05))/2+5,{size:13,weight:700,color:COL.red,align:'center'});
+    const wl=14+Math.min(80,Wt*1000*7); vec(ctx,cx+pw/2+16,py,cx+pw/2+16,py+wl,COL.red,3.6); textAt(ctx,'mg',cx+pw/2+26,py+wl*0.6,{size:13,weight:700,color:COL.red});
+    // l label and film depth
+    dimArrow2c(ctx,cx-lpx/2,cx+lpx/2,ytop-22,COL.yellow); textAt(ctx,'l = '+fmt(K.v('l'),1)+' cm',cx,ytop-30,{size:12,weight:700,color:COL.yellow,align:'center'});
+    pill(ctx,cx-lpx/2-46,(ytop+yb)/2,'d = '+fmt(st.d*100,1)+' cm',COL.yellow,'right');
+    // cross-section inset: two surfaces → factor 2
+    const ix=w*0.8, iy=h*0.3; ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(ix-50,iy-7); ctx.lineTo(ix+50,iy-7); ctx.moveTo(ix-50,iy+7); ctx.lineTo(ix+50,iy+7); ctx.stroke(); ctx.restore();
+    [-1,1].forEach(s=>vec(ctx,ix+22,iy+s*7,ix-14,iy+s*7,COL.blue,2.4)); textAt(ctx,'2 surfaces',ix,iy+34,{size:11.5,weight:700,color:COL.blue,align:'center'});
+  });
+  function dimArrow2c(ctx,x1,x2,y,c){ line(ctx,x1,y,x2,y,c,1.6); arrowHead(ctx,x1,y,Math.PI,c,5); arrowHead(ctx,x2,y,0,c,5); }
+  return wrap;
+}
+
+/* =====================================================================
+   13. DROPS & BUBBLES                  (§9.6.4, eq. 9.25–9.26, Example 9.10)
+   Drop / bubble in a liquid: ΔP = 2S/r.  Soap bubble (two faces): ΔP = 4S/r.
+   Check: air bubble r = 1 mm, 8 cm deep in water: Pₒ = 1.01784×10⁵ Pa, ΔP = 146 Pa.
+   ===================================================================== */
+function buildA13(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Bubble type', seg('ty',[['soap','Soap bubble'],['air','Air in water'],['drop','Water drop']],0)) +
+    slider('r','Radius r',0.2,5,0.1,1.5) +
+    cards([{l:'Excess pressure ΔP',id:'c1',col:'var(--f-red)'},{l:'Pressure inside',id:'c2',col:'var(--f-blue)'},{l:'Pressure outside',id:'c3'},{l:'S',id:'c4'}]) +
+    hintBox('Smaller bubble → bigger ΔP &nbsp;·&nbsp; ΔP = 2S/r or 4S/r');
+  const canvas=$('canvas'); let ty='soap', t=0; const rs={x:20,v:0}, wob={x:0,v:0}; let lastR=1.5;
+  wireSeg(wrap,'ty',v=>ty=v);
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const rmm=K.v('r'), S={soap:0.025,air:0.0727,drop:0.0727}[ty], f=ty==='soap'?4:2;
+    const dP=f*S/(rmm*1e-3), Po=PATM+(ty==='air'?1000*G*0.08:0), Pi=Po+dP;
+    K.put('rV',fmt(rmm,1)+' mm'); K.put('c1',fmt(dP,0)+' Pa'); K.put('c2',fmt(Pi/1000,3)+' kPa'); K.put('c3',fmt(Po/1000,3)+' kPa'+(ty==='air'?'  (8 cm deep)':'')); K.put('c4',S+' N/m');
+    const rt=20+28*rmm; springTo(rs,rt,46,5.2,dt); const rp=Math.max(6,rs.x);
+    const eps=clamp(rs.v*0.0009,-0.14,0.14)+0.012*Math.sin(t*6.2);
+    const cx=w*0.42, cy=h*(ty==='drop'?0.45:0.46);
+    // environment
+    if(ty==='air'){ const ys=h*0.1; ctx.save(); ctx.fillStyle=FL_BLUE; ctx.fillRect(w*0.06,ys,w*0.72,h*0.86); ctx.restore(); line(ctx,w*0.06,ys,w*0.78,ys,COL.blue,2.4);
+      dimArrow(ctx,w*0.09,ys,cy,COL.yellow); pill(ctx,w*0.095,(ys+cy)/2,'8 cm',COL.yellow); textAt(ctx,'Pₐ',w*0.7,ys-8,{size:13,weight:700,color:COL.blue}); for(let k=0;k<4;k++) vec(ctx,w*0.62+k*18,ys-30,w*0.62+k*18,ys-4,COL.blue,2); }
+    // supply tube
+    const tubeW=14; ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3;
+    if(ty==='drop'){ line(ctx,cx-tubeW/2,h*0.04,cx-tubeW/2,cy-rp*(1-eps)-4,COL.ink,3); line(ctx,cx+tubeW/2,h*0.04,cx+tubeW/2,cy-rp*(1-eps)-4,COL.ink,3); }
+    else { line(ctx,cx-tubeW/2,h*0.96,cx-tubeW/2,cy+rp*(1-eps)-2,COL.ink,3); line(ctx,cx+tubeW/2,h*0.96,cx+tubeW/2,cy+rp*(1-eps)-2,COL.ink,3);
+      for(let k=0;k<3;k++){ const yy=h*0.9-((t*60+k*30)%100); vec(ctx,cx,yy+10,cx,yy-6,COL.blue,2.2); } }
+    ctx.restore();
+    // the bubble / drop (slightly squashed while it grows or shrinks)
+    ctx.save(); ctx.translate(cx,cy); ctx.beginPath(); ctx.ellipse(0,0,rp*(1+eps),rp*(1-eps),0,0,Math.PI*2);
+    ctx.fillStyle=ty==='air'?'#fff':ty==='drop'?'rgba(47,143,224,0.2)':'rgba(255,255,255,0.6)'; ctx.fill(); ctx.strokeStyle=ty==='drop'?COL.blue:COL.ink; ctx.lineWidth=ty==='soap'?2:3; ctx.stroke();
+    if(ty==='soap'){ ctx.beginPath(); ctx.ellipse(0,0,rp*(1+eps)-3.5,rp*(1-eps)-3.5,0,0,Math.PI*2); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.stroke(); }
+    ctx.restore();
+    // skin contracts (red ←) and the inside pushes back (blue →)
+    const na=10, al=14+Math.min(60,dP/700*80);
+    for(let k=0;k<na;k++){ const a=k/na*Math.PI*2+0.3, c=Math.cos(a), s=Math.sin(a);
+      vec(ctx,cx+c*(rp+30),cy+s*(rp+30),cx+c*(rp+3),cy+s*(rp+3),COL.red,2.6); }
+    for(let k=0;k<na;k++){ const a=k/na*Math.PI*2+0.3+Math.PI/na, c=Math.cos(a), s=Math.sin(a); if(rp>al+14) vec(ctx,cx+c*(rp-al-6),cy+s*(rp-al-6),cx+c*(rp-6),cy+s*(rp-6),COL.blue,2.6); }
+    textAt(ctx,'S',cx+rp+36,cy-rp*0.7,{size:13,weight:700,color:COL.red}); textAt(ctx,'Pᵢ',cx,cy+5,{size:15,weight:700,color:COL.blue,align:'center'});
+    // radius marker
+    line(ctx,cx,cy,cx+rp*0.7,cy+rp*0.7,COL.yellow,2); pill(ctx,cx+rp*0.7+6,cy+rp*0.7+10,'r = '+fmt(rmm,1)+' mm',COL.yellow);
+    // ΔP–r graph
+    const gx=w*0.8, gy=h*0.2, gw=w*0.17, gh=h*0.5; line(ctx,gx,gy,gx,gy+gh,COL.ink,2); line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.ink,2);
+    textAt(ctx,'ΔP',gx-5,gy+8,{size:12,weight:700,color:COL.red,align:'right'}); textAt(ctx,'r',gx+gw+4,gy+gh+4,{size:12,weight:700,color:COL.yellow});
+    const dmax=f*S/0.2e-3; ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.6; ctx.beginPath();
+    for(let r=0.2;r<=5.001;r+=0.1){ const X=gx+gw*(r-0.2)/4.8, Y=gy+gh-gh*(f*S/(r*1e-3))/dmax*0.92; r===0.2?ctx.moveTo(X,Y):ctx.lineTo(X,Y); } ctx.stroke(); ctx.restore();
+    circ(ctx,gx+gw*(rmm-0.2)/4.8,gy+gh-gh*dP/dmax*0.92,6,COL.red,COL.red,1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   14. CAPILLARY RISE                   (§9.6.5, eq. 9.29, Fig 9.19)
+   h = 2S cos θ / (ρ g a).   Check: water, a = 0.5 mm → h ≈ 2.98 cm
+   (2.97 cm with S = 0.0727 N/m; the textbook rounds S to 0.073).
+   Mercury (θ ≈ 140°) is pushed DOWN: cos θ < 0.
+   ===================================================================== */
+function buildA14(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Liquid', seg('lq',[['wa','Water'],['et','Ethanol'],['hg','Mercury']],0)) +
+    slider('a','Narrow tube radius a',0.1,1,0.05,0.5) +
+    cards([{l:'h in a',id:'c1',col:'var(--f-blue)'},{l:'h in 2a',id:'c2',col:'var(--f-blue)'},{l:'h in 4a',id:'c3',col:'var(--f-blue)'},{l:'Contact angle θ',id:'c4',wide:true}],'three') +
+    hintBox('h = 2S cosθ ÷ (ρ g a)');
+  $('.result-cards').classList.add('three');
+  const LQ={wa:{S:0.0727,rho:1000,th:0,col:COL.blue,fill:'rgba(47,143,224,0.30)'},et:{S:0.0227,rho:789,th:0,col:COL.green,fill:'rgba(31,157,85,0.22)'},hg:{S:0.465,rho:13600,th:140,col:'#5b6f86',fill:'rgba(129,149,171,0.55)'}};
+  const canvas=$('canvas'); let lq='wa', t=0; const hs=[{x:0,v:0},{x:0,v:0},{x:0,v:0}];
+  wireSeg(wrap,'lq',v=>lq=v);
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=LQ[lq], th=L.th*Math.PI/180, a0=K.v('a')*1e-3, rad=[a0,2*a0,4*a0];
+    const hcm=rad.map(a=>2*L.S*Math.cos(th)/(L.rho*G*a)*100);
+    hs.forEach((s,i)=>springTo(s,hcm[i],46,5.4,dt));
+    K.put('aV',fmt(K.v('a'),2)+' mm'); hcm.forEach((v,i)=>K.put('c'+(i+1),fmt(v,2)+' cm')); K.put('c4',L.th+'°  ('+(L.th>90?'convex · liquid pushed down':'concave · liquid climbs')+')');
+    const L0=h*0.62, pxcm=h*0.5/16, bx0=w*0.2, bx1=w*0.86, bb=L0+128, tb=L0+112, tt=h*0.12;
+    // beaker + liquid
+    ctx.save(); ctx.fillStyle=L.fill; ctx.fillRect(bx0,L0,bx1-bx0,bb-L0); ctx.restore();
+    line(ctx,bx0,L0+Math.sin(t*2.5)*1.2,bx1,L0+Math.sin(t*2.5+1)*1.2,L.col,2.4);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx0,L0-26); ctx.lineTo(bx0,bb); ctx.lineTo(bx1,bb); ctx.lineTo(bx1,L0-26); ctx.stroke(); ctx.restore();
+    // ruler
+    for(let c=0;c<=16;c++){ const yy=L0-c*pxcm; line(ctx,bx0-10,yy,bx0,yy,COL.ink,c%5?1:2); if(c%5===0) textAt(ctx,c+' cm',bx0-14,yy+4,{size:10.5,align:'right',color:COL.muted,weight:600}); }
+    // tubes
+    const xs=[w*0.34,w*0.54,w*0.74], wpx=[12,22,38];
+    xs.forEach((x,i)=>{
+      const hw_=wpx[i]/2, yL=L0-hs[i].x*pxcm;
+      ctx.save(); ctx.fillStyle=L.fill; ctx.fillRect(x-hw_,yL,wpx[i],tb-yL); ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.beginPath(); ctx.moveTo(x-hw_,tt); ctx.lineTo(x-hw_,tb); ctx.moveTo(x+hw_,tt); ctx.lineTo(x+hw_,tb); ctx.stroke(); ctx.restore();
+      // meniscus
+      const conc=Math.cos(th)>0, sag=Math.min(wpx[i]*0.55,hw_*(1-Math.sin(th))/Math.max(0.2,Math.abs(Math.cos(th)))*1);
+      ctx.save(); ctx.strokeStyle=L.col; ctx.lineWidth=2.8; ctx.beginPath();
+      for(let k=0;k<=16;k++){ const u=-1+k/8, xx=x+u*hw_, yy=conc?yL+sag*(1-u*u):yL-sag*(1-u*u)*0.9; k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore();
+      textAt(ctx,['a','2a','4a'][i]+' = '+fmt(rad[i]*1000,2)+' mm',x,tt-12,{size:11.5,weight:700,color:COL.muted,align:'center'});
+      if(i===0){ // h marker + contact angle
+        const dxm=x+hw_+16; line(ctx,x+hw_,yL,dxm+14,yL,COL.yellow,1.4,[4,3]); line(ctx,x+hw_,L0,dxm+14,L0,COL.yellow,1.4,[4,3]); if(Math.abs(yL-L0)>2) dimArrow(ctx,dxm,yL,L0,COL.yellow);
+        pill(ctx,dxm+10,(yL+L0)/2-(Math.abs(yL-L0)<24?24:0),'h = '+fmt(hs[0].x,2)+' cm',COL.yellow);
+        const wx=x-hw_, wy=yL, ang=th, r_=20;
+        line(ctx,wx,wy,wx,wy+28,COL.yellow,2); line(ctx,wx,wy,wx+Math.sin(ang)*28,wy+Math.cos(ang)*28,COL.yellow,2);
+        ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.8; ctx.beginPath(); ctx.arc(wx,wy,r_,Math.PI/2-ang,Math.PI/2); ctx.stroke(); ctx.restore();
+        textAt(ctx,'θ = '+L.th+'°',wx-8,wy+30,{size:12,weight:700,color:COL.yellow,align:'right'});
+      }
+    });
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   0c. FLUIDS HELPERS — controls kit, liquids, dials, router
+   --------------------------------------------------------------------- */
+const G = 9.8, PATM = 1.013e5;
+const FL_BLUE = 'rgba(47,143,224,0.17)';
+const SQ = Math.sqrt;
+
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function group(label,inner){ return `<div class="control-group"><label>${label}</label>${inner}</div>`; }
+function seg(id,items,active){
+  return `<div class="toggle-group" id="${id}">`+items.map((it,i)=>`<button class="toggle-btn small${i===active?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')+`</div>`;
+}
+function cards(arr,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">`+arr.map(c=>
+    `<div class="rcard${c.wide?' wide':''}"><div class="rlabel">${c.l}</div><div class="rval" id="${c.id}" style="${c.col?'color:'+c.col:''}">—</div></div>`).join('')+`</div></div>`;
+}
+function hintBox(t){ return `<p class="hint" style="margin:0 2px;">${t}</p>`; }
+function wireSeg(wrap,id,cb){
+  const g=wrap.querySelector('#'+id), btns=[...g.querySelectorAll('button')];
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b.dataset.v); });
+  return { set(v){ btns.forEach(x=>x.classList.toggle('active',x.dataset.v===String(v))); } };
+}
+function kit(wrap){
+  const $=s=>wrap.querySelector(s);
+  return {
+    $,
+    v:id=>+$('#'+id).value,
+    put:(id,t)=>{ const e=$('#'+id); if(e) e.textContent=t; },
+    setSlider:(id,val)=>{ $('#'+id).value=val; },
+  };
+}
+
+/* liquid with a wavy surface, clipped to any container path */
+function liquid(ctx,pathFn,x0,x1,yS,yB,t,amp,fill,stroke){
+  ctx.save(); pathFn(); ctx.clip();
+  const wav=x=>yS+Math.sin(x*0.045+t*2.6)*amp;
+  ctx.beginPath(); ctx.moveTo(x0,yB); ctx.lineTo(x0,wav(x0));
+  for(let x=x0;x<=x1;x+=5) ctx.lineTo(x,wav(x));
+  ctx.lineTo(x1,wav(x1)); ctx.lineTo(x1,yB); ctx.closePath();
+  ctx.fillStyle=fill||FL_BLUE; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x0,wav(x0)); for(let x=x0;x<=x1;x+=5) ctx.lineTo(x,wav(x)); ctx.lineTo(x1,wav(x1));
+  ctx.strokeStyle=stroke||COL.blue; ctx.lineWidth=2; ctx.stroke();
+  ctx.restore();
+}
+/* 270° analogue dial; frac 0..1 */
+function dial(ctx,cx,cy,r,frac,maxLab,unit,valTxt,nt){
+  const a0=0.75*Math.PI, sw=1.5*Math.PI; nt=nt||5;
+  circ(ctx,cx,cy,r,COL.ink,'#fff',2.6);
+  circ(ctx,cx,cy,r-6,COL.mid,null,1);
+  for(let i=0;i<=nt;i++){
+    const a=a0+sw*i/nt, c=Math.cos(a), s=Math.sin(a);
+    line(ctx,cx+c*(r-6),cy+s*(r-6),cx+c*(r-15),cy+s*(r-15),COL.ink,2);
+    textAt(ctx,fmt(maxLab*i/nt,maxLab<10?1:0),cx+c*(r-28),cy+s*(r-28)+4,{size:10,align:'center',color:COL.muted,weight:600});
+  }
+  const a=a0+sw*clamp(frac,0,1.04);
+  line(ctx,cx,cy,cx+Math.cos(a)*(r-12),cy+Math.sin(a)*(r-12),COL.red,3);
+  circ(ctx,cx,cy,5,COL.ink,COL.ink,1);
+  textAt(ctx,unit,cx,cy+r*0.42,{size:11,align:'center',color:COL.muted,weight:600});
+  textAt(ctx,valTxt,cx,cy+r+17,{size:13,align:'center',weight:700,color:COL.ink});
+}
+function bobAmp(t,k){ return Math.sin(t*k); }
+function pill(ctx,x,y,txt,col,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const bx=align==='right'?x-tw-10:align==='center'?x-tw/2-5:x;
+  ctx.save(); rrect(ctx,bx,y-11,tw+10,22,6); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+5,y+4,{size:12,weight:700,color:col});
+}
+function fmtP(p){ // pascal → readable
+  const a=Math.abs(p);
+  if(a>=1e6) return fmt(p/1e6,2)+' MPa';
+  if(a>=1e4) return fmt(p/1e3,1)+' kPa';
+  if(a>=1e3) return fmt(p/1e3,2)+' kPa';
+  return fmt(p,0)+' Pa';
+}
+function smoothstep(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'1',  title:'Pressure = Force ÷ Area',   desc:'§9.2 · Push a blunt or a sharp tip into foam', build: buildA1 },
+  { num:'2',  title:'Pressure with Depth',        desc:'§9.2.2 · Lower a pressure probe into a liquid', build: buildA2 },
+  { num:'3',  title:'Hydrostatic Paradox',        desc:'§9.2.2 · Three vessels, one level', build: buildA3 },
+  { num:'4',  title:'Barometer & Manometer',      desc:'§9.2.3 · Weigh the air · read a gas pressure', build: buildA4 },
+  { num:'5',  title:'Hydraulic Lift',             desc:'§9.2.4 · Pascal\'s law lifts a car', build: buildA5 },
+  { num:'6',  title:'Streamline Flow',            desc:'§9.3 · Av = constant · steady vs turbulent', build: buildA6 },
+  { num:'7',  title:'Bernoulli\'s Principle',     desc:'§9.4 · Fast flow, low pressure', build: buildA7 },
+  { num:'8',  title:'Speed of Efflux',            desc:'§9.4.1 · Torricelli\'s law', build: buildA8 },
+  { num:'9',  title:'Dynamic Lift',               desc:'§9.4.2 · Aerofoil and spinning ball', build: buildA9 },
+  { num:'10', title:'Viscosity',                  desc:'§9.5 · A block dragged over an oil film', build: buildA10 },
+  { num:'11', title:'Stokes\' Law',               desc:'§9.5.1 · Terminal velocity of a falling ball', build: buildA11 },
+  { num:'12', title:'Surface Tension',            desc:'§9.6.1 · A soap film pulls the bar', build: buildA12 },
+  { num:'13', title:'Drops & Bubbles',            desc:'§9.6.4 · Excess pressure inside', build: buildA13 },
+  { num:'14', title:'Capillary Rise',             desc:'§9.6.5 · Narrow tube, taller column', build: buildA14 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

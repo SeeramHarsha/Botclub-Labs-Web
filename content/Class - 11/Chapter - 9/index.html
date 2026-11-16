@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 2 · Chapter 3 — Thermal Properties of Matter | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+/* compact side column so every control + result stays in view */
+.lab-side{gap:8px;}
+.control-group{padding:7px 11px;}
+.control-group input[type=range]{margin-top:3px;}
+.result-cards{gap:5px;}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.toggle-btn.red{background:var(--f-red); border-color:var(--f-red); color:#fff;}
+.toggle-btn.row{flex:0 0 auto; width:100%; padding:10px; margin-top:0;}
+.btn-row{display:flex; gap:6px;}
+.btn-row .toggle-btn{flex:1;}
+.rcard .rval.sm{font-size:var(--fs-sm);}
+.nav-item .n-num{min-width:22px;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🌡️</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 2 · Ch 3</div>
+      <h1>Thermal Properties of Matter</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Cold · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Result · Kelvin</span>
+      <span><i style="background:var(--f-red)"></i>Heat · Temperature</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    try{ tick(dt); }catch(e){ console.error(e); }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+/* ---------------------------------------------------------------------
+   0b. SMALL UTILITIES — seeded random, smoothing, angles
+   --------------------------------------------------------------------- */
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function lw(k,base){ return clamp(k*base,1,3); }
+
+/* ---------------------------------------------------------------------
+   0c. THERMAL HELPERS — controls kit, thermometer, burner, graphs
+   --------------------------------------------------------------------- */
+const SIGMA = 5.67e-8, RGAS = 8.31, P0 = 1.013e5;
+const FL_BLUE = 'rgba(47,143,224,0.17)';
+const SQ = Math.sqrt;
+
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group" id="g_${id}"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function group(label,inner,id){ return `<div class="control-group"${id?` id="${id}"`:''}><label>${label}</label>${inner}</div>`; }
+function seg(id,items,active){
+  return `<div class="toggle-group" id="${id}">`+items.map((it,i)=>`<button class="toggle-btn small${i===active?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')+`</div>`;
+}
+function cards(arr,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">`+arr.map(c=>
+    `<div class="rcard${c.wide?' wide':''}"><div class="rlabel">${c.l}</div><div class="rval" id="${c.id}" style="${c.col?'color:'+c.col:''}">—</div></div>`).join('')+`</div></div>`;
+}
+function hintBox(t){ return `<p class="hint" style="margin:0 2px;">${t}</p>`; }
+function wireSeg(wrap,id,cb){
+  const g=wrap.querySelector('#'+id), btns=[...g.querySelectorAll('button')];
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b.dataset.v); });
+  return { set(v){ btns.forEach(x=>x.classList.toggle('active',x.dataset.v===String(v))); } };
+}
+function kit(wrap){
+  const $=s=>wrap.querySelector(s);
+  return {
+    $,
+    v:id=>+$('#'+id).value,
+    put:(id,t)=>{ const e=$('#'+id); if(e) e.textContent=t; },
+    setSlider:(id,val)=>{ $('#'+id).value=val; },
+    show:(id,on)=>{ const e=$('#g_'+id)||$('#'+id); if(e) e.classList.toggle('hidden',!on); },
+  };
+}
+function smoothstep(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* liquid with a wavy surface, clipped to any container path */
+function liquid(ctx,pathFn,x0,x1,yS,yB,t,amp,fill,stroke){
+  ctx.save(); pathFn(); ctx.clip();
+  const wav=x=>yS+Math.sin(x*0.045+t*2.6)*amp;
+  ctx.beginPath(); ctx.moveTo(x0,yB); ctx.lineTo(x0,wav(x0));
+  for(let x=x0;x<=x1;x+=5) ctx.lineTo(x,wav(x));
+  ctx.lineTo(x1,wav(x1)); ctx.lineTo(x1,yB); ctx.closePath();
+  ctx.fillStyle=fill||FL_BLUE; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x0,wav(x0)); for(let x=x0;x<=x1;x+=5) ctx.lineTo(x,wav(x)); ctx.lineTo(x1,wav(x1));
+  ctx.strokeStyle=stroke||COL.blue; ctx.lineWidth=2; ctx.stroke();
+  ctx.restore();
+}
+/* 270° analogue dial; frac 0..1 */
+function dial(ctx,cx,cy,r,frac,maxLab,unit,valTxt,nt){
+  const a0=0.75*Math.PI, sw=1.5*Math.PI; nt=nt||5;
+  circ(ctx,cx,cy,r,COL.ink,'#fff',2.6);
+  circ(ctx,cx,cy,r-6,COL.mid,null,1);
+  for(let i=0;i<=nt;i++){
+    const a=a0+sw*i/nt, c=Math.cos(a), s=Math.sin(a);
+    line(ctx,cx+c*(r-6),cy+s*(r-6),cx+c*(r-15),cy+s*(r-15),COL.ink,2);
+    textAt(ctx,fmt(maxLab*i/nt,maxLab<10?1:0),cx+c*(r-28),cy+s*(r-28)+4,{size:10,align:'center',color:COL.muted,weight:600});
+  }
+  const a=a0+sw*clamp(frac,0,1.04);
+  line(ctx,cx,cy,cx+Math.cos(a)*(r-12),cy+Math.sin(a)*(r-12),COL.red,3);
+  circ(ctx,cx,cy,5,COL.ink,COL.ink,1);
+  textAt(ctx,unit,cx,cy+r*0.42,{size:11,align:'center',color:COL.muted,weight:600});
+  textAt(ctx,valTxt,cx,cy+r+17,{size:13,align:'center',weight:700,color:COL.ink});
+}
+function pill(ctx,x,y,txt,col,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const bx=align==='right'?x-tw-10:align==='center'?x-tw/2-5:x;
+  ctx.save(); rrect(ctx,bx,y-11,tw+10,22,6); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+5,y+4,{size:12,weight:700,color:col});
+}
+function axes(ctx,x0,y0,gw,gh,xl,yl){
+  line(ctx,x0,y0,x0,y0-gh,COL.ink,2); line(ctx,x0,y0,x0+gw,y0,COL.ink,2);
+  arrowHead(ctx,x0,y0-gh,-Math.PI/2,COL.ink,7); arrowHead(ctx,x0+gw,y0,0,COL.ink,7);
+  textAt(ctx,yl,x0-8,y0-gh+6,{size:12,weight:700,align:'right',color:COL.blue});
+  textAt(ctx,xl,x0+gw,y0+20,{size:12,weight:700,align:'right',color:COL.muted});
+}
+function polyline(ctx,pts,color,lwid,dash){
+  if(pts.length<2) return;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lwid||2.6; ctx.lineJoin='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+}
+
+/* temperature colour: cold blue → pale → orange → red */
+function hotCol(T,lo,hi){ return rampCol([[0,'#2f8fe0'],[0.3,'#a9d8f5'],[0.5,'#f4e7c4'],[0.75,'#ec9a52'],[1,'#d9432b']], clamp((T-lo)/(hi-lo),0,1)); }
+/* heated metal: grey → dull red → orange → yellow-white (T in °C) */
+function glowCol(T){ return rampCol([[0,'#cfd8e3'],[150,'#d8c9bd'],[400,'#d98a6a'],[600,'#d9532b'],[800,'#f0902c'],[1000,'#f6d468'],[1400,'#fff4cc']], T); }
+
+function thermo(ctx,x,top,bot,frac,outline,liq){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liq; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liq,liq,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  if(inten<=0.02) return;
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+/* Bunsen-style burner: base on floorY, flame on top */
+function burner(ctx,cx,floorY,width,inten,t){
+  const bw=width*0.5;
+  ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.fillStyle='#fff';
+  rrect(ctx,cx-bw/2,floorY-12,bw,12,4); ctx.fill(); ctx.stroke();
+  rrect(ctx,cx-4,floorY-34,8,22,2); ctx.fill(); ctx.stroke(); ctx.restore();
+  flame(ctx,cx,floorY-34,width*0.9,inten,t);
+}
+function ice(ctx,x,y,s,rot,alpha){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0); ctx.globalAlpha=alpha===undefined?1:alpha;
+  rect(ctx,-s/2,-s/2,s,s,COL.blue,'rgba(169,216,245,0.45)',2);
+  line(ctx,-s/2+3,-s/2+3,-s/2+s*0.35,-s/2+3,'#fff',2); line(ctx,-s/2+3,-s/2+3,-s/2+3,-s/2+s*0.35,'#fff',2);
+  ctx.restore();
+}
+/* beaker outline (open top) */
+function beakerPath(ctx,x,top,bot,bw){
+  ctx.beginPath(); ctx.moveTo(x-bw/2,top); ctx.lineTo(x-bw/2,bot-6); ctx.quadraticCurveTo(x-bw/2,bot,x-bw/2+6,bot); ctx.lineTo(x+bw/2-6,bot); ctx.quadraticCurveTo(x+bw/2,bot,x+bw/2,bot-6); ctx.lineTo(x+bw/2,top);
+}
+function beakerStroke(ctx,x,top,bot,bw,col){
+  ctx.save(); ctx.strokeStyle=col||COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; beakerPath(ctx,x,top,bot,bw); ctx.stroke(); ctx.restore();
+}
+function steamWisps(ctx,x,y,w,n,t,alpha){
+  for(let i=0;i<n;i++){
+    const ph=(t*0.5+i/n)%1, xx=x+(i/(n-1||1)-0.5)*w+Math.sin(t*2+i*2)*6, yy=y-ph*60;
+    ctx.save(); ctx.globalAlpha=alpha*(1-ph); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.8; ctx.beginPath();
+    ctx.moveTo(xx,yy+14); ctx.bezierCurveTo(xx-8,yy+7,xx+8,yy+2,xx,yy-4); ctx.stroke(); ctx.restore();
+  }
+}
+/* Planck spectral radiance shape (relative), λ in metres */
+function planck(lam,T){ const c2=1.4388e-2; return 1/(Math.pow(lam,5)*(Math.exp(c2/(lam*T))-1)); }
+/* Water: Tanaka density (kg/m³), T in °C */
+function rhoWater(T){ return 999.97495*(1-((T-3.983035)*(T-3.983035)*(T+301.797))/(522528.9*(T+69.34881))); }
+/* Water saturation: Antoine, T in °C ↔ P in atm */
+function psatWater(T){ return Math.pow(10,8.07131-1730.63/(233.426+T))/760; }
+function tbWater(P){ return 1730.63/(8.07131-Math.log10(Math.max(1e-4,P)*760))-233.426; }
+/* =====================================================================
+   1. TEMPERATURE SCALES                 (§10.3, eq. 10.1, 10.3; Fig 10.1)
+   t_F = 9/5 t_C + 32 ,  T = t_C + 273.15
+   Check: 100 °C → 212 °F → 373.15 K ;  0 °C → 32 °F → 273.15 K
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('bt','Bath temperature',-20,120,1,25) +
+    group('Quick set', seg('pre',[['0','Ice'],['25','Room'],['37','Body'],['100','Boiling']],1)) +
+    cards([{l:'Celsius',id:'c1',col:'var(--f-red)'},{l:'Fahrenheit',id:'c2',col:'var(--f-blue)'},{l:'Kelvin',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('t<sub>F</sub> = 9/5 t<sub>C</sub> + 32 &nbsp;·&nbsp; T = t<sub>C</sub> + 273.15');
+  const canvas=$('canvas'); let t=0, bath=25, Tm=25; const bub=[], trail=[];
+  wireSeg(wrap,'pre',v=>K.setSlider('bt',v));
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tgt=K.v('bt'); bath=approach(bath,tgt,0.9,dt); Tm=approach(Tm,bath,1.5,dt);
+    K.put('btV',fmt(tgt,0)+' °C');
+    const C=Tm, F=C*9/5+32;
+    K.put('c1',fmt(C,1)+' °C'); K.put('c2',fmt(F,1)+' °F'); K.put('c3',fmt(C+273.15,2)+' K');
+    const sc=Math.min(w/760,h/520,1.5);
+    const bx=w*0.26, bw=Math.min(w*0.3,250*sc), top=h*0.60, bot=h*0.90, floor=bot+14*sc;
+    // thermometer geometry
+    const tTop=h*0.07, tBot=h*0.78, TMIN=-30, TMAX=130;
+    const yOf=T=>tBot-(T-TMIN)/(TMAX-TMIN)*(tBot-tTop-6);
+    // heating / cooling
+    const dir=clamp((tgt-bath)/30,-1,1);
+    line(ctx,bx-bw*0.9,floor,bx+bw*0.9,floor,COL.ink,3);
+    burner(ctx,bx,floor,bw*0.6,Math.max(0,dir),t);
+    // water
+    const wlev=top+(bot-top)*0.18;
+    liquid(ctx,()=>{ctx.beginPath();ctx.rect(bx-bw/2,top,bw,bot-top);},bx-bw/2,bx+bw/2,wlev,bot,t,1.4,mixCol('#cfe8fb','#f4cdc3',(bath-30)/90),COL.blue);
+    beakerStroke(ctx,bx,top-10,bot,bw);
+    // ice cubes
+    if(bath<3) for(let i=0;i<4;i++){ ice(ctx,bx-bw*0.32+i*bw*0.21+Math.sin(t*1.2+i)*3,wlev+4+Math.sin(t*1.7+i*2)*2.5,bw*0.17,Math.sin(t+i)*0.12); }
+    // bubbles / steam
+    if(bath>88 && Math.random()<0.5) bub.push({x:bx+(Math.random()-0.5)*bw*0.8,y:bot-8,r:2+Math.random()*3});
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.y-=(70+b.r*12)*dt; b.x+=Math.sin(t*6+i)*0.4; circ(ctx,b.x,b.y,b.r,COL.blue,'rgba(255,255,255,0.7)',1.4); if(b.y<wlev) bub.splice(i,1); }
+    if(bath>78) steamWisps(ctx,bx,wlev-6,bw*0.7,4,t,smoothstep(78,100,bath));
+    // cooling arrows
+    if(dir<-0.1){ for(let i=0;i<3;i++){ const ax=bx-bw*0.3+i*bw*0.3, ay=top-70+((t*50+i*30)%50); vec(ctx,ax,ay,ax,ay+26,COL.blue,2.6); } }
+    // thermometer in the bath
+    const tx=bx+bw*0.18, tw=14*sc+6;
+    ctx.save(); ctx.lineWidth=2.6; ctx.strokeStyle=COL.ink; ctx.fillStyle='rgba(255,255,255,0.92)';
+    rrect(ctx,tx-tw/2,tTop,tw,tBot-tTop+4,tw/2); ctx.fill(); ctx.stroke(); ctx.restore();
+    circ(ctx,tx,tBot+16*sc+8,13*sc+6,COL.ink,'#fff',2.6);
+    ctx.save(); ctx.fillStyle=COL.red; ctx.fillRect(tx-2.6,yOf(C),5.2,tBot+10-yOf(C)+8*sc); ctx.restore();
+    circ(ctx,tx,tBot+16*sc+8,9*sc+3,COL.red,COL.red,1);
+    for(let T=TMIN;T<=TMAX;T+=10){ const yy=yOf(T), big=T%20===0; line(ctx,tx-tw/2,yy,tx-tw/2-(big?11:6),yy,COL.red,big?2:1.2); if(big) textAt(ctx,T+'',tx-tw/2-15,yy+4,{size:11,align:'right',weight:700,color:COL.red}); }
+    for(let Fv=-20;Fv<=260;Fv+=20){ const yy=yOf((Fv-32)*5/9); if(yy<tTop||yy>tBot) continue; const big=Fv%40===0; line(ctx,tx+tw/2,yy,tx+tw/2+(big?11:6),yy,COL.blue,big?2:1.2); if(big) textAt(ctx,Fv+'',tx+tw/2+15,yy+4,{size:11,weight:700,color:COL.blue}); }
+    textAt(ctx,'°C',tx-tw/2-15,tTop-8,{size:13,weight:700,align:'right',color:COL.red}); textAt(ctx,'°F',tx+tw/2+15,tTop-8,{size:13,weight:700,color:COL.blue});
+    // fixed points
+    [[0,'ice point'],[100,'steam point']].forEach(([T,n])=>{ line(ctx,tx-tw/2-44,yOf(T),tx+tw/2+44,yOf(T),COL.yellow,1.4,[5,4]); textAt(ctx,n,tx+tw/2+68,yOf(T)-5,{size:10.5,weight:600,color:COL.yellow}); });
+    // graph t_F vs t_C
+    const gx=w*0.60, gy=h*0.80, gw=w*0.34, gh=h*0.62;
+    axes(ctx,gx,gy,gw,gh,'t꜀ (°C)','t_F (°F)');
+    const GX=c=>gx+(c-TMIN)/(TMAX-TMIN)*gw, GY=f=>gy-(f+22)/(266+22)*gh;
+    polyline(ctx,[[GX(TMIN),GY(TMIN*9/5+32)],[GX(TMAX),GY(TMAX*9/5+32)]],COL.blue,3);
+    [[0,32],[100,212]].forEach(([c,f])=>{ line(ctx,GX(c),gy,GX(c),GY(f),COL.mid,1.2,[4,4]); line(ctx,gx,GY(f),GX(c),GY(f),COL.mid,1.2,[4,4]); circ(ctx,GX(c),GY(f),4,COL.yellow,COL.yellow,1); textAt(ctx,c+'°C = '+f+'°F',GX(c)+8,GY(f)+(c?-8:16),{size:11,weight:700,color:COL.muted}); });
+    line(ctx,GX(C),gy,GX(C),GY(F),COL.red,1.8); line(ctx,gx,GY(F),GX(C),GY(F),COL.blue,1.8);
+    circ(ctx,GX(C),GY(F),7,COL.red,COL.red,1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2. GAS THERMOMETER & ABSOLUTE ZERO    (§10.4, eq. 10.2; Fig 10.2–10.4)
+   PV = μRT ,  R = 8.31 J mol⁻¹ K⁻¹ ,  μ = 1 mol
+   Check: T = 300 K , V = 24.6 L → P ≈ 1 atm ; P→0 at t_C = −273.15 °C
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Keep fixed', seg('md',[['V','Volume'],['P','Pressure'],['T','Temperature']],0)) +
+    slider('T','Temperature',100,600,5,300) + slider('V','Volume',8,50,0.5,25) +
+    cards([{l:'Pressure',id:'c1',col:'var(--f-red)'},{l:'Volume',id:'c2',col:'var(--f-blue)'},{l:'Temperature',id:'c3',col:'var(--f-yellow)'},{l:'PV ÷ T',id:'c4',col:'var(--f-green)'}]) +
+    hintBox('PV = μRT &nbsp;·&nbsp; μ = 1 mol &nbsp;·&nbsp; R = 8.31 J mol⁻¹K⁻¹');
+  const canvas=$('canvas'); let t=0, mode='V', Tc=300, Vc=25, Vprev=25, trail=[], lastPt=null;
+  const N=44, P=[]; const rnd=rng(7);
+  for(let i=0;i<N;i++){ const a=rnd()*6.28; P.push({x:rnd(),d:rnd()*200+10,vx:Math.cos(a),vy:Math.sin(a),hit:0}); }
+  wireSeg(wrap,'md',v=>{ mode=v; trail=[]; lastPt=null; $('#V').disabled=(v==='P'); });
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/820,h/520,1.5);
+    const Tset=K.v('T'), Vset=K.v('V');
+    Tc=approach(Tc,Tset,2.5,dt);
+    let Vtgt=Vset; if(mode==='P'){ Vtgt=clamp(RGAS*Tc/P0*1000,8,50); K.setSlider('V',Vtgt); }
+    Vprev=Vc; Vc=approach(Vc,Vtgt,mode==='P'?3:5,dt);
+    const pa=RGAS*Tc/(Vc/1000), patm=pa/P0;
+    K.put('TV',fmt(Tset,0)+' K ('+fmt(Tset-273.15,0)+' °C)'); K.put('VV',fmt(mode==='P'?Vtgt:Vset,1)+' L');
+    K.put('c1',fmt(patm,2)+' atm'); K.put('c2',fmt(Vc,1)+' L'); K.put('c3',fmt(Tc,0)+' K'); K.put('c4',fmt(pa*Vc/1000/Tc,2)+' J/K');
+    // cylinder
+    const cw=Math.min(w*0.26,230*sc), cx=w*0.22, yb=h*0.82, ytop=h*0.14, Hpx=yb-ytop;
+    const hv=Hpx*Vc/50, yp=yb-hv, pv=(Vc-Vprev)/Math.max(dt,1e-3)/50*Hpx;
+    const xl=cx-cw/2+6, xr=cx+cw/2-6;
+    // burner
+    line(ctx,cx-cw*0.8,yb+30*sc,cx+cw*0.8,yb+30*sc,COL.ink,3);
+    burner(ctx,cx,yb+30*sc,cw*0.55,clamp((Tc-100)/500,0,1)*1.0,t);
+    // gas particles
+    const v0=(120+160*SQ(Tc/300))*sc;
+    let hits=0;
+    P.forEach(p=>{
+      const sp=Math.hypot(p.vx,p.vy)||1; p.vx=p.vx/sp; p.vy=p.vy/sp;
+      let x=xl+p.x*(xr-xl); x+=p.vx*v0*dt; p.d+=p.vy*v0*dt;
+      if(x<xl+4){x=xl+4;p.vx=Math.abs(p.vx);} if(x>xr-4){x=xr-4;p.vx=-Math.abs(p.vx);}
+      if(p.d<4){p.d=4;p.vy=Math.abs(p.vy);}
+      if(p.d>hv-4){ p.d=hv-4; if(p.vy>0){ p.vy=-Math.abs(p.vy); p.hit=1; hits++; } }
+      p.x=(x-xl)/(xr-xl); p.hit=Math.max(0,p.hit-dt*5);
+    });
+    // glass body
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(cx-cw/2,ytop-10); ctx.lineTo(cx-cw/2,yb); ctx.lineTo(cx+cw/2,yb); ctx.lineTo(cx+cw/2,ytop-10); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.fillStyle=hotCol(Tc,100,600); ctx.globalAlpha=0.13; ctx.fillRect(cx-cw/2+2,yp,cw-4,hv); ctx.restore();
+    P.forEach(p=>{ const px=xl+p.x*(xr-xl), py=yb-p.d; circ(ctx,px,py,5*sc+1.5,COL.ink,hotCol(Tc,100,600),1.6); if(p.hit>0) circ(ctx,px,yp,9*p.hit+5,COL.red,null,1.8); });
+    // piston
+    ctx.save(); rrect(ctx,cx-cw/2+3,yp-14,cw-6,14,3); ctx.fillStyle='#e3ecf7'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    line(ctx,cx,yp-14,cx,Math.min(yp-14,ytop-20)-8,COL.ink,5);
+    const hy=Math.min(yp-14,ytop-20)-8;
+    if(mode==='P'){ for(let i=0;i<2;i++){ const wy=hy-(i+1)*20; rect(ctx,cx-34,wy,68,18,COL.ink,'#cfd8e3',2.4); if(!i) textAt(ctx,'1 atm',cx,wy+13,{size:11,align:'center',weight:700,color:COL.red}); } }
+    else if(mode==='V'){ [-1,1].forEach(s=>{ rect(ctx,cx+s*(cw/2)-(s>0?0:8),yp-18,8,22,COL.red,COL.red,1.2); }); rect(ctx,cx-26,hy-8,52,10,COL.ink,'#cfd8e3',2.4); textAt(ctx,'locked',cx,hy-14,{size:11,align:'center',weight:700,color:COL.red}); }
+    else { rect(ctx,cx-26,hy-8,52,10,COL.ink,'#cfd8e3',2.4); const mv=clamp(pv/40,-1,1); if(Math.abs(mv)>0.05) vec(ctx,cx+44,hy-3,cx+44,hy-3+mv*34,COL.blue,3.4); textAt(ctx,'push / pull',cx,hy-18,{size:11,align:'center',weight:700,color:COL.blue}); }
+    // pressure arrows on piston
+    const pl=clamp(patm/3,0.05,1)*46; vec(ctx,cx+cw/2+22,yp+4-pl,cx+cw/2+22,yp+4,COL.red,3.4);
+    // dial
+    dial(ctx,(cx+cw/2+w*0.58)/2,h*0.3,Math.min(52*sc+6,h*0.12),patm/3,3,'atm',fmt(patm,2)+' atm',6);
+    // graph
+    const gx=w*0.58, gy=h*0.80, gw=w*0.37, gh=h*0.62;
+    let GX,GY,xl_,yl_;
+    if(mode==='T'){
+      const Pmax=RGAS*Tset/(8/1000)/P0*1.12;
+      GX=v=>gx+gw*v/55; GY=p=>gy-gh*p/Pmax; xl_='V (L)'; yl_='P (atm)';
+      axes(ctx,gx,gy,gw,gh,xl_,yl_);
+      const pts=[]; for(let v=8;v<=50;v+=1) pts.push([GX(v),GY(RGAS*Tset/(v/1000)/P0)]);
+      polyline(ctx,pts,COL.green,3);
+      trail.forEach(q=>circ(ctx,GX(q[0]),GY(q[1]),2.6,COL.blue,COL.blue,1));
+      circ(ctx,GX(Vc),GY(patm),7,COL.red,COL.red,1);
+      pill(ctx,gx+gw,gy-gh+8,'PV = constant','#1f9d55','right');
+      if(!lastPt||Math.hypot(lastPt[0]-Vc,lastPt[1]-patm)>0.6){ trail.push([Vc,patm]); lastPt=[Vc,patm]; if(trail.length>40) trail.shift(); }
+    } else {
+      const isP=mode==='V';
+      const ymax=isP? RGAS*600/((Vset)/1000)/P0*1.1 : 60;
+      GX=c=>gx+gw*(c+300)/650; GY=y=>gy-gh*y/ymax; xl_='t (°C)'; yl_=isP?'P (atm)':'V (L)';
+      axes(ctx,gx,gy,gw,gh,xl_,yl_);
+      const f=c=>isP? RGAS*(c+273.15)/(Vset/1000)/P0 : RGAS*(c+273.15)/P0*1000;
+      line(ctx,GX(-273.15),gy,GX(-273.15),gy-gh,COL.mid,1.2,[4,5]);
+      polyline(ctx,[[GX(-273.15),GY(0)],[GX(100-273.15),GY(f(100-273.15))]],COL.yellow,2.6,[7,5]);
+      polyline(ctx,[[GX(100-273.15),GY(f(100-273.15))],[GX(350),GY(f(350))]],COL.green,3.2);
+      trail.forEach(q=>circ(ctx,GX(q[0]),GY(q[1]),2.6,COL.blue,COL.blue,1));
+      const cc=Tc-273.15; circ(ctx,GX(cc),GY(isP?patm:Vc),7,COL.red,COL.red,1);
+      circ(ctx,GX(-273.15),GY(0),5,COL.yellow,COL.yellow,1);
+      pill(ctx,GX(-273.15)+8,gy-14,'−273.15 °C','#d9a017','left');
+      if(!lastPt||Math.hypot(lastPt[0]-cc,(lastPt[1]-(isP?patm:Vc))*40)>8){ trail.push([cc,isP?patm:Vc]); lastPt=[cc,isP?patm:Vc]; if(trail.length>40) trail.shift(); }
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3. THERMAL EXPANSION                  (§10.5, eq. 10.4–10.9; Ex 10.1, 10.2)
+   ΔL = α L ΔT ;  ΔA/A = 2αΔT ;  ΔV/V = 3αΔT ;  σ = Y α ΔT
+   Ex 10.2: ring D = 5.231 m → rim D = 5.243 m  →  T₂ = 218 °C
+   Ex (rails): ΔT = 10 K , Y = 2×10¹¹ → σ = 2.4×10⁷ Pa , F ≈ 1×10⁵ N
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Activity', seg('md',[['rod','Rod'],['plate','Plate'],['rail','Rails'],['ring','Ring']],0)) +
+    `<div id="g_mat">`+group('Material', seg('mat',[['2.5','Al'],['1.8','Brass'],['1.7','Cu'],['1.2','Iron'],['0.32','Pyrex']],0))+`</div>` +
+    slider('dT','Temperature rise ΔT',0,300,1,100) + slider('Tr','Ring temperature',27,400,1,27) +
+    `<div class="btn-row" id="g_fit"><button class="toggle-btn play" id="fit">▶ Fit the ring</button><button class="toggle-btn" id="rst">⟲ Reset</button></div>` +
+    cards([{l:'Result 1',id:'c1',col:'var(--f-red)'},{l:'Result 2',id:'c2',col:'var(--f-blue)'},{l:'Note',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('<span id="hn"></span>');
+  const canvas=$('canvas'); let t=0, mode='rod', alpha=2.5e-5;
+  let Tm=0;                       // body temperature rise (lagged)
+  const endS={x:0,v:0}, bow={x:0,v:0}, ring={x:0,v:0,state:'idle',p:0,fitted:false,Trng:27,msg:''};
+  const MATN={'2.5':'Aluminium','1.8':'Brass','1.7':'Copper','1.2':'Iron','0.32':'Pyrex glass'};
+  function sync(){
+    K.show('mat',mode==='rod'||mode==='plate'); K.show('dT',mode!=='ring'); K.show('Tr',mode==='ring'); K.show('fit',mode==='ring');
+    $('#hn').innerHTML = mode==='rod'?'ΔL = α L ΔT' : mode==='plate'?'ΔA ÷ A = 2 α ΔT' : mode==='rail'?'σ = Y α ΔT' : 'L<sub>T2</sub> = L<sub>T1</sub>[1 + α(T₂ − T₁)]';
+    Tm=0; endS.x=0; endS.v=0; ring.state='idle'; ring.fitted=false; ring.Trng=27; ring.x=0; ring.v=0; bow.x=0; bow.v=0;
+    if(mode==='ring') K.setSlider('Tr',27);
+  }
+  wireSeg(wrap,'md',v=>{ mode=v; sync(); });
+  wireSeg(wrap,'mat',v=>{ alpha=+v*1e-5; });
+  $('#rst').onclick=()=>{ sync(); };
+  $('#fit').onclick=()=>{ if(ring.state==='idle'&&!ring.fitted){ ring.state='try'; ring.p=0; } };
+  sync();
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/820,h/520,1.5);
+    const dTset=K.v('dT'); K.put('dTV','+'+fmt(dTset,0)+' K'); K.put('TrV',fmt(K.v('Tr'),0)+' °C');
+    const floor=h*0.9; line(ctx,w*0.05,floor,w*0.95,floor,COL.ink,3);
+    const bodyCol=T=>rampCol([[0,'#cfd8e3'],[0.5,'#ecb07a'],[1,'#d9532b']],clamp(T/300,0,1));
+    if(mode==='rod'||mode==='plate'||mode==='rail'){
+      const useA = mode==='rail'?1.2e-5:alpha;
+      Tm=approach(Tm,dTset,0.9,dt);
+      const burnI=clamp((dTset-Tm)/60+0.25*(dTset>2),0,1);
+      if(mode==='rod'||mode==='rail'){
+        const x0=w*0.12, L0=w*0.62, yr=floor-112*sc, th=34*sc;
+        const EX=mode==='rail'?0:30, dL=useA*Tm*L0*EX;
+        springTo(endS,dL,70,10,dt);
+        const xe=x0+L0+endS.x;
+        // wall(s)
+        rect(ctx,x0-24,yr-th*1.5,24,th*3,COL.ink,'#cfd8e3',2.6);
+        for(let i=0;i<6;i++) line(ctx,x0-24,yr-th*1.5+i*th*0.6,x0-34,yr-th*1.5+i*th*0.6+10,COL.ink,1.6);
+        if(mode==='rail'){ rect(ctx,x0+L0,yr-th*1.5,24,th*3,COL.ink,'#cfd8e3',2.6); for(let i=0;i<6;i++) line(ctx,x0+L0+24,yr-th*1.5+i*th*0.6,x0+L0+34,yr-th*1.5+i*th*0.6+10,COL.ink,1.6); }
+        // bow for rails
+        const bowT=mode==='rail'?26*SQ(Tm/10)*sc*0.8:0; springTo(bow,Math.min(bowT,h*0.18),60,9,dt);
+        const nseg=40, topP=[], botP=[];
+        for(let i=0;i<=nseg;i++){ const u=i/nseg, xx=x0+(xe-x0)*u, off=-bow.x*Math.sin(Math.PI*u); topP.push([xx,yr-th/2+off]); botP.push([xx,yr+th/2+off]); }
+        ctx.save(); ctx.beginPath(); topP.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); for(let i=nseg;i>=0;i--) ctx.lineTo(botP[i][0],botP[i][1]); ctx.closePath();
+        ctx.fillStyle=bodyCol(Tm); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+        // atoms vibrating
+        const cols=24, amp=0.6+SQ(Tm)*0.22;
+        for(let r=0;r<3;r++) for(let c=0;c<=cols;c++){ const u=c/cols, px=x0+(xe-x0)*u+Math.sin(t*14+c*1.3+r*2)*amp, off=-bow.x*Math.sin(Math.PI*u), py=yr+(r-1)*th*0.28+off+Math.cos(t*16+c*0.9+r)*amp; circ(ctx,px,py,3.4*sc+0.6,COL.ink,'rgba(255,255,255,0.3)',1.2); }
+        // burner
+        burner(ctx,x0+L0*0.5,floor,100*sc,burnI,t);
+        if(mode==='rod'){
+          line(ctx,x0+L0,yr-th*1.1,x0+L0,yr+th*1.7,COL.yellow,1.8,[6,5]);
+          if(endS.x>1){ dimArrow2(ctx,x0+L0,xe,yr+th*1.6,COL.red); pill(ctx,(x0+L0+xe)/2,yr+th*1.6+22,'ΔL = '+fmt(useA*1000*Tm,2)+' mm (× 30 shown)',COL.red,'center'); }
+          textAt(ctx,'L₀ = 1 m  ·  '+MATN[String(+(alpha*1e5).toFixed(2))],x0+L0/2,yr-th*1.9,{size:13,weight:700,align:'center',color:COL.muted});
+          K.put('c1','ΔL = '+fmt(useA*1000*Tm,3)+' mm'); K.put('c2','ΔL/L = '+fmt(useA*Tm*100,3)+' %'); K.put('c3','α = '+fmt(alpha*1e5,2)+' × 10⁻⁵ K⁻¹');
+        } else {
+          const Y=2e11, sig=Y*useA*Tm, F=sig*40e-4;
+          const al=clamp(sig/4e7,0,1)*70*sc;
+          if(al>2){ vec(ctx,x0+22,yr+th*1.8,x0+22+al,yr+th*1.8,COL.red,4); vec(ctx,x0+L0-22,yr+th*1.8,x0+L0-22-al,yr+th*1.8,COL.red,4); pill(ctx,x0+L0/2,yr+th*1.8,'F = '+fmt(F/1e5,2)+' × 10⁵ N',COL.red,'center'); }
+          textAt(ctx,'steel rail · A = 40 cm² · ends fixed',x0+L0/2,yr-th*2.2,{size:13,weight:700,align:'center',color:COL.muted});
+          K.put('c1','σ = '+fmt(sig/1e7,2)+' × 10⁷ Pa'); K.put('c2','F = '+fmt(F/1e5,2)+' × 10⁵ N'); K.put('c3','Strain αΔT = '+fmt(useA*Tm*1e4,2)+' × 10⁻⁴');
+        }
+      } else {
+        const s0=Math.min(w*0.3,h*0.42), cx=w*0.4, cy=floor-92*sc-Math.min(w*0.3,h*0.42)/2, EX=30;
+        const f=1+useA*Tm*EX; springTo(endS,f-1,80,11,dt); const s=s0*(1+endS.x);
+        rect(ctx,cx-s0/2,cy-s0/2,s0,s0,COL.yellow,null,1.8); ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.yellow; ctx.strokeRect(cx-s0/2,cy-s0/2,s0,s0); ctx.restore();
+        rect(ctx,cx-s/2,cy-s/2,s,s,COL.ink,bodyCol(Tm),2.8);
+        const n=7; for(let i=0;i<n;i++) for(let j=0;j<n;j++){ const px=cx-s/2+s*(i+0.5)/n+Math.sin(t*14+i*1.7+j)*(0.6+SQ(Tm)*0.2), py=cy-s/2+s*(j+0.5)/n+Math.cos(t*15+j*1.3+i)*(0.6+SQ(Tm)*0.2); circ(ctx,px,py,3.6*sc+0.6,COL.ink,'rgba(255,255,255,0.3)',1.2); }
+        dimArrow2(ctx,cx-s/2,cx+s/2,cy+s/2+26,COL.blue); textAt(ctx,'a',cx,cy+s/2+46,{size:13,weight:700,align:'center',color:COL.blue});
+        vec(ctx,cx+s/2+30,cy+s/2,cx+s/2+30,cy-s/2,COL.green,2.6); arrowHead(ctx,cx+s/2+30,cy+s/2,Math.PI/2,COL.green,7); textAt(ctx,'b',cx+s/2+42,cy+4,{size:13,weight:700,color:COL.green});
+        burner(ctx,cx,floor,110*sc,burnI,t);
+        const dA=2*useA*Tm;
+        pill(ctx,w*0.78,h*0.3,'ΔA ÷ A = 2αΔT','#d9432b','center');
+        K.put('c1','ΔA/A = '+fmt(dA*100,3)+' %'); K.put('c2','ΔL/L = '+fmt(useA*Tm*100,3)+' %'); K.put('c3','ΔV/V = 3αΔT = '+fmt(3*useA*Tm*100,3)+' % (cube)');
+        textAt(ctx,'dashed = original size · expansion × 30 shown',cx,h*0.09,{size:12,weight:600,align:'center',color:COL.muted});
+      }
+    } else {
+      /* ---------- blacksmith's ring ---------- */
+      const alphaI=1.2e-5, Ls=5.231, Lr=5.243, Tset=K.v('Tr');
+      ring.Trng=approach(ring.Trng,Tset,ring.fitted?0.7:0.9,dt);
+      const Lcur=Ls*(1+alphaI*(ring.Trng-27)), Dring=Lcur;
+      const EXr=30, rimR=Math.min(h*0.27,w*0.16), wx=w*0.3, wy=floor-88*sc-rimR;
+      const stX=w*0.72;
+      const rr=rimR*(1+(Dring-Lr)/Lr*EXr);
+      const fits=Dring>=Lr-1e-6;
+      // wheel
+      circ(ctx,wx,wy,rimR,COL.ink,'#f3e6cf',3); circ(ctx,wx,wy,rimR*0.82,COL.mid,null,1.6); circ(ctx,wx,wy,rimR*0.16,COL.ink,'#d8c19a',2.4);
+      for(let i=0;i<8;i++){ const a=i*Math.PI/4; line(ctx,wx+Math.cos(a)*rimR*0.16,wy+Math.sin(a)*rimR*0.16,wx+Math.cos(a)*rimR*0.82,wy+Math.sin(a)*rimR*0.82,COL.ink,2.4); }
+      textAt(ctx,'wooden wheel · D = 5.243 m',wx,wy+rimR+30,{size:12,weight:700,align:'center',color:COL.muted});
+      // stage + burner
+      const stY=wy; line(ctx,wx-rimR*1.15,wy+rimR+6,wx+rimR*1.15,wy+rimR+6,COL.ink,3.2);
+      // ring animation state
+      const homeX=stX-wx;
+      if(ring.state==='try'){
+        ring.p+=dt*0.7;
+        const u=ring.p; let target;
+        if(fits){ target=homeX*(1-smoothstep(0,0.7,u)); if(u>0.85){ ring.state='idle'; ring.fitted=true; ring.msg='Fits! Now let it cool'; } }
+        else { const go=smoothstep(0,0.45,u), back=smoothstep(0.55,1,u); target=homeX*(1-0.8*go*(1-back)); if(u>1.05){ ring.state='idle'; } if(u>0.45&&u<0.6) ring.msg='Too small — D < 5.243 m'; }
+        ring.x=target;
+      } else if(ring.fitted){ ring.x=approach(ring.x,0,8,dt); }
+      else { ring.x=approach(ring.x,homeX,6,dt); }
+      const rx=wx+ring.x;
+      const drawR=ring.fitted? Math.max(rr,rimR*0.995) : rr;
+      if(!ring.fitted) { line(ctx,stX-rimR*1.1,stY+rimR+6,stX+rimR*1.1,stY+rimR+6,COL.ink,3.2); burner(ctx,stX,floor,110*sc,clamp((Tset-ring.Trng)/80+0.2*(Tset>30),0,1),t); line(ctx,stX-rimR*1.1,floor-0,stX-rimR*1.1,stY+rimR+6,COL.mid,1.4,[4,4]); line(ctx,stX+rimR*1.1,floor,stX+rimR*1.1,stY+rimR+6,COL.mid,1.4,[4,4]); }
+      ctx.save(); ctx.lineWidth=Math.max(5,rimR*0.07); ctx.strokeStyle=glowCol((ring.Trng-27)*3.2+27); ctx.beginPath(); ctx.arc(rx,wy,drawR+(ring.fitted?0:0),0,Math.PI*2); ctx.stroke();
+      ctx.lineWidth=1.6; ctx.strokeStyle=COL.ink; ctx.beginPath(); ctx.arc(rx,wy,drawR+Math.max(5,rimR*0.07)/2,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.arc(rx,wy,drawR-Math.max(5,rimR*0.07)/2,0,Math.PI*2); ctx.stroke(); ctx.restore();
+      // tightness arrows
+      if(ring.fitted){ const tight=clamp((Lr-Lcur)/Lr*EXr*3,0,1); if(tight>0.02) for(let i=0;i<8;i++){ const a=i*Math.PI/4+0.4; vec(ctx,wx+Math.cos(a)*(rimR*1.28),wy+Math.sin(a)*(rimR*1.28),wx+Math.cos(a)*(rimR*1.28-26*tight-6),wy+Math.sin(a)*(rimR*1.28-26*tight-6),COL.blue,3); } }
+      dimArrow2(ctx,wx-rimR,wx+rimR,wy-rimR-24,COL.yellow);
+      if(ring.msg&&ring.state==='idle'&&!ring.fitted&&ring.p>0.5) {}
+      const status=ring.fitted?(Lcur<Lr-1e-5?'Cooled: ring grips the rim':ring.msg):(ring.state==='try'?ring.msg:(fits?'Hot enough — press Fit':'Ring smaller than rim'));
+      pill(ctx,w*0.5,h*0.09,status,fits||ring.fitted?'#1f9d55':'#d9432b','center');
+      K.put('c1','D ring = '+fmt(Dring,3)+' m'); K.put('c2','D rim = 5.243 m'); K.put('c3','Needs T₂ = 218 °C  (now '+fmt(ring.Trng,0)+' °C)');
+      textAt(ctx,'ring size × 30 exaggerated',w*0.5,h*0.96,{size:11,weight:600,align:'center',color:COL.mid});
+    }
+  });
+  return wrap;
+}
+function dimArrow2(ctx,x1,x2,y,color){ line(ctx,x1,y,x2,y,color,1.8); arrowHead(ctx,x1,y,Math.PI,color,6); arrowHead(ctx,x2,y,0,color,6); }
+/* =====================================================================
+   4. ANOMALOUS WATER — A LAKE FREEZES FROM THE TOP   (§10.5, Fig 10.7)
+   Water is densest at 4 °C. Surface cools → sinks (convection) until the
+   whole lake is at 4 °C; colder water is lighter, stays on top and freezes.
+   Density: Tanaka formula (ρ = 999.97 kg m⁻³ at 3.98 °C).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('ta','Air temperature',-15,25,1,18) +
+    group('Time speed', seg('sp',[['1','×1'],['3','×3'],['8','×8']],1)) +
+    `<div class="btn-row"><button class="toggle-btn play" id="warm">☀ Warm lake 18 °C</button><button class="toggle-btn" id="cold">❄ Cold lake 8 °C</button></div>` +
+    cards([{l:'Surface',id:'c1',col:'var(--f-red)'},{l:'Bottom',id:'c2',col:'var(--f-blue)'},{l:'Ice thickness',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('Densest at 4 °C · colder water floats');
+  const canvas=$('canvas'); let t=0, speed=3, flow=0, ice=0;
+  const N=10; let T=Array(N).fill(18), D=T.slice();
+  const flakes=[]; for(let i=0;i<30;i++) flakes.push({x:Math.random(),y:Math.random(),s:0.4+Math.random()});
+  const dots=[]; const rnd=rng(11); for(let i=0;i<46;i++) dots.push({x:rnd(),y:rnd(),ph:rnd()*6});
+  wireSeg(wrap,'sp',v=>speed=+v);
+  const reset=T0=>{ T=Array(N).fill(T0); D=T.slice(); ice=0; flow=0; };
+  $('#warm').onclick=()=>reset(18); $('#cold').onclick=()=>reset(8);
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ta=K.v('ta'); K.put('taV',fmt(ta,0)+' °C');
+    const hs=dt*speed/5; let fl=0;
+    for(let s=0;s<5;s++){
+      if(ice<=0.05){ T[0]+=(ta-T[0])*0.16*hs*5; if(T[0]<0){ T[0]=0; if(ta<0) ice+=0.0; } }
+      else { T[0]+=(0-T[0])*0.5*hs*5; }
+      if(ta<0 && T[0]<=0.15) ice=Math.min(40,ice+0.03*(-ta)/(1+0.2*ice)*hs*5);
+      if(ta>0 && ice>0) ice=Math.max(0,ice-0.05*ta*hs*5*0.2);
+      for(let i=0;i<N-1;i++){ const f=0.05*(T[i+1]-T[i])*hs*5; T[i]+=f; T[i+1]-=f; }
+      T[N-1]+=0;
+      for(let pass=0;pass<2;pass++) for(let i=0;i<N-1;i++){
+        if(rhoWater(T[i])>rhoWater(T[i+1])+2e-5){ const r=Math.min(0.5,6*hs*5), d=(T[i]-T[i+1])*r; T[i]-=d; T[i+1]+=d; fl+=Math.abs(d); }
+      }
+      T[0]=Math.max(0,T[0]);
+    }
+    flow=approach(flow,clamp(fl*3,0,1),4,dt);
+    for(let i=0;i<N;i++) D[i]=approach(D[i],T[i],6,dt);
+    K.put('c1',fmt(T[0],1)+' °C'); K.put('c2',fmt(T[N-1],1)+' °C'); K.put('c3',ice>0.1?fmt(ice,1)+' cm':'no ice');
+    const sc=Math.min(w/820,h/520,1.5);
+    const lx=w*0.1, lw=w*0.42, ly=h*0.26, lh=h*0.56, lay=lh/N;
+    // sky
+    if(ta>=5){ circ(ctx,lx+lw*0.86,h*0.12,16*sc+4,COL.yellow,'rgba(217,160,23,0.25)',2.4); for(let i=0;i<8;i++){ const a=i*Math.PI/4+t*0.4; line(ctx,lx+lw*0.86+Math.cos(a)*(22*sc+6),h*0.12+Math.sin(a)*(22*sc+6),lx+lw*0.86+Math.cos(a)*(30*sc+8),h*0.12+Math.sin(a)*(30*sc+8),COL.yellow,2); } }
+    if(ta<0){ flakes.forEach(f=>{ f.y+=dt*0.12*f.s; if(f.y>1) f.y=0; const fx=lx+f.x*lw+Math.sin(t*1.5+f.x*9)*6, fy=h*0.04+f.y*(ly-h*0.08); for(let k=0;k<3;k++){ const a=k*Math.PI/3; line(ctx,fx-Math.cos(a)*4,fy-Math.sin(a)*4,fx+Math.cos(a)*4,fy+Math.sin(a)*4,COL.blue,1.4); } }); }
+    textAt(ctx,'Air  '+fmt(ta,0)+' °C',lx+lw*0.02,h*0.075,{size:14,weight:700,color:ta<0?COL.blue:COL.red});
+    // lake layers
+    for(let i=0;i<N;i++){ const y=ly+i*lay; ctx.save(); ctx.fillStyle=hotCol(D[i],-1,20); ctx.globalAlpha=0.55; ctx.fillRect(lx,y,lw,lay+0.6); ctx.restore(); textAt(ctx,fmt(D[i],1)+'°',lx-8,y+lay*0.62,{size:11,weight:700,align:'right',color:D[i]<4.2?COL.blue:COL.red}); line(ctx,lx,y,lx+lw,y,'rgba(19,42,68,0.12)',1); }
+    // convection dots
+    dots.forEach((d,i)=>{ const zoneTop=0, vy=flow*0.22*(d.x<0.5?1:-1); d.y+=vy*dt; if(d.y>1) d.y=0; if(d.y<0) d.y=1; const dx=lx+d.x*lw+Math.sin(t*2+d.ph)*3*flow, dy=ly+d.y*lh; ctx.save(); ctx.globalAlpha=0.25+0.6*flow; circ(ctx,dx,dy,2.6,d.x<0.5?COL.blue:COL.red,d.x<0.5?COL.blue:COL.red,1); ctx.restore(); });
+    if(flow>0.12) { vec(ctx,lx+lw*0.25,ly+lh*0.18,lx+lw*0.25,ly+lh*0.7,COL.blue,3.4); vec(ctx,lx+lw*0.75,ly+lh*0.7,lx+lw*0.75,ly+lh*0.18,COL.red,3.4); }
+    // basin walls
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=4; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(lx,ly-6); ctx.lineTo(lx,ly+lh); ctx.lineTo(lx+lw,ly+lh); ctx.lineTo(lx+lw,ly-6); ctx.stroke(); ctx.restore();
+    // ice sheet
+    if(ice>0.05){ const ih=Math.max(7,ice/40*lay*7); ctx.save(); rrect(ctx,lx+2,ly-ih*0.25,lw-4,ih,4); ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore(); for(let i=0;i<4;i++) line(ctx,lx+lw*(0.15+i*0.23),ly-ih*0.2,lx+lw*(0.2+i*0.23),ly+ih*0.6,'#a9d8f5',1.6); }
+    // fish
+    const fx=lx+lw*(0.5+0.32*Math.sin(t*0.5)), fy=ly+lh-lay*0.5+Math.sin(t*1.4)*4, dir=Math.cos(t*0.5)>0?1:-1;
+    ctx.save(); ctx.translate(fx,fy); ctx.scale(dir,1); ctx.strokeStyle=COL.green; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); ctx.ellipse(0,0,15*sc+3,7*sc+2,0,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-14*sc-3,0); ctx.lineTo(-24*sc-4,-8*sc-2+Math.sin(t*8)*3); ctx.lineTo(-24*sc-4,8*sc+2+Math.sin(t*8)*3); ctx.closePath(); ctx.stroke(); circ(ctx,8*sc+2,-1.5,1.8,COL.green,COL.green,1); ctx.restore();
+    // density graph
+    const gx=w*0.64, gy=h*0.80, gw=w*0.31, gh=h*0.58, X0=0,X1=12,Y0=999.45,Y1=1000.02;
+    axes(ctx,gx,gy,gw,gh,'T (°C)','ρ (kg m⁻³)');
+    const GX=v=>gx+gw*(v-X0)/(X1-X0), GY=r=>gy-gh*(r-Y0)/(Y1-Y0);
+    const pts=[]; for(let v=0;v<=12;v+=0.25) pts.push([GX(v),GY(rhoWater(v))]);
+    polyline(ctx,pts,COL.blue,3);
+    line(ctx,GX(3.98),gy,GX(3.98),GY(rhoWater(3.98)),COL.yellow,1.6,[5,4]); pill(ctx,GX(3.98)+6,gy-12,'4 °C · densest','#d9a017','left');
+    for(let v=0;v<=12;v+=4) { line(ctx,GX(v),gy,GX(v),gy+5,COL.ink,1.6); textAt(ctx,v+'',GX(v),gy+17,{size:10.5,align:'center',weight:600,color:COL.muted}); }
+    for(let i=0;i<N;i++){ const v=clamp(D[i],0,12); circ(ctx,GX(v),GY(rhoWater(v)),4.5,COL.ink,hotCol(D[i],-1,20),1.6); }
+    textAt(ctx,'each dot = one layer of the lake',gx+gw,gy-gh-8,{size:11,weight:600,align:'right',color:COL.muted});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5. SPECIFIC HEAT CAPACITY             (§10.6, eq. 10.10–10.11, Table 10.3)
+   Q = m s ΔT .  Same burner power → ΔT = P t / (m s)
+   Beaker A is always water; beaker B can hold another liquid.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Beaker B holds', seg('sb',[['4186|Water','Water'],['2118|Kerosene','Kerosene'],['1965|Edible oil','Edible oil'],['140|Mercury','Mercury']],2)) +
+    slider('ma','Mass of water A',0.1,1,0.05,0.5) + slider('mb','Mass in B',0.1,1,0.05,0.5) + slider('pw','Burner power',200,1500,50,800) +
+    `<div class="btn-row"><button class="toggle-btn play" id="go">▶ Heat</button><button class="toggle-btn" id="rs">⟲ Cool down</button></div>` +
+    cards([{l:'ΔT  water A',id:'c1',col:'var(--f-blue)'},{l:'ΔT  beaker B',id:'c2',col:'var(--f-red)'},{l:'Heat given to each',id:'c3',col:'var(--f-yellow)'},{l:'Time',id:'c4'}]) +
+    hintBox('Q = m s ΔT &nbsp;·&nbsp; s<sub>water</sub> = 4186 J kg⁻¹K⁻¹');
+  const canvas=$('canvas'); let t=0, sB=2118, nameB='Edible oil', run=false, Q=0, tim=0;
+  let TA=20, TB=20; const dispA={x:20}, dispB={x:20}, parts=[]; const rnd=rng(5);
+  for(let i=0;i<14;i++) parts.push({x:rnd(),y:rnd(),ph:rnd()*6});
+  const reset=()=>{ TA=20; TB=20; Q=0; tim=0; run=false; $('#go').textContent='▶ Heat'; };
+  wireSeg(wrap,'sb',v=>{ const p=v.split('|'); sB=+p[0]; nameB=p[1]; reset(); });
+  ['ma','mb','pw'].forEach(id=>$('#'+id).addEventListener('input',()=>{ if(id!=='pw') reset(); }));
+  $('#go').onclick=()=>{ run=!run; $('#go').textContent=run?'⏸ Pause':'▶ Heat'; };
+  $('#rs').onclick=reset;
+  const cutA=()=>TA>=99.99, cutB=()=>TB>=99.99;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const mA=K.v('ma'), mB=K.v('mb'), Pw=K.v('pw'); K.put('maV',fmt(mA,2)+' kg'); K.put('mbV',fmt(mB,2)+' kg'); K.put('pwV',Pw+' W');
+    const sim=dt*10;
+    if(run){ if(!cutA()){ TA=Math.min(100,TA+Pw*sim/(mA*4186)); } if(!cutB()){ TB=Math.min(100,TB+Pw*sim/(mB*sB)); } if(!(cutA()&&cutB())){ tim+=sim; } if(!cutA()||!cutB()) Q+=0; }
+    Q=Pw*tim;
+    if(run && cutA()&&cutB()){ run=false; $('#go').textContent='▶ Heat'; }
+    dispA.x=approach(dispA.x,TA,10,dt); dispB.x=approach(dispB.x,TB,10,dt);
+    K.put('c1','+'+fmt(TA-20,1)+' K'); K.put('c2','+'+fmt(TB-20,1)+' K'); K.put('c3',fmt(Q/1000,1)+' kJ'); K.put('c4',fmt(tim,0)+' s');
+    const sc=Math.min(w/820,h/520,1.5);
+    const floor=h*0.84; line(ctx,w*0.04,floor,w*0.96,floor,COL.ink,3);
+    const bw=Math.min(w*0.24,200*sc), bot=floor-92*sc, top=bot-h*0.36;
+    const cols=[w*0.2,w*0.8];
+    [[0,mA,TA,dispA.x,'Water A','rgba(47,143,224,0.2)',COL.blue,cutA()],[1,mB,TB,dispB.x,nameB+' B',nameB==='Mercury'?'rgba(129,149,171,0.45)':nameB==='Water'?'rgba(47,143,224,0.2)':'rgba(217,160,23,0.22)',nameB==='Mercury'?COL.mid:nameB==='Water'?COL.blue:COL.yellow,cutB()]].forEach(([i,m,Tt,Td,nm,fill,strk,cut])=>{
+      const cx=cols[i], lev=bot-(bot-top)*(0.2+0.7*m);
+      burner(ctx,cx,floor,bw*0.7,run&&!cut?clamp(Pw/1200,0.25,1):0,t);
+      line(ctx,cx-bw*0.62,bot+14,cx+bw*0.62,bot+14,COL.ink,3.2); line(ctx,cx-bw*0.5,bot+14,cx-bw*0.5,floor-34,COL.mid,1.6); line(ctx,cx+bw*0.5,bot+14,cx+bw*0.5,floor-34,COL.mid,1.6);
+      liquid(ctx,()=>{ctx.beginPath();ctx.rect(cx-bw/2,top,bw,bot-top);},cx-bw/2,cx+bw/2,lev,bot,t+i,1.3,fill,strk);
+      beakerStroke(ctx,cx,top-12,bot,bw);
+      // convection motes
+      const sp=clamp((Td-20)/60,0,1);
+      parts.forEach((p,k)=>{ const ang=t*(0.8+sp*4)+p.ph; const px=cx+Math.cos(ang)*bw*0.32*(0.5+p.x*0.5), py=(lev+bot)/2+Math.sin(ang)*(bot-lev)*0.32*(0.4+p.y*0.6); if(i===0||nm!=='Mercury') circ(ctx,px,py,2.2,strk,'#fff',1.2); });
+      if(Td>75) for(let k=0;k<4;k++){ const bx=cx-bw*0.3+k*bw*0.2, by=bot-6-((t*60+k*37+i*11)%(bot-lev)); circ(ctx,bx,by,2.8,strk,'rgba(255,255,255,0.8)',1.4); }
+      // thermometer
+      const tx=cx+bw*0.18; thermo(ctx,tx,top-60,bot-24,(Td-20)/80,COL.ink,mixCol('#2f8fe0','#d9432b',(Td-20)/80));
+      textAt(ctx,fmt(Td,1)+' °C',tx,top-72,{size:13,weight:700,align:'center',color:COL.red});
+      textAt(ctx,nm,cx,floor+24,{size:14,weight:700,align:'center',color:COL.ink});
+      textAt(ctx,fmt(m,2)+' kg · s = '+(i?sB:4186),cx,floor+43,{size:12,weight:600,align:'center',color:COL.muted});
+      if(cut) pill(ctx,cx,top-94,'cut-off at 100 °C','#d9a017','center');
+      if(run&&!cut) for(let k=0;k<3;k++){ const ay=bot+12+((t*40+k*14)%40); ctx.save(); ctx.globalAlpha=0.7; vec(ctx,cx-bw*0.3+k*bw*0.3,ay+22,cx-bw*0.3+k*bw*0.3,ay,COL.red,2.4); ctx.restore(); }
+    });
+    // stopwatch
+    const sx=w*0.5, sy=h*0.38, sr=Math.min(46*sc,h*0.1);
+    circ(ctx,sx,sy,sr,COL.ink,'#fff',3); rect(ctx,sx-5,sy-sr-10,10,9,COL.ink,'#cfd8e3',2);
+    for(let k=0;k<12;k++){ const a=k*Math.PI/6-Math.PI/2; line(ctx,sx+Math.cos(a)*(sr-4),sy+Math.sin(a)*(sr-4),sx+Math.cos(a)*(sr-10),sy+Math.sin(a)*(sr-10),COL.ink,1.6); }
+    const ha=-Math.PI/2+(tim/60)*Math.PI*2; line(ctx,sx,sy,sx+Math.cos(ha)*(sr-8),sy+Math.sin(ha)*(sr-8),COL.red,3); circ(ctx,sx,sy,3.6,COL.ink,COL.ink,1);
+    textAt(ctx,fmt(tim,0)+' s',sx,sy+sr+22,{size:15,weight:700,align:'center'});
+    textAt(ctx,'sim. clock ×10',sx,sy+sr+40,{size:10.5,weight:600,align:'center',color:COL.mid});
+    // equal-heat bar
+    const bx0=w*0.37, bx1=w*0.63, byb=h*0.66; line(ctx,bx0,byb,bx1,byb,COL.ink,2);
+    if(Q>0){ const L=(bx1-bx0)*clamp(Q/4.2e5,0,1); line(ctx,bx0,byb,bx0+L,byb,COL.red,7); }
+    textAt(ctx,'same heat Q reaches both',w*0.5,byb+22,{size:12,weight:700,align:'center',color:COL.red});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6. CALORIMETRY — HEAT LOST = HEAT GAINED     (§10.7, Ex 10.3, Ex 10.4)
+   T_f = (m₁s₁T₁ + (m₂s_w + m₃s_cu) T₂) / (m₁s₁ + m₂s_w + m₃s_cu)
+   Check (Ex 10.3): 47 g Al at 100 °C → 0.25 kg water + 0.14 kg Cu at 20 °C → 23 °C
+   Ice mode (Ex 10.4): 0.15 kg ice + 0.30 kg water at 50 °C → 6.7 °C (L_f = 3.34×10⁵)
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Drop in', seg('md',[['M','Hot metal ball'],['I','Ice cubes']],0)) +
+    `<div id="g_met">`+group('Metal', seg('met',[['900|Aluminium','Al'],['386.4|Copper','Cu'],['450|Iron','Fe'],['127.7|Lead','Pb']],0))+`</div>` +
+    slider('m1','Mass dropped',0.02,0.4,0.001,0.047) + slider('m2','Water in calorimeter',0.1,0.5,0.01,0.25) + slider('tw','Water temperature',20,80,1,20) +
+    `<div class="btn-row"><button class="toggle-btn play" id="go">▶ Drop it in</button><button class="toggle-btn" id="rs">⟲ Reset</button></div>` +
+    cards([{l:'Final temperature',id:'c1',col:'var(--f-green)'},{l:'Heat exchanged',id:'c2',col:'var(--f-red)'},{l:'Dropped body',id:'c3',col:'var(--f-red)'},{l:'Water + vessel',id:'c4',col:'var(--f-blue)'}]) +
+    hintBox('Heat lost = heat gained');
+  const canvas=$('canvas'); let t=0, mode='M', s1=900, nm1='Aluminium';
+  const S={ph:0,u:0,te:0,hist:[],splash:[],sink:{x:0,v:0}};
+  const Lf=3.34e5, sw=4186, scu=386;
+  const reset=()=>{ S.ph=0; S.u=0; S.te=0; S.hist=[]; S.splash=[]; S.sink={x:0,v:0}; };
+  function setMode(m){ mode=m; K.show('met',m==='M'); K.show('tw',m==='I'); if(m==='M'){ K.setSlider('m1',0.047); K.setSlider('m2',0.25); K.setSlider('tw',20); } else { K.setSlider('m1',0.15); K.setSlider('m2',0.30); K.setSlider('tw',50); } reset(); }
+  wireSeg(wrap,'md',setMode); wireSeg(wrap,'met',v=>{ const p=v.split('|'); s1=+p[0]; nm1=p[1]; reset(); });
+  ['m1','m2','tw'].forEach(id=>$('#'+id).addEventListener('input',reset));
+  $('#go').onclick=()=>{ if(S.ph===0){ S.ph=1; S.u=0; } }; $('#rs').onclick=reset;
+  K.show('tw',false);
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const m1=K.v('m1'), m2=K.v('m2'), Tw0=K.v('tw'); K.put('m1V',fmt(m1,3)+' kg'); K.put('m2V',fmt(m2,2)+' kg'); K.put('twV',fmt(Tw0,0)+' °C');
+    const m3=mode==='M'?0.14:0, C2=m2*sw+m3*scu; let Tf, T1=100, frac=1, melt=1;
+    if(mode==='M'){ Tf=(m1*s1*100+C2*20)/(m1*s1+C2); }
+    else { const avail=m2*sw*Tw0; if(avail>=m1*Lf+0){ Tf=(m2*sw*Tw0-m1*Lf)/(m1*sw+m2*sw); if(Tf<0){ Tf=0; melt=(m2*sw*Tw0)/(m1*Lf); } } else { Tf=0; melt=avail/(m1*Lf); } T1=0; }
+    const Tstart2=mode==='M'?20:Tw0, TS0=mode==='M'?100:0;
+    // phases: 1 swing (1.7 s), 2 equilibrate
+    if(S.ph===1){ S.u+=dt/1.7; if(S.u>=1){ S.u=1; S.ph=2; S.te=0; S.hist=[]; S.sink.v=140; for(let i=0;i<18;i++) S.splash.push({x:0,y:0,vx:(Math.random()-0.5)*220,vy:-120-Math.random()*200,live:1}); } }
+    if(S.ph===2){ S.te+=dt; if(S.hist.length===0||S.te-S.hist[S.hist.length-1][0]>0.05) S.hist.push([S.te,TS0,Tstart2]); }
+    const tau=2.4, e=S.ph===2?Math.exp(-S.te/tau):1;
+    const u2=S.ph===2?1-e:0;
+    let Tball, Twat;
+    if(mode==='M'){ Tball=Tf+(TS0-Tf)*e; Twat=Tf+(Tstart2-Tf)*e; }
+    else { const mm=m1*melt*u2; Twat=(m2*sw*Tw0-mm*Lf)/(mm*sw+m2*sw); if(S.ph<2) Twat=Tw0; Tball=0; }
+    if(S.ph===2){ const last=S.hist[S.hist.length-1]; if(last){ last[1]=Tball; last[2]=Twat; } }
+    K.put('c1',fmt(mode==='M'?Tf:(Tf),1)+' °C');
+    if(mode==='M'){ K.put('c2',fmt(m1*s1*(100-Tf),0)+' J'); K.put('c3','−'+fmt(100-Tf,1)+' K (lost)'); K.put('c4','+'+fmt(Tf-20,1)+' K (gained)'); }
+    else { K.put('c2',fmt(m1*Lf*melt+m1*sw*Tf,0)+' J'); K.put('c3',fmt(melt*100,0)+' % melted'); K.put('c4','−'+fmt(Tw0-Tf,1)+' K'); }
+    const sc=Math.min(w/820,h/520,1.5);
+    const floor=h*0.9; line(ctx,w*0.03,floor,w*0.62,floor,COL.ink,3);
+    // ---- left object: boiling pot (metal) or ice bowl (ice) ----
+    const px=w*0.13, pw=Math.min(w*0.17,150*sc), ptop=h*0.5, pbot=h*0.84;
+    const cx=w*0.45, cw=Math.min(w*0.2,170*sc), ctop=h*0.42, cbot=h*0.84;
+    const wlevC=cbot-(cbot-ctop)*(0.28+0.6*m2), wlevP=ptop+(pbot-ptop)*0.35;
+    if(mode==='M'){
+      burner(ctx,px,floor,pw*0.7,1,t); line(ctx,px-pw*0.6,pbot+12,px+pw*0.6,pbot+12,COL.ink,3);
+      liquid(ctx,()=>{ctx.beginPath();ctx.rect(px-pw/2,ptop,pw,pbot-ptop);},px-pw/2,px+pw/2,wlevP,pbot,t,1.8,'rgba(47,143,224,0.2)',COL.blue);
+      beakerStroke(ctx,px,ptop-10,pbot,pw);
+      for(let k=0;k<4;k++){ const bx=px-pw*0.3+k*pw*0.2, by=pbot-8-((t*50+k*29)%(pbot-wlevP)); circ(ctx,bx,by,2.8,COL.blue,'rgba(255,255,255,0.85)',1.4); }
+      steamWisps(ctx,px,wlevP-4,pw*0.7,4,t,0.9);
+      textAt(ctx,'boiling water 100 °C',px,pbot+34,{size:12,weight:700,align:'center',color:COL.red});
+    } else {
+      line(ctx,px-pw*0.55,pbot+2,px+pw*0.55,pbot+2,COL.ink,3);
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(px-pw*0.5,pbot-pw*0.2); ctx.quadraticCurveTo(px-pw*0.45,pbot,px,pbot); ctx.quadraticCurveTo(px+pw*0.45,pbot,px+pw*0.5,pbot-pw*0.2); ctx.stroke(); ctx.restore();
+      if(S.ph===0){ const n=5; for(let k=0;k<n;k++) ice(ctx,px-pw*0.3+(k%3)*pw*0.3+(k>2?pw*0.15:0),pbot-14-Math.floor(k/3)*pw*0.22,pw*0.22*Math.cbrt(m1/0.15),0.1*k,1); }
+      textAt(ctx,'ice at 0 °C · '+fmt(m1,2)+' kg',px,pbot+34,{size:12,weight:700,align:'center',color:COL.blue});
+    }
+    // ---- calorimeter ----
+    const jw=cw*1.28;
+    rect(ctx,cx-jw/2,ctop-18,jw,cbot-ctop+36,COL.mid,'rgba(194,209,229,0.25)',2); for(let k=0;k<8;k++) line(ctx,cx-jw/2+2,ctop-14+k*((cbot-ctop+28)/7),cx-jw/2+9,ctop-6+k*((cbot-ctop+28)/7),COL.mid,1);
+    textAt(ctx,'insulating jacket',cx,cbot+36,{size:10.5,weight:600,align:'center',color:COL.mid});
+    const Tshow=S.ph===2?Twat:Tstart2;
+    const wcol=mixCol('#bfe0fa','#f4cdc3',(Tshow-20)/70);
+    const lv=wlevC-(mode==='I'&&S.ph===2?-0:0);
+    liquid(ctx,()=>{ctx.beginPath();ctx.rect(cx-cw/2,ctop,cw,cbot-ctop);},cx-cw/2,cx+cw/2,lv,cbot,t,S.ph===2&&S.te<1.4?3:1.2,wcol,COL.blue);
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.4; ctx.lineJoin='round'; beakerPath(ctx,cx,ctop-10,cbot,cw); ctx.stroke(); ctx.restore();
+    // stirrer
+    const stx=cx-cw*0.22+Math.sin(t*3)*cw*0.12; line(ctx,stx,ctop-24,stx,cbot-24,COL.ink,2.4); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.strokeRect(stx-9,cbot-44,18,14); ctx.restore();
+    // thermometer
+    const tx=cx+cw*0.22; thermo(ctx,tx,ctop-48,cbot-26,(Tshow-0)/100,COL.ink,mixCol('#2f8fe0','#d9432b',(Tshow)/100));
+    textAt(ctx,fmt(Tshow,1)+' °C',tx,ctop-58,{size:13,weight:700,align:'center',color:COL.red});
+    // ---- the dropped body ----
+    const sx0=px, sy0=mode==='M'?wlevP+pw*0.12:pbot-26, sx1=cx-cw*0.05, sy1=lv+cw*0.12, apex=h*0.14;
+    let bx, by;
+    if(S.ph===0){ bx=sx0; by=sy0; if(mode==='M') bx+=Math.sin(t*2)*1.5; }
+    else if(S.ph===1){ const u=S.u, s=u*u*(3-2*u); bx=lerp(sx0,sx1,s); by=lerp(sy0,sy1,s)-apex*Math.sin(Math.PI*s)*(mode==='M'?1:0.8); }
+    else { springTo(S.sink,cw*0.18,40,7,dt); bx=sx1+Math.sin(S.te*3)*2; by=sy1+Math.max(0,S.sink.x)*0.0+(cbot-sy1-30)*Math.min(1,S.te*0.9)*0.0+S.sink.x; }
+    const r=(mode==='M'?12+Math.cbrt(m1/0.047)*6:0)*sc;
+    if(S.ph>=1&&S.ph<3||S.ph===0){
+      if(mode==='M'){
+        if(S.ph<2) line(ctx,bx,by,bx,by-(S.ph===0?60:80),COL.ink,1.6);
+        circ(ctx,bx,by,r,COL.ink,mixCol('#d9432b','#9fd4f5',(100-Tball)/(100-Tf+1e-6)),3);
+        circ(ctx,bx-r*0.3,by-r*0.3,r*0.25,'#fff',null,1.2);
+      } else if(S.ph>0){
+        // ice cubes dropped, melting
+        const n=5, sizeF=Math.cbrt(Math.max(0.0001,1-melt*u2));
+        for(let k=0;k<n;k++){
+          const dly=k*0.12, uu=clamp((S.ph===1?S.u:1)-dly,0,1), ss=uu*uu*(3-2*uu);
+          const ex=lerp(sx0+ (k%3)*8,cx-cw*0.3+k*cw*0.13,ss), ey=lerp(sy0,lv+2,ss)-apex*Math.sin(Math.PI*ss)*0.8;
+          ice(ctx,ex,ey+(S.ph===2?Math.sin(t*1.5+k)*2:0),cw*0.2*Math.cbrt(m1/0.15)*(S.ph===2?sizeF:1),k*0.5+ss,1);
+        }
+      }
+    }
+    if(S.ph===2){ for(let i=S.splash.length-1;i>=0;i--){ const p=S.splash[i]; p.vy+=900*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; circ(ctx,sx1+p.x,sy1-cw*0.1+p.y,2.2,COL.blue,'#fff',1.2); if(p.y>40) S.splash.splice(i,1); } }
+    // ---- graph ----
+    const gx=w*0.7, gy=h*0.72, gw=w*0.26, gh=h*0.52;
+    axes(ctx,gx,gy,gw,gh,'t (s)','T (°C)');
+    const Tmax=mode==='M'?105:Math.max(60,Tw0+8), TG=v=>gy-gh*clamp(v,-2,Tmax)/Tmax, XG=v=>gx+gw*clamp(v,0,9)/9;
+    line(ctx,gx,TG(Tf),gx+gw,TG(Tf),COL.yellow,2,[7,5]); pill(ctx,gx+gw,TG(Tf)-14,'T_f = '+fmt(Tf,1)+' °C',COL.yellow,'right');
+    polyline(ctx,S.hist.map(p=>[XG(p[0]),TG(p[1])]),mode==='M'?COL.red:COL.blue,3);
+    polyline(ctx,S.hist.map(p=>[XG(p[0]),TG(p[2])]),COL.blue,3);
+    if(S.hist.length){ const q=S.hist[S.hist.length-1]; circ(ctx,XG(q[0]),TG(q[2]),5,COL.blue,COL.blue,1); if(mode==='M') circ(ctx,XG(q[0]),TG(q[1]),5,COL.red,COL.red,1); }
+    textAt(ctx,mode==='M'?'red: ball · blue: water':'blue: water + vessel',gx,gy-gh-16,{size:11,weight:700,color:COL.muted});
+  });
+  return wrap;
+}
+/* =====================================================================
+   7. CHANGE OF STATE — HEATING ICE TO STEAM   (§10.8, Fig 10.9/10.12, Ex 10.5)
+   Q₁ = m s_ice (0 − T₀) ; Q₂ = m L_f ; Q₃ = m s_w ·100 ; Q₄ = m L_v
+   Check (Ex 10.5): m = 3 kg, T₀ = −12 °C → 75.6 kJ, 1005 kJ, 1255.8 kJ, 6768 kJ,
+   total = 9.1 × 10⁶ J.   s_ice = 2100, s_w = 4186, L_f = 3.35×10⁵, L_v = 2.256×10⁶
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('m','Mass of ice',0.5,3,0.1,3) + slider('t0','Starting temperature',-30,-1,1,-12) + slider('pw','Heater power',1,10,0.5,5) +
+    `<div class="btn-row"><button class="toggle-btn play" id="go">▶ Heat</button><button class="toggle-btn" id="rs">⟲ Reset</button></div>` +
+    cards([{l:'Temperature',id:'c1',col:'var(--f-red)'},{l:'Heat supplied',id:'c2',col:'var(--f-yellow)'},{l:'State',id:'c3',col:'var(--f-blue)',wide:true}]) +
+    hintBox('Q = m s ΔT &nbsp;·&nbsp; Q = m L');
+  const canvas=$('canvas'); let t=0, Q=0, run=false;
+  const SI=2100, SW=4186, LF=3.35e5, LV=2.256e6;
+  const rnd=rng(21), NP=38, lens=[];
+  for(let i=0;i<NP;i++){ const a=rnd()*6.28, r=Math.sqrt(rnd()); lens.push({x:Math.cos(a)*r*0.5,y:Math.sin(a)*r*0.5,vx:rnd()-0.5,vy:rnd()-0.5,ph:rnd()*6,lx:0,ly:0}); }
+  // hex lattice sites
+  { let k=0; for(let r=-4;r<=4&&k<NP;r++) for(let c=-4;c<=4&&k<NP;c++){ const x=(c+(r&1?0.5:0))*0.17, y=r*0.15; if(Math.hypot(x,y)<0.66){ lens[k].lx=x; lens[k].ly=y; k++; } } }
+  const bub=[];
+  const reset=()=>{ Q=0; run=false; $('#go').textContent='▶ Heat'; };
+  $('#go').onclick=()=>{ run=!run; $('#go').textContent=run?'⏸ Pause':'▶ Heat'; }; $('#rs').onclick=reset;
+  ['m','t0'].forEach(id=>$('#'+id).addEventListener('input',reset));
+  function stateOf(Q,m,T0){
+    const Q1=m*SI*(0-T0), Q2=m*LF, Q3=m*SW*100, Q4=m*LV, c1=Q1, c2=c1+Q2, c3=c2+Q3, c4=c3+Q4;
+    let T,ph,ic=0,lq=0,gs=0;
+    if(Q<c1){ T=T0+Q/(m*SI); ph='Ice warming'; ic=1; }
+    else if(Q<c2){ T=0; ph='Melting · ice + water'; const f=(Q-c1)/Q2; ic=1-f; lq=f; }
+    else if(Q<c3){ T=(Q-c2)/(m*SW); ph='Water warming'; lq=1; }
+    else if(Q<c4){ T=100; ph='Boiling · water + steam'; const f=(Q-c3)/Q4; lq=1-f; gs=f; }
+    else { T=100; ph='All steam at 100 °C'; gs=1; }
+    return {T,ph,ic,lq,gs,c1,c2,c3,c4,Q1,Q2,Q3,Q4};
+  }
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const m=K.v('m'), T0=K.v('t0'), Pk=K.v('pw'); K.put('mV',fmt(m,1)+' kg'); K.put('t0V',T0+' °C'); K.put('pwV',fmt(Pk,1)+' kW');
+    const S0=stateOf(0,m,T0);
+    if(run){ Q+=Pk*1000*dt*40; if(Q>=S0.c4){ Q=S0.c4; run=false; $('#go').textContent='▶ Heat'; } }
+    const S=stateOf(Q,m,T0);
+    K.put('c1',fmt(S.T,1)+' °C'); K.put('c2',fmt(Q/1000,0)+' kJ'); K.put('c3',S.ph);
+    const sc=Math.min(w/820,h/520,1.5);
+    const floor=h*0.9; line(ctx,w*0.03,floor,w*0.46,floor,COL.ink,3);
+    const bx=w*0.2, bw=Math.min(w*0.26,230*sc), top=h*0.2, bot=h*0.76;
+    burner(ctx,bx,floor,bw*0.7,run?clamp(Pk/8,0.25,1):0,t); line(ctx,bx-bw*0.62,bot+14,bx+bw*0.62,bot+14,COL.ink,3.2); line(ctx,bx-bw*0.5,bot+14,bx-bw*0.5,floor-34,COL.mid,1.6); line(ctx,bx+bw*0.5,bot+14,bx+bw*0.5,floor-34,COL.mid,1.6);
+    const liqF=S.lq, levH=(bot-top)*(0.04+0.62*liqF), lev=bot-levH;
+    const boilI=S.gs>0||S.T>=99.9?1:clamp((S.T-90)/10,0,0.5)*(S.lq>0.5?1:0);
+    if(S.lq>0.001) liquid(ctx,()=>{ctx.beginPath();ctx.rect(bx-bw/2,top,bw,bot-top);},bx-bw/2,bx+bw/2,lev,bot,t,S.T>=99.9?3:1.2,'rgba(47,143,224,0.2)',COL.blue);
+    beakerStroke(ctx,bx,top-10,bot,bw);
+    // ice cubes: rest at bottom, float when liquid present
+    if(S.ic>0.005){ const cs=bw*0.2*Math.cbrt(S.ic); const rows=3; for(let k=0;k<9;k++){ const c=k%3, r=Math.floor(k/3); const rx=bx-bw*0.28+c*bw*0.28+(r%2?bw*0.04:0), restY=bot-cs/2-4-r*cs*0.95; const fy=Math.min(restY,lev+cs*0.15+Math.sin(t*1.6+k)*2); ice(ctx,rx+Math.sin(t*1.1+k)*(S.lq>0?3:0),fy,cs,Math.sin(t+k)*(S.lq>0?0.18:0.02),1); } }
+    // bubbles + steam
+    if(boilI>0.05 && S.lq>0.01 && Math.random()<boilI*0.9) bub.push({x:bx+(Math.random()-0.5)*bw*0.8,y:bot-8,r:2+Math.random()*3.5});
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.y-=(90+b.r*14)*dt; b.x+=Math.sin(t*7+i)*0.5; circ(ctx,b.x,b.y,b.r,COL.blue,'rgba(255,255,255,0.75)',1.4); if(b.y<lev||S.lq<=0.01) bub.splice(i,1); }
+    if(S.T>60&&S.lq>0.01) steamWisps(ctx,bx,lev-4,bw*0.7,5,t,clamp((S.T-60)/40,0,1)*(0.4+0.6*(S.gs>0?1:0)));
+    // stirrer
+    const sx=bx-bw*0.2+Math.sin(t*3.4)*bw*0.14; line(ctx,sx,top-30,sx,bot-18,COL.ink,2.4); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.strokeRect(sx-8,bot-38,16,14); ctx.restore();
+    // thermometer
+    const tx=bx+bw*0.22; thermo(ctx,tx,top-50,bot-26,(S.T+30)/130,COL.ink,mixCol('#2f8fe0','#d9432b',(S.T+30)/130));
+    textAt(ctx,fmt(S.T,1)+' °C',tx,top-60,{size:13,weight:700,align:'center',color:S.T>=0?COL.red:COL.blue});
+    // graph T vs Q
+    const gx=w*0.56, gy=h*0.62, gw=w*0.39, gh=h*0.48, Qm=S.c4*1.03, Tlo=Math.min(T0,-5)-5, Thi=112;
+    axes(ctx,gx,gy,gw,gh,'Q (MJ)','T (°C)');
+    const GX=q=>gx+gw*q/Qm, GY=T=>gy-gh*(T-Tlo)/(Thi-Tlo);
+    line(ctx,gx,GY(0),gx+gw,GY(0),COL.mid,1,[3,4]); line(ctx,gx,GY(100),gx+gw,GY(100),COL.mid,1,[3,4]);
+    textAt(ctx,'0',gx-6,GY(0)+4,{size:10.5,align:'right',weight:600,color:COL.muted}); textAt(ctx,'100',gx-6,GY(100)+4,{size:10.5,align:'right',weight:600,color:COL.muted});
+    const ghost=[[0,T0],[S.c1,0],[S.c2,0],[S.c3,100],[S.c4,100]].map(p=>[GX(p[0]),GY(p[1])]);
+    polyline(ctx,ghost,'rgba(129,149,171,0.55)',2,[6,5]);
+    const live=[[0,T0]]; [S.c1,S.c2,S.c3,S.c4].forEach((c,i)=>{ if(Q>c) live.push([c,i<1?0:i<2?0:i<3?100:100]); });
+    const ptsL=[]; const segs=[[0,T0,S.c1,0],[S.c1,0,S.c2,0],[S.c2,0,S.c3,100],[S.c3,100,S.c4,100]];
+    segs.forEach(sg=>{ if(Q>sg[0]){ const q1=Math.min(Q,sg[2]), f=(q1-sg[0])/(sg[2]-sg[0]); if(!ptsL.length) ptsL.push([GX(sg[0]),GY(sg[1])]); ptsL.push([GX(q1),GY(sg[1]+(sg[3]-sg[1])*f)]); } });
+    polyline(ctx,ptsL,COL.red,3.4);
+    circ(ctx,GX(Q),GY(S.T),7,COL.red,COL.red,1);
+    textAt(ctx,'Q₂ = mL_f',(GX(S.c1)+GX(S.c2))/2,GY(0)+(T0<-10?18:-9),{size:11,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,'Q₄ = mL_v',(GX(S.c3)+GX(S.c4))/2,GY(100)-9,{size:11,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,fmt(S.c4/1e6,2)+' MJ',GX(S.c4),gy+36,{size:11,weight:700,align:'center',color:COL.green});
+    // molecular lens
+    const lr=Math.min(h*0.13,w*0.085), lx=w*0.62, ly=h*0.83;
+    ctx.save(); ctx.beginPath(); ctx.arc(lx,ly,lr,0,Math.PI*2); ctx.fillStyle='#f9fbfd'; ctx.fill(); ctx.clip();
+    lens.forEach((p,i)=>{ const f=(i+0.5)/NP; let px,py;
+      if(f<S.ic){ const A=0.012+Math.max(0,S.T+35)*0.0009; px=p.lx+Math.sin(t*14+p.ph)*A; py=p.ly+Math.cos(t*13+p.ph*2)*A; p.x=px; p.y=py; }
+      else { const gas=f>1-S.gs; const sp=gas?0.9:0.22+Math.max(0,S.T)*0.0012; const lim=gas?0.9:0.62;
+        p.vx+=(Math.random()-0.5)*dt*8; p.vy+=(Math.random()-0.5)*dt*8; const n=Math.hypot(p.vx,p.vy)||1; p.vx=p.vx/n*sp; p.vy=p.vy/n*sp;
+        p.x+=p.vx*dt; p.y+=p.vy*dt; const d=Math.hypot(p.x,p.y); if(d>lim){ const nx=p.x/d, ny=p.y/d, dp=p.vx*nx+p.vy*ny; p.vx-=2*dp*nx; p.vy-=2*dp*ny; p.x=nx*lim*0.98; p.y=ny*lim*0.98; } px=p.x; py=p.y; }
+      circ(ctx,lx+px*lr,ly+py*lr,4,COL.ink,f<S.ic?'#cfe8fb':f>1-S.gs?'#fff':'#9fd4f5',1.6); });
+    ctx.restore(); circ(ctx,lx,ly,lr,COL.ink,null,2.6);
+    textAt(ctx,'molecules',lx,ly-lr-8,{size:11,weight:700,align:'center',color:COL.muted});
+    // mass bar
+    const mx0=w*0.72, mx1=w*0.95, my=h*0.83, bh=18;
+    textAt(ctx,'ice',mx0,my-14,{size:11,weight:700,color:COL.blue}); textAt(ctx,'water',(mx0+mx1)/2,my-14,{size:11,weight:700,align:'center',color:COL.blue}); textAt(ctx,'steam',mx1,my-14,{size:11,weight:700,align:'right',color:COL.muted});
+    const wI=(mx1-mx0)*S.ic, wL=(mx1-mx0)*S.lq, wG=(mx1-mx0)*S.gs;
+    ctx.save(); ctx.fillStyle='#cfe8fb'; ctx.fillRect(mx0,my,wI,bh); ctx.fillStyle='#5cc8ff'; ctx.fillRect(mx0+wI,my,wL,bh); ctx.fillStyle='#dbe4f0'; ctx.fillRect(mx0+wI+wL,my,wG,bh); ctx.restore(); rect(ctx,mx0,my,mx1-mx0,bh,COL.ink,null,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8. REGELATION — A WIRE THROUGH A SLAB OF ICE     (§10.8, Fig 10.10)
+   Pressure under the wire  P = 2mg ÷ (d × ℓ) lowers the melting point
+   (≈ 0.0075 °C per atm). Water flows round the wire and refreezes above.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    slider('m','Weight at each end',1,10,0.5,5) + slider('d','Wire diameter',0.2,1.2,0.05,0.5) + slider('ts','Slab temperature',-0.4,0,0.01,-0.08) +
+    `<div class="btn-row"><button class="toggle-btn play" id="rs">⟲ New slab</button></div>` +
+    cards([{l:'Pressure under wire',id:'c1',col:'var(--f-red)'},{l:'Melting point there',id:'c2',col:'var(--f-blue)'},{l:'Slab temperature',id:'c3',col:'var(--f-yellow)'},{l:'Wire status',id:'c4',col:'var(--f-green)'}]) +
+    hintBox('P = 2mg ÷ (d·ℓ) &nbsp;·&nbsp; melting point falls as P rises');
+  const canvas=$('canvas'); let t=0, yw=0, vfall=0, dropped=false, ground=0; const sw={x:0,v:0}, fl=[];
+  const reset=()=>{ yw=0; vfall=0; dropped=false; ground=0; sw.x=0; sw.v=0; };
+  $('#rs').onclick=reset;
+  for(let i=0;i<14;i++) fl.push({a:Math.random()*6.28,ph:Math.random()});
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const m=K.v('m'), d=K.v('d'), Ts=K.v('ts'); K.put('mV',fmt(m,1)+' kg'); K.put('dV',fmt(d,2)+' mm'); K.put('tsV',fmt(Ts,2)+' °C');
+    const Pa=2*m*9.8/(d*1e-3*0.10), Patm=Pa/P0, Tmelt=-0.0075*Patm, excess=Ts-Tmelt;
+    const through=yw>=10;
+    let vcm=0;
+    if(!through&&excess>0) vcm=clamp(excess*18,0,3.6);
+    if(!through){ yw=Math.min(10,yw+vcm*dt); if(yw>=10&&!dropped){ dropped=true; vfall=0; sw.v=-60; } }
+    if(dropped){ vfall+=900*dt; }
+    K.put('c1',fmt(Patm,1)+' atm'); K.put('c2',fmt(Tmelt,3)+' °C'); K.put('c3',fmt(Ts,2)+' °C');
+    K.put('c4',dropped?'Passed through · slab whole':excess>0?'Sinking':'Stuck · pressure too low');
+    // geometry
+    const sc=Math.min(w/820,h/520,1.5);
+    const sw_=Math.min(w*0.34,300*sc), sx=w*0.27, stop=h*0.16, sth=h*0.36, sbot=stop+sth, px=sth/10;
+    const floorY=h*0.9;
+    line(ctx,w*0.03,floorY,w*0.55,floorY,COL.ink,3);
+    // supports
+    rect(ctx,sx-sw_*0.38,sbot,20*sc+8,floorY-sbot,COL.ink,'#cfd8e3',2.6); rect(ctx,sx+sw_*0.38-20*sc-8,sbot,20*sc+8,floorY-sbot,COL.ink,'#cfd8e3',2.6);
+    // slab
+    rect(ctx,sx-sw_/2,stop,sw_,sth,COL.blue,'rgba(169,216,245,0.4)',3);
+    for(let i=1;i<4;i++) line(ctx,sx-sw_/2+sw_*i/4*0.9,stop+6,sx-sw_/2+sw_*i/4*0.9+16,stop+26,'#fff',2);
+    // wire geometry (falls after exit)
+    let wy=stop+yw*px+ (dropped?(0.5*0+Math.max(0,(vfall*vfall)/(2*900))):0);
+    const hang=h*0.13, wFloor=floorY-hang-26;
+    if(dropped && wy>wFloor){ wy=wFloor; if(!ground){ ground=1; } }
+    // refrozen trail & water film (inside slab)
+    if(yw>0.05){ const y0=stop; ctx.save(); ctx.fillStyle='rgba(255,255,255,0.0)'; ctx.restore(); line(ctx,sx-sw_/2,stop+yw*px*0.5,sx+sw_/2,stop+yw*px*0.5,'rgba(255,255,255,0)',1); }
+    const swing=Math.sin(t*3)*(vcm>0?2:0.8);
+    const wl=sx-sw_/2-26*sc, wr=sx+sw_/2+26*sc;
+    // wire horizontal + hangers
+    line(ctx,wl,wy,wr,wy,COL.yellow,Math.max(2,d*4),null);
+    [wl,wr].forEach((xx,i)=>{ line(ctx,xx,wy,xx+swing*(i?1:-1),wy+hang,COL.ink,1.8); const wx=xx+swing*(i?1:-1), wyy=wy+hang; rect(ctx,wx-14*sc-4,wyy,28*sc+8,26,COL.ink,'#cfd8e3',2.6); textAt(ctx,fmt(m,1)+' kg',wx,wyy+17,{size:11,weight:700,align:'center',color:COL.red}); vec(ctx,wx,wyy+30,wx,wyy+30+24,COL.red,3); });
+    if(!dropped){ // water film glow under wire inside slab
+      if(vcm>0){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=5; ctx.globalAlpha=0.55; ctx.beginPath(); ctx.moveTo(sx-sw_/2+4,wy+4); ctx.lineTo(sx+sw_/2-4,wy+4); ctx.stroke(); ctx.restore(); }
+    }
+    if(yw>0.2){ ctx.save(); ctx.setLineDash([4,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(sx-sw_/2+6,stop+2); ctx.lineTo(sx-sw_/2+6,Math.min(wy,sbot)); ctx.stroke(); ctx.restore(); }
+    textAt(ctx,'ice slab',sx,stop-10,{size:12,weight:700,align:'center',color:COL.muted});
+    if(through) pill(ctx,sx,stop+sth/2,'slab is still in one piece','#1f9d55','center');
+    // depth meter
+    dimArrow(ctx,sx+sw_/2+60*sc,stop,Math.min(sbot,stop+yw*px),COL.green); textAt(ctx,fmt(yw,1)+' cm',sx+sw_/2+68*sc,stop+yw*px/2+4,{size:11,weight:700,color:COL.green});
+    // magnified lens
+    const lr=Math.min(h*0.21,w*0.13), lx=w*0.77, ly=h*0.38;
+    ctx.save(); ctx.beginPath(); ctx.arc(lx,ly,lr,0,Math.PI*2); ctx.fillStyle='rgba(169,216,245,0.28)'; ctx.fill(); ctx.clip();
+    // ice lattice lines
+    for(let i=-6;i<=6;i++){ line(ctx,lx+i*lr*0.2-lr,ly-lr,lx+i*lr*0.2+lr*0.3,ly+lr,'rgba(129,149,171,0.35)',1); line(ctx,lx+i*lr*0.2+lr,ly-lr,lx+i*lr*0.2-lr*0.3,ly+lr,'rgba(129,149,171,0.35)',1); }
+    const wr_=lr*0.17;
+    const film=clamp(excess/0.12,0,1)*lr*0.12*(through?0:1);
+    // water film under wire (blue)
+    if(!through){ ctx.fillStyle='rgba(47,143,224,0.45)'; ctx.beginPath(); ctx.ellipse(lx,ly+wr_*0.6,wr_+film*1.4,wr_*0.5+film,0,0,Math.PI); ctx.fill(); }
+    // refrozen cap (white) above
+    ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.rect(lx-lr,ly-lr,2*lr,lr-wr_*0.4); ctx.fill();
+    circ(ctx,lx,ly,wr_,COL.ink,'#f0c75e',2.8);
+    // flow arrows around wire
+    if(vcm>0 && !through){ for(let k=0;k<6;k++){ const ph=((t*0.7+k/6)%1), side=k%2?1:-1, ang=Math.PI/2+side*ph*Math.PI*0.95; const rr=wr_*1.9+Math.sin(ph*3.14)*6; const fx=lx+Math.cos(ang)*rr, fy=ly+Math.sin(ang)*rr; circ(ctx,fx,fy,2.6,COL.blue,COL.blue,1); } }
+    // pressure arrows
+    if(!through) for(let k=-1;k<=1;k++) vec(ctx,lx+k*wr_*1.1,ly-wr_-34-((t*20)%8),lx+k*wr_*1.1,ly-wr_-8,COL.red,3);
+    // heat through wire
+    if(vcm>0&&!through){ vec(ctx,lx-wr_*0.6,ly-wr_*0.4,lx-wr_*0.6,ly+wr_*0.4,COL.red,2.2); }
+    ctx.restore(); circ(ctx,lx,ly,lr,COL.ink,null,2.8);
+    textAt(ctx,'magnified: wire in ice',lx,ly-lr-10,{size:11.5,weight:700,align:'center',color:COL.muted});
+    textAt(ctx,'↑ pressure melts ice below',lx,ly+lr+18,{size:11,weight:600,align:'center',color:COL.red});
+    textAt(ctx,'↑ water refreezes above',lx,ly+lr+34,{size:11,weight:600,align:'center',color:COL.blue});
+    textAt(ctx,'↑ heat flows down the wire',lx,ly+lr+50,{size:11,weight:600,align:'center',color:COL.yellow});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   9. BOILING & PRESSURE                       (§10.8, Fig 10.11)
+   Water boils when its vapour pressure equals the pressure above it.
+   Boiling point T_b(P): Antoine fit,  T_b(1 atm) = 100 °C.
+   Heat & seal → pressure rises, boiling stops, T_b rises (pressure cooker).
+   Cool & invert & pour cold water → pressure falls, water boils at ~80 °C.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Activity', seg('md',[['H','Heat & seal'],['C','Cool & invert']],0)) +
+    slider('pw','Burner power',0,100,5,70) +
+    `<div id="g_hb" class="btn-row"><button class="toggle-btn play" id="seal">⛔ Close steam outlet</button><button class="toggle-btn" id="rs">⟲ Reset</button></div>` +
+    `<div id="g_cb" class="btn-row hidden"><button class="toggle-btn play" id="inv">↻ Invert flask</button><button class="toggle-btn" id="pour">🧊 Pour cold water</button><button class="toggle-btn" id="rs2">⟲</button></div>` +
+    cards([{l:'Water',id:'c1',col:'var(--f-red)'},{l:'Pressure',id:'c2',col:'var(--f-blue)'},{l:'Boils at this P',id:'c3',col:'var(--f-green)'},{l:'State',id:'c4'}]) +
+    hintBox('Higher pressure → higher boiling point');
+  const canvas=$('canvas'); let t=0, mode='H', Tw=25, Pf=1, sealed=false, inverted=false, pouring=false, pourT=0;
+  const rot={x:0,v:0}, bub=[], drops=[], jets=[]; let valve=0;
+  function reset(){ if(mode==='H'){ Tw=25; Pf=1; sealed=false; } else { Tw=80; Pf=psatWater(80); inverted=false; pouring=false; pourT=0; } rot.x=0; rot.v=0; bub.length=0; drops.length=0; $('#seal').textContent='⛔ Close steam outlet'; $('#seal').classList.add('play'); $('#pour').classList.remove('active'); }
+  wireSeg(wrap,'md',v=>{ mode=v; K.show('pw',v==='H'); $('#g_hb').classList.toggle('hidden',v!=='H'); $('#g_cb').classList.toggle('hidden',v!=='C'); reset(); });
+  $('#seal').onclick=()=>{ sealed=!sealed; $('#seal').textContent=sealed?'✅ Open steam outlet':'⛔ Close steam outlet'; };
+  $('#rs').onclick=reset; $('#rs2').onclick=reset;
+  $('#inv').onclick=()=>{ inverted=!inverted; };
+  $('#pour').onclick=()=>{ if(!pouring){ pouring=true; pourT=0; $('#pour').classList.add('active'); } };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pw=K.v('pw')/100; K.put('pwV',fmt(pw*100,0)+' %');
+    let Tb=tbWater(Pf), boilI=0;
+    if(mode==='H'){
+      if(sealed){ const boiling=Tw>=Tb-0.15; Pf+= (boiling?0.5*pw:0.015*pw*(Tw>50?1:0))*dt; if(Pf>=2.6){ Pf=2.6; valve=1; } else valve=Math.max(0,valve-dt*3); }
+      else { Pf=approach(Pf,1,5,dt); valve=0; }
+      Tb=tbWater(Pf);
+      if(Tw<Tb) Tw=Math.min(Tb,Tw+8*pw*dt); else Tw=approach(Tw,Tb,8,dt);
+      boilI=Tw>=Tb-0.15? (pw>0?0.35+0.65*pw:0)+clamp((Tw-Tb)/4,0,1) : 0;
+    } else {
+      if(pouring){ pourT+=dt; if(pourT>6){ pouring=false; $('#pour').classList.remove('active'); } }
+      const tgt=psatWater(Tw)*(pouring?0.82:1); Pf=approach(Pf,tgt,2.2,dt);
+      Tb=tbWater(Pf);
+      const sup=Tw-Tb; if(sup>0.2){ Tw-=sup*0.9*dt; }
+      boilI=clamp((sup-0.2)/2.2,0,1);
+      if(!pouring) Tw=approach(Tw,Tw-0.05,0.0,dt);
+    }
+    Tw=Math.max(15,Tw);
+    K.put('c1',fmt(Tw,1)+' °C'); K.put('c2',fmt(Pf,2)+' atm'); K.put('c3',fmt(Tb,1)+' °C');
+    K.put('c4',valve>0.2?'Safety valve hissing':boilI>0.1?'Boiling':sealed&&mode==='H'?'Boiling stopped':Tw>45?'Bubbles of air':'Heating');
+    const sc=Math.min(w/820,h/520,1.5);
+    const R=Math.min(h*0.2,w*0.11), nw=R*0.42, nl=R*0.85;
+    const fcx=w*0.24, floor=h*0.93, fcy=mode==='H'?floor-R-62*sc:h*0.52;
+    springTo(rot,inverted?Math.PI:0,22,6,dt);
+    const rt=rot.x, up=Math.cos(rt)>0;
+    const lev=fcy+R*0.05;
+    const flaskPath=()=>{ ctx.save(); ctx.translate(fcx,fcy); ctx.rotate(rt); const th=Math.asin((nw/2)/R); ctx.beginPath(); ctx.moveTo(-nw/2,-R-nl); ctx.lineTo(-nw/2,-R*Math.cos(th)); ctx.arc(0,0,R,-Math.PI/2-th,-Math.PI/2+th,true); ctx.lineTo(nw/2,-R-nl); ctx.restore(); };
+    // burner / stand (mode H)
+    if(mode==='H'){ line(ctx,w*0.05,floor,w*0.46,floor,COL.ink,3); burner(ctx,fcx,floor,R*1.1,pw,t); line(ctx,fcx-R*0.55,fcy+R+16*sc,fcx+R*0.55,fcy+R+16*sc,COL.ink,3.4); }
+    else line(ctx,w*0.05,floor,w*0.46,floor,COL.ink,3);
+    // water in flask (clipped)
+    ctx.save(); flaskPath(); ctx.clip();
+    ctx.fillStyle=mixCol('#cfe8fb','#f1d3cb',(Tw-30)/70); ctx.globalAlpha=0.85; ctx.fillRect(fcx-R*2,lev,R*4,R*3); ctx.globalAlpha=1;
+    ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.beginPath(); for(let x=fcx-R;x<=fcx+R;x+=4){ const y=lev+Math.sin(x*0.08+t*(3+boilI*10))*(1+boilI*3); x===fcx-R?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke();
+    // bubbles
+    const bottomY=fcy+R*0.92*Math.cos(rt)+ (up?0:(R*0.0)) ;
+    const spawnY=up?fcy+R*0.88:fcy+R*(0.5)+ (1-Math.cos(rt))/2*(nl*0.9);
+    const airRate=(Tw>40&&Tw<Tb-6)?clamp((Tw-40)/60,0,1)*3:0;
+    const steamRate=Tw>=Tb-10? smoothstep(Tb-10,Tb,Tw)*(4+boilI*40):0;
+    const rate=(airRate+steamRate)*dt*(boilI>0.05||airRate>0||steamRate>0?1:0);
+    if(Math.random()<rate) bub.push({x:fcx+(Math.random()-0.5)*R*(up?1.2:0.4),y:spawnY,r:2+Math.random()*3,steam:steamRate>airRate});
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.y-=(70+b.r*12)*dt; b.x+=Math.sin(t*8+i)*0.5;
+      if(b.steam){ b.r+= (Tw>=Tb-0.2?4.5:-(Tb-Tw)*0.9)*dt; }
+      circ(ctx,b.x,b.y,Math.max(0.5,b.r),COL.blue,'rgba(255,255,255,0.8)',1.4);
+      if(b.y<lev||b.r<0.8||b.y<fcy-R-nl) bub.splice(i,1); }
+    ctx.restore();
+    // outer wall chill
+    if(pouring){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=7; ctx.globalAlpha=0.5; flaskPath(); ctx.stroke(); ctx.restore(); }
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.lineJoin='round'; flaskPath(); ctx.stroke(); ctx.restore();
+    // cork + fittings (local transform)
+    ctx.save(); ctx.translate(fcx,fcy); ctx.rotate(rt);
+    const cy0=-R-nl; ctx.beginPath(); ctx.moveTo(-nw/2-5,cy0-12); ctx.lineTo(nw/2+5,cy0-12); ctx.lineTo(nw/2-1,cy0+12); ctx.lineTo(-nw/2+1,cy0+12); ctx.closePath(); ctx.fillStyle='#e3c796'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke();
+    if(mode==='H'){
+      // thermometer through cork
+      ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.rect(-nw*0.28,cy0-70,nw*0.18,R*1.05+nl+58); ctx.fill(); ctx.stroke();
+      const th0=cy0-70, th1=cy0-70+R*1.05+nl+58, fr=clamp((Tw-20)/110,0,1); ctx.fillStyle=COL.red; ctx.fillRect(-nw*0.28+nw*0.06,th1-(th1-th0-4)*fr,nw*0.06,(th1-th0-4)*fr);
+      // steam outlet tube
+      ctx.strokeStyle=COL.ink; ctx.lineWidth=5; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(nw*0.2,cy0+6); ctx.lineTo(nw*0.2,cy0-34); ctx.lineTo(nw*0.2+R*0.9,cy0-34); ctx.stroke();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(nw*0.2,cy0+6); ctx.lineTo(nw*0.2,cy0-34); ctx.lineTo(nw*0.2+R*0.9,cy0-34); ctx.stroke();
+    }
+    ctx.restore();
+    if(mode==='H'){
+      const ox=fcx+nw*0.2+R*0.9, oy=fcy-R-nl-34;
+      textAt(ctx,fmt(Tw,1)+' °C',fcx-nw*0.2,fcy-R-nl-80,{size:13,weight:700,align:'center',color:COL.red});
+      if(sealed){ rect(ctx,ox-8,oy-14,10,28,COL.red,COL.red,1.4); rect(ctx,ox-14,oy-3,22,6,COL.red,COL.red,1); }
+      else if(boilI>0.05){ for(let k=0;k<5;k++){ const ph=((t*1.6+k/5)%1); ctx.save(); ctx.globalAlpha=(1-ph)*0.9; ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(ox+ph*70,oy-ph*18-3+Math.sin(ph*9)*2); ctx.lineTo(ox+ph*70+18,oy-ph*18-8); ctx.stroke(); ctx.restore(); } }
+      if(valve>0.3) for(let k=0;k<6;k++){ const ph=((t*2+k/6)%1); ctx.save(); ctx.globalAlpha=1-ph; ctx.strokeStyle=COL.red; ctx.lineWidth=2.2; ctx.beginPath(); ctx.moveTo(fcx-nw*0.5,fcy-R-nl-24-ph*60); ctx.lineTo(fcx-nw*0.5-ph*30,fcy-R-nl-34-ph*70); ctx.stroke(); ctx.restore(); }
+    } else {
+      textAt(ctx,fmt(Tw,1)+' °C',fcx,fcy+(up?R+34:-R-8)-(up?0:nl*0),{size:13,weight:700,align:'center',color:COL.red});
+      // pouring beaker
+      if(pouring||drops.length){
+        const bx0=fcx+R*0.9, by0=fcy-R-nl*1.05-40;
+        ctx.save(); ctx.translate(bx0+30,by0); ctx.rotate(pouring?-0.9:0); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.fillStyle='rgba(169,216,245,0.5)'; ctx.beginPath(); ctx.rect(-24,-34,48,60); ctx.fill(); ctx.stroke(); ctx.restore();
+        if(pouring&&Math.random()<0.9) drops.push({x:bx0+30-30,y:by0+10,vx:-30-Math.random()*40,vy:-20});
+      }
+      for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.vy+=900*dt; d.x+=d.vx*dt; d.y+=d.vy*dt; circ(ctx,d.x,d.y,2.6,COL.blue,COL.blue,1); if(Math.hypot(d.x-fcx,d.y-fcy)<R+1||d.y>floor) drops.splice(i,1); }
+      if(pouring) textAt(ctx,'ice-cold water → vapour condenses',fcx,h*0.07,{size:12,weight:700,align:'center',color:COL.blue});
+    }
+    // gauge + vapour-pressure graph
+    dial(ctx,w*0.52,h*0.26,Math.min(58*sc+6,h*0.13),Pf/3,3,'atm',fmt(Pf,2)+' atm',6);
+    const gx=w*0.62, gy=h*0.82, gw=w*0.33, gh=h*0.56;
+    axes(ctx,gx,gy,gw,gh,'T (°C)','P (atm)');
+    const GX=T=>gx+gw*(T-20)/115, GY=P=>gy-gh*P/3;
+    const pts=[]; for(let T=20;T<=130;T+=2) pts.push([GX(T),GY(psatWater(T))]);
+    polyline(ctx,pts,COL.blue,3);
+    textAt(ctx,'boils on this line',GX(60),GY(psatWater(60))-26,{size:11,weight:700,color:COL.blue});
+    line(ctx,GX(100),gy,GX(100),GY(1),COL.mid,1.2,[4,4]); line(ctx,gx,GY(1),GX(100),GY(1),COL.mid,1.2,[4,4]); textAt(ctx,'1 atm · 100 °C',GX(100)+6,GY(1)+16,{size:10.5,weight:600,color:COL.muted});
+    circ(ctx,GX(clamp(Tw,20,135)),GY(clamp(Pf,0,3)),8,COL.red,boilI>0.1?COL.red:'#fff',2.6);
+  });
+  return wrap;
+}
+/* =====================================================================
+   10. CONDUCTION                         (§10.9.1, eq. 10.14; Ex 10.6, 10.7)
+   H = K A (T_C − T_D) ÷ L .  Compound bar: series thermal resistances.
+   Ex 10.6: steel 15 cm (A = 2A₂) + copper 10 cm, 300 °C → 0 °C  ⇒ junction 44.4 °C
+   Ex 10.7: iron (79) + brass (109), 10 cm each, A = 0.02 m², 373 K → 273 K
+            ⇒ junction 315 K, K_eq = 91.6 W m⁻¹K⁻¹, H = 916 W
+   The bar is a 48-cell finite-difference model; heat flow is time-scaled
+   so the steady state arrives in a few seconds.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Bar', seg('md',[['S','Single'],['A','Steel + Cu'],['B','Iron + Brass']],0)) +
+    `<div id="g_mat">`+group('Material', seg('mat',[['385|Copper','Cu'],['205|Aluminium','Al'],['109|Brass','Brass'],['50.2|Steel','Steel'],['0.8|Glass','Glass'],['0.12|Wood','Wood']],0))+`</div>` +
+    slider('tc','Hot end T_C',50,400,5,300) + slider('td','Cold end T_D',0,80,1,0) + slider('L','Length L',10,60,1,25) + slider('A','Cross-section A',1,300,1,4) +
+    `<div class="btn-row"><button class="toggle-btn play" id="rs">⟲ Start from cold</button></div>` +
+    cards([{l:'Heat current H',id:'c1',col:'var(--f-red)'},{l:'Equivalent K',id:'c2',col:'var(--f-blue)'},{l:'Junction (calc)',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('H = K A (T<sub>C</sub> − T<sub>D</sub>) ÷ L');
+  const canvas=$('canvas'); let t=0, mode='S', Kmat=385, nmat='Copper';
+  const N=48; let Tn=Array(N).fill(20);
+  const carriers=[]; const rnd=rng(3); for(let i=0;i<42;i++) carriers.push({u:rnd(),y:rnd()});
+  function setMode(m){ mode=m; K.show('mat',m==='S'); K.show('L',m==='S');
+    if(m==='A'){ K.setSlider('tc',300); K.setSlider('td',0); K.setSlider('A',2); }
+    if(m==='B'){ K.setSlider('tc',100); K.setSlider('td',0); K.setSlider('A',200); }
+    Tn=Array(N).fill(20); }
+  wireSeg(wrap,'md',setMode); wireSeg(wrap,'mat',v=>{ const p=v.split('|'); Kmat=+p[0]; nmat=p[1]; Tn=Array(N).fill(20); });
+  $('#rs').onclick=()=>{ Tn=Array(N).fill(20); };
+  K.show('mat',true);
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const TC=K.v('tc'), TD=K.v('td'); K.put('tcV',TC+' °C'); K.put('tdV',TD+' °C');
+    let segs; // [{K,A (m²),L (m)}]
+    const Acm=K.v('A'), Lcm=K.v('L');
+    K.put('LV',Lcm+' cm'); K.put('AV',Acm+' cm²');
+    if(mode==='S') segs=[{K:Kmat,A:Acm*1e-4,L:Lcm*0.01,n:'Single bar · '+nmat}];
+    else if(mode==='A') segs=[{K:50.2,A:2*Acm*1e-4,L:0.15,n:'Steel'},{K:385,A:Acm*1e-4,L:0.10,n:'Copper'}];
+    else segs=[{K:79,A:Acm*1e-4,L:0.10,n:'Iron'},{K:109,A:Acm*1e-4,L:0.10,n:'Brass'}];
+    const Ltot=segs.reduce((s,q)=>s+q.L,0), dx=Ltot/N;
+    const cells=[]; segs.forEach((sg,si)=>{ const nn=Math.round(N*sg.L/Ltot); for(let i=0;i<nn&&cells.length<N;i++) cells.push(sg); }); while(cells.length<N) cells.push(segs[segs.length-1]);
+    const G=[]; for(let i=0;i<=N;i++){ const a=cells[Math.min(i,N-1)], b=cells[Math.max(i-1,0)]; G.push(1/(dx/(2*a.K*a.A)+dx/(2*b.K*b.A))); } // G[i] between cell i-1 and i ; ends = reservoir half cells
+    const Cc=cells.map(c=>3.5e6*c.A*dx);
+    const Rtot=segs.reduce((s,q)=>s+q.L/(q.K*q.A),0), Ctot=Cc.reduce((a,b)=>a+b,0);
+    const z=(Rtot*Ctot/(Math.PI*Math.PI))/2.5;
+    let rmax=0; for(let i=0;i<N;i++) rmax=Math.max(rmax,z*(G[i]+G[i+1])/Cc[i]);
+    const nsub=clamp(Math.ceil(dt*rmax/0.35),1,120), hh=dt/nsub;
+    for(let s=0;s<nsub;s++){ const nT=Tn.slice(); for(let i=0;i<N;i++){ const Tl=i===0?TC:Tn[i-1], Tr=i===N-1?TD:Tn[i+1]; nT[i]=Tn[i]+hh*z*(G[i]*(Tl-Tn[i])+G[i+1]*(Tr-Tn[i]))/Cc[i]; } Tn=nT; }
+    // analytics
+    const H=(TC-TD)/Rtot; let Teq=H>0?Rtot*0:0;
+    const Keff=Ltot/(Rtot*segs[0].A) ;
+    let Tj=null; if(segs.length===2){ Tj=TC-H*segs[0].L/(segs[0].K*segs[0].A); }
+    const mid=Math.floor(N/2), Hlive=Math.max(0,G[mid]*(Tn[mid-1]-Tn[mid]));
+    K.put('c1',(H>=100?fmt(H,0):H>=1?fmt(H,1):fmt(H,3))+' W  (live '+(Hlive>=100?fmt(Hlive,0):fmt(Hlive,2))+')');
+    K.put('c2',mode==='S'?fmt(Kmat,Kmat<1?2:1)+' W m⁻¹K⁻¹':mode==='B'?fmt(Keff,1)+' W m⁻¹K⁻¹':'areas differ');
+    K.put('c3',Tj===null?'T falls evenly along the bar':fmt(Tj,1)+' °C  ('+fmt(Tj+273.15,0)+' K)');
+    // ---- draw the bar ----
+    const sc=Math.min(w/820,h/520,1.5);
+    const x0=w*0.17, x1=w*0.83, by=h*0.33, bwid=x1-x0;
+    const thick=sg=>clamp(16+Math.sqrt(sg.A*1e4)*5.5,16,70)*sc;
+    // reservoirs
+    rect(ctx,x0-w*0.1,by-46*sc,w*0.1-2,92*sc,COL.red,'rgba(217,67,43,0.14)',3); textAt(ctx,'T_C = '+TC+' °C',x0-w*0.05,by-56*sc,{size:13,weight:700,align:'center',color:COL.red});
+    flame(ctx,x0-w*0.05,by+46*sc+36,w*0.08,0.9,t); line(ctx,x0-w*0.095,by+46*sc+38,x0-w*0.005,by+46*sc+38,COL.ink,3);
+    rect(ctx,x1+2,by-46*sc,w*0.1-2,92*sc,COL.blue,'rgba(47,143,224,0.14)',3); textAt(ctx,'T_D = '+TD+' °C',x1+w*0.05,by-56*sc,{size:13,weight:700,align:'center',color:COL.blue});
+    for(let k=0;k<3;k++){ ice(ctx,x1+w*0.03+k*w*0.025,by+Math.sin(t*1.5+k)*3,16*sc+4,0.1*k,0.9); }
+    // cells
+    let px=x0; const cellW=bwid/N; const posT=[];
+    for(let i=0;i<N;i++){ const th=thick(cells[i]); ctx.save(); ctx.fillStyle=hotCol(Tn[i],Math.min(TD,20),Math.max(TC,TD+1)); ctx.fillRect(x0+i*cellW,by-th/2,cellW+0.8,th); ctx.restore(); }
+    // outlines per segment
+    let acc=0; segs.forEach((sg,si)=>{ const wpx=bwid*sg.L/Ltot, th=thick(sg); rect(ctx,x0+acc,by-th/2,wpx,th,COL.ink,null,2.8); textAt(ctx,sg.n+(mode==='S'?'':'  K = '+sg.K),x0+acc+wpx/2,by-th/2-10,{size:12,weight:700,align:'center',color:COL.muted});
+      // insulation hatch
+      for(let k=0;k<wpx/12;k++){ line(ctx,x0+acc+k*12,by-th/2-2,x0+acc+k*12+6,by-th/2-8,COL.mid,1); line(ctx,x0+acc+k*12,by+th/2+2,x0+acc+k*12+6,by+th/2+8,COL.mid,1); }
+      acc+=wpx; });
+    if(segs.length===2){ const jx=x0+bwid*segs[0].L/Ltot; line(ctx,jx,by-70*sc,jx,by+70*sc,COL.yellow,1.8,[5,4]); pill(ctx,jx,by-86*sc,'junction '+fmt(Tn[Math.round(N*segs[0].L/Ltot)-1],1)+' °C',COL.yellow,'center'); }
+    // heat carriers
+    const sp=30+240*(Hlive/(Hlive+40));
+    carriers.forEach(c=>{ c.u=(c.u+sp*dt/bwid)%1; const ci=Math.min(N-1,Math.floor(c.u*N)), th=thick(cells[ci]); const yy=by+(c.y-0.5)*th*0.8+Math.sin(t*9+c.u*40)*2; circ(ctx,x0+c.u*bwid,yy,3,COL.red,hotCol(Tn[ci],Math.min(TD,20),Math.max(TC,TD+1)),1.4); });
+    vec(ctx,x0+bwid*0.35,by+thick(cells[Math.floor(N*0.35)])/2+26,x0+bwid*0.35+Math.min(160,30+sp*0.5),by+thick(cells[Math.floor(N*0.35)])/2+26,COL.red,3.6); textAt(ctx,'heat flow H',x0+bwid*0.35,by+thick(cells[Math.floor(N*0.35)])/2+46,{size:12,weight:700,color:COL.red});
+    // temperature profile graph
+    const gx=w*0.12, gy=h*0.9, gw=w*0.76, gh=h*0.3, Tlo=Math.min(TD,20)-5, Thi=Math.max(TC,20)+10;
+    axes(ctx,gx,gy,gw,gh,'distance along bar','T (°C)');
+    const GX=u=>gx+gw*u, GY=T=>gy-gh*(T-Tlo)/(Thi-Tlo);
+    // expected steady profile
+    const st=[[GX(0),GY(TC)]]; let ac=0,Tcur=TC; segs.forEach(sg=>{ ac+=sg.L/Ltot; Tcur-=H*sg.L/(sg.K*sg.A); st.push([GX(ac),GY(Tcur)]); });
+    polyline(ctx,st,COL.yellow,2.2,[7,5]);
+    polyline(ctx,[[GX(0),GY(TC)]].concat(Tn.map((T,i)=>[GX((i+0.5)/N),GY(T)])).concat([[GX(1),GY(TD)]]),COL.red,3.4);
+    textAt(ctx,'dashed: steady state',gx+gw,gy-gh-6,{size:11,weight:700,align:'right',color:COL.yellow});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11. CONVECTION                         (§10.9.2, Fig 10.17)
+   Heated fluid expands → less dense → rises; cooler fluid sinks.
+   Sea breeze: land warms faster by day (T_land − T_sea > 0 → wind sea→land)
+   and cools faster by night (wind reverses).
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Activity', seg('md',[['P','Heated pot'],['B','Sea breeze']],0)) +
+    slider('pw','Heater power',0,100,5,60) + slider('hr','Time of day',0,24,0.1,12) +
+    `<div id="g_run" class="btn-row hidden"><button class="toggle-btn play" id="run">▶ Run a day</button></div>` +
+    cards([{l:'Left / Sea',id:'c1',col:'var(--f-blue)'},{l:'Right / Land',id:'c2',col:'var(--f-red)'},{l:'Wind at ground',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('<span id="hn"></span>');
+  const canvas=$('canvas'); let t=0, mode='P', amp=0, running=false, hr=12;
+  const NP=170, P=[]; const rnd=rng(17);
+  for(let i=0;i<NP;i++) P.push({x:rnd(),y:rnd(),T:0.3});
+  const camp={x:0,v:0};
+  function setMode(m){ mode=m; K.show('pw',m==='P'); K.show('hr',m==='B'); $('#g_run').classList.toggle('hidden',m!=='B'); $('#hn').textContent=m==='P'?'Warm → rises · cool → sinks':'Day: wind sea → land · Night: land → sea'; P.forEach(p=>{p.x=rnd();p.y=rnd();p.T=0.3;}); }
+  wireSeg(wrap,'md',setMode); setMode('P');
+  $('#run').onclick=()=>{ running=!running; $('#run').textContent=running?'⏸ Pause':'▶ Run a day'; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/820,h/520,1.5);
+    if(mode==='P'){
+      const pw=K.v('pw')/100; K.put('pwV',fmt(pw*100,0)+' %');
+      springTo(camp,pw<0.02?0:Math.pow(pw,0.7),9,5,dt); const A=Math.max(0,camp.x);
+      const bx=w*0.12, bwid=w*0.62, top=h*0.1, bot=h*0.78, bh=bot-top;
+      const V=190*A*sc;  // px/s peak vertical velocity
+      line(ctx,bx-20,h*0.92,bx+bwid+20,h*0.92,COL.ink,3);
+      burner(ctx,bx+bwid/2,h*0.92,bwid*0.28,pw,t);
+      line(ctx,bx+bwid*0.2,bot+14,bx+bwid*0.8,bot+14,COL.ink,3.2);
+      // water
+      ctx.save(); ctx.fillStyle='rgba(47,143,224,0.12)'; ctx.fillRect(bx,top+14,bwid,bh-14); ctx.restore();
+      let sumT=0;
+      P.forEach(p=>{
+        const xn=p.x, yn=1-(p.y); // yn: 0 bottom .. 1 top
+        const vUp=-V*Math.cos(2*Math.PI*xn)*Math.sin(Math.PI*yn);
+        const u=V*(bwid/(2*bh))*Math.sin(2*Math.PI*xn)*Math.cos(Math.PI*yn);
+        p.x=clamp(p.x+(u*dt)/bwid+(Math.random()-0.5)*0.002,0.003,0.997); p.y=clamp(p.y-(vUp*dt)/bh+(Math.random()-0.5)*0.002,0.003,0.997);
+        const ynn=1-p.y;
+        if(ynn<0.14&&Math.abs(p.x-0.5)<0.28) p.T=Math.min(1,p.T+dt*2.2*pw); else if(ynn>0.86) p.T=Math.max(0.15,p.T-dt*1.0); else p.T+=(0.25+0.1*pw-p.T)*0.1*dt;
+        // gentle respawn if stagnant
+        const X=bx+p.x*bwid, Y=top+14+p.y*(bh-14);
+        circ(ctx,X,Y,3.8*sc+0.6,COL.ink,hotCol(p.T,0.1,1),1.3); sumT+=p.T;
+      });
+      // pot
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=4.2; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx,top-6); ctx.lineTo(bx,bot); ctx.lineTo(bx+bwid,bot); ctx.lineTo(bx+bwid,top-6); ctx.stroke(); ctx.restore();
+      if(A>0.1){ // direction arrows
+        vec(ctx,bx+bwid*0.5,bot-18,bx+bwid*0.5,bot-18-60*A-14,COL.red,4); vec(ctx,bx+bwid*0.07,top+30,bx+bwid*0.07,top+30+60*A+14,COL.blue,4); vec(ctx,bx+bwid*0.93,top+30,bx+bwid*0.93,top+30+60*A+14,COL.blue,4);
+        textAt(ctx,'warm rises',bx+bwid*0.5,bot-110*A-34,{size:12,weight:700,align:'center',color:COL.red}); textAt(ctx,'cool sinks',bx+bwid*0.07+8,top+130*A+60,{size:12,weight:700,color:COL.blue}); }
+      steamWisps(ctx,bx+bwid*0.5,top+8,bwid*0.4,4,t,A*0.8);
+      K.put('c1','cool '+fmt(20,0)+' °C'); K.put('c2','hot '+fmt(20+pw*70,0)+' °C'); K.put('c3','current ∝ '+fmt(A*100,0)+' %');
+      textAt(ctx,'convection currents',bx+bwid/2,top-14,{size:13,weight:700,align:'center',color:COL.muted});
+    } else {
+      if(running){ hr=(hr+dt*1.6)%24; K.setSlider('hr',hr); } else hr=K.v('hr');
+      K.put('hrV',fmt(Math.floor(hr),0)+':'+('0'+Math.floor((hr%1)*60)).slice(-2));
+      const TL=24+9*Math.sin(2*Math.PI*(hr-9)/24), TS=26+1.5*Math.sin(2*Math.PI*(hr-12)/24), dT=TL-TS;
+      springTo(camp,clamp(dT/6,-1.4,1.4),7,4.5,dt); const U=camp.x;
+      K.put('c1',fmt(TS,1)+' °C'); K.put('c2',fmt(TL,1)+' °C'); K.put('c3',Math.abs(U)<0.06?'calm':(U>0?'sea → land (day breeze)':'land → sea (night breeze)'));
+      const x0=w*0.04, W=w*0.9, top=h*0.2, gy=h*0.78, H=gy-top, coast=x0+W*0.45;
+      // sky tint
+      const dayF=clamp(Math.sin(Math.PI*(hr-6)/12)*1.4,0,1);
+      ctx.save(); ctx.fillStyle=mixCol('#2a3a5a','#cfe8fb',dayF); ctx.globalAlpha=0.28; ctx.fillRect(x0,h*0.03,W,gy-h*0.03); ctx.restore();
+      // sun / moon on arc
+      const ang=Math.PI*(1-((hr-6+24)%24)/12), sunUp=((hr-6+24)%24)<12;
+      const ax=x0+W*0.5+Math.cos(ang)*W*0.46, ay=gy-Math.sin(Math.abs(ang))*(H*0.78)*(sunUp?1:0.0)-6;
+      if(sunUp){ circ(ctx,ax,ay,16*sc+4,COL.yellow,'rgba(217,160,23,0.3)',2.6); for(let i=0;i<8;i++){ const a=i*Math.PI/4+t*0.5; line(ctx,ax+Math.cos(a)*(22*sc+6),ay+Math.sin(a)*(22*sc+6),ax+Math.cos(a)*(30*sc+8),ay+Math.sin(a)*(30*sc+8),COL.yellow,2); } }
+      else { const nh=((hr-18+24)%24)/12, mx=x0+W*(0.1+0.8*nh), my=h*0.12+Math.sin(nh*Math.PI)*-h*0.05+h*0.06; ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=2.6; ctx.beginPath(); ctx.arc(mx,my,14*sc+3,0.55*Math.PI,1.5*Math.PI); ctx.arc(mx+7,my,11*sc+2,1.5*Math.PI,0.55*Math.PI,true); ctx.stroke(); ctx.restore(); }
+      // sea + land
+      ctx.save(); ctx.fillStyle='rgba(47,143,224,0.2)'; ctx.fillRect(x0,gy,coast-x0,h*0.1); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath(); for(let x=x0;x<=coast;x+=4){ const y=gy+Math.sin(x*0.05+t*2)*2.4; x===x0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.fillStyle='rgba(217,160,23,0.15)'; ctx.fillRect(coast,gy,x0+W-coast,h*0.1); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(coast,gy); ctx.lineTo(x0+W,gy); ctx.stroke(); ctx.restore();
+      textAt(ctx,'SEA  '+fmt(TS,1)+' °C',x0+(coast-x0)/2,gy+h*0.065,{size:13,weight:700,align:'center',color:COL.blue});
+      textAt(ctx,'LAND  '+fmt(TL,1)+' °C',coast+(x0+W-coast)/2,gy+h*0.065,{size:13,weight:700,align:'center',color:COL.red});
+      // tree + flag showing ground wind
+      const tx=coast+W*0.2; line(ctx,tx,gy,tx,gy-34*sc,COL.ink,3); for(let k=0;k<5;k++){ const a=-Math.PI/2+(k-2)*0.55+U*0.25*Math.sin(t*3+k); line(ctx,tx,gy-34*sc,tx+Math.cos(a)*26*sc,gy-34*sc+Math.sin(a)*26*sc,COL.green,3); }
+      const fxx=coast+W*0.38; line(ctx,fxx,gy,fxx,gy-46*sc,COL.ink,2.6); ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.8; ctx.beginPath(); const dirn=Math.sign(U)||1; ctx.moveTo(fxx,gy-46*sc); for(let k=1;k<=10;k++){ ctx.lineTo(fxx+dirn*k*3.2*sc*Math.min(1,Math.abs(U)*1.5+0.1),gy-46*sc+Math.sin(t*8-k*0.7)*3*Math.min(1,Math.abs(U)+0.1)+k*0.8*(1-Math.min(1,Math.abs(U)))); } ctx.stroke(); ctx.restore();
+      // air parcels
+      const Vm=110*sc;
+      P.forEach(p=>{
+        const xn=p.x, yn=1-p.y;
+        const u=U*Vm*Math.cos(Math.PI*yn)*Math.sin(Math.PI*xn)*1.2;
+        const v=-U*Vm*(H/W)*2.2*Math.cos(Math.PI*xn)*Math.sin(Math.PI*yn);
+        p.x=clamp(p.x+u*dt/W+(Math.random()-0.5)*0.002,0.003,0.997); p.y=clamp(p.y-v*dt/H+(Math.random()-0.5)*0.002,0.003,0.997);
+        const Xn=x0+p.x*W, Yn=top+p.y*H, Tpart=25+clamp(v/(Vm*0.5),-1,1)*9;
+        circ(ctx,Xn,Yn,3.4*sc+0.6,COL.ink,hotCol(Tpart,16,36),1.2);
+      });
+      // wind arrows
+      if(Math.abs(U)>0.08){ const s=Math.sign(U), L=Math.min(110,40+Math.abs(U)*60); vec(ctx,x0+W*0.5-s*L/2,gy-24,x0+W*0.5+s*L/2,gy-24,COL.green,4.4); vec(ctx,x0+W*0.5+s*L/2,top+16,x0+W*0.5-s*L/2,top+16,COL.green,3.2); textAt(ctx,'cool wind',x0+W*0.5,gy-34,{size:11.5,weight:700,align:'center',color:COL.green}); textAt(ctx,'return flow aloft',x0+W*0.5,top+8,{size:11.5,weight:700,align:'center',color:COL.green}); }
+      // time bar
+      textAt(ctx,'Day-night cycle',x0,h*0.07,{size:13,weight:700,color:COL.muted});
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   12. RADIATION & BLACKBODY SPECTRUM    (§10.9.3–10.9.4, eq. 10.15–10.18)
+   λ_m T = 2.9×10⁻³ m K ;  H = σ e A (T⁴ − T_s⁴) ,  σ = 5.67×10⁻⁸
+   Checks: Sun 6000 K → λ_m = 483 nm ;  skin: A = 1.9 m², e = 0.97,
+   T = 301 K, T_s = 295 K → 66.4 W ;  lamp 3000 K, e = 0.4, 0.3 cm² → 55 W
+   (the textbook prints 60 W for the same numbers).
+   ===================================================================== */
+function specCol(nm){
+  let r=0,g=0,b=0;
+  if(nm<380||nm>750) return null;
+  if(nm<440){ r=-(nm-440)/60; b=1; } else if(nm<490){ g=(nm-440)/50; b=1; } else if(nm<510){ g=1; b=-(nm-510)/20; } else if(nm<580){ r=(nm-510)/70; g=1; } else if(nm<645){ r=1; g=-(nm-645)/65; } else r=1;
+  return 'rgb('+Math.round(r*230)+','+Math.round(g*200)+','+Math.round(b*235)+')';
+}
+function bbColor(T){ return rampCol([[500,'#cfd8e3'],[700,'#8c3a30'],[900,'#c0392b'],[1200,'#e8573a'],[1800,'#f08a3c'],[2800,'#f6c46a'],[4200,'#fde7b5'],[6000,'#fff8ec'],[9000,'#dbe8ff']],T); }
+function buildA12(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Try', seg('pre',[['lamp','Lamp'],['iron','Hot iron'],['sun','Sun'],['skin','Skin'],['moon','Moon']],0)) +
+    slider('T','Body temperature T',100,7000,10,3000) + slider('Ts','Surroundings T_s',0,500,5,300) + slider('e','Emissivity e',0.05,1,0.01,0.4) + slider('lA','Surface area A',-1,4.4,0.001,-0.523) +
+    cards([{l:'Peak wavelength λm',id:'c1',col:'var(--f-green)'},{l:'Net power H',id:'c2',col:'var(--f-red)'},{l:'λm × T',id:'c3',col:'var(--f-blue)',wide:true}]) +
+    hintBox('λ<sub>m</sub>T = 2.9×10⁻³ m K &nbsp;·&nbsp; H = σeA(T⁴ − T<sub>s</sub>⁴)');
+  const canvas=$('canvas'); let t=0;
+  const PRE={lamp:[3000,300,0.4,0.3],iron:[1100,300,0.8,50],sun:[6000,3,1,1],skin:[301,295,0.97,19000],moon:[200,3,0.9,100]};
+  wireSeg(wrap,'pre',v=>{ const p=PRE[v]; K.setSlider('T',p[0]); K.setSlider('Ts',p[1]); K.setSlider('e',p[2]); K.setSlider('lA',Math.log10(p[3])); });
+  const sm={T:3000,xmax:2.5e-6,ymax:1}, rings=[]; let ringT=0;
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const T=K.v('T'), Ts=K.v('Ts'), e=K.v('e'), Acm=Math.pow(10,K.v('lA')), A=Acm*1e-4;
+    K.put('TV',fmt(T,0)+' K'); K.put('TsV',fmt(Ts,0)+' K'); K.put('eV',fmt(e,2)); K.put('lAV',Acm>=100?fmt(Acm/1e4,2)+' m²':fmt(Acm,Acm<10?2:0)+' cm²');
+    sm.T=approach(sm.T,T,7,dt);
+    const lm=2.9e-3/sm.T, H=SIGMA*e*A*(Math.pow(T,4)-Math.pow(Ts,4));
+    K.put('c1',lm<1e-6?fmt(lm*1e9,0)+' nm':fmt(lm*1e6,2)+' µm'); K.put('c2',Math.abs(H)>=1000?fmt(H,0)+' W':fmt(H,H<1?4:1)+' W'); K.put('c3','2.9×10⁻³ m K ✓');
+    const sc=Math.min(w/820,h/520,1.5);
+    // ---- glowing body with radiated rings ----
+    const cx=w*0.2, cy=h*0.42, rBody=clamp(24+Math.sqrt(Acm)*3.2,26,92)*sc;
+    const spacing=(10+8*Math.log(Math.max(0.3,lm*1e6/0.4)))*sc;
+    ringT+=dt*(70+60*Math.log10(Math.max(1,T)));
+    const lmNm=lm*1e9, ringCol=specCol(lmNm)||(lmNm>750?COL.red:COL.blue);
+    const Rmax=Math.min(w*0.2,h*0.4);
+    const inten=clamp(Math.log10(Math.max(1e-3,Math.abs(H)))/9+0.35,0.1,1);
+    for(let r=rBody+(ringT%spacing);r<Rmax;r+=spacing){ const fade=1-(r-rBody)/(Rmax-rBody); ctx.save(); ctx.globalAlpha=fade*(0.25+0.75*inten); ctx.strokeStyle=ringCol; ctx.lineWidth=2.2; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke(); ctx.restore(); }
+    // glow
+    const bc=bbColor(sm.T);
+    ctx.save(); const gr=ctx.createRadialGradient(cx,cy,rBody*0.5,cx,cy,rBody*(1+clamp((sm.T-700)/4000,0,1.2))); gr.addColorStop(0,bc); gr.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=gr; ctx.globalAlpha=clamp((sm.T-600)/900,0,0.8); ctx.beginPath(); ctx.arc(cx,cy,rBody*2.2,0,Math.PI*2); ctx.fill(); ctx.restore();
+    circ(ctx,cx,cy,rBody,COL.ink,bc,3.2);
+    textAt(ctx,fmt(T,0)+' K',cx,cy+4,{size:13,weight:700,align:'center',color:sm.T>2500?COL.ink:'#fff'});
+    textAt(ctx,'radiates in vacuum too',cx,h*0.82,{size:12,weight:600,align:'center',color:COL.muted});
+    // ---- spectrum graph ----
+    const gx=w*0.47, gy=h*0.74, gw=w*0.49, gh=h*0.56;
+    const xm=Math.max(2.0e-6,3.8*lm); sm.xmax=approach(sm.xmax,xm,6,dt);
+    axes(ctx,gx,gy,gw,gh,'wavelength λ','energy per unit λ');
+    const pk=planck(lm,sm.T), XG=l=>gx+gw*l/sm.xmax, YG=(l,TT)=>gy-gh*0.88*planck(l,TT)/pk;
+    // visible band
+    for(let nm=380;nm<750;nm+=6){ const l=nm*1e-9; if(l>sm.xmax) break; const c=specCol(nm); ctx.fillStyle=c; ctx.globalAlpha=0.5; ctx.fillRect(XG(l),gy-10,Math.max(1,XG((nm+6)*1e-9)-XG(l)),10); ctx.globalAlpha=1; }
+    textAt(ctx,'visible',XG(565e-9),gy-14,{size:10.5,weight:700,align:'center',color:COL.muted});
+    // ghost curves
+    [0.78,1.28].forEach(f=>{ const pts=[]; for(let k=1;k<=140;k++){ const l=sm.xmax*k/140; pts.push([XG(l),clamp(YG(l,sm.T*f),gy-gh*1.1,gy)]); } polyline(ctx,pts,'rgba(129,149,171,0.6)',1.6,[5,5]); });
+    textAt(ctx,'dashed: ±25 % in T',gx+gw,gy-gh-8,{size:11,weight:600,align:'right',color:COL.mid});
+    // live curve (filled)
+    const pts=[]; for(let k=1;k<=160;k++){ const l=sm.xmax*k/160; pts.push([XG(l),gy-gh*0.88*planck(l,sm.T)/pk]); }
+    ctx.save(); ctx.beginPath(); ctx.moveTo(gx,gy); pts.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.lineTo(gx+gw,gy); ctx.closePath(); ctx.fillStyle='rgba(217,67,43,0.14)'; ctx.fill(); ctx.restore();
+    polyline(ctx,pts,COL.red,3.6);
+    line(ctx,XG(lm),gy,XG(lm),gy-gh*0.88,COL.green,2,[6,5]); circ(ctx,XG(lm),gy-gh*0.88,6,COL.green,COL.green,1);
+    pill(ctx,XG(lm)+(XG(lm)>gx+gw*0.7?-10:10),gy-gh*0.88-14,'λm = '+(lm<1e-6?fmt(lm*1e9,0)+' nm':fmt(lm*1e6,2)+' µm'),'#1f9d55',XG(lm)>gx+gw*0.7?'right':'left');
+    // axis ticks
+    const stepU=sm.xmax>6e-6?2e-6:sm.xmax>3e-6?1e-6:0.5e-6;
+    for(let l=stepU;l<sm.xmax;l+=stepU){ line(ctx,XG(l),gy,XG(l),gy+5,COL.ink,1.6); textAt(ctx,fmt(l*1e6,1)+' µm',XG(l),gy+18,{size:10.5,align:'center',weight:600,color:COL.muted}); }
+    // power bar (log)
+    const bx0=w*0.47, bx1=w*0.96, by=h*0.93; line(ctx,bx0,by,bx1,by,COL.mid,2);
+    const lg=clamp((Math.log10(Math.max(1e-4,Math.abs(H)))+4)/14,0,1); line(ctx,bx0,by,bx0+(bx1-bx0)*lg,by,COL.red,8);
+    textAt(ctx,'power (log scale)',bx0,by-12,{size:11,weight:700,color:COL.red});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13. NEWTON'S LAW OF COOLING            (§10.10, eq. 10.19–10.23; Ex 10.8)
+   T(t) = T_s + (T₀ − T_s) e^{−Kt}   (K = k ÷ ms)
+   Check (Ex 10.8): K = 0.0572 min⁻¹ , T_s = 20 °C :  94 → 86 °C in 2 min
+   and 71 → 69 °C in 0.70 min ≈ 42 s.
+   ===================================================================== */
+function buildA13(){
+  const wrap=labShell(), K=kit(wrap), $=K.$;
+  $('.lab-side').innerHTML =
+    group('Surface of the vessel', seg('kk',[['0.0572','Pan (Ex 10.8)'],['0.02','Polished'],['0.045','Dull'],['0.09','Black']],0)) +
+    slider('T0','Start temperature',50,100,1,94) + slider('Ts','Room temperature',5,35,1,20) + slider('qa','Ask: from',40,99,1,71) + slider('qb','Ask: to',25,98,1,69) +
+    group('Clock', seg('sp',[['1','1 min / s'],['4','4 min / s']],0)) +
+    `<div class="btn-row"><button class="toggle-btn play" id="go">▶ Start cooling</button><button class="toggle-btn" id="rs">⟲ Reset</button></div>` +
+    cards([{l:'Water now',id:'c1',col:'var(--f-red)'},{l:'Cooling rate',id:'c2',col:'var(--f-blue)'},{l:'Time “from → to”',id:'c3',col:'var(--f-green)',wide:true}]) +
+    hintBox('Rate of cooling ∝ (T − T<sub>s</sub>)');
+  const canvas=$('canvas'); let t=0, tm=0, run=false, Kc=0.0572, spd=1; const rates=[];
+  wireSeg(wrap,'kk',v=>{ Kc=+v; tm=0; }); wireSeg(wrap,'sp',v=>spd=+v);
+  const reset=()=>{ tm=0; run=false; $('#go').textContent='▶ Start cooling'; };
+  $('#go').onclick=()=>{ run=!run; $('#go').textContent=run?'⏸ Pause':'▶ Start cooling'; }; $('#rs').onclick=reset;
+  ['T0','Ts'].forEach(id=>$('#'+id).addEventListener('input',reset));
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const T0=K.v('T0'), Ts=K.v('Ts'), qa=K.v('qa'); let qb=K.v('qb'); qb=Math.min(qb,qa-1);
+    K.put('T0V',T0+' °C'); K.put('TsV',Ts+' °C'); K.put('qaV',qa+' °C'); K.put('qbV',qb+' °C');
+    if(run) tm+=dt*spd;
+    const tmax=clamp(4.6/Kc,20,160);
+    if(tm>tmax*1.0){ tm=tmax; run=false; $('#go').textContent='▶ Start cooling'; }
+    const Tw=Ts+(T0-Ts)*Math.exp(-Kc*tm), rate=Kc*(Tw-Ts);
+    const tq=(qa>Ts&&qb>Ts)?Math.log((qa-Ts)/(qb-Ts))/Kc:NaN;
+    K.put('c1',fmt(Tw,1)+' °C  ('+fmt(tm,1)+' min)'); K.put('c2',fmt(rate,2)+' °C / min'); K.put('c3',isFinite(tq)?fmt(tq,2)+' min  =  '+fmt(tq*60,0)+' s':'—');
+    const sc=Math.min(w/820,h/520,1.5);
+    // ---- the cup ----
+    const cx=w*0.18, cw=Math.min(w*0.16,140*sc), ctop=h*0.34, cbot=h*0.74, floor=h*0.8;
+    line(ctx,w*0.03,floor,w*0.36,floor,COL.ink,3);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(cx-cw/2,ctop); ctx.lineTo(cx-cw*0.4,cbot); ctx.lineTo(cx+cw*0.4,cbot); ctx.lineTo(cx+cw/2,ctop); ctx.closePath(); ctx.fillStyle='rgba(255,255,255,0.0)'; ctx.fill(); ctx.restore();
+    liquid(ctx,()=>{ctx.beginPath();ctx.moveTo(cx-cw/2,ctop);ctx.lineTo(cx-cw*0.4,cbot);ctx.lineTo(cx+cw*0.4,cbot);ctx.lineTo(cx+cw/2,ctop);ctx.closePath();},cx-cw/2,cx+cw/2,ctop+14,cbot,t,1.4,mixCol('#cfe8fb','#f3b9a8',(Tw-Ts)/(100-Ts+1)),hotCol(Tw,Ts,100));
+    ctx.save(); ctx.strokeStyle=Kc>0.07?'#132a44':Kc<0.03?'#8195ab':'#4c6178'; ctx.lineWidth=Kc>0.07?6:3.4; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(cx-cw/2,ctop); ctx.lineTo(cx-cw*0.4,cbot); ctx.lineTo(cx+cw*0.4,cbot); ctx.lineTo(cx+cw/2,ctop); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(cx+cw/2+4,(ctop+cbot)/2-10,cw*0.2,-Math.PI/2,Math.PI/2); ctx.stroke(); ctx.restore();
+    steamWisps(ctx,cx,ctop+6,cw*0.6,5,t,clamp((Tw-35)/60,0,1));
+    // thermometer in cup
+    thermo(ctx,cx+cw*0.15,ctop-40,cbot-30,(Tw-Ts)/(100-Ts+1)*0.9+0.05,COL.ink,mixCol('#2f8fe0','#d9432b',(Tw-Ts)/(100-Ts+1)));
+    textAt(ctx,fmt(Tw,1)+' °C',cx,ctop-56,{size:14,weight:700,align:'center',color:COL.red});
+    // heat leaving
+    const nA=7, L=clamp((Tw-Ts)/(100-Ts+1),0,1)*52*sc;
+    if(L>3) for(let i=0;i<nA;i++){ const a=-Math.PI*0.9+i*(Math.PI*0.8/(nA-1))+0.06; const ph=((t*0.9+i/nA)%1); const r0=cw*0.55+ph*24; ctx.save(); ctx.globalAlpha=1-ph*0.7; vec(ctx,cx+Math.cos(a)*r0*1.3,(ctop+cbot)/2+Math.sin(a)*r0*0.9-cw*0.1,cx+Math.cos(a)*(r0*1.3+L*0.55),(ctop+cbot)/2+Math.sin(a)*(r0*0.9+L*0.55)-cw*0.1,COL.red,2.6); ctx.restore(); }
+    textAt(ctx,'heat lost ∝ (T − T_s)',cx,floor+24,{size:12,weight:700,align:'center',color:COL.red});
+    // room thermometer
+    thermo(ctx,w*0.33,h*0.32,h*0.7,(Ts-5)/60,COL.ink,COL.blue); textAt(ctx,'room '+Ts+' °C',w*0.33,h*0.28,{size:12,weight:700,align:'center',color:COL.blue});
+    // ---- graph 1: T vs t ----
+    const gx=w*0.47, gw=w*0.48, g1y=h*0.45, g1h=h*0.34;
+    axes(ctx,gx,g1y,gw,g1h,'t (min)','T (°C)');
+    const GX=m=>gx+gw*m/tmax, GY=T=>g1y-g1h*(T-(Ts-3))/((T0+4)-(Ts-3));
+    const full=[]; for(let k=0;k<=80;k++){ const m=tmax*k/80; full.push([GX(m),GY(Ts+(T0-Ts)*Math.exp(-Kc*m))]); }
+    polyline(ctx,full,'rgba(129,149,171,0.55)',2,[6,5]);
+    line(ctx,gx,GY(Ts),gx+gw,GY(Ts),COL.blue,1.6,[4,4]); textAt(ctx,'T_s',gx+gw+6,GY(Ts)+4,{size:11,weight:700,color:COL.blue});
+    [[qa,COL.yellow],[qb,COL.yellow]].forEach(([q,c])=>{ if(q<T0&&q>Ts){ line(ctx,gx,GY(q),gx+gw,GY(q),c,1.2,[3,5]); textAt(ctx,q+'',gx-6,GY(q)+4,{size:10.5,align:'right',weight:700,color:COL.yellow}); } });
+    if(isFinite(tq)&&qa<T0){ const ma=Math.log((T0-Ts)/(qa-Ts))/Kc, mb=Math.log((T0-Ts)/(qb-Ts))/Kc; ctx.save(); ctx.fillStyle='rgba(217,160,23,0.22)'; ctx.fillRect(GX(ma),g1y-g1h,Math.max(2,GX(mb)-GX(ma)),g1h); ctx.restore(); }
+    const live=[]; const steps=Math.max(2,Math.round(80*tm/tmax)); for(let k=0;k<=steps;k++){ const m=tm*k/steps; live.push([GX(m),GY(Ts+(T0-Ts)*Math.exp(-Kc*m))]); }
+    polyline(ctx,live,COL.red,3.6);
+    circ(ctx,GX(tm),GY(Tw),6,COL.red,COL.red,1);
+    // tangent: slope = −K(T − T_s)
+    { const sx=gw/tmax, sy=g1h/((T0+4)-(Ts-3)), tl=gw*0.13, dy=rate*sy*tl/sx; line(ctx,GX(tm)-tl,GY(Tw)-dy,GX(tm)+tl,GY(Tw)+dy,COL.yellow,2.6); }
+    // ---- graph 2: ln(T-Ts) vs t ----
+    const g2y=h*0.9, g2h=h*0.3;
+    axes(ctx,gx,g2y,gw,g2h,'t (min)','ln(T − T_s)');
+    const lnTop=Math.log(Math.max(1.2,T0-Ts))+0.25, lnBot=lnTop-4.9;
+    const G2=v=>g2y-g2h*(v-lnBot)/(lnTop-lnBot);
+    polyline(ctx,[[GX(0),G2(Math.log(T0-Ts))],[GX(tmax),G2(Math.log(T0-Ts)-Kc*tmax)]],'rgba(129,149,171,0.55)',2,[6,5]);
+    polyline(ctx,[[GX(0),G2(Math.log(T0-Ts))],[GX(tm),G2(Math.log(T0-Ts)-Kc*tm)]],COL.green,3.6);
+    circ(ctx,GX(tm),G2(Math.log(T0-Ts)-Kc*tm),6,COL.green,COL.green,1);
+    pill(ctx,gx+gw,g2y-g2h+8,'straight line, slope −K = −'+fmt(Kc,4)+' min⁻¹','#1f9d55','right');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'1',  title:'Temperature Scales',        desc:'§10.3 · Dip a thermometer · read °C, °F and K', build: buildA1 },
+  { num:'2',  title:'Gas Thermometer',           desc:'§10.4 · Heat, push, pull · find absolute zero', build: buildA2 },
+  { num:'3',  title:'Thermal Expansion',         desc:'§10.5 · Rod, plate, rails and the blacksmith\'s ring', build: buildA3 },
+  { num:'4',  title:'Anomalous Water',           desc:'§10.5 · Why a lake freezes from the top', build: buildA4 },
+  { num:'5',  title:'Specific Heat Capacity',    desc:'§10.6 · Same flame, different liquids', build: buildA5 },
+  { num:'6',  title:'Calorimetry',               desc:'§10.7 · Heat lost = heat gained', build: buildA6 },
+  { num:'7',  title:'Ice to Steam',              desc:'§10.8 · Plateaus and latent heat', build: buildA7 },
+  { num:'8',  title:'Regelation',                desc:'§10.8 · A weighted wire cuts through ice', build: buildA8 },
+  { num:'9',  title:'Boiling & Pressure',        desc:'§10.8 · Seal the flask · cool it · boil again', build: buildA9 },
+  { num:'10', title:'Conduction',                desc:'§10.9.1 · Heat creeping along a bar', build: buildA10 },
+  { num:'11', title:'Convection',                desc:'§10.9.2 · Pot currents and the sea breeze', build: buildA11 },
+  { num:'12', title:'Radiation',                 desc:'§10.9.3 · Colour, peak wavelength and power', build: buildA12 },
+  { num:'13', title:'Newton\'s Law of Cooling',  desc:'§10.10 · A cup cools toward the room', build: buildA13 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 1 · Chapter 2 — Motion in a Straight Line | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.val-y{color:var(--f-yellow) !important;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🚗</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 1 · Ch 2</div>
+      <h1>Motion in a Straight Line</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Position · Distance</span>
+      <span><i style="background:var(--f-green)"></i>Velocity</span>
+      <span><i style="background:var(--f-red)"></i>Acceleration</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">2.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — PHYSICS PART 1 — CHAPTER 2: MOTION IN A STRAIGHT LINE
+   One activity per worked example / figure in NCERT Chapter 2.
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; parameters ease toward it and the object is positioned from
+   the real kinematic equations every frame (x = x0 + v0 t + ½ a t², v² = v0² + 2ax …)
+   so nothing ever jumps. Colours: blue = position/distance, green = velocity,
+   red = acceleration, yellow = what you change.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+
+/* ---------------------------------------------------------------------
+   0c. KINEMATICS HELPERS — clock, eased parameters, graphs, car, road
+   --------------------------------------------------------------------- */
+const COLS = [COL.blue, COL.red, COL.green, COL.yellow];
+function niceStep(range,n){ const raw=range/Math.max(1,n), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function dec(step){ return step>=1?0:step>=0.1?1:2; }
+function setT(el,txt){ if(el && el.textContent!==txt) el.textContent=txt; }
+function eased(){ const o={}; return (k,tg,rate,dt)=>{ if(o[k]===undefined) o[k]=tg; o[k]=approach(o[k],tg,rate||9,dt); return o[k]; }; }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,'#fff',col,1.6); }
+
+/* A looping simulation clock. Plays 0 → Tend, holds, then loops. */
+function makeClock(Tend,hold){
+  const c={t:0,playing:true,Tend:Tend,hold:hold||1.2,h:0};
+  c.step=function(dt){
+    if(!c.playing) return c.t;
+    if(c.t>=c.Tend){ c.h+=dt; if(c.h>=c.hold){ c.t=0; c.h=0; } }
+    else c.t=Math.min(c.Tend,c.t+dt);
+    return c.t;
+  };
+  c.restart=()=>{ c.t=0; c.h=0; c.playing=true; };
+  return c;
+}
+
+/* ---------- control builders (right-hand 30 % column) ---------- */
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label} <span class="val val-y" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipRow(id,label,items,activeIdx){
+  return `<div class="control-group"><label style="margin-bottom:2px;">${label}</label><div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn small${i===activeIdx?' active':''}" data-v="${it[1]}">${it[0]}</button>`).join('')}</div></div>`;
+}
+function transport(){
+  return `<div class="control-group"><div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="pp">❚❚ Pause</button><button class="toggle-btn" id="rp">↺ Replay</button></div>
+    <label style="margin-top:8px;">Time <span class="val" id="tV"></span></label><input type="range" id="tR" min="0" max="1000" value="0"></div>`;
+}
+function cards(list,three){
+  return `<div class="control-group"><div class="result-cards${three?' three':''}">${list.map(c=>`<div class="rcard${c[3]?' wide':''}"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}" style="color:${c[2]||'var(--text-1)'}">—</div></div>`).join('')}</div></div>`;
+}
+function wireTransport(wrap,clock){
+  const pp=wrap.querySelector('#pp'), rp=wrap.querySelector('#rp'), tR=wrap.querySelector('#tR'), tV=wrap.querySelector('#tV');
+  pp.onclick=()=>{ clock.playing=!clock.playing; pp.textContent=clock.playing?'❚❚ Pause':'▶ Play'; };
+  rp.onclick=()=>{ clock.restart(); pp.textContent='❚❚ Pause'; };
+  tR.oninput=()=>{ clock.playing=false; pp.textContent='▶ Play'; clock.t=tR.value/1000*clock.Tend; clock.h=0; };
+  return ()=>{ if(document.activeElement!==tR) tR.value=Math.round(clamp(clock.t/clock.Tend,0,1)*1000); setT(tV,fmt(clock.t,2)+' s'); };
+}
+function wireSlider(wrap,id,unit,d){
+  const r=wrap.querySelector('#'+id), v=wrap.querySelector('#'+id+'V');
+  const upd=()=>setT(v,fmt(+r.value,d===undefined?1:d)+(unit?' '+unit:'')); upd(); r.addEventListener('input',upd);
+  return r;
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------- graph: draws grid, axes, curve (solid up to tcur, dashed beyond) ---------- */
+function plot(ctx,x,y,w,h,o){
+  const L=o.padL||46, B=30, T=24, R=14;
+  const gx=x+L, gy=y+T, gw=w-L-R, gh=h-T-B;
+  const X=v=>gx+(v-o.x0)/(o.x1-o.x0)*gw, Y=v=>gy+gh-(v-o.y0)/(o.y1-o.y0)*gh;
+  ctx.save(); rrect(ctx,x,y,w,h,10); ctx.fillStyle='#fbfcfe'; ctx.fill(); ctx.lineWidth=1.2; ctx.strokeStyle='#dbe4f0'; ctx.stroke(); ctx.restore();
+  const sx=niceStep(o.x1-o.x0,gw/62), sy=niceStep(o.y1-o.y0,gh/34);
+  for(let v=Math.ceil(o.x0/sx-1e-9)*sx; v<=o.x1+1e-9; v+=sx){ const px=X(v); line(ctx,px,gy,px,gy+gh,'#e6edf5',1); textAt(ctx,fmt(v,dec(sx)),px,gy+gh+14,{size:10,color:COL.mid,align:'center'}); }
+  for(let v=Math.ceil(o.y0/sy-1e-9)*sy; v<=o.y1+1e-9; v+=sy){ const py=Y(v); line(ctx,gx,py,gx+gw,py,'#e6edf5',1); textAt(ctx,fmt(v,dec(sy)),gx-6,py+3.5,{size:10,color:COL.mid,align:'right'}); }
+  if(o.y0<0 && o.y1>0) line(ctx,gx,Y(0),gx+gw,Y(0),COL.muted,1.4);
+  line(ctx,gx,gy,gx,gy+gh,COL.muted,1.4);
+  if(o.y0>=0) line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.muted,1.4);
+  textAt(ctx,o.title,x+12,y+16,{size:11.5,weight:700,color:o.color});
+  if(o.xl) textAt(ctx,o.xl,gx+gw,gy+gh+27,{size:10,weight:600,color:COL.muted,align:'right'});
+  const g={X,Y,gx,gy,gw,gh};
+  g.clip=fn=>{ ctx.save(); ctx.beginPath(); ctx.rect(gx,gy-1,gw,gh+2); ctx.clip(); fn(); ctx.restore(); };
+  if(o.fn){
+    const N=140, tc=o.tcur===undefined?o.x1:o.tcur;
+    g.clip(()=>{
+      ctx.lineJoin='round';
+      ctx.strokeStyle=o.color; ctx.globalAlpha=0.28; ctx.lineWidth=2.2; ctx.setLineDash([5,4]); ctx.beginPath();
+      for(let i=0;i<=N;i++){ const t=o.x0+(o.x1-o.x0)*i/N, px=X(t), py=Y(o.fn(t)); i?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1; ctx.lineWidth=3.2; ctx.beginPath();
+      const M=Math.max(2,Math.round(N*(tc-o.x0)/(o.x1-o.x0)));
+      for(let i=0;i<=M;i++){ const t=o.x0+(tc-o.x0)*i/M, px=X(t), py=Y(o.fn(t)); i?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.stroke();
+    });
+    if(o.tcur!==undefined) dot(ctx,X(tc),Y(o.fn(tc)),5,o.color);
+  }
+  return g;
+}
+/* straight line across a graph (extended to the plot edges) through (tx,ty) with slope m */
+function gline(ctx,g,o,tx,ty,m,col,lw,dash){
+  g.clip(()=>{ line(ctx,g.X(o.x0),g.Y(ty+m*(o.x0-tx)),g.X(o.x1),g.Y(ty+m*(o.x1-tx)),col,lw||2,dash); });
+}
+
+/* ---------- line-diagram car (side view). cx = centre, gy = ground, s = scale ---------- */
+function drawCar(ctx,cx,gy,s,face,wheel,o){
+  o=o||{}; const R=11*s;
+  ctx.save(); ctx.translate(cx,gy); ctx.scale(face===undefined?1:face,1); ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.save(); ctx.translate(0,-14*s); ctx.rotate(o.pitch||0); ctx.translate(0,14*s);
+  ctx.lineWidth=2.4; ctx.strokeStyle=COL.ink; ctx.fillStyle=o.fill||'#fff';
+  ctx.beginPath(); ctx.moveTo(-50*s,-13*s); ctx.lineTo(-50*s,-30*s); ctx.quadraticCurveTo(-50*s,-36*s,-42*s,-36*s); ctx.lineTo(-30*s,-36*s);
+  ctx.lineTo(-18*s,-54*s); ctx.lineTo(14*s,-54*s); ctx.lineTo(32*s,-36*s); ctx.lineTo(44*s,-34*s); ctx.quadraticCurveTo(52*s,-32*s,52*s,-24*s); ctx.lineTo(52*s,-13*s); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  line(ctx,-2*s,-54*s,-2*s,-36*s,COL.ink,1.8);
+  ctx.beginPath(); ctx.moveTo(-26*s,-37*s); ctx.lineTo(-16*s,-51*s); ctx.lineTo(-4*s,-51*s); ctx.lineTo(-4*s,-37*s); ctx.closePath();
+  ctx.moveTo(0*s,-37*s); ctx.lineTo(0*s,-51*s); ctx.lineTo(13*s,-51*s); ctx.lineTo(27*s,-37*s); ctx.closePath(); ctx.lineWidth=1.4; ctx.stroke();
+  circ(ctx,47*s,-26*s,3.2*s,COL.yellow,'#fff6d8',1.8);
+  if(o.brake>0){
+    ctx.save(); ctx.globalAlpha=Math.min(1,o.brake); ctx.fillStyle=COL.red; ctx.fillRect(-52*s,-32*s,5*s,9*s);
+    for(let k=-1;k<=1;k++) line(ctx,-56*s,(-27+k*5)*s,-68*s,(-27+k*9)*s,COL.red,2);
+    ctx.restore();
+  } else { ctx.fillStyle='#f3c9c2'; ctx.fillRect(-52*s,-32*s,4*s,8*s); }
+  ctx.restore();
+  for(const wx of [-29*s,29*s]){
+    circ(ctx,wx,-R,R,COL.ink,'#fff',2.4); circ(ctx,wx,-R,2.2*s,COL.ink,COL.ink,1);
+    for(let k=0;k<3;k++){ const a=(wheel||0)+k*Math.PI*2/3; line(ctx,wx,-R,wx+Math.cos(a)*R*0.85,-R+Math.sin(a)*R*0.85,COL.ink,1.6); }
+  }
+  ctx.restore();
+}
+/* ground line with metre ticks. X: metres → px */
+function roadAxis(ctx,X,m0,m1,y,w,label){
+  line(ctx,0,y,w,y,COL.ink,2.6);
+  const step=niceStep(m1-m0,w/84);
+  for(let m=Math.ceil(m0/step-1e-9)*step;m<=m1+1e-9;m+=step){ const px=X(m); if(px<4||px>w-4) continue; line(ctx,px,y,px,y+7,COL.ink,1.6); textAt(ctx,fmt(m,dec(step)),px,y+21,{size:11,align:'center',color:COL.muted}); }
+  textAt(ctx,label||'x (m)',w-10,y-8,{size:11.5,weight:700,color:COL.blue,align:'right'});
+}
+/* little flag post on the road */
+function post(ctx,px,gy,hgt,col,txt){
+  line(ctx,px,gy,px,gy-hgt,col,2.2);
+  ctx.save(); ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(px,gy-hgt); ctx.lineTo(px+13,gy-hgt+5); ctx.lineTo(px,gy-hgt+10); ctx.closePath(); ctx.fill(); ctx.restore();
+  if(txt) textAt(ctx,txt,px+17,gy-hgt+9,{size:11,weight:700,color:col});
+}
+/* horizontal double-headed dimension arrow with a label above */
+function hdim(ctx,x1,x2,y,col,txt){
+  if(Math.abs(x2-x1)>8){ line(ctx,x1,y,x2,y,col,1.8); arrowHead(ctx,x1,y,Math.PI,col,6); arrowHead(ctx,x2,y,0,col,6); }
+  else line(ctx,x1,y,x2,y,col,2.6);
+  line(ctx,x1,y-6,x1,y+6,col,1.6); line(ctx,x2,y-6,x2,y+6,col,1.6);
+  if(txt) textAt(ctx,txt,(x1+x2)/2,y-9,{size:12,weight:700,color:col,align:'center'});
+}
+/* vertical dimension arrow with label to the side */
+function vdim(ctx,x,y1,y2,col,txt,side){
+  if(Math.abs(y2-y1)>8){ line(ctx,x,y1,x,y2,col,1.8); arrowHead(ctx,x,y1,y1<y2?-Math.PI/2:Math.PI/2,col,6); arrowHead(ctx,x,y2,y1<y2?Math.PI/2:-Math.PI/2,col,6); }
+  line(ctx,x-6,y1,x+6,y1,col,1.6); line(ctx,x-6,y2,x+6,y2,col,1.6);
+  if(txt) textAt(ctx,txt,x+(side||10),(y1+y2)/2+4,{size:12,weight:700,color:col,align:(side||10)<0?'right':'left'});
+}
+function ball(ctx,x,y,r,col,fill){
+  circ(ctx,x,y,r,col||COL.ink,fill||'#fff',2.6);
+  ctx.save(); ctx.strokeStyle=col||COL.ink; ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(x,y,r*0.6,Math.PI*1.1,Math.PI*1.65); ctx.stroke(); ctx.restore();
+}
+function stickman(ctx,x,gy,s,armA,col){
+  col=col||COL.ink; const hd=5*s;
+  line(ctx,x,gy,x-3*s,gy-14*s,col,2.4); line(ctx,x,gy,x+5*s,gy-14*s,col,2.4);     // legs
+  line(ctx,x+1*s,gy-14*s,x+1*s,gy-30*s,col,2.6);                                  // body
+  circ(ctx,x+1*s,gy-30*s-hd-1,hd,col,'#fff',2.4);                                  // head
+  const sx=x+1*s, sy=gy-28*s, L=17*s;
+  line(ctx,sx,sy,sx+Math.cos(armA)*L,sy-Math.sin(armA)*L,col,2.6);                // throwing arm
+  line(ctx,sx,sy,sx-8*s,sy+9*s,col,2.4);                                          // other arm
+  return {hx:sx+Math.cos(armA)*L, hy:sy-Math.sin(armA)*L};
+}
+
+function poly(ctx,pts,fill,alpha,stroke){
+  ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  ctx.globalAlpha=alpha; ctx.fillStyle=fill; ctx.fill(); ctx.globalAlpha=1;
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=1.6; ctx.stroke(); } ctx.restore();
+}
+function wheelFollow(st,px,R){ if(st.last!==null && Math.abs(px-st.last)<120) st.a+=(px-st.last)/R; st.last=px; return st.a; }
+
+/* =====================================================================
+   2.1 INSTANTANEOUS VELOCITY — Fig 2.1 and Table 2.1,  x = 0.08 t³
+   v = dx/dt = 0.24 t²  →  at t = 4 s:  v = 3.84 m/s   (textbook value)
+   Secant slope Δx/Δt over [t₀−Δt/2, t₀+Δt/2] → tangent slope as Δt → 0.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('t0','Instant t₀',1,9,0.1,4) +
+    `<div class="control-group"><label>Interval Δt <span class="val val-y" id="dtV"></span></label>
+       <input type="range" id="dtR" min="0" max="100" step="0.1" value="0">
+       <div class="toggle-group" id="dtC">${[2,1,0.5,0.1,0.01].map(d=>`<button class="toggle-btn small" data-d="${d}">${d} s</button>`).join('')}</div>
+       <div class="toggle-group"><button class="toggle-btn play" id="shr">▶ Shrink Δt</button><button class="toggle-btn" id="rst">↺ Reset</button></div></div>` +
+    transport() +
+    cards([['c1','Δx / Δt  (secant)',COL.yellow],['c2','dx/dt at t₀  (tangent)',COL.green],['c3','Difference',COL.ink],['c4','x at t₀',COL.blue]]);
+  const canvas=$('canvas'), t0R=wireSlider(wrap,'t0','s',1), dtR=$('#dtR');
+  const clock=makeClock(10,1.0), tick=wireTransport(wrap,clock), E=eased(), wh={a:0,last:null};
+  let shrinking=false;
+  const sFromD=d=>100*Math.log(d/2)/Math.log(0.005), dFromS=s=>2*Math.pow(0.005,s/100);
+  wrap.querySelectorAll('#dtC button').forEach(b=>b.onclick=()=>{ shrinking=false; dtR.value=sFromD(+b.dataset.d); });
+  dtR.addEventListener('input',()=>{ shrinking=false; });
+  $('#shr').onclick=()=>{ if(+dtR.value>=99.9) dtR.value=0; shrinking=true; };
+  $('#rst').onclick=()=>{ shrinking=false; dtR.value=0; };
+  const xf=t=>0.08*t*t*t, vf=t=>0.24*t*t;
+
+  animLoop(dt=>{
+    if(shrinking){ dtR.value=Math.min(100,+dtR.value+dt*20); if(+dtR.value>=100) shrinking=false; }
+    const tt=clock.step(dt); tick();
+    setT($('#dtV'),fmt(dFromS(+dtR.value),2)+' s');
+    const T0=E('t0',+t0R.value,9,dt), S=E('s',+dtR.value,7,dt), DT=dFromS(S);
+    const t1=T0-DT/2, t2=T0+DT/2, vin=vf(T0), avg=(xf(t2)-xf(t1))/DT;
+    setT($('#c1'),fmt(avg,3)+' m/s'); setT($('#c2'),fmt(vin,3)+' m/s'); setT($('#c3'),fmt(Math.abs(avg-vin),3)+' m/s'); setT($('#c4'),fmt(xf(T0),2)+' m');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* ---- scene: the car speeds up along x = 0.08 t³ ---- */
+    const sceneH=h*0.45, gy=sceneH*0.82, pad=84, s=clamp(w/700,0.7,1.7), X=m=>pad+m/80*(w-2*pad);
+    roadAxis(ctx,X,0,80,gy,w,'x (m)');
+    const cx=X(xf(tt));
+    post(ctx,X(xf(t1)),gy,36*s+10,COL.yellow,''); post(ctx,X(xf(t2)),gy,36*s+10,COL.yellow,'');
+    post(ctx,X(xf(T0)),gy,60*s+18,COL.green,'t₀');
+    hdim(ctx,X(xf(t1)),X(xf(t2)),gy-98*s-8,COL.yellow,'Δx = '+fmt(xf(t2)-xf(t1),2)+' m');
+    drawCar(ctx,cx,gy,s,1,wheelFollow(wh,cx,11*s),{});
+    vec(ctx,cx,gy-66*s,cx+vf(tt)*4.2,gy-66*s,COL.green,3.2);
+    textAt(ctx,'v = '+fmt(vf(tt),2)+' m/s',cx+vf(tt)*4.2+8,gy-62*s,{size:12,weight:700,color:COL.green});
+    textAt(ctx,'t = '+fmt(tt,2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+
+    /* ---- graphs: x–t with secant & tangent, and a zoom around t₀ ---- */
+    const gy2=sceneH+6, gh2=h-gy2-8, lw1=(w-30)*0.56, lw2=(w-30)-lw1;
+    const o1={x0:0,x1:10,y0:0,y1:80,title:'x (m)  vs  t (s)',color:COL.blue,fn:xf,tcur:tt,xl:'t (s)'};
+    const g1=plot(ctx,10,gy2,lw1,gh2,o1);
+    gline(ctx,g1,o1,T0,xf(T0),vin,COL.green,2.2);
+    gline(ctx,g1,o1,t1,xf(t1),avg,COL.yellow,2.6);
+    dot(ctx,g1.X(t1),g1.Y(xf(t1)),4,COL.yellow); dot(ctx,g1.X(t2),g1.Y(xf(t2)),4,COL.yellow); dot(ctx,g1.X(T0),g1.Y(xf(T0)),5,COL.green);
+    const hw=1.3, ym=xf(T0), hy=vin*hw*1.3+0.4;
+    const o2={x0:T0-hw,x1:T0+hw,y0:ym-hy,y1:ym+hy,title:'zoom near t₀',color:COL.blue,fn:xf,padL:50};
+    const g2=plot(ctx,10+lw1+10,gy2,lw2,gh2,o2);
+    gline(ctx,g2,o2,T0,xf(T0),vin,COL.green,2.6);
+    gline(ctx,g2,o2,t1,xf(t1),avg,COL.yellow,2.6,DT>0.3?null:null);
+    dot(ctx,g2.X(t1),g2.Y(xf(t1)),4,COL.yellow); dot(ctx,g2.X(t2),g2.Y(xf(t2)),4,COL.yellow); dot(ctx,g2.X(T0),g2.Y(xf(T0)),5,COL.green);
+    textAt(ctx,DT<0.06?'secant ≈ tangent':'secant ≠ tangent',10+lw1+10+lw2-14,gy2+16,{size:11.5,weight:700,color:DT<0.06?COL.green:COL.yellow,align:'right'});
+    line(ctx,10+lw1+10+20,gy2+gh2-38,10+lw1+10+44,gy2+gh2-38,COL.yellow,2.6); textAt(ctx,'secant',10+lw1+10+50,gy2+gh2-34,{size:11,weight:600,color:COL.muted});
+    line(ctx,10+lw1+10+104,gy2+gh2-38,10+lw1+10+128,gy2+gh2-38,COL.green,2.6); textAt(ctx,'tangent',10+lw1+10+134,gy2+gh2-34,{size:11,weight:600,color:COL.muted});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.2 EXAMPLE 2.1 — x = a + b t²,  a = 8.5 m,  b = 2.5 m s⁻²
+   v = dx/dt = 2bt  → v(2.0) = 10 m/s.  Average over 2→4 s = 15 m/s,
+   which equals v at the mid-time 3 s (uniform acceleration).
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('a','Start position a',0,15,0.5,8.5) + slider('b','Constant b',0.5,5,0.1,2.5) +
+    slider('t1','Instant t₁',0,5,0.1,2) + slider('t2','Instant t₂',1,8,0.1,4) +
+    transport() +
+    cards([['c1','v at t₁',COL.green],['c2','v at t₂',COL.green],['c3','Average v̄  (t₁ → t₂)',COL.yellow],['c4','v at mid-time',COL.green]]);
+  const canvas=$('canvas'), aR=wireSlider(wrap,'a','m',1), bR=wireSlider(wrap,'b','m/s²',1), t1R=wireSlider(wrap,'t1','s',1), t2R=wireSlider(wrap,'t2','s',1);
+  const clock=makeClock(8,1.0), tick=wireTransport(wrap,clock), E=eased(), wh={a:0,last:null};
+
+  animLoop(dt=>{
+    const tt=clock.step(dt); tick();
+    const A=E('a',+aR.value,9,dt), B=E('b',+bR.value,9,dt), T1=E('t1',+t1R.value,9,dt), T2=Math.max(E('t2',+t2R.value,9,dt),T1+0.3);
+    const xf=t=>A+B*t*t, vf=t=>2*B*t;
+    const v1=vf(T1), v2=vf(T2), avg=(xf(T2)-xf(T1))/(T2-T1);
+    setT($('#c1'),fmt(v1,2)+' m/s'); setT($('#c2'),fmt(v2,2)+' m/s'); setT($('#c3'),fmt(avg,2)+' m/s'); setT($('#c4'),fmt(vf((T1+T2)/2),2)+' m/s');
+    const xmax=A+B*64, xm=E('xm',xmax,6,dt), vm=E('vm',2*B*8*1.05,6,dt);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sceneH=h*0.45, gy=sceneH*0.8, pad=84, s=clamp(w/700,0.7,1.7), X=m=>pad+m/xm*(w-2*pad);
+    roadAxis(ctx,X,0,xm,gy,w,'x (m)');
+    for(let k=0;k<=Math.floor(tt+1e-6);k++){ const px=X(xf(k)); dot(ctx,px,gy+0,3.6,COL.blue); textAt(ctx,k+' s',px,gy-8,{size:10,color:COL.mid,align:'center'}); }
+    post(ctx,X(xf(T1)),gy,34*s+8,COL.yellow,'t₁'); post(ctx,X(xf(T2)),gy,34*s+8,COL.yellow,'t₂');
+    hdim(ctx,X(xf(T1)),X(xf(T2)),gy-100*s-8,COL.yellow,'Δx = '+fmt(xf(T2)-xf(T1),1)+' m');
+    const cx=X(xf(tt));
+    drawCar(ctx,cx,gy,s,1,wheelFollow(wh,cx,11*s),{});
+    const kv=(w*0.2)/(2*B*8), al=vf(tt)*kv;
+    vec(ctx,cx,gy-66*s,cx+al,gy-66*s,COL.green,3.2);
+    textAt(ctx,'v = '+fmt(vf(tt),1)+' m/s',cx+al+8,gy-62*s,{size:12,weight:700,color:COL.green});
+    textAt(ctx,'t = '+fmt(tt,2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+    textAt(ctx,'x = '+fmt(A,1)+' + '+fmt(B,1)+'·t²',16,44,{size:12,weight:600,color:COL.blue});
+
+    const gy2=sceneH+6, gh2=h-gy2-8, lw1=(w-30)*0.5, lw2=(w-30)-lw1;
+    const o1={x0:0,x1:8,y0:0,y1:xm,title:'x (m)  vs  t (s)',color:COL.blue,fn:xf,tcur:tt,xl:'t (s)'};
+    const g1=plot(ctx,10,gy2,lw1,gh2,o1);
+    gline(ctx,g1,o1,T1,xf(T1),v1,COL.green,2.2);
+    gline(ctx,g1,o1,T1,xf(T1),avg,COL.yellow,2.6);
+    dot(ctx,g1.X(T1),g1.Y(xf(T1)),4.5,COL.yellow); dot(ctx,g1.X(T2),g1.Y(xf(T2)),4.5,COL.yellow);
+    const o2={x0:0,x1:8,y0:0,y1:vm,title:'v (m/s)  vs  t (s)',color:COL.green,fn:vf,tcur:tt,xl:'t (s)'};
+    const g2=plot(ctx,10+lw1+10,gy2,lw2,gh2,o2);
+    poly(ctx,[[g2.X(T1),g2.Y(0)],[g2.X(T1),g2.Y(v1)],[g2.X(T2),g2.Y(v2)],[g2.X(T2),g2.Y(0)]],COL.blue,0.16);
+    g2.clip(()=>{ line(ctx,g2.X(T1),g2.Y(avg),g2.X(T2),g2.Y(avg),COL.yellow,2.6); line(ctx,g2.X((T1+T2)/2),g2.Y(0),g2.X((T1+T2)/2),g2.Y(avg),COL.yellow,1.4,[4,4]); });
+    dot(ctx,g2.X(T1),g2.Y(v1),4.5,COL.green); dot(ctx,g2.X(T2),g2.Y(v2),4.5,COL.green); dot(ctx,g2.X((T1+T2)/2),g2.Y(avg),5,COL.yellow);
+    textAt(ctx,'blue area = Δx',g2.gx+10,g2.gy+g2.gh-8,{size:11,weight:600,color:COL.blue});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.3 ACCELERATION AND DIRECTION — Figs 2.2 and 2.3
+   v = v₀ + at,  x = v₀t + ½at².
+   a(+) with v(+) speeds up; a(−) with v(+) slows down, stops, then turns back
+   at t = −v₀/a; the acceleration never changes at the turning point.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  const CASES=[['(a) +v, +a',[4,2]],['(b) +v, −a',[10,-1]],['(c) −v, −a',[-4,-2]],['(d) turns back',[8,-2]]];
+  $('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:2px;">Cases of Fig. 2.3</label><div class="toggle-group" id="cs">${CASES.map((c,i)=>`<button class="toggle-btn small${i===3?' active':''}" data-i="${i}">${c[0]}</button>`).join('')}</div></div>` +
+    slider('v0','Initial velocity v₀',-10,10,0.5,8) + slider('a','Acceleration a',-3,3,0.1,-2) + transport() +
+    `<div class="control-group"><div class="fb ok" id="st" style="margin-top:0">—</div></div>` +
+    cards([['c1','Velocity v',COL.green],['c2','Acceleration a',COL.red],['c3','Position x',COL.blue]],true);
+  const canvas=$('canvas'), v0R=wireSlider(wrap,'v0','m/s',1), aR=wireSlider(wrap,'a','m/s²',1);
+  const clock=makeClock(8,1.4), tick=wireTransport(wrap,clock), E=eased(), wh={a:0,last:null}, pitch={x:0,v:0};
+  const csB=wrap.querySelectorAll('#cs button');
+  toggleWire(csB,b=>{ const c=CASES[+b.dataset.i][1]; v0R.value=c[0]; aR.value=c[1]; v0R.dispatchEvent(new Event('input')); aR.dispatchEvent(new Event('input')); clock.restart(); });
+  [v0R,aR].forEach(r=>r.addEventListener('input',()=>{ if(document.activeElement===r) csB.forEach(b=>b.classList.remove('active')); }));
+  let face=1;
+
+  animLoop(dt=>{
+    const T=8, tt=clock.step(dt); tick();
+    const V0=E('v0',+v0R.value,8,dt), A=E('a',+aR.value,8,dt);
+    const xf=t=>V0*t+0.5*A*t*t, vf=t=>V0+A*t;
+    let lo=0,hi=0,vlo=0,vhi=0;
+    for(let i=0;i<=40;i++){ const t=T*i/40, x=xf(t), v=vf(t); lo=Math.min(lo,x); hi=Math.max(hi,x); vlo=Math.min(vlo,v); vhi=Math.max(vhi,v); }
+    const m0=E('m0',lo-(hi-lo)*0.1-4,6,dt), m1=E('m1',hi+(hi-lo)*0.1+4,6,dt), vmn=E('vmn',vlo-1,6,dt), vmx=E('vmx',vhi+1,6,dt);
+    const v=vf(tt), tT=Math.abs(A)>0.05?-V0/A:-1, turned=tT>0&&tT<T&&tt>tT;
+    if(Math.abs(v)>0.05) face=v>0?1:-1;
+    const F=E('face',face,10,dt);
+    const fb=$('#st');
+    if(Math.abs(A)<0.05){ fb.className='fb warn'; setT(fb,'Uniform motion: a = 0, v stays constant'); }
+    else if(turned){ fb.className='fb bad'; setT(fb,'Turned back at t = '+fmt(tT,1)+' s — a never changed'); }
+    else if(v*A>0){ fb.className='fb ok'; setT(fb,'Speeding up: v and a point the same way'); }
+    else { fb.className='fb warn'; setT(fb,'Slowing down: v and a point opposite ways'); }
+    setT($('#c1'),fmt(v,1)+' m/s'); setT($('#c2'),fmt(A,1)+' m/s²'); setT($('#c3'),fmt(xf(tt),1)+' m');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sceneH=h*0.5, gy=sceneH*0.8, pad=84, s=clamp(w/700,0.7,1.7), X=m=>pad+(m-m0)/(m1-m0)*(w-2*pad);
+    roadAxis(ctx,X,m0,m1,gy,w,'x (m)');
+    line(ctx,X(0),gy-64*s-34,X(0),gy+2,COL.mid,1.4,[4,4]); textAt(ctx,'O',X(0),gy-64*s-40,{size:12,weight:700,color:COL.muted,align:'center'});
+    const cx=X(xf(tt)), mv=Math.max(Math.abs(vlo),Math.abs(vhi),1);
+    springTo(pitch,A*(F>0?1:-1)*(-0.006),60,9,dt);
+    drawCar(ctx,cx,gy,s,F,wheelFollow(wh,cx,11*s),{pitch:pitch.x,brake:(v*A<-0.01&&Math.abs(A)>0.05)?1:0});
+    const kv=Math.min(7,(w*0.22)/mv), vl=v*kv;
+    if(Math.abs(vl)>2){ vec(ctx,cx,gy-70*s,cx+vl,gy-70*s,COL.green,3.4); textAt(ctx,'v',cx+vl+(vl>0?10:-10),gy-66*s,{size:13,weight:700,color:COL.green,align:vl>0?'left':'right'}); }
+    const al=A*30;
+    if(Math.abs(al)>3){ vec(ctx,cx,gy-96*s-10,cx+al,gy-96*s-10,COL.red,3.4); textAt(ctx,'a',cx+al+(al>0?10:-10),gy-92*s-10,{size:13,weight:700,color:COL.red,align:al>0?'left':'right'}); }
+    textAt(ctx,'t = '+fmt(tt,2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+
+    const gy2=sceneH+6, gh2=h-gy2-8, lw1=(w-30)*0.5, lw2=(w-30)-lw1;
+    const o1={x0:0,x1:T,y0:m0,y1:m1,title:'x (m)  vs  t (s)',color:COL.blue,fn:xf,tcur:tt,xl:'t (s)'};
+    const g1=plot(ctx,10,gy2,lw1,gh2,o1);
+    const o2={x0:0,x1:T,y0:vmn,y1:vmx,title:'v (m/s)  vs  t (s)',color:COL.green,fn:vf,tcur:tt,xl:'t (s)'};
+    const g2=plot(ctx,10+lw1+10,gy2,lw2,gh2,o2);
+    if(tT>0&&tT<T){ g2.clip(()=>line(ctx,g2.X(tT),g2.gy,g2.X(tT),g2.gy+g2.gh,COL.red,1.4,[4,4])); g1.clip(()=>line(ctx,g1.X(tT),g1.gy,g1.X(tT),g1.gy+g1.gh,COL.red,1.4,[4,4])); textAt(ctx,'v = 0',g2.X(tT)+5,g2.Y(0)-6,{size:11,weight:700,color:COL.red}); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4 AREA UNDER THE v–t GRAPH — Figs 2.4, 2.5, Eqs (2.4)–(2.8)
+   Area of rectangle (v₀t) + triangle (½·at·t) = displacement x = v₀t + ½at²
+   and v² = v₀² + 2ax.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('v0','Initial velocity v₀',0,10,0.5,4) + slider('a','Acceleration a',0,3,0.1,1.5) + transport() +
+    cards([['c1','x = v₀t + ½at²',COL.blue],['c2','v = v₀ + at',COL.green],['c3','v²',COL.green],['c4','v₀² + 2ax',COL.ink]]);
+  const canvas=$('canvas'), v0R=wireSlider(wrap,'v0','m/s',1), aR=wireSlider(wrap,'a','m/s²',1);
+  const clock=makeClock(8,1.4), tick=wireTransport(wrap,clock), E=eased(), wh={a:0,last:null};
+
+  animLoop(dt=>{
+    const T=8, tt=clock.step(dt); tick();
+    const V0=E('v0',+v0R.value,8,dt), A=E('a',+aR.value,8,dt);
+    const vf=t=>V0+A*t, xf=t=>V0*t+0.5*A*t*t;
+    const x=xf(tt), v=vf(tt), rect_=V0*tt, tri=0.5*A*tt*tt;
+    setT($('#c1'),fmt(x,1)+' m'); setT($('#c2'),fmt(v,1)+' m/s'); setT($('#c3'),fmt(v*v,1)); setT($('#c4'),fmt(V0*V0+2*A*x,1));
+    const xmax=E('xm',Math.max(20,xf(T)),6,dt), vtop=E('vt',Math.max(10,vf(T))+2,6,dt);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sceneH=h*0.42, gy=sceneH*0.62, pad=84, s=clamp(w/700,0.7,1.7), X=m=>pad+m/xmax*(w-2*pad);
+    roadAxis(ctx,X,0,xmax,gy,w,'x (m)');
+    const cx=X(x);
+    drawCar(ctx,cx,gy,s,1,wheelFollow(wh,cx,11*s),{});
+    vec(ctx,cx,gy-66*s,cx+v*3.6,gy-66*s,COL.green,3.2);
+    // displacement bar: blue part = v₀t, red part = ½at² — the same two areas as on the graph
+    const by=gy+44, bh=15;
+    rect(ctx,X(0),by,X(rect_)-X(0),bh,COL.blue,'rgba(47,143,224,0.28)',1.6);
+    rect(ctx,X(rect_),by,X(rect_+tri)-X(rect_),bh,COL.red,'rgba(217,67,43,0.28)',1.6);
+    textAt(ctx,'x = '+fmt(x,1)+' m',X(x)+10,by+bh-2,{size:12,weight:700,color:COL.blue});
+    textAt(ctx,'t = '+fmt(tt,2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+
+    const gy2=sceneH+8, gh2=h-gy2-8, lw1=(w-30)*0.64, lw2=(w-30)-lw1;
+    const o1={x0:0,x1:T,y0:0,y1:vtop,title:'v (m/s)  vs  t (s)',color:COL.green,fn:vf,tcur:tt,xl:'t (s)'};
+    const g1=plot(ctx,10,gy2,lw1,gh2,o1);
+    poly(ctx,[[g1.X(0),g1.Y(0)],[g1.X(0),g1.Y(V0)],[g1.X(tt),g1.Y(V0)],[g1.X(tt),g1.Y(0)]],COL.blue,0.22,COL.blue);
+    poly(ctx,[[g1.X(0),g1.Y(V0)],[g1.X(tt),g1.Y(V0)],[g1.X(tt),g1.Y(v)]],COL.red,0.24,COL.red);
+    if(tt>0.5){
+      if(V0>1) textAt(ctx,'v₀·t = '+fmt(rect_,1),g1.X(tt/2),g1.Y(V0/2)+4,{size:12,weight:700,color:COL.blue,align:'center'});
+      if(A*tt*tt>6) textAt(ctx,'½·a·t² = '+fmt(tri,1),g1.X(tt*0.68),g1.Y(V0+ (v-V0)*0.28)+4,{size:11.5,weight:700,color:COL.red,align:'center'});
+    }
+    dot(ctx,g1.X(tt),g1.Y(v),5,COL.green);
+    g1.clip(()=>line(ctx,g1.X(tt),g1.Y(0),g1.X(tt),g1.Y(v),COL.mid,1.2,[4,4]));
+    const o2={x0:0,x1:T,y0:0,y1:xmax,title:'x (m)  vs  t (s)',color:COL.blue,fn:xf,tcur:tt,xl:'t (s)'};
+    plot(ctx,10+lw1+10,gy2,lw2,gh2,o2);
+  });
+  return wrap;
+}
+
+/* height above ground after landing: a damped sequence of real parabolic bounces */
+function bounceY(s,vl,g,e){
+  let vv=vl*e;
+  for(let k=0;k<5;k++){ const fl=2*vv/g; if(s<fl) return vv*s-0.5*g*s*s; s-=fl; vv*=e; }
+  return 0;
+}
+/* vertical axis with metre ticks. top/bot are px; m1 = metres at top */
+function vAxis(ctx,x,top,bot,m1,label,flip){
+  line(ctx,x,top,x,bot,COL.muted,1.6);
+  const step=niceStep(m1,(bot-top)/38);
+  for(let m=0;m<=m1+1e-9;m+=step){ const py=flip?top+(m/m1)*(bot-top):bot-(m/m1)*(bot-top); line(ctx,x,py,x+7,py,COL.muted,1.6); textAt(ctx,fmt(m,dec(step)),x+11,py+4,{size:10.5,color:COL.muted}); }
+  textAt(ctx,label,x,top-8,{size:11,weight:700,color:COL.blue,align:'center'});
+}
+
+/* =====================================================================
+   2.5 EXAMPLE 2.3 — Ball thrown up from a building, Fig 2.6
+   v₀ = 20 m/s, a = −10 m/s², roof 25 m above ground.
+   Rise: v² = v₀² + 2ay → 20 m.   Total time: 0 = 25 + 20t − 5t² → t = 5 s.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('v0','Throw speed v₀',5,30,1,20) + slider('H','Building height',5,50,1,25) +
+    chipRow('gC','g  (m/s²)',[['10  (textbook)',10],['9.8',9.8]],0) + transport() +
+    cards([['c1','Rise above roof',COL.blue],['c2','Time to top',COL.green],['c3','Total time',COL.ink],['c4','Hits ground at',COL.green]]);
+  const canvas=$('canvas'), v0R=wireSlider(wrap,'v0','m/s',0), HR=wireSlider(wrap,'H','m',0);
+  let g=10; toggleWire(wrap.querySelectorAll('#gC button'),b=>{ g=+b.dataset.v; });
+  const clock=makeClock(8,1.0), tick=wireTransport(wrap,clock), E=eased(), arm={x:-0.8,v:0};
+  const TL=0.7;
+
+  animLoop(dt=>{
+    const V0=E('v0',+v0R.value,8,dt), H=E('H',+HR.value,8,dt), G=E('g',g,8,dt);
+    const tf=(V0+Math.sqrt(V0*V0+2*G*H))/G, rise=V0*V0/(2*G), vl=Math.sqrt(V0*V0+2*G*H);
+    clock.Tend=TL+tf+1.4; const tt=clock.step(dt); tick();
+    const tau=tt-TL;
+    const yOf=t=>t<=0?H:(t<=tf?H+V0*t-0.5*G*t*t:bounceY(t-tf,vl,G,0.3));
+    const vOf=t=>t<=0?0:V0-G*t;
+    setT($('#c1'),fmt(rise,1)+' m'); setT($('#c2'),fmt(V0/G,2)+' s'); setT($('#c3'),fmt(tf,2)+' s'); setT($('#c4'),fmt(vl,1)+' m/s');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const leftW=w*0.47, groundY=h-34, topY=34, r=7, ym=E('ym',H+rise+4,6,dt), ppm=(groundY-r-topY)/ym;
+    const Yc=y=>groundY-r-y*ppm, ballX=leftW*0.42, s=1.15;
+    line(ctx,6,groundY,leftW-6,groundY,COL.ink,2.8);
+    for(let i=0;i<16;i++){ const gx=12+i*(leftW-30)/15; line(ctx,gx,groundY,gx-8,groundY+9,COL.mid,1.2); }
+    // building
+    const roofY=Yc(H)+16*s, bx1=ballX-22*s, bx0=Math.max(8,bx1-leftW*0.28);
+    if(H>0.5){
+      rect(ctx,bx0,roofY,bx1-bx0,groundY-roofY,COL.ink,'#f6f9fc',2.6);
+      const rows=Math.max(1,Math.floor((groundY-roofY)/34));
+      for(let rI=0;rI<rows;rI++) for(let c=0;c<3;c++){ const wx=bx0+(c+0.5)*(bx1-bx0)/3-7, wy=roofY+10+rI*(groundY-roofY-24)/rows; if(wy+14<groundY-20) rect(ctx,wx,wy,14,16,COL.mid,'#fff',1.4); }
+      line(ctx,bx0-5,roofY,bx1+3,roofY,COL.ink,3.4);
+    }
+    // thrower: the arm really swings up at release
+    const thrown=tau>=0;
+    springTo(arm,thrown?1.35:-0.78,70,9,dt);
+    stickman(ctx,bx1-14*s+ (H>0.5?0:0),H>0.5?roofY:groundY-0,s,arm.x,COL.ink);
+    // ball
+    const y=yOf(tau);
+    const by=Yc(y);
+    // markers A, B, C
+    const topPx=Yc(H+rise);
+    line(ctx,ballX-34,topPx,leftW*0.9,topPx,COL.yellow,1.6,[6,5]);
+    textAt(ctx,'B  highest point  '+fmt(H+rise,1)+' m',leftW*0.9-14,topPx-6,{size:11.5,weight:700,color:COL.yellow,align:'right'});
+    textAt(ctx,'A',ballX-48,Yc(H)+4,{size:12,weight:700,color:COL.ink});
+    textAt(ctx,'C',ballX-48,groundY-8,{size:12,weight:700,color:COL.ink});
+    vdim(ctx,ballX-62,Yc(H+rise),Yc(H),COL.blue,fmt(rise,0)+' m',-6);
+    // 1-second marks of where the ball has been
+    for(let k=1;k<=Math.floor(Math.min(tau,tf)+1e-6);k++){ const py=Yc(yOf(k)); circ(ctx,ballX+42,py,3.2,COL.blue,'#fff',1.6); textAt(ctx,k+' s',ballX+50,py+4,{size:10.5,color:COL.mid}); }
+    vAxis(ctx,leftW*0.9,topY,groundY-r,ym,'height (m)',false);
+    ball(ctx,ballX,by,r,COL.ink,'#fff');
+    if(tau>0&&tau<tf){
+      const v=vOf(tau);
+      vec(ctx,ballX+18,by,ballX+18,by-v*3.2,COL.green,3.2); textAt(ctx,'v',ballX+24,by-v*1.6+4,{size:12,weight:700,color:COL.green});
+      vec(ctx,ballX-18,by,ballX-18,by+G*3.2,COL.red,3.2); textAt(ctx,'g',ballX-26,by+G*1.6+4,{size:12,weight:700,color:COL.red,align:'right'});
+    }
+    textAt(ctx,'t = '+fmt(clamp(tau,0,tf),2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+
+    // graphs
+    const gx0=leftW+10, gw=w-gx0-10, gh=(h-26)/2;
+    const tfE=E('tf',tf,6,dt), tc=clamp(tau,0,tf);
+    const o1={x0:0,x1:tfE,y0:0,y1:ym,title:'y (m)  vs  t (s)',color:COL.blue,fn:t=>H+V0*t-0.5*G*t*t,tcur:tc,xl:'t (s)'};
+    const g1=plot(ctx,gx0,8,gw,gh,o1);
+    g1.clip(()=>{ line(ctx,g1.X(0),g1.Y(H+rise),g1.X(V0/G),g1.Y(H+rise),COL.yellow,1.4,[5,4]); line(ctx,g1.X(V0/G),g1.Y(0),g1.X(V0/G),g1.Y(H+rise),COL.yellow,1.4,[5,4]); });
+    const o2={x0:0,x1:tfE,y0:-vl*1.08,y1:V0*1.08,title:'v (m/s)  vs  t (s)',color:COL.green,fn:t=>V0-G*t,tcur:tc,xl:'t (s)'};
+    plot(ctx,gx0,16+gh,gw,gh,o2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.6 EXAMPLE 2.4 — Free fall, Fig 2.7
+   v = −gt, y = −½gt², v² = −2gy, a = −g = −9.8 m/s² for every mass.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('H','Drop height',20,120,5,80) + chipRow('bC','Objects',[['1 ball',1],['Heavy + light',2]],0) + transport() +
+    cards([['c1','Fall time √(2h/g)',COL.ink],['c2','Impact speed √(2gh)',COL.green],['c3','Fallen so far y',COL.blue],['c4','Speed now |v|',COL.green]]);
+  const canvas=$('canvas'), HR=wireSlider(wrap,'H','m',0);
+  let nb=1; toggleWire(wrap.querySelectorAll('#bC button'),b=>{ nb=+b.dataset.v; clock.restart(); });
+  const clock=makeClock(8,1.0), tick=wireTransport(wrap,clock), E=eased(), jaw={x:0.1,v:0};
+  const G=9.8, TL=0.9;
+
+  animLoop(dt=>{
+    const Hh=E('H',+HR.value,8,dt), tf=Math.sqrt(2*Hh/G), vl=G*tf;
+    clock.Tend=TL+tf+1.7; const tt=clock.step(dt); tick();
+    const tau=tt-TL, d=t=>t<=0?0:(t<=tf?0.5*G*t*t:Hh-bounceY(t-tf,vl,G,0.3));
+    setT($('#c1'),fmt(tf,2)+' s'); setT($('#c2'),fmt(vl,1)+' m/s'); setT($('#c3'),fmt(0.5*G*Math.pow(clamp(tau,0,tf),2),1)+' m'); setT($('#c4'),fmt(G*clamp(tau,0,tf),1)+' m/s');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const leftW=w*0.46, groundY=h-34, relY=86, rr=nb===2?16:13, ppm=(groundY-rr-relY)/Hh;
+    // tower and release arm
+    const tx0=leftW*0.04, tx1=leftW*0.2;
+    rect(ctx,tx0,relY-34,tx1-tx0,groundY-(relY-34),COL.ink,'#f6f9fc',2.6);
+    for(let i=1;i<10;i++){ const yy=relY-34+i*(groundY-relY+34)/10; line(ctx,tx0,yy,tx1,yy,'#dbe4f0',1); }
+    line(ctx,6,groundY,leftW-6,groundY,COL.ink,2.8);
+    const cols=nb===2?[leftW*0.40,leftW*0.62]:[leftW*0.5], rads=nb===2?[16,8]:[13];
+    line(ctx,tx1,relY-34,cols[cols.length-1]+24,relY-34,COL.ink,3.2);
+    springTo(jaw,tau>=0?1:0.1,60,8,dt);
+    cols.forEach((cx,i)=>{
+      const r=rads[i], yc=relY+d(tau)*ppm;
+      line(ctx,cx,relY-34,cx,relY-r*1.6-6,COL.ink,2);
+      const j=jaw.x*r*0.9; line(ctx,cx,relY-r*1.6-6,cx-j-r*0.7,relY-r*0.7-4,COL.ink,2.2); line(ctx,cx,relY-r*1.6-6,cx+j+r*0.7,relY-r*0.7-4,COL.ink,2.2);
+      if(tau>0) line(ctx,cx,relY,cx,yc,COL.blue,1.2,[3,5]);
+      ball(ctx,cx,yc,r,i?COL.red:COL.ink,'#fff');
+      if(i===cols.length-1 && tau>0 && tau<tf){
+        const v=G*tau, kv=Math.min(1.1,90/vl)*1;
+        vec(ctx,cx+r+14,yc,cx+r+14,yc+v*kv,COL.green,3.2); textAt(ctx,'v',cx+r+20,yc+v*kv/2+4,{size:12,weight:700,color:COL.green});
+        vec(ctx,cx-r-14,yc,cx-r-14,yc+36,COL.red,3.2); textAt(ctx,'g',cx-r-20,yc+22,{size:12,weight:700,color:COL.red,align:'right'});
+      }
+    });
+    textAt(ctx,'release',tx1+8,relY-40,{size:11,weight:600,color:COL.muted});
+    vAxis(ctx,leftW*0.9,relY,groundY-rr,Hh,'fallen (m)',true);
+    textAt(ctx,'t = '+fmt(clamp(tau,0,tf),2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+    if(nb===2 && tau>tf) textAt(ctx,'both land together',cols[0],groundY+22,{size:12,weight:700,color:COL.green});
+
+    // Fig 2.7 graphs: a–t, v–t, y–t
+    const gx0=leftW+10, gw=w-gx0-10, gh=(h-32)/3, tc=clamp(tau,0,tf), tfE=E('tf',tf,6,dt);
+    plot(ctx,gx0,8,gw,gh,{x0:0,x1:tfE,y0:-13,y1:3,title:'a (m/s²)  vs  t (s)',color:COL.red,fn:t=>-G,tcur:tc});
+    plot(ctx,gx0,16+gh,gw,gh,{x0:0,x1:tfE,y0:-vl*1.1,y1:vl*0.1,title:'v (m/s)  vs  t (s)',color:COL.green,fn:t=>-G*t,tcur:tc});
+    plot(ctx,gx0,24+2*gh,gw,gh,{x0:0,x1:tfE,y0:-Hh*1.08,y1:Hh*0.08,title:'y (m)  vs  t (s)',color:COL.blue,fn:t=>-0.5*G*t*t,tcur:tc,xl:'t (s)'});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.7 EXAMPLE 2.5 — Galileo's law of odd numbers
+   y = ½gt² from rest: distances in successive equal intervals τ are
+   y₀ : 3y₀ : 5y₀ : 7y₀ … with y₀ = ½gτ².
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('tau','Interval τ',0.2,0.6,0.01,0.4) + chipRow('nC','Intervals',[['4',4],['5',5],['6',6]],1) + transport() +
+    cards([['c1','y₀ = ½gτ²',COL.blue],['c2','Last interval',COL.ink],['c3','Fallen so far',COL.blue],['c4','Ratio so far',COL.ink]]);
+  const canvas=$('canvas'), tauR=wireSlider(wrap,'tau','s',2);
+  let N=5; toggleWire(wrap.querySelectorAll('#nC button'),b=>{ N=+b.dataset.v; clock.restart(); });
+  const clock=makeClock(8,1.0), tick=wireTransport(wrap,clock), E=eased();
+  const G=9.8, TL=0.6;
+
+  animLoop(dt=>{
+    const TAU=E('tau',+tauR.value,8,dt), Ne=E('N',N,8,dt), Tn=Ne*TAU, D=0.5*G*Tn*Tn, y0=0.5*G*TAU*TAU;
+    clock.Tend=TL+N*(+tauR.value)+1.5; const tt=clock.step(dt); tick();
+    const ts=tt-TL, y=t=>t<=0?0:(t<=Tn?0.5*G*t*t:D-bounceY(t-Tn,G*Tn,G,0.25));
+    const units=[]; for(let k=1;k<=N;k++){ const a=(k-1)*TAU, b=k*TAU; units.push((0.5*G*Math.pow(clamp(ts,a,b),2)-0.5*G*a*a)/y0); }
+    const done=Math.min(N,Math.max(0,Math.floor(ts/TAU+1e-6)));
+    setT($('#c1'),fmt(y0,2)+' m'); setT($('#c2'),done?fmt((2*done-1)*y0,2)+' m':'—'); setT($('#c3'),fmt(0.5*G*Math.pow(clamp(ts,0,Tn),2),1)+' m');
+    setT($('#c4'),done?Array.from({length:done},(_,i)=>2*i+1).join(' : '):'—');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const leftW=w*0.44, groundY=h-34, topY=54, r=11, ppm=(groundY-r-topY)/D, ballX=leftW*0.52;
+    line(ctx,6,groundY,leftW-6,groundY,COL.ink,2.8);
+    line(ctx,ballX,topY-20,ballX,groundY,COL.mid,1.2,[2,6]);
+    // equal-time marks
+    for(let k=0;k<=N;k++){
+      const py=topY+0.5*G*k*k*TAU*TAU*ppm - 0;
+      line(ctx,ballX-52,py,ballX+34,py,COL.mid,1.2,[5,4]);
+      textAt(ctx,k===0?'0':k+'τ',ballX-58,py+4,{size:11,weight:700,color:COL.muted,align:'right'});
+      if(ts>=k*TAU && k>0) circ(ctx,ballX,py,r,COL.mid,'rgba(129,149,171,0.12)',1.4);
+    }
+    // coloured track segments: distance covered in each interval
+    for(let k=1;k<=N;k++){
+      const a=(k-1)*TAU, b=k*TAU, ta=clamp(ts,a,b); if(ta<=a) continue;
+      line(ctx,ballX-30,topY+0.5*G*a*a*ppm,ballX-30,topY+0.5*G*ta*ta*ppm,COLS[(k-1)%4],6);
+    }
+    const yc=topY+y(ts)*ppm;
+    ball(ctx,ballX,yc,r,COL.ink,'#fff');
+    textAt(ctx,'t = '+fmt(clamp(ts,0,Tn),2)+' s',16,24,{size:15,weight:700,color:COL.ink});
+
+    // bars: live distance in units of y₀ — they end at exactly 1, 3, 5, 7 …
+    const bx=leftW+40, bwMax=w-bx-30, unit=(bwMax-10)/(2*N-1), rowH=Math.min(46,(h-118)/N);
+    textAt(ctx,'Distance covered in each interval  (units of y₀)',bx,34,{size:12.5,weight:700,color:COL.ink});
+    for(let k=1;k<=N;k++){
+      const ry=62+(k-1)*(rowH+10), col=COLS[(k-1)%4], u=units[k-1];
+      textAt(ctx,'interval '+k,bx,ry+rowH/2+4,{size:11,weight:600,color:COL.muted});
+      const x0=bx+72, bw=u*unit*(bwMax-72)/bwMax;
+      rect(ctx,x0,ry,Math.max(0,(2*k-1)*unit*(bwMax-72)/bwMax),rowH,'#e6edf5',null,1);
+      rect(ctx,x0,ry,bw,rowH,col,col+'33',2);
+      if(u>0.02) textAt(ctx,fmt(u,1)+' y₀',x0+bw+8,ry+rowH/2+4,{size:12,weight:700,color:col});
+      if(u>=(2*k-1)-0.02) textAt(ctx,'= '+(2*k-1),x0+bw+60,ry+rowH/2+4,{size:12,weight:700,color:COL.ink});
+    }
+    const ratio=Array.from({length:N},(_,i)=>2*i+1);
+    ctx.save(); ctx.font='700 20px Poppins, sans-serif'; ctx.textBaseline='alphabetic'; let rx=bx+72; const ry2=h-34;
+    ratio.forEach((q,i)=>{ ctx.fillStyle=i<done?COLS[i%4]:'#c2d1e5'; ctx.fillText(String(q),rx,ry2); rx+=ctx.measureText(String(q)).width; ctx.fillStyle='#8195ab'; if(i<N-1){ ctx.fillText('  :  ',rx,ry2); rx+=ctx.measureText('  :  ').width; } });
+    ctx.restore();
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.8 EXAMPLE 2.6 — Stopping distance of vehicles
+   v² = v₀² + 2ax with v = 0  →  d_s = v₀² / 2|a|.
+   Doubling v₀ quadruples d_s. Textbook data (a ≈ 6 m/s²):
+   11, 15, 20, 25 m/s  →  10, 20, 34, 50 m.
+   Long braking runs are played faster so they last a few seconds.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('v0','Initial speed v₀',5,30,1,20) + slider('a','Braking deceleration |a|',2,10,0.5,6) +
+    chipRow('tb','Textbook speeds',[['11',11],['15',15],['20',20],['25',25]],-1) +
+    chipRow('cmp','Cars',[['One car',0],['Compare 2×v₀',1]],0) + transport() +
+    cards([['c1','Stopping distance',COL.blue],['c2','Braking time',COL.green],['c3','At 2×v₀',COL.yellow],['c4','Ratio',COL.ink]]);
+  const canvas=$('canvas'), v0R=wireSlider(wrap,'v0','m/s',0), aR=wireSlider(wrap,'a','m/s²',1);
+  let cmp=0;
+  wrap.querySelectorAll('#tb button').forEach(b=>b.onclick=()=>{ v0R.value=b.dataset.v; v0R.dispatchEvent(new Event('input')); wrap.querySelectorAll('#tb button').forEach(x=>x.classList.toggle('active',x===b)); clock.restart(); });
+  v0R.addEventListener('input',()=>{ if(document.activeElement===v0R) wrap.querySelectorAll('#tb button').forEach(x=>x.classList.remove('active')); });
+  toggleWire(wrap.querySelectorAll('#cmp button'),b=>{ cmp=+b.dataset.v; clock.restart(); });
+  const clock=makeClock(8,1.8), tick=wireTransport(wrap,clock), E=eased();
+  const wh=[{a:0,last:null},{a:0,last:null}], pt=[{x:0,v:0},{x:0,v:0}], tc=1.2;
+  const TEXT=[[11,10],[15,20],[20,34],[25,50]];
+
+  animLoop(dt=>{
+    const V0=E('v0',+v0R.value,8,dt), A=E('a',+aR.value,8,dt), CM=E('cm',cmp,7,dt);
+    const vmax=V0*(1+CM), tbMax=vmax/A, SF=Math.max(1,(tc+tbMax)/6.5);
+    clock.Tend=(tc+tbMax)/SF+0.2; const tw=clock.step(dt)*SF; tick();
+    const ds1=V0*V0/(2*A), ds2=4*ds1;
+    setT($('#c1'),fmt(ds1,1)+' m'); setT($('#c2'),fmt(V0/A,2)+' s'); setT($('#c3'),cmp?fmt(ds2,1)+' m':'—'); setT($('#c4'),cmp?'× '+fmt(ds2/ds1,1):'—');
+    const lane=(v)=>{ const tb=v/A, ds=v*v/(2*A); if(tw<tc) return {x:-v*tc+v*tw,v:v,br:false,u:0}; const u=tw-tc; if(u<tb) return {x:v*u-0.5*A*u*u,v:v-A*u,br:true,u:u}; return {x:ds,v:0,br:false,u:tb}; };
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sceneH=h*0.52, pad=70, m0=E('m0',-vmax*tc-6,6,dt), m1=E('m1',vmax*vmax/(2*A)*1.08+8,6,dt), X=m=>pad+(m-m0)/(m1-m0)*(w-2*pad);
+    const s=E('sc',clamp(w/800,0.6,1.4)*(cmp?0.78:1),8,dt);
+    const gy1=E('g1',cmp?sceneH*0.5:sceneH*0.76,8,dt), gy2=sceneH*0.93;
+    roadAxis(ctx,X,m0,m1,cmp?gy2:gy1,w,'x (m)');
+    if(CM>0.02){ ctx.save(); ctx.globalAlpha=CM; line(ctx,0,gy1,w,gy1,COL.ink,2.6); ctx.restore(); }
+    // brake line
+    line(ctx,X(0),sceneH*0.06,X(0),(cmp?gy2:gy1)+4,COL.red,2,[6,5]); textAt(ctx,'brakes applied',X(0)+8,sceneH*0.1,{size:11.5,weight:700,color:COL.red});
+    const lanes=[{v:V0,gy:gy1,col:COL.blue,al:1,i:0}];
+    if(CM>0.02) lanes.push({v:V0*2,gy:gy2,col:COL.yellow,al:CM,i:1});
+    lanes.forEach(L=>{
+      const st=lane(L.v), ds=L.v*L.v/(2*A), cxm=X(st.x)-52*s;
+      ctx.save(); ctx.globalAlpha=L.al;
+      // skid marks under the locked wheels
+      if(tw>=tc){ const a0=X(0)-81*s, a1=Math.min(X(st.x)-52*s-29*s,X(ds)-81*s); line(ctx,a0,L.gy+2,Math.max(a0,a1),L.gy+2,COL.ink,3.4); }
+      springTo(pt[L.i],st.br?0.007*A:0,60,9,dt);
+      drawCar(ctx,cxm,L.gy,s,1,wheelFollow(wh[L.i],cxm,11*s),{pitch:pt[L.i].x,brake:st.br||(tw>=tc&&st.v<0.01)?1:0});
+      const al=st.v*3.2*(w*0.3/(30*3.2));
+      if(st.v>0.1){ vec(ctx,cxm,L.gy-64*s,cxm+al,L.gy-64*s,COL.green,3); textAt(ctx,fmt(st.v,1)+' m/s',cxm+al+8,L.gy-60*s,{size:11.5,weight:700,color:COL.green}); }
+      if(tw>=tc){ hdim(ctx,X(0),X(ds),L.gy-74*s-16,L.col,'d = '+fmt(ds,1)+' m'); line(ctx,X(ds),L.gy,X(ds),L.gy-74*s-16,L.col,1.2,[3,4]); }
+      ctx.restore();
+    });
+    textAt(ctx,'t = '+fmt(tw,1)+' s'+(SF>1.05?'  (×'+fmt(SF,1)+' speed)':''),16,24,{size:15,weight:700,color:COL.ink});
+
+    // graphs: v–t during braking (area = d_s) and d_s versus v₀ (the square law)
+    const gyg=sceneH+10, gh=h-gyg-8, lw1=(w-30)*0.5, lw2=(w-30)-lw1;
+    const tbE=E('tb',tbMax,6,dt), vmE=E('vm',vmax,6,dt);
+    const u1=lane(V0).u, tbl=V0/A;
+    const o1={x0:0,x1:tbE,y0:0,y1:vmE*1.05,title:'v (m/s)  vs  braking time (s)',color:COL.green,fn:t=>Math.max(0,V0-A*t),tcur:Math.min(u1,tbl),xl:'t (s)'};
+    const g1=plot(ctx,10,gyg,lw1,gh,o1);
+    poly(ctx,[[g1.X(0),g1.Y(0)],[g1.X(0),g1.Y(V0)],[g1.X(tbl),g1.Y(0)]],COL.blue,0.18);
+    textAt(ctx,'area = stopping distance',g1.X(tbl*0.28),g1.Y(V0*0.3),{size:12,weight:700,color:COL.blue,align:'center'});
+    if(CM>0.02){ g1.clip(()=>{ ctx.globalAlpha=CM; line(ctx,g1.X(0),g1.Y(2*V0),g1.X(2*tbl),g1.Y(0),COL.yellow,2.6,[6,4]); }); const u2=lane(2*V0).u; dot(ctx,g1.X(u2),g1.Y(Math.max(0,2*V0-A*u2)),5,COL.yellow); }
+    const xv=E('xv',cmp?62:32,6,dt), o2={x0:0,x1:xv,y0:0,y1:xv*xv/(2*A)*1.04,title:'stopping distance (m)  vs  v₀ (m/s)',color:COL.blue,fn:v=>v*v/(2*A),xl:'v₀ (m/s)'};
+    const g2=plot(ctx,10+lw1+10,gyg,lw2,gh,o2);
+    TEXT.forEach(p=>{ circ(ctx,g2.X(p[0]),g2.Y(p[1]),4,COL.ink,COL.ink,1); });
+    textAt(ctx,'● textbook data',g2.gx+10,g2.gy+14,{size:10.5,weight:600,color:COL.ink});
+    dot(ctx,g2.X(V0),g2.Y(ds1),6,COL.green);
+    if(CM>0.02){ ctx.save(); ctx.globalAlpha=CM; dot(ctx,g2.X(2*V0),g2.Y(ds2),6,COL.yellow); ctx.restore(); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.9 EXAMPLE 2.7 — Measuring reaction time with a falling ruler, Fig 2.8
+   Ruler falls from rest:  d = ½ g t_r²  →  t_r = √(2d/g).
+   d = 21.0 cm, g = 9.8 m/s²  →  t_r = 0.207 s.   (played in slow motion)
+   ===================================================================== */
+function fingers(ctx,cx,tipY,dir,gap,halfW,s,col){
+  const fw=15*s, fl=46*s, off=dir>0?-70*s:70*s;
+  for(const sd of [-1,1]){
+    const xin=cx+sd*(halfW+gap), xl=sd<0?xin-fw:xin, y0=dir>0?tipY-fl:tipY, baseY=dir>0?tipY-fl:tipY+fl;
+    line(ctx,xl,baseY,xl+sd*120*s,baseY+off,col,2.4); line(ctx,xl+fw,baseY,xl+fw+sd*120*s,baseY+off,col,2.4);
+    ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.fillStyle='#fff'; rrect(ctx,xl,y0,fw,fl,fw/2); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+}
+function buildA9(){
+  const wrap=labShell(), $=s=>wrap.querySelector(s);
+  $('.lab-side').innerHTML =
+    slider('tr','Reaction time tᵣ',0.1,0.24,0.001,0.207) + chipRow('sm','Playback speed',[['1×',1],['¼×',0.25],['0.1×',0.1]],1) + transport() +
+    cards([['c1','Ruler fell  d = ½gt²',COL.blue],['c2','tᵣ = √(2d/g)',COL.ink],['c3','Speed at catch',COL.green]],true);
+  const canvas=$('canvas'), trR=wireSlider(wrap,'tr','s',3);
+  let sm=0.25; toggleWire(wrap.querySelectorAll('#sm button'),b=>{ sm=+b.dataset.v; clock.restart(); });
+  const clock=makeClock(8,1.0), tick=wireTransport(wrap,clock), E=eased(), R={x:0}, jT={x:0,v:0}, jB={x:1,v:0};
+  const G=9.8, pre=0.9;
+
+  animLoop(dt=>{
+    const TR=E('tr',+trR.value,8,dt), dF=0.5*G*TR*TR*100;
+    clock.Tend=pre+(TR+0.4)/sm+1.6; const tt=clock.step(dt); tick();
+    const tau=(tt-pre)*sm, target=tau<=0?0:(tau<TR?0.5*G*tau*tau*100:dF);
+    R.x = (tt<0.7&&R.x>target+0.05) ? approach(R.x,target,7,dt) : target;
+    setT($('#c1'),fmt(dF,1)+' cm'); setT($('#c2'),fmt(TR,3)+' s'); setT($('#c3'),fmt(G*TR,2)+' m/s');
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const leftW=w*0.56, p=(h-120)/60, rx=leftW*0.5, hw=2.2*p, yf=70+30*p+8, s=clamp(p/7,0.7,1.3);
+    // ruler (30 cm), zero end at the bottom
+    const y0=yf+R.x*p, topR=y0-30*p;
+    rect(ctx,rx-hw,topR,2*hw,30*p,COL.ink,'#fffdf2',2.6);
+    for(let c=0;c<=30;c++){ const py=y0-c*p, L=c%10===0?hw*0.8:c%5===0?hw*0.55:hw*0.32; line(ctx,rx-hw,py,rx-hw+L,py,COL.ink,c%5===0?1.8:1); if(c%5===0) textAt(ctx,String(c),rx-hw+L+4,py+4,{size:10.5,weight:600,color:COL.ink}); }
+    // hands: friend (top) lets go, you (bottom) catch
+    springTo(jT,tau>=0?1:0,90,9,dt); springTo(jB,tau>=TR?0:1,160,12,dt);
+    const gTop=Math.max(-1,jT.x*18), gBot=Math.max(-1.5,jB.x*18);
+    fingers(ctx,rx,yf-30*p+18,1,gTop,hw,s,COL.ink);
+    fingers(ctx,rx,yf,-1,gBot,hw,s,COL.blue);
+    textAt(ctx,"friend's hand",rx-hw-24*s-60,yf-30*p-6,{size:11.5,weight:600,color:COL.muted,align:'right'});
+    textAt(ctx,'your hand',rx+hw+90*s,yf+84*s,{size:11.5,weight:700,color:COL.blue});
+    // reading line at the fingertips
+    line(ctx,rx-hw-34,yf,rx+hw+34,yf,COL.yellow,1.8,[5,4]);
+    if(R.x>0.3){ vdim(ctx,rx-hw-52,yf,y0,COL.blue,'d = '+fmt(R.x,1)+' cm',-8); }
+    if(tau>=TR){ ctx.save(); ctx.fillStyle=COL.yellow; ctx.beginPath(); ctx.moveTo(rx+hw+2,yf); ctx.lineTo(rx+hw+16,yf-7); ctx.lineTo(rx+hw+16,yf+7); ctx.closePath(); ctx.fill(); ctx.restore(); textAt(ctx,'reads '+fmt(dF,1)+' cm',rx+hw+20,yf-12,{size:12.5,weight:700,color:COL.yellow}); }
+    textAt(ctx,'t = '+fmt(clamp(tau,0,TR),3)+' s'+(sm<1?'   ('+(sm===0.25?'¼':'0.1')+'× slow motion)':''),16,24,{size:14,weight:700,color:COL.ink});
+
+    // right panel: fall graph and the result
+    const gx0=leftW+8, gw=w-gx0-10, gh=Math.min(h*0.58,340);
+    const o={x0:0,x1:0.26,y0:0,y1:32,title:'fall d (cm)  vs  t (s)',color:COL.blue,fn:t=>0.5*G*t*t*100,tcur:clamp(tau,0,TR),xl:'t (s)'};
+    const g=plot(ctx,gx0,8,gw,gh,o);
+    g.clip(()=>{ line(ctx,g.X(0),g.Y(dF),g.X(TR),g.Y(dF),COL.yellow,1.6,[5,4]); line(ctx,g.X(TR),g.Y(0),g.X(TR),g.Y(dF),COL.yellow,1.6,[5,4]); });
+    dot(ctx,g.X(TR),g.Y(dF),5,COL.yellow);
+    const ty=gh+44;
+    textAt(ctx,'d = '+fmt(dF,1)+' cm',gx0+gw/2,ty,{size:clamp(w/40,15,24),weight:700,color:COL.blue,align:'center'});
+    textAt(ctx,'tᵣ = √(2d / g) = '+fmt(TR,3)+' s',gx0+gw/2,ty+clamp(w/32,26,36),{size:clamp(w/46,13,20),weight:700,color:COL.ink,align:'center'});
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'2.1', title:'Instantaneous Velocity', desc:'Shrink Δt · the secant becomes the tangent', build: buildA1 },
+  { num:'2.2', title:'Velocity from x(t)', desc:'x = a + bt² · average vs instantaneous', build: buildA2 },
+  { num:'2.3', title:'Acceleration & Direction', desc:'Speed up · slow down · turn back', build: buildA3 },
+  { num:'2.4', title:'Area under the v–t Graph', desc:'Area = displacement', build: buildA4 },
+  { num:'2.5', title:'Ball from a Building', desc:'Thrown up · rises · falls to the ground', build: buildA5 },
+  { num:'2.6', title:'Free Fall', desc:'a = −g for every mass', build: buildA6 },
+  { num:'2.7', title:'Galileo’s Odd Numbers', desc:'1 : 3 : 5 : 7 in equal times', build: buildA7 },
+  { num:'2.8', title:'Stopping Distance', desc:'Double the speed · four times the distance', build: buildA8 },
+  { num:'2.9', title:'Reaction Time', desc:'Catch the falling ruler', build: buildA9 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

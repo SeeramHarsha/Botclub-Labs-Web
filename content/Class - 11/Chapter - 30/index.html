@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 8 — Sequences and Series | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:30px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.lab-side>.toggle-btn{flex:0 0 auto;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.dis{opacity:.4; pointer-events:none;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px; min-width:0;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px; overflow-wrap:anywhere;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">∑</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 8</div>
+      <h1>Sequences and Series</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Terms · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Sum · G.M. · Result</span>
+      <span><i style="background:var(--f-red)"></i>Ratio · Difference</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">8.2</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 8: SEQUENCES AND SERIES
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame — it never jumps there.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------- canvas + drawing helpers ---------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function dimH(ctx,x1,x2,y,color,lbl){
+  line(ctx,x1,y,x2,y,color,1.8); arrowHead(ctx,x1,y,Math.PI,color,6); arrowHead(ctx,x2,y,0,color,6);
+  if(lbl) textAt(ctx,lbl,(x1+x2)/2,y-6,{align:'center',size:12,weight:700,color});
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function pill(ctx,txt,x,y,col,size){
+  size=size||12; ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif';
+  const tw=ctx.measureText(txt).width+10; ctx.restore();
+  ctx.save(); rrect(ctx,x-tw/2,y-size*0.85,tw,size*1.5,5); ctx.fillStyle='rgba(255,255,255,0.93)'; ctx.fill(); ctx.restore();
+  textAt(ctx,txt,x,y+size*0.3,{align:'center',size,weight:700,color:col});
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+const SUB='₀₁₂₃₄₅₆₇₈₉', SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const sub=s=>String(s).replace(/\d/g,d=>SUB[d]);
+const sup=s=>String(s).replace(/[-0-9]/g,c=>SUP[c]);
+function fmtN(x){
+  if(!isFinite(x)) return '—'; const ax=Math.abs(x);
+  if(ax<1e-12) return '0';
+  if(ax>=1e9||ax<1e-3) return x.toExponential(1).replace('e+','e');
+  let s=Number(x.toFixed(ax>=100?2:ax>=1?3:4)).toString();
+  if(ax>=1000){ const p=s.split('.'); s=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,',')+(p[1]?'.'+p[1]:''); }
+  return s.replace('-','−');
+}
+
+/* ---------------- animation engine ---------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+/** frame-rate independent exponential ease */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** spring-damper — natural overshoot and settle */
+function springTo(s,target,k,damping,dt){
+  const acc=(target-s.x)*k - s.v*damping; s.v+=acc*dt; s.x+=s.v*dt; return s.x;
+}
+
+/* ---------------- UI builders ---------------- */
+function slHtml(id,label,min,max,step,val){
+  return `<div class="control-group"><label><span id="${id}L">${label}</span> <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipsHtml(id,items,act){
+  return `<div class="chip-wrap" id="${id}">`+items.map(([k,l],i)=>`<button class="chip-btn${act!==null&&i===(act||0)?' active':''}" data-k="${k}">${l}</button>`).join('')+'</div>';
+}
+function wireChips(root,cb,toggle){
+  const btns=[...root.querySelectorAll('.chip-btn')];
+  btns.forEach(b=>b.onclick=()=>{ if(toggle!==false){ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); } cb(b.dataset.k,b); });
+}
+function cardsHtml(list){
+  return `<div class="control-group"><div class="result-cards">`+list.map(([id,l,wide,col])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel" id="${id}L">${l}</div><div class="rval" id="${id}"${col?` style="color:${col}"`:''}>—</div></div>`).join('')+`</div></div>`;
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------------- bars shared by 8.4.1 and 8.4.3 ----------------
+   Heights are in signed pixels. Linear and logarithmic height scales are
+   blended (cam.bl), so switching the scale makes the bars flow, not snap. */
+function newCam(){ return {init:false, base:0, sl:1, sg:1, Lmin:0, bl:0}; }
+function barLayout(cam,vals,h,blendT,dt){
+  const hasNeg=vals.some(v=>v<0);
+  const up0=(hasNeg?h*0.52:h*0.8)-52;
+  const baseT=hasNeg?h*0.52:h*0.8, up=up0, dn=h-48-baseT;
+  let mp=0, mn=0; vals.forEach(v=>{ if(v>0) mp=Math.max(mp,v); else if(v<0) mn=Math.max(mn,-v); });
+  const lims=[]; if(mp>0) lims.push(up/mp); if(mn>0) lims.push(dn/mn);
+  const linT=lims.length?Math.min(...lims):1;
+  const lg=vals.map(v=>Math.log10(Math.max(Math.abs(v),1e-12)));
+  const LminT=Math.min(...lg)-0.35, Lmax=Math.max(...lg);
+  const room=hasNeg?Math.min(up,dn):up;
+  const logT=room/Math.max(0.5,Lmax-LminT);
+  const ap=(c,t,r)=>cam.init?approach(c,t,r,dt):t;
+  cam.base=ap(cam.base,baseT,6); cam.sl=ap(cam.sl,linT,6); cam.sg=ap(cam.sg,logT,6); cam.Lmin=ap(cam.Lmin,LminT,6); cam.bl=ap(cam.bl,blendT,5);
+  cam.init=true;
+  return v=>{ const lin=v*cam.sl; const l=Math.log10(Math.max(Math.abs(v),1e-12));
+    const lgh=(v===0?0:Math.sign(v))*Math.max(0,l-cam.Lmin)*cam.sg; return lerp(lin,lgh,cam.bl); };
+}
+/* dashed red arrow arching from one bar-top to the next, labelled ×r */
+function ratioArc(ctx,x1,y1,x2,y2,col,label,t,lift){
+  const mx=(x1+x2)/2, top=Math.min(y1,y2)-(lift||30), cy=2*top-(y1+y2)/2;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.lineDashOffset=-t*34;
+  ctx.beginPath(); ctx.moveTo(x1,y1-20); ctx.quadraticCurveTo(mx,cy-14,x2,y2-22); ctx.stroke(); ctx.restore();
+  arrowHead(ctx,x2,y2-22,Math.atan2((y2-22)-(cy-14),x2-mx),col,7);
+  if(label) pill(ctx,label,mx,top-16,col,11);
+}
+
+/* =====================================================================
+   8.2  SEQUENCES — ancestors and Fibonacci
+   Ancestors: a(n) = 2ⁿ  (a₁=2 parents … a₁₀=1024).   Fibonacci: aₙ = aₙ₋₂ + aₙ₋₁
+   ===================================================================== */
+const FIB=(()=>{
+  const F=[1,1]; for(let i=2;i<14;i++) F.push(F[i-1]+F[i-2]);
+  const sq=[{x:0,y:0,s:1,d:3}]; let minX=0,maxX=1,minY=0,maxY=1;
+  for(let k=1;k<14;k++){
+    const s=F[k], d=(k-1)%4; let x,y;
+    if(d===0){x=maxX;y=minY;} else if(d===1){x=minX;y=maxY;} else if(d===2){x=minX-s;y=minY;} else {x=minX;y=minY-s;}
+    sq.push({x,y,s,d});
+    minX=Math.min(minX,x); maxX=Math.max(maxX,x+s); minY=Math.min(minY,y); maxY=Math.max(maxY,y+s);
+  }
+  return {F,sq};
+})();
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Sequence</label>${chipsHtml('md',[['anc','Ancestors'],['fib','Fibonacci']])}</div>`+
+    slHtml('n','Generation n',1,10,1,5)+
+    `<button class="toggle-btn play" id="go" style="padding:10px">▶ Grow</button>`+
+    cardsHtml([['c1','aₙ',0,COL.blue],['c2','Total so far',0,COL.green],['c3','Terms',1]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nR=$('#n');
+  let mode='anc', t=0, grow=false, gt=0;
+  const gS=Array.from({length:14},()=>({x:0,v:0}));
+  const cam={dy:60, cx:0, cy:0, lsc:Math.log(20), init:false};
+  wireChips($('#md'),k=>{
+    mode=k; nR.max=k==='anc'?10:13; if(+nR.value>+nR.max) nR.value=nR.max;
+    $('#nL').textContent=k==='anc'?'Generation n':'Term n';
+    $('#c1L').textContent='a'+'ₙ'; $('#c2L').textContent=k==='anc'?'Total so far':'aₙ₊₁ / aₙ';
+    gS.forEach(s=>{ s.x=0; s.v=0; }); cam.init=false;
+  });
+  $('#go').onclick=()=>{ if(grow){ grow=false; } else { if(+nR.value>=+nR.max) nR.value=1; grow=true; gt=0; } };
+
+  function person(ctx,x,y,s,col,bob){
+    const yy=y+bob;
+    circ(ctx,x,yy-s*1.75,s*0.5,col,'#fff',1.6);
+    line(ctx,x,yy-s*1.25,x,yy-s*0.35,col,1.8);
+    line(ctx,x-s*0.6,yy-s*0.95,x+s*0.6,yy-s*0.95,col,1.6);
+    line(ctx,x,yy-s*0.35,x-s*0.45,yy+s*0.4,col,1.6); line(ctx,x,yy-s*0.35,x+s*0.45,yy+s*0.4,col,1.6);
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(grow){ gt+=dt; if(gt>0.85){ gt=0; if(+nR.value<+nR.max) nR.value=+nR.value+1; else grow=false; } }
+    $('#go').textContent=grow?'⏸ Growing…':'▶ Grow';
+    const n=+nR.value; $('#nV').textContent=n;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='anc'){
+      const ml=84, mr=26, topM=40, botM=64, W=w-ml-mr;
+      cam.dy=cam.init?approach(cam.dy,(h-topM-botM)/Math.max(n,3),5,dt):(h-topM-botM)/Math.max(n,3); cam.init=true;
+      for(let k=0;k<=10;k++) springTo(gS[k],k<=n?1:0,70,9,dt);
+      gS[0].x=1;
+      const X=(k,i)=>ml+(i+0.5)/Math.pow(2,k)*W, Y=k=>h-botM-k*cam.dy;
+      const pos=(k,i)=>{ if(k===0) return [X(0,0),Y(0)]; const p=pos(k-1,i>>1); const g=gS[k].x; return [lerp(p[0],X(k,i),g), lerp(p[1],Y(k),g)]; };
+      // current-generation band
+      line(ctx,ml-6,Y(n),w-mr,Y(n),rgba(COL.yellow,0.9),1.6,[6,5]);
+      // ground
+      line(ctx,ml-6,Y(0)+12,w-mr,Y(0)+12,COL.ink,2.2);
+      // branches first
+      for(let k=1;k<=10;k++){
+        const g=gS[k].x; if(g<0.003) continue;
+        const cnt=1<<k, lwid=clamp(2.4-k*0.2,0.7,2.4);
+        ctx.save(); ctx.globalAlpha=clamp(g*1.6,0,1);
+        for(let i=0;i<cnt;i++){ const p=pos(k,i), c=pos(k-1,i>>1); line(ctx,p[0],p[1],c[0],c[1],(i&1)?COL.red:COL.blue,lwid); }
+        ctx.restore();
+      }
+      // people
+      for(let k=0;k<=10;k++){
+        const g=gS[k].x; if(g<0.003&&k>0) continue;
+        const cnt=1<<k, sp=W/cnt, cur=(k===n);
+        const col=cur?COL.yellow:COL.ink;
+        ctx.save(); ctx.globalAlpha=k===0?1:clamp(g*1.6,0,1);
+        for(let i=0;i<cnt;i++){
+          const p=pos(k,i);
+          if(sp>=22||k===0){ const s=k===0?11:clamp(sp*0.22,4,10); person(ctx,p[0],p[1],s,col,Math.sin(t*2.4+i*1.7)*1.3); }
+          else circ(ctx,p[0],p[1],Math.max(1.1,Math.min(5,sp*0.32)),col,cur?COL.yellow:COL.blue,0.8);
+        }
+        ctx.restore();
+        if(k>0&&g>0.5) textAt(ctx,'a'+sub(k)+' = '+(1<<k),ml-12,Y(k)+4,{align:'right',size:12,weight:700,color:cur?COL.yellow:COL.blue,alpha:clamp((g-0.5)*3,0,1)});
+      }
+      textAt(ctx,'You',ml-12,Y(0)+4,{align:'right',size:12,weight:700,color:COL.ink});
+      const tot=Math.pow(2,n+1)-2;
+      $('#c1').textContent=Math.pow(2,n); $('#c2').textContent=tot; $('#c3').textContent=Array.from({length:Math.min(n,10)},(_,i)=>Math.pow(2,i+1)).join(', ');
+    } else {
+      // Fibonacci spiral — squares of side aₖ added one by one
+      const F=FIB.F, SQ=FIB.sq;
+      let x0=0,x1=1,y0=0,y1=1;
+      for(let k=0;k<n;k++){ const q=SQ[k]; x0=Math.min(x0,q.x); x1=Math.max(x1,q.x+q.s); y0=Math.min(y0,q.y); y1=Math.max(y1,q.y+q.s); }
+      const bw=x1-x0, bh=y1-y0, tsc=Math.min((w-110)/bw,(h-100)/bh), tcx=(x0+x1)/2, tcy=(y0+y1)/2;
+      if(!cam.init){ cam.lsc=Math.log(tsc); cam.cx=tcx; cam.cy=tcy; cam.init=true; }
+      cam.lsc=approach(cam.lsc,Math.log(tsc),5,dt); cam.cx=approach(cam.cx,tcx,5,dt); cam.cy=approach(cam.cy,tcy,5,dt);
+      const sc=Math.exp(cam.lsc), PX=x=>w/2+(x-cam.cx)*sc, PY=y=>h/2+8+(y-cam.cy)*sc;
+      const pal=[COL.blue,COL.green,COL.yellow,COL.red];
+      for(let k=0;k<14;k++) springTo(gS[k],k<n?1:0,70,9,dt);
+      for(let k=0;k<14;k++){
+        const g=gS[k].x; if(g<0.004) continue;
+        const q=SQ[k], c=pal[k%4], s=q.s*g, cx=q.x+q.s/2, cy=q.y+q.s/2;
+        const px=PX(cx-s/2), py=PY(cy-s/2), pw=s*sc;
+        ctx.save(); ctx.globalAlpha=clamp(g*2,0,1);
+        rect(ctx,px,py,pw,pw,c,rgba(c,0.1),2.2);
+        if(pw>18) textAt(ctx,String(F[k]),px+pw/2,py+pw/2+clamp(pw*0.1,3,8),{align:'center',size:clamp(pw*0.32,9,30),weight:700,color:c});
+        ctx.restore();
+      }
+      // the spiral: a quarter circle in every square
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineCap='round';
+      for(let k=0;k<14;k++){
+        const g=clamp(gS[k].x,0,1); if(g<0.01) continue;
+        const q=SQ[k], R=q.s*sc; let cx,cy,a0;
+        if(q.d===0){cx=q.x;cy=q.y+q.s;a0=-Math.PI/2;} else if(q.d===1){cx=q.x;cy=q.y;a0=0;}
+        else if(q.d===2){cx=q.x+q.s;cy=q.y;a0=Math.PI/2;} else {cx=q.x+q.s;cy=q.y+q.s;a0=Math.PI;}
+        ctx.beginPath(); ctx.arc(PX(cx),PY(cy),R,a0,a0+Math.PI/2*g); ctx.stroke();
+      }
+      ctx.restore();
+      if(n>=3) textAt(ctx,'a'+sub(n)+' = a'+sub(n-2)+' + a'+sub(n-1)+' = '+F[n-3]+' + '+F[n-2]+' = '+F[n-1],22,34,{size:14,weight:700,color:COL.blue});
+      $('#c1').textContent=F[n-1]; $('#c2').textContent=n>=2?fmtN(F[n-1]/F[n-2]):'—';
+      $('#c3').textContent=F.slice(0,Math.min(n,13)).join(', ');
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.3  SERIES — Σ aₖ  (Examples 1–3)
+   Terms drop in one at a time (positive = weights, negative = balloons);
+   a spring balance reads the running sum Sₙ and settles with a bounce.
+   ===================================================================== */
+function buildA2(){
+  const FM=[
+    {n:'2n + 5',f:k=>2*k+5},
+    {n:'(n − 3) / 4',f:k=>(k-3)/4},
+    {n:'(n−1)(2−n)(3+n)',f:k=>(k-1)*(2-k)*(3+k)},
+    {n:'a₁=1, aₙ=aₙ₋₁+2',f:k=>2*k-1}
+  ];
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Rule for aₙ</label>${chipsHtml('fm',FM.map((f,i)=>[i,f.n]))}</div>`+
+    slHtml('n','Terms n',1,20,1,6)+
+    `<button class="toggle-btn play" id="go" style="padding:10px">▶ Add terms again</button>`+
+    cardsHtml([['c1','aₙ',0,COL.blue],['c2','Sₙ = Σ aₖ',0,COL.green]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), nR=$('#n');
+  let fi=0, cur=0, tmr=0, t=0, Scur=0, tokens=[];
+  const balls=Array.from({length:21},()=>({hOff:0,v:0,al:0,on:false}));
+  const pan={x:0,v:0}, cam={sc:1,slot:40,init:false,dsc:1};
+  const reset=()=>{ cur=0; Scur=0; tokens=[]; balls.forEach(b=>{b.on=false;}); };
+  wireChips($('#fm'),k=>{ fi=+k; reset(); });
+  $('#go').onclick=reset;
+  animLoop(dt=>{
+    t+=dt;
+    const n=+nR.value, f=FM[fi].f; $('#nV').textContent=n;
+    const T=[0], S=[0]; for(let k=1;k<=n;k++){ T[k]=f(k); S[k]=S[k-1]+T[k]; }
+    if(cur>n){ cur=n; tokens=[]; Scur=S[cur]; }
+    tmr+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const mid=h*0.5, sx=Math.min(w*0.78,w-120), anchor=40, panRest=h*0.5;
+    if(cur<n && tmr>0.3){
+      tmr=0; cur++; const b=balls[cur]; b.on=true; b.hOff=h*0.45; b.v=0; b.al=0;
+      tokens.push({k:cur,val:T[cur],y:T[cur]>=0?panRest-170:panRest+160,vy:0});
+    }
+    let maxT=1, maxS=1; for(let k=1;k<=n;k++){ maxT=Math.max(maxT,Math.abs(T[k])); maxS=Math.max(maxS,Math.abs(S[k])); }
+    const scT=(h*0.5-70)/maxT, slotT=(w*0.56-50)/Math.max(n,5), dscT=(h*0.2)/maxS;
+    if(!cam.init){ cam.sc=scT; cam.slot=slotT; cam.dsc=dscT; cam.init=true; }
+    cam.sc=approach(cam.sc,scT,5,dt); cam.slot=approach(cam.slot,slotT,5,dt); cam.dsc=approach(cam.dsc,dscT,5,dt);
+    // ---- terms plot (left)
+    const px0=44; line(ctx,px0-8,mid,px0+cam.slot*Math.max(n,5)+6,mid,COL.ink,2);
+    textAt(ctx,'0',px0-14,mid+4,{align:'right',size:11,weight:600,color:COL.mid});
+    for(let k=1;k<=20;k++){
+      const b=balls[k]; b.on=b.on&&k<=cur; b.al=approach(b.al,b.on?1:0,9,dt);
+      if(b.al<0.02) continue;
+      b.v+=1500*dt; b.hOff-=b.v*dt;
+      if(b.hOff<=0){ b.hOff=0; b.v=-b.v*0.42; if(Math.abs(b.v)<70) b.v=0; }
+      const x=px0+(k-0.5)*cam.slot, yT=mid-T[k]*cam.sc, yb=yT-b.hOff, c=T[k]>=0?COL.green:COL.red;
+      ctx.save(); ctx.globalAlpha=b.al;
+      line(ctx,x,mid,x,yT,c,2.4);
+      circ(ctx,x,yb,Math.min(10,cam.slot*0.3),c,'#fff',2.4);
+      textAt(ctx,fmtN(T[k]),x,T[k]>=0?yb-14:yb+22,{align:'center',size:clamp(cam.slot*0.3,9,12),weight:700,color:c});
+      if(cam.slot>20) textAt(ctx,'a'+sub(k),x,h-16,{align:'center',size:10.5,weight:600,color:COL.mid});
+      ctx.restore();
+    }
+    // ---- spring balance (right)
+    const panTarget=Scur*cam.dsc; springTo(pan,panTarget,90,4.2,dt);
+    const panY=panRest+pan.x, hang=panY-34;
+    line(ctx,sx-64,anchor,sx+64,anchor,COL.ink,5);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(sx,anchor);
+    const coils=14, sl=(hang-anchor-12);
+    for(let i=1;i<=coils;i++){ ctx.lineTo(sx+(i%2?-1:1)*11, anchor+6+sl*(i-0.5)/coils); }
+    ctx.lineTo(sx,hang); ctx.stroke(); ctx.restore();
+    line(ctx,sx,hang,sx-46,panY,COL.ink,1.8); line(ctx,sx,hang,sx+46,panY,COL.ink,1.8);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(sx-54,panY); ctx.quadraticCurveTo(sx,panY+16,sx+54,panY); ctx.stroke(); ctx.restore();
+    // ruler + pointer
+    const rx=Math.min(sx+90,w-14); line(ctx,rx,panRest-h*0.28,rx,panRest+h*0.28,COL.ink,2);
+    for(let i=-4;i<=4;i++) line(ctx,rx-(i===0?9:5),panRest+i*h*0.07,rx,panRest+i*h*0.07,i===0?COL.green:COL.mid,i===0?2.4:1.4);
+    line(ctx,sx+54,panY,rx-2,panY,COL.blue,1.6,[4,4]); arrowHead(ctx,rx-2,panY,0,COL.blue,7);
+    textAt(ctx,'S = '+fmtN(Scur),sx,Math.min(h-12,panY+46),{align:'center',size:14,weight:700,color:COL.green});
+    // falling weights / rising balloons
+    tokens=tokens.filter(tk=>{
+      if(tk.val>=0){
+        tk.vy+=1400*dt; tk.y+=tk.vy*dt; const sz=Math.min(34,16+Math.abs(tk.val)*0.1);
+        if(tk.y+sz/2>=panY-2){ Scur=S[tk.k]===undefined?Scur:S[tk.k]; pan.v+=110; return false; }
+        rect(ctx,sx-sz/2,tk.y-sz/2,sz,sz,COL.green,'#e4f7ec',2.2); textAt(ctx,fmtN(tk.val),sx,tk.y+4,{align:'center',size:10.5,weight:700,color:COL.green});
+      } else {
+        tk.vy-=700*dt; tk.y+=tk.vy*dt;
+        if(tk.y<=panY+12){ Scur=S[tk.k]===undefined?Scur:S[tk.k]; pan.v-=110; return false; }
+        line(ctx,sx,tk.y+14,sx+Math.sin(t*5)*5,tk.y+44,COL.red,1.4);
+        circ(ctx,sx,tk.y,15,COL.red,'#fdece7',2.2); textAt(ctx,fmtN(tk.val),sx,tk.y+4,{align:'center',size:10.5,weight:700,color:COL.red});
+      }
+      return true;
+    });
+    if(n>=1){ $('#c1').textContent=fmtN(T[n]); $('#c2').textContent=fmtN(S[n]); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.1  G.P. — aₙ = a·rⁿ⁻¹   (every ratio aₖ₊₁/aₖ is the same r)
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slHtml('a','First term  a',0.01,6,'any',2)+
+    slHtml('r','Common ratio  r',-3,3,'any',2)+
+    slHtml('n','Terms shown  n',2,12,1,6)+
+    `<div class="control-group"><label>Bar height</label>${chipsHtml('sc',[['lin','Linear'],['log','Log']])}</div>`+
+    `<div class="control-group"><label>Textbook sequences</label>${chipsHtml('pre',[['1','2, 4, 8…'],['2','1/9, −1/27…'],['3','.01, .0001…']],null)}</div>`+
+    cardsHtml([['c1','aₙ = a·rⁿ⁻¹',0,COL.blue],['c2','every aₖ₊₁ / aₖ',0,COL.red]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#a'), rR=$('#r'), nR=$('#n');
+  let t=0, scale='lin';
+  const cam=newCam(), hv=Array.from({length:12},()=>({x:0,v:0}));
+  wireChips($('#sc'),k=>scale=k);
+  wireChips($('#pre'),k=>{ const P={'1':[2,2,6],'2':[1/9,-1/3,6],'3':[0.01,0.01,5]}[k]; aR.value=P[0]; rR.value=P[1]; nR.value=P[2]; },false);
+  animLoop(dt=>{
+    t+=dt;
+    const a=+aR.value, r=+rR.value, n=+nR.value;
+    $('#aV').textContent=fmtN(a); $('#rV').textContent=fmtN(r); $('#nV').textContent=n;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const vals=[]; for(let k=0;k<n;k++) vals.push(a*Math.pow(r,k));
+    const map=barLayout(cam,vals,h,scale==='log'?1:0,dt);
+    const base=cam.base, m=44, slot=(w-2*m)/n, bw=Math.min(slot*0.5,90);
+    line(ctx,m-10,base,w-m+10,base,COL.ink,2.2);
+    const tops=[];
+    for(let k=0;k<12;k++){
+      const s=hv[k]; springTo(s,k<n?map(vals[k]):0,95,9.5,dt);
+      const x=m+(k+0.5)*slot;
+      if(k>=n&&Math.abs(s.x)<0.6) continue;
+      const hh=s.x, y=base-hh, neg=hh<0;
+      ctx.save(); ctx.setLineDash(neg?[6,4]:[]);
+      rect(ctx,x-bw/2,Math.min(base,y),bw,Math.abs(hh),COL.blue,rgba(COL.blue,0.14),2.2);
+      ctx.restore();
+      tops[k]=[x,y];
+      if(k<n){
+        textAt(ctx,fmtN(vals[k]),x,neg?y+16:y-9,{align:'center',size:clamp(slot*0.2,9.5,13),weight:700,color:COL.ink});
+        textAt(ctx,'a'+sub(k+1),x,h-16,{align:'center',size:11,weight:600,color:COL.mid});
+      }
+    }
+    for(let k=0;k<n-1;k++){
+      if(!tops[k]||!tops[k+1]) continue;
+      ratioArc(ctx,tops[k][0],tops[k][1],tops[k+1][0],tops[k+1][1],COL.red,slot>46?'×'+fmtN(r):null,t,Math.min(34,10+slot*0.25));
+    }
+    $('#c1').textContent=fmtN(vals[n-1]); $('#c2').textContent='× '+fmtN(r);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.2  SUM OF n TERMS — the subtraction trick
+   Sₙ = a + ar + … + arⁿ⁻¹ ,  r·Sₙ = ar + … + arⁿ  ⇒  (1−r)Sₙ = a − arⁿ
+   Frogs hop one term at a time along the number line.
+   Check: a=2, r=2, n=10 → 2046 (Example 11); a=1, r=⅔, n=5 → 211/81 (Example 7).
+   ===================================================================== */
+function drawFrog(ctx,x,y,col,face,air,sq){
+  ctx.save(); ctx.translate(x,y); ctx.scale(face,1); ctx.lineCap='round'; ctx.lineJoin='round';
+  const ry=9*(1-0.32*sq)+3*air, by=-ry-2;
+  // hind leg — folded on the ground, stretched in the air
+  ctx.strokeStyle=col; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(-7,by+2); ctx.lineTo(-13-air*9,-3+air*4); ctx.lineTo(-20-air*14,0+air*3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(8,by+3); ctx.lineTo(13+air*5,-2-air*2); ctx.stroke();
+  // body + head
+  ctx.beginPath(); ctx.ellipse(0,by,15,ry,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.lineWidth=2.4; ctx.strokeStyle=COL.ink; ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(13,by-5,8,6,0.1,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke();
+  circ(ctx,16,by-9,2.8,COL.ink,'#fff',1.6); circ(ctx,17,by-9,1,COL.ink,COL.ink,1);
+  ctx.beginPath(); ctx.arc(0,by,15,Math.PI*1.15,Math.PI*1.85); ctx.strokeStyle=col; ctx.lineWidth=3; ctx.stroke();
+  ctx.restore();
+}
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw))); for(const m of [1,2,5,10]) if(m*p>=raw) return m*p; return 10*p; }
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slHtml('a','First term  a',0.5,5,0.5,2)+
+    slHtml('r','Common ratio  r',-2,3,'any',2)+
+    slHtml('n','Terms  n',1,10,1,10)+
+    `<div class="control-group"><label>Textbook examples</label>${chipsHtml('pre',[['1','Ancestors  (Ex 11)'],['2','Ex 7'],['3','r = 1']],null)}</div>`+
+    `<button class="toggle-btn play" id="go" style="padding:10px">↻ Hop again</button>`+
+    cardsHtml([['c1','Sₙ = a(rⁿ−1)/(r−1)',1,COL.green],['c2','Terms added one by one',0,COL.blue],['c3','a − arⁿ',0,COL.red]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#a'), rR=$('#r'), nR=$('#n');
+  let et=0, sig='';
+  const cam={c:0,ls:0,init:false};
+  $('#go').onclick=()=>{ et=0; };
+  wireChips($('#pre'),k=>{ const P={'1':[2,2,10],'2':[1,2/3,5],'3':[1.5,1,6]}[k]; aR.value=P[0]; rR.value=P[1]; nR.value=P[2]; },false);
+  function hopAt(P,n,Th,et0){
+    const tt=et-et0; if(tt<=0) return {done:0,x:P[0],air:0,sq:0,cur:-1,sgn:1};
+    const j=Math.floor(tt/Th); if(j>=n) return {done:n,x:P[n],air:0,sq:0,cur:-1,sgn:P[n]>=P[n-1]?1:-1};
+    const u=(tt-j*Th)/Th, uh=Math.min(u/0.82,1);
+    return {done:j,x:lerp(P[j],P[j+1],uh),air:uh<1?4*uh*(1-uh):0,sq:uh>=1?1-(u-0.82)/0.18:0,cur:j,sgn:P[j+1]>=P[j]?1:-1};
+  }
+  animLoop(dt=>{
+    const a=+aR.value, r=+rR.value, n=+nR.value;
+    $('#aV').textContent=fmtN(a); $('#rV').textContent=fmtN(r); $('#nV').textContent=n;
+    const s2=[a.toFixed(3),r.toFixed(3),n].join('|'); if(s2!==sig){ sig=s2; et=0; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // positions after every hop
+    const P1=[0], P2=[0]; let acc=0;
+    for(let k=1;k<=n;k++){ acc+=a*Math.pow(r,k-1); P1.push(acc); P2.push(r*acc); }
+    const Sn=acc, P3=[0,a,a-a*Math.pow(r,n)];
+    const Th=Math.min(0.5,4/n), T1=n*Th, T3s=T1+0.6, Th3=0.8;
+    et+=dt;
+    // camera on the number line
+    const all=P1.concat(P2,P3), lo=Math.min(...all), hi=Math.max(...all), rng=Math.max(hi-lo,1e-6);
+    const ml=40, mr=40, tsc=(w-ml-mr)/(rng*1.14), tc=(lo+hi)/2;
+    if(!cam.init){ cam.c=tc; cam.ls=Math.log(tsc); cam.init=true; }
+    cam.c=approach(cam.c,tc,6,dt); cam.ls=approach(cam.ls,Math.log(tsc),6,dt);
+    const sc=Math.exp(cam.ls), X=x=>w/2+(x-cam.c)*sc;
+    const rows=[h*0.27,h*0.57,h*0.87], rc=[COL.green,COL.blue,COL.red];
+    const labs=['Sₙ  =  a + ar + … + arⁿ⁻¹','r·Sₙ  =  ar + ar² + … + arⁿ','Sₙ − r·Sₙ  =  a − arⁿ'];
+    // number lines
+    const step=niceStep((w-ml-mr)/sc/8), xa=cam.c-w/2/sc, xb=cam.c+w/2/sc;
+    rows.forEach((y,i)=>{
+      line(ctx,12,y,w-12,y,COL.ink,2);
+      for(let v=Math.ceil(xa/step)*step; v<=xb; v+=step){
+        const px=X(v); if(px<14||px>w-14) continue;
+        line(ctx,px,y,px,y+(Math.abs(v)<1e-9?9:5),Math.abs(v)<1e-9?COL.ink:COL.mid,Math.abs(v)<1e-9?2.4:1.3);
+        if(i===2||Math.abs(v)<1e-9||(rows.length&&true)) textAt(ctx,fmtN(Math.abs(v)<1e-9?0:v),px,y+22,{align:'center',size:10,weight:600,color:Math.abs(v)<1e-9?COL.ink:COL.mid});
+      }
+      textAt(ctx,labs[i],16,y-h*0.2,{size:13,weight:700,color:rc[i]});
+    });
+    // hops: completed arcs + frog
+    function track(P,m,y,Th_,t0,cols,lab){
+      const st=hopAt(P,m,Th_,t0);
+      for(let j=0;j<st.done;j++){
+        const x0=X(P[j]), x1=X(P[j+1]), H=clamp(Math.abs(x1-x0)*0.5+14,14,70), c=cols[j%cols.length];
+        ctx.save(); ctx.strokeStyle=c; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(x0,y); ctx.quadraticCurveTo((x0+x1)/2,y-2*H,x1,y); ctx.stroke(); ctx.restore();
+        if(lab&&Math.abs(x1-x0)>34) textAt(ctx,lab[j],(x0+x1)/2,y-H-5,{align:'center',size:11.5,weight:700,color:c});
+      }
+      for(let j=0;j<=st.done&&j<=m;j++) circ(ctx,X(P[j]),y,3.6,cols[0],'#fff',2);
+      let H=0; if(st.cur>=0) H=clamp(Math.abs(X(P[st.cur+1])-X(P[st.cur]))*0.5+14,14,70);
+      drawFrog(ctx,X(st.x),y-st.air*H,cols[Math.max(0,Math.min(st.done,cols.length-1))],st.sgn,st.air,st.sq);
+      return st;
+    }
+    const s1=track(P1,n,rows[0],Th,0,[COL.green],null);
+    const s2b=track(P2,n,rows[1],Th,0,[COL.blue],null);
+    const s3=track(P3,2,rows[2],Th3,T3s,[COL.yellow,COL.red],['+a','−arⁿ']);
+    if(s1.done>=n){ pill(ctx,'Sₙ = '+fmtN(Sn),X(Sn),rows[0]-44,COL.green,12); }
+    if(s2b.done>=n){ pill(ctx,'rSₙ = '+fmtN(r*Sn),X(r*Sn),rows[1]-44,COL.blue,12); }
+    if(s3.done>=2){ pill(ctx,fmtN(P3[2]),X(P3[2]),rows[2]-44,COL.red,12); }
+    const formula=Math.abs(r-1)<1e-9?n*a:a*(Math.pow(r,n)-1)/(r-1);
+    $('#c1').textContent=fmtN(formula); $('#c2').textContent=fmtN(Sn)+(Math.abs(Sn-formula)<1e-6*Math.max(1,Math.abs(Sn))?'  ✓':'');
+    $('#c3').textContent=fmtN(a-a*Math.pow(r,n));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.3  GEOMETRIC MEANS — insert n numbers between a and b
+   r = (b/a)^(1/(n+1)),  Gₖ = a·rᵏ.   Check (Example 12): a=1, b=256, n=3 → 4, 16, 64.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slHtml('a','First pole  a',1,20,1,1)+
+    slHtml('b','Last pole  b',2,512,1,256)+
+    slHtml('n','Means inserted  n',1,8,1,3)+
+    `<div class="control-group"><label>Root for r</label>${chipsHtml('sg',[['p','r +'],['m','r −']])}<div class="hint" id="sgH">r − needs n + 1 to be even</div></div>`+
+    `<div class="control-group"><label>Bar height</label>${chipsHtml('sc',[['lin','Linear'],['log','Log']])}
+      <div class="toggle-group"><button class="toggle-btn" id="ap">Show A.P. instead</button></div></div>`+
+    cardsHtml([['c1','Common ratio r',0,COL.red],['c2','a·rⁿ⁺¹',0,COL.green],['c3','G₁ … Gₙ',1,COL.green]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#a'), bR=$('#b'), nR=$('#n');
+  let t=0, scale='lin', sign=1, ghost=false;
+  const cam=newCam(), hv=Array.from({length:10},()=>({x:0,v:0}));
+  wireChips($('#sc'),k=>scale=k);
+  wireChips($('#sg'),k=>sign=k==='m'?-1:1);
+  $('#ap').onclick=()=>{ ghost=!ghost; $('#ap').classList.toggle('active',ghost); };
+  animLoop(dt=>{
+    t+=dt;
+    const a=+aR.value, b=+bR.value, n=+nR.value, m=n+2;
+    $('#aV').textContent=a; $('#bV').textContent=b; $('#nV').textContent=n;
+    const even=(n+1)%2===0; $('#sg').querySelector('[data-k=m]').classList.toggle('dis',!even);
+    const sg=(even&&sign<0)?-1:1;
+    if(!even&&sign<0){ sign=1; $('#sg').querySelectorAll('.chip-btn').forEach(x=>x.classList.toggle('active',x.dataset.k==='p')); }
+    const r=sg*Math.pow(b/a,1/(n+1));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const vals=[]; for(let i=0;i<m;i++) vals.push(a*Math.pow(r,i));
+    vals[m-1]=(sg<0&&((m-1)%2===1))?-b:b;   // pin the last pole to ±b exactly
+    const map=barLayout(cam,vals,h,scale==='log'?1:0,dt);
+    const base=cam.base, mg=48, slot=(w-2*mg)/m, bw=Math.min(slot*0.5,72);
+    line(ctx,mg-14,base,w-mg+14,base,COL.ink,2.2);
+    const tops=[];
+    for(let i=0;i<10;i++){
+      const s=hv[i]; springTo(s,i<m?map(vals[i]):0,95,9.5,dt);
+      if(i>=m&&Math.abs(s.x)<0.6) continue;
+      const x=mg+(i+0.5)*slot, y=base-s.x, neg=s.x<0, end=(i===0||i===m-1), c=end?COL.yellow:COL.green;
+      ctx.save(); ctx.setLineDash(neg?[6,4]:[]); rect(ctx,x-bw/2,Math.min(base,y),bw,Math.abs(s.x),c,rgba(c,0.15),2.4); ctx.restore();
+      tops[i]=[x,y];
+      if(i<m){
+        textAt(ctx,fmtN(vals[i]),x,neg?y+16:y-9,{align:'center',size:clamp(slot*0.2,10,13),weight:700,color:COL.ink});
+        textAt(ctx,i===0?'a':i===m-1?'b':'G'+sub(i),x,h-16,{align:'center',size:12,weight:700,color:c});
+      }
+    }
+    // the A.P. alternative: equal steps instead of equal ratios
+    if(ghost){
+      for(let i=0;i<m;i++){
+        const v=a+i*(b-a)/(m-1), x=mg+(i+0.5)*slot, y=base-map(v);
+        if(i>0&&i<m-1){ ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.strokeRect(x-bw/2-4,y,bw+8,base-y); ctx.restore(); }
+        circ(ctx,x,y,3.5,COL.mid,'#fff',1.6);
+      }
+      textAt(ctx,'dashed grey = A.P. (equal steps)',w-mg,34,{align:'right',size:11.5,weight:600,color:COL.mid});
+    }
+    for(let i=0;i<m-1;i++) if(tops[i]&&tops[i+1]) ratioArc(ctx,tops[i][0],tops[i][1],tops[i+1][0],tops[i+1][1],COL.red,slot>50?'×'+fmtN(r):null,t,Math.min(34,10+slot*0.25));
+    // a ball hopping pole to pole along the G.P.
+    const seg=m-1, hp=(t*1.1)%seg, hi=Math.floor(hp), u=hp-hi;
+    if(tops[hi]&&tops[hi+1]){
+      const bx=lerp(tops[hi][0],tops[hi+1][0],u), by=lerp(tops[hi][1],tops[hi+1][1],u)-Math.sin(u*Math.PI)*Math.min(34,10+slot*0.25)-11;
+      circ(ctx,bx,by,6,COL.ink,COL.yellow,2);
+    }
+    $('#c1').textContent=fmtN(r); $('#c2').textContent=fmtN(a*Math.pow(r,n+1))+' = b ✓';
+    $('#c3').textContent=Array.from({length:n},(_,i)=>fmtN(a*Math.pow(r,i+1))).join(', ');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.5  A.M. ≥ G.M.   (Example 13: A.M. 10, G.M. 8 → numbers 4 and 16)
+   Semicircle on a+b: radius = A.M. , perpendicular at the split = G.M.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>You choose</label>${chipsHtml('md',[['ab','a and b'],['ag','A.M. and G.M.']])}</div>`+
+    `<div id="gAB">${slHtml('a','Number  a',1,20,0.5,4)}${slHtml('b','Number  b',1,20,0.5,16)}</div>`+
+    `<div id="gAG" class="hidden">${slHtml('A','A.M.',1,20,0.5,10)}${slHtml('G','G.M.',1,20,0.5,8)}</div>`+
+    `<div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="sw" style="padding:10px">▶ Slide the split</button><button class="toggle-btn navy" id="ex" style="padding:10px">Example 13</button></div>`+
+    cardsHtml([['c1','A.M. = (a+b)/2',0,COL.blue],['c2','G.M. = √(ab)',0,COL.green],['c3','A.M. − G.M.',0,COL.red],['c4','Numbers',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, mode='ab', sweep=false, st=0;
+  const sa={x:4,v:0}, sb={x:16,v:0}, ball={x:0,v:0};
+  const aR=$('#a'), bR=$('#b'), AR=$('#A'), GR=$('#G');
+  wireChips($('#md'),k=>{ mode=k; sweep=false; $('#gAB').classList.toggle('hidden',k!=='ab'); $('#gAG').classList.toggle('hidden',k!=='ag'); });
+  $('#sw').onclick=()=>{ if(mode!=='ab'){ mode='ab'; $('#md').querySelectorAll('.chip-btn').forEach(x=>x.classList.toggle('active',x.dataset.k==='ab')); $('#gAB').classList.remove('hidden'); $('#gAG').classList.add('hidden'); } sweep=!sweep; st=0; };
+  [aR,bR,AR,GR].forEach(e=>e.addEventListener('input',()=>{ sweep=false; }));
+  $('#ex').onclick=()=>{ mode='ag'; sweep=false; AR.value=10; GR.value=8;
+    $('#md').querySelectorAll('.chip-btn').forEach(x=>x.classList.toggle('active',x.dataset.k==='ag')); $('#gAB').classList.add('hidden'); $('#gAG').classList.remove('hidden'); };
+  animLoop(dt=>{
+    t+=dt;
+    if(sweep){ st+=dt; const a=10+9*Math.sin(st*0.9); aR.value=a; bR.value=20-a; }
+    $('#sw').textContent=sweep?'⏸ Stop':'▶ Slide the split';
+    let a, b;
+    if(mode==='ab'){ a=+aR.value; b=+bR.value; $('#aV').textContent=fmtN(a); $('#bV').textContent=fmtN(b); }
+    else {
+      const A=+AR.value; let G=+GR.value; $('#AV').textContent=fmtN(A); $('#GV').textContent=fmtN(G);
+      G=Math.min(G,A); const d=Math.sqrt(Math.max(0,A*A-G*G)); a=A-d; b=A+d;
+    }
+    springTo(sa,a,120,13,dt); springTo(sb,b,120,13,dt);
+    const aa=Math.max(0.2,sa.x), bb=Math.max(0.2,sb.x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const S=aa+bb, u=Math.min(w*0.84/S,h*0.62/(S/2)), cx=w/2, base=h*0.84, R=S/2*u;
+    const x0=cx-R, xP=x0+aa*u, G=Math.sqrt(aa*bb), A=S/2;
+    // semicircle + diameter
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.beginPath(); ctx.arc(cx,base,R,Math.PI,Math.PI*2); ctx.stroke(); ctx.restore();
+    line(ctx,x0-8,base,cx+R+8,base,COL.ink,2.4);
+    dimH(ctx,x0,xP,base+30,COL.yellow,'a = '+fmtN(aa)); dimH(ctx,xP,cx+R,base+30,COL.yellow,'b = '+fmtN(bb));
+    line(ctx,xP,base+5,xP,base+36,COL.yellow,1.4,[3,3]);
+    // A.M. : the radius, drawn from the centre up to the top
+    line(ctx,cx,base,cx,base-R,COL.blue,3.4);
+    line(ctx,cx-R*0.0,base-R,w-24,base-R,rgba(COL.blue,0.55),1.4,[6,5]);
+    pill(ctx,'A.M. = '+fmtN(A),cx+0.0,base-R/2,COL.blue,12);
+    // G.M. : perpendicular at the split — rises to meet the semicircle
+    const gy=base-G*u;
+    line(ctx,xP,base,xP,gy,COL.green,3.8);
+    // red gap
+    if(R-G*u>2){ dimH2(ctx,xP+16,gy,base-R,COL.red); pill(ctx,'gap '+fmtN(A-G),xP+60,(gy+base-R)/2+4,COL.red,11.5); }
+    // ball rides the arc to the top of the perpendicular
+    springTo(ball,xP,140,16,dt);
+    circ(ctx,xP,gy,6.5,COL.ink,COL.green,2.4);
+    pill(ctx,'G.M. = '+fmtN(G),xP+(xP<cx?-1:1)*70,gy+(gy<base-30?24:-12),COL.green,12);
+    // centre marker
+    circ(ctx,cx,base,4,COL.ink,'#fff',2);
+    if(mode==='ag'&&+GR.value>+AR.value+1e-9) textAt(ctx,'G.M. can never exceed A.M.',cx,34,{align:'center',size:14,weight:700,color:COL.red});
+    $('#c1').textContent=fmtN(A); $('#c2').textContent=fmtN(G); $('#c3').textContent=fmtN(A-G);
+    $('#c4').textContent=fmtN(Math.min(aa,bb))+' , '+fmtN(Math.max(aa,bb));
+  });
+  return wrap;
+}
+function dimH2(ctx,x,y1,y2,col){ line(ctx,x,y1,x,y2,col,1.8); arrowHead(ctx,x,y1,Math.PI/2,col,6); arrowHead(ctx,x,y2,-Math.PI/2,col,6); line(ctx,x-6,y1,x+6,y1,col,1.4); line(ctx,x-6,y2,x+6,y2,col,1.4); }
+
+/* =====================================================================
+   Growth & decay — a G.P. in real life
+   Bacteria (Ex 30):  30 cells, doubling every hour → 120 at 2 h, 480 at 4 h
+   Savings  (Ex 31):  ₹500 at 10 % compounded → ₹1296.87 after 10 years
+   Machine  (M.Ex 17): ₹15625, loses 20 % a year → ₹5120 after 5 years
+   Value after n steps = a·rⁿ  (r = 1 + rate)
+   ===================================================================== */
+function drawGear(ctx,x,y,R,ang,col,teeth){
+  const N=teeth||12, pts=N*8;
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.lineJoin='round';
+  ctx.beginPath();
+  for(let i=0;i<=pts;i++){
+    const f=i/pts*Math.PI*2, s=clamp(Math.sin(N*f)*2.4,-1,1), rr=R*(0.82+0.18*(s+1)/2);
+    const px=Math.cos(f)*rr, py=Math.sin(f)*rr; i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+  }
+  ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,R*0.62,0,Math.PI*2); ctx.lineWidth=1.6; ctx.stroke();
+  for(let i=0;i<3;i++){ const a=i*Math.PI*2/3; ctx.beginPath(); ctx.moveTo(Math.cos(a)*R*0.2,Math.sin(a)*R*0.2); ctx.lineTo(Math.cos(a)*R*0.62,Math.sin(a)*R*0.62); ctx.stroke(); }
+  ctx.beginPath(); ctx.arc(0,0,R*0.16,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+function buildA7(){
+  const SC={
+    bac:{n:'Bacteria', start:[1,100,1,30],      rate:[-50,100,5,100], steps:[1,12,1,4],  pre:'', unit:'cells'},
+    sav:{n:'Savings',  start:[100,2000,50,500],  rate:[-10,30,1,10],   steps:[1,12,1,10], pre:'₹', unit:''},
+    mac:{n:'Machine',  start:[5000,25000,125,15625], rate:[-50,0,1,-20], steps:[1,12,1,5], pre:'₹', unit:''}
+  };
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Situation</label>${chipsHtml('sc',Object.keys(SC).map(k=>[k,SC[k].n]))}</div>`+
+    slHtml('s','Start  a',1,100,1,30)+
+    slHtml('p','Change each step',-50,100,1,100)+
+    slHtml('n','Steps  n',1,12,1,4)+
+    `<button class="toggle-btn play" id="go" style="padding:10px">▶ Run from the start</button>`+
+    cardsHtml([['c1','Value after n steps',1,COL.blue],['c2','Multiplier r',0,COL.red],['c3','Total change',0,COL.green]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sR=$('#s'), pR=$('#p'), nR=$('#n');
+  let key='bac', t=0, shown=99;
+  const cells=[]; const cs=Array.from({length:13},()=>({x:0,v:0})), gr=Array.from({length:13},()=>({x:1,v:0,ang:Math.random()*6}));
+  function setScenario(k){
+    key=k; const c=SC[k];
+    [['s',c.start],['p',c.rate],['n',c.steps]].forEach(([id,cfg])=>{ const e=$('#'+id); e.min=cfg[0]; e.max=cfg[1]; e.step=cfg[2]; e.value=cfg[3]; });
+    $('#sL').textContent=k==='bac'?'Starting cells  a':k==='sav'?'Deposit  a (₹)':'Cost  a (₹)';
+    $('#pL').textContent=k==='bac'?'Change every hour (%)':k==='sav'?'Interest per year (%)':'Change per year (%)';
+    $('#nL').textContent=k==='bac'?'Hours  n':'Years  n';
+    cells.length=0; cs.forEach(s=>{s.x=0;s.v=0;}); shown=0;
+  }
+  wireChips($('#sc'),setScenario);
+  $('#go').onclick=()=>{ shown=0; };
+  setScenario('bac'); shown=99;
+  function stepVal(a,r,j){ return a*Math.pow(r,j); }
+  animLoop(dt=>{
+    t+=dt;
+    const a=+sR.value, pct=+pR.value, n=+nR.value, r=1+pct/100, sc=SC[key];
+    $('#sV').textContent=sc.pre+fmtN(a); $('#pV').textContent=(pct>0?'+':'')+pct+' %'; $('#nV').textContent=n;
+    shown=Math.min(shown+dt/0.7,n+0.001); const sh=Math.floor(Math.min(shown,n));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const val=stepVal(a,r,sh);
+    const vlab=v=>sc.pre+fmtN(key==='sav'?Math.round(v*100)/100:v);
+    if(key==='bac'){
+      const cx=w/2, cy=h*0.52, R=Math.min(w*0.4,(h-100)/2);
+      circ(ctx,cx,cy,R,COL.ink,'#f6f9fc',3.2); circ(ctx,cx,cy,R-9,COL.mid,null,1.2);
+      const target=Math.round(Math.min(val,240));
+      let guard=0;
+      while(cells.length<target&&guard++<Math.max(1,Math.ceil((target-cells.length)*0.12))){
+        const p=cells.length?cells[(Math.random()*cells.length)|0]:{x:0,y:0};
+        cells.push({x:p.x+gauss()*0.02,y:p.y+gauss()*0.02,a:Math.random()*6.28,g:0,vx:0,vy:0});
+      }
+      guard=0; while(cells.length>target&&guard++<Math.max(1,Math.ceil((cells.length-target)*0.12))) cells.splice((Math.random()*cells.length)|0,1);
+      const L=Math.max(4,Math.min(R*0.05,11)), Wd=L*0.34, rad=L*1.5/R;
+      for(let i=0;i<cells.length;i++){
+        const c=cells[i];
+        c.g=Math.min(1,c.g+dt*1.8); c.a+=gauss()*0.9*Math.sqrt(dt); c.vx+=gauss()*0.5*Math.sqrt(dt); c.vy+=gauss()*0.5*Math.sqrt(dt);
+        for(let j=i+1;j<cells.length;j++){
+          const d=cells[j], dx=c.x-d.x, dy=c.y-d.y, dd=Math.hypot(dx,dy)||1e-6;
+          if(dd<rad){ const f=(rad-dd)/rad*2.6; c.vx+=dx/dd*f*dt*60*0.05; c.vy+=dy/dd*f*dt*60*0.05; d.vx-=dx/dd*f*dt*60*0.05; d.vy-=dy/dd*f*dt*60*0.05; }
+        }
+        const rr=Math.hypot(c.x,c.y); if(rr>0.86){ c.x*=0.86/rr; c.y*=0.86/rr; c.vx*=0.5; c.vy*=0.5; }
+        c.vx*=Math.exp(-3*dt); c.vy*=Math.exp(-3*dt); c.x+=c.vx*dt*3; c.y+=c.vy*dt*3;
+      }
+      cells.forEach(c=>{
+        const px=cx+c.x*R, py=cy+c.y*R, len=L*(0.55+0.45*c.g);
+        ctx.save(); ctx.translate(px,py); ctx.rotate(c.a);
+        rrect(ctx,-len,-Wd,len*2,Wd*2,Wd); ctx.fillStyle=c.g<1?'#fff8e6':'#eef6fe'; ctx.fill(); ctx.strokeStyle=c.g<1?COL.yellow:COL.blue; ctx.lineWidth=1.6; ctx.stroke();
+        ctx.restore();
+      });
+      textAt(ctx,'hour '+sh,cx,cy+R+26,{align:'center',size:14,weight:700,color:COL.ink});
+      textAt(ctx,fmtN(val)+' cells'+(val>240?'  (showing 240)':''),cx,cy-R-12,{align:'center',size:14,weight:700,color:COL.blue});
+    } else if(key==='sav'){
+      const cols=n+1, mL=36, slot=(w-2*mL)/cols, baseY=h*0.82, maxV=Math.max(a,a*Math.pow(r,n)), coins=64;
+      const unit=maxV/coins, ct=clamp((h*0.6)/(coins+2),3,9), rx=Math.min(slot*0.36,38), ry=rx*0.3;
+      line(ctx,mL-10,baseY+ry+3,w-mL+10,baseY+ry+3,COL.ink,2.2);
+      for(let j=0;j<=12;j++){
+        const s=cs[j]; const v=stepVal(a,r,j); const tgt=j<=sh&&j<=n?v/unit:0; springTo(s,tgt,80,8,dt);
+        if(j>n&&s.x<0.05) continue;
+        const x=mL+(j+0.5)*slot, pc=Math.min(a/unit,Math.max(0,s.x)), cnt=Math.max(0,s.x);
+        for(let i=0;i<Math.ceil(cnt);i++){
+          const frac=Math.min(1,cnt-i), y=baseY-i*ct;
+          const c=i<pc?COL.yellow:(r>=1?COL.green:COL.red);
+          ctx.save(); ctx.globalAlpha=frac; ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=c; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore();
+        }
+        if(cnt>0.5){ textAt(ctx,vlab(v),x,baseY-cnt*ct-ry-8,{align:'center',size:clamp(slot*0.2,9,12.5),weight:700,color:COL.blue}); }
+        textAt(ctx,String(j),x,baseY+ry+22,{align:'center',size:11,weight:600,color:COL.mid});
+      }
+      textAt(ctx,'years',w/2,baseY+ry+42,{align:'center',size:11,weight:600,color:COL.mid});
+      textAt(ctx,'yellow = deposit    '+(r>=1?'green = interest earned':'red = lost'),mL,30,{size:12,weight:600,color:COL.muted});
+    } else {
+      const cols=n+1, mL=30, slot=(w-2*mL)/cols, cyg=h*0.48, R0=Math.min(slot*0.5,h*0.3);
+      line(ctx,mL-10,cyg,w-mL+10,cyg,rgba(COL.mid,0.5),1.2,[4,6]);
+      for(let j=0;j<=12;j++){
+        const g=gr[j]; const v=stepVal(a,r,j), rel=Math.sqrt(Math.max(0,v)/a);
+        springTo(g,j<=sh&&j<=n?rel:0,90,9,dt);
+        if(j>n&&g.x<0.02) continue;
+        const x=mL+(j+0.5)*slot, R=R0*Math.max(0,g.x);
+        g.ang+=dt*(j%2?-1:1)*(1.6/Math.max(0.3,rel));
+        circ(ctx,x,cyg,R0,rgba(COL.mid,0.7),null,1.2);
+        ctx.save(); ctx.setLineDash([3,4]); ctx.restore();
+        if(R>2) drawGear(ctx,x,cyg,R,g.ang,rel>0.95?COL.blue:COL.blue,10);
+        if(g.x>0.1){ textAt(ctx,vlab(v),x,cyg+R0+24,{align:'center',size:clamp(slot*0.2,9,12.5),weight:700,color:COL.blue});
+          textAt(ctx,'year '+j,x,cyg+R0+42,{align:'center',size:10.5,weight:600,color:COL.mid}); }
+      }
+      textAt(ctx,'grey ring = original size',mL,30,{size:12,weight:600,color:COL.muted});
+    }
+    $('#c1').textContent=vlab(stepVal(a,r,n)); $('#c2').textContent='× '+fmtN(r);
+    const tc=stepVal(a,r,n)-a; $('#c3').textContent=(tc>=0?'+':'−')+sc.pre+fmtN(Math.abs(key==='sav'?Math.round(tc*100)/100:tc));
+    $('#c3').style.color=tc>=0?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'8.2',   title:'Sequences',          desc:'Ancestors double · Fibonacci spirals', build: buildA1 },
+  { num:'8.3',   title:'Series  Σ',          desc:'Add the terms · watch the sum settle', build: buildA2 },
+  { num:'8.4.1', title:'G.P. — Common Ratio', desc:'Multiply by r, every time', build: buildA3 },
+  { num:'8.4.2', title:'Sum of a G.P.',      desc:'Hop · multiply by r · subtract', build: buildA4 },
+  { num:'8.4.3', title:'Geometric Means',    desc:'Insert numbers so the ratio stays equal', build: buildA5 },
+  { num:'8.5',   title:'A.M. ≥ G.M.',        desc:'Radius versus perpendicular', build: buildA6 },
+  { num:'Apps',  title:'Growth & Decay',     desc:'G.P. in cells, money and machines', build: buildA7 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

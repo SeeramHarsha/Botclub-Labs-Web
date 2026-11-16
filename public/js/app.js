@@ -44,7 +44,7 @@
       h('h2', { style: 'font-size:18px;margin:6px 0 12px', text: 'Your classes' }),
       h('div', { class: 'class-grid' }, S.cat.classes.map(function (c) {
         var acts = c.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0), open = c.chapters.filter(function (x) { return x.access; }).length, done = c.chapters.filter(function (x) { return x.done; }).length;
-        return h('a', { class: 'cls', href: '#/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + acts + ' activities' }), h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
+        return h('a', { class: 'cls', href: '#/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + acts + ' activities' }), c.chapters[0] && c.chapters[0].group ? h('div', { class: 'micro', style: 'margin:-6px 0 6px', text: 'Physics · Chemistry · Mathematics' }) : null, h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
           h('div', { class: 'bar' }, h('i', { style: 'width:' + (c.chapters.length ? Math.round(done / c.chapters.length * 100) : 0) + '%' })), h('div', { class: 'micro', style: 'margin-top:6px', text: done + ' of ' + c.chapters.length + ' done' }));
       })),
     ]));
@@ -57,13 +57,24 @@
     if (!cl) return go('#/');
     render(head('#/', 'Class ' + c, cl.chapters.length + ' chapters · ' + cl.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0) + ' activities').concat([
       h('div', { class: 'crumbs' }, h('a', { href: '#/', text: '← All classes' })),
-      h('div', { class: 'chapters' }, cl.chapters.map(function (x) {
-        return h('div', { class: 'ch' + (x.access ? '' : ' locked') }, h('span', { class: 'n', text: x.access ? x.chapter : '🔒' }),
+      h('div', { class: 'chapters' }, chapterRows(cl, c)),
+    ]));
+  }
+  /** the chapter rows; Class 11 and 12 are grouped by subject and part ("Physics · Part 1") */
+  function chapterRows(cl, c) {
+    var out = [], last = null, k = 0;
+    cl.chapters.forEach(function (x) {
+      if (x.group && x.group !== last) { last = x.group; k = 0; out.push(h('div', { class: 'grp', text: x.group })); }
+      k++;
+      out.push(chapterRow(x, c, x.group ? k : x.chapter));
+    });
+    return out;
+  }
+  function chapterRow(x, c, label) {
+    return h('div', { class: 'ch' + (x.access ? '' : ' locked') }, h('span', { class: 'n', text: x.access ? label : '🔒' }),
           h('div', null, h('div', { class: 't', text: x.title }), h('div', { class: 'meta', text: (x.activities ? x.activities + ' activities · ' : '') + (x.access ? (x.sec ? BL.fmtTime(x.sec) + ' spent · opened ' + x.opens + '×' : 'Not started yet') : 'Part of a plan') })),
           h('div', { style: 'display:flex;gap:10px;align-items:center' }, x.done ? h('span', { class: 'badge green', text: 'Done' }) : null,
             x.access ? h('a', { class: 'btn primary small', href: lessonUrl(c, x.chapter), text: x.sec ? 'Continue' : 'Start' }) : h('a', { class: 'btn ghost small', href: '#/plans?need=' + c + '/' + x.chapter, text: 'Unlock' })));
-      })),
-    ]));
   }
 
   // ------------------------------------------------------------------ plans + checkout
@@ -74,7 +85,7 @@
       var sel = null, picked = [S.me.user.cls || defCls];
       if (p.scope === 'multi-class') {
         var need = p.classCount || 2; picked = [defCls];
-        var chips = [6, 7, 8, 9, 10].map(function (n) {
+        var chips = [6, 7, 8, 9, 10, 11, 12].map(function (n) {
           var cb = h('input', { type: 'checkbox', value: n }); cb.checked = n === defCls;
           cb.addEventListener('change', function () {
             picked = chips.filter(function (x) { return x.cb.checked; }).map(function (x) { return x.n; });
@@ -88,7 +99,7 @@
         sel = h('div', { style: 'margin-bottom:12px' }, h('div', { class: 'micro', style: 'margin-bottom:6px', text: 'Choose ' + need + ' classes' }), h('div', { class: 'chips' }, chips.map(function (x) { return x.el; })), hint);
       }
       if (p.scope === 'one-class') sel = h('select', { 'aria-label': 'Class', style: 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--field);color:var(--text);margin-bottom:12px' },
-        [6, 7, 8, 9, 10].map(function (n) { var o = h('option', { value: n, text: 'Class ' + n }); if (n === defCls) o.selected = true; return o; }));
+        [6, 7, 8, 9, 10, 11, 12].map(function (n) { var o = h('option', { value: n, text: 'Class ' + n }); if (n === defCls) o.selected = true; return o; }));
       var btn = h('button', { class: 'btn primary', type: 'button', text: 'Buy for ' + BL.fmtInr(p.priceInr), onclick: function () {
         if (p.scope === 'multi-class') { var need2 = p.classCount || 2; if (picked.length !== need2) return BL.toast('Please choose exactly ' + need2 + ' classes.'); return buy(p, { classes: picked }, btn); }
         buy(p, p.scope === 'one-class' ? { cls: Number(sel.value) } : {}, btn);
@@ -155,7 +166,7 @@
     } },
       h('label', { class: 'f' }, h('span', { text: 'Name' }), h('input', { name: 'name', value: u.name, maxlength: 80, required: true })),
       h('label', { class: 'f' }, h('span', { text: 'Email' }), h('input', { value: u.email, disabled: true })),
-      h('div', { class: 'two' }, h('label', { class: 'f' }, h('span', { text: 'Class' }), h('select', { name: 'cls' }, [6, 7, 8, 9, 10].map(function (n) { var o = h('option', { value: n, text: String(n) }); if (n === u.cls) o.selected = true; return o; }))),
+      h('div', { class: 'two' }, h('label', { class: 'f' }, h('span', { text: 'Class' }), h('select', { name: 'cls' }, [6, 7, 8, 9, 10, 11, 12].map(function (n) { var o = h('option', { value: n, text: String(n) }); if (n === u.cls) o.selected = true; return o; }))),
         h('label', { class: 'f' }, h('span', { text: 'Phone' }), h('input', { name: 'phone', value: u.phone, maxlength: 20 }))),
       h('label', { class: 'f' }, h('span', { text: 'School' }), h('input', { name: 'school', value: u.school, maxlength: 100 })), err, ok,
       h('button', { class: 'btn primary', type: 'submit', style: 'margin-top:16px', text: 'Save changes' }));

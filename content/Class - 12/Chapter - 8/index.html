@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 8 — Electromagnetic Waves | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{ flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px); display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5; }
+.topbar .brand-badge{ width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:clamp(15px,1.3vw,20px); flex:0 0 auto; }
+.topbar .chip{ display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28); border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px; }
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center; flex-wrap:wrap;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{ flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border); overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px; }
+.nav-item{ display:flex; align-items:center; gap:8px; text-align:left; width:100%; border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease; }
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:40px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.act{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.off{background:var(--f-red); border-color:var(--f-red); color:#fff;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard .rval.sm{font-size:var(--fs-sm); line-height:1.25;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:160px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:360px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📡</div>
+    <div>
+      <div class="chip">Grade 12 · Physics Part 1 · Ch 8</div>
+      <h1>Electromagnetic Waves</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-red)"></i>Electric field E</span>
+      <span><i style="background:var(--f-blue)"></i>Magnetic field B</span>
+      <span><i style="background:var(--f-green)"></i>Propagation · displacement current</span>
+      <span><i style="background:var(--f-yellow)"></i>Charge · conduction current</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">8.2</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 8: ELECTROMAGNETIC WAVES
+   Every scene runs a continuous loop. Sliders and buttons only set TARGETS;
+   parameters ease toward them, springy things settle, waves are drawn from
+   the real equations  E = E0 sin(kz − ωt),  B0 = E0/c,  v = 1/√(με).
+   Light speed is slowed to a watchable pace; wavelengths, frequencies, field
+   amplitudes and currents shown in the cards use the real values.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', navy:'#1a3a5c', muted:'#4c6178', mid:'#8195ab', grid:'#dbe4f0'};
+const TAU = Math.PI*2, C0 = 3e8, MU0 = 4e-7*Math.PI, EPS0 = 8.854e-12, HEV = 4.1357e-15;
+
+/* ---------- canvas + drawing helpers ---------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||8); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save(); ctx.font=(o.weight||600)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha; ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function smooth(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function hexRgb(h){ if(h[0]==='r'){ const m=h.match(/[0-9.]+/g); return [+m[0],+m[1],+m[2]]; } const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rgba(hex,a){ const c=hexRgb(hex); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+clamp(a,0,1).toFixed(3)+')'; }
+/* engineering-prefix formatter: 1.6e-11,'T' → "16.3 pT" */
+function si(x,unit,d){
+  if(!isFinite(x)) return '—'; if(x===0) return '0 '+unit; d=d===undefined?2:d;
+  const P=[[1e12,'T'],[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n'],[1e-12,'p'],[1e-15,'f']], a=Math.abs(x);
+  for(const [m,p] of P){ if(a>=m*0.9995) return fmt(x/m,d)+' '+p+unit; }
+  return x.toExponential(1)+' '+unit;
+}
+/* scientific formatter: "1.87 × 10¹⁰ V/s" */
+function sci(x,unit,d){
+  if(!isFinite(x)||x===0) return '0 '+unit; d=d===undefined?2:d;
+  let e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e); if(Math.abs(Number(m.toFixed(d)))>=10){ m/=10; e++; }
+  const sup={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  return fmt(m,d)+' × 10'+String(e).split('').map(c=>sup[c]).join('')+' '+unit;
+}
+/* a short travelling wave-packet drawn along a direction (a photon) */
+function wavy(ctx,x,y,ang,len,amp,waves,color,lw,ph){
+  const dx=Math.cos(ang), dy=Math.sin(ang); ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2.2; ctx.lineJoin='round'; ctx.beginPath();
+  for(let i=0;i<=26;i++){ const u=i/26, s=(u-0.5)*len, off=amp*Math.sin(waves*TAU*u+(ph||0))*Math.sin(Math.PI*u);
+    const px=x+dx*s-dy*off, py=y+dy*s+dx*off; i?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+  ctx.stroke(); ctx.restore();
+}
+function lamp(ctx,x,y,r,b){
+  if(b>0.03){ const gr=r*(1.6+b*1.8), g=ctx.createRadialGradient(x,y,r*0.2,x,y,gr); g.addColorStop(0,'rgba(255,214,90,'+(0.85*b).toFixed(3)+')'); g.addColorStop(1,'rgba(255,214,90,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,gr,0,TAU); ctx.fill(); }
+  circ(ctx,x,y,r,COL.ink,'rgba(255,255,255,0.9)',2.4);
+  ctx.save(); ctx.strokeStyle=mixCol('#9aa8b8',COL.red,clamp(b*1.2,0,1)); ctx.lineWidth=2.4; ctx.lineJoin='round'; ctx.beginPath();
+  ctx.moveTo(x-r*0.45,y+r*0.55); ctx.lineTo(x-r*0.25,y-r*0.1); ctx.lineTo(x,y+r*0.3); ctx.lineTo(x+r*0.25,y-r*0.1); ctx.lineTo(x+r*0.45,y+r*0.55); ctx.stroke(); ctx.restore();
+}
+/* H2O drawn as a line diagram: red O, blue H, bond lines. ang = direction of the H side. */
+function h2o(ctx,x,y,s,ang,lw){
+  const a1=ang-0.91, a2=ang+0.91, hx1=x+s*Math.cos(a1), hy1=y+s*Math.sin(a1), hx2=x+s*Math.cos(a2), hy2=y+s*Math.sin(a2);
+  line(ctx,x,y,hx1,hy1,COL.ink,lw||1.6); line(ctx,x,y,hx2,hy2,COL.ink,lw||1.6);
+  circ(ctx,hx1,hy1,s*0.26,COL.blue,'#fff',lw||1.6); circ(ctx,hx2,hy2,s*0.26,COL.blue,'#fff',lw||1.6); circ(ctx,x,y,s*0.4,COL.red,'#fff',lw||1.6);
+}
+
+/* ---------- animation engine ---------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){ const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now; tick(dt); raf = requestAnimationFrame(frame); }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf); activeStops.push(stop); return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function springTo(s,target,k,damping,dt){ s.v += ((target-s.x)*k - s.v*damping)*dt; s.x += s.v*dt; return s.x; }
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); if(cb) cb(b); }); }
+
+/* ---------- UI builders ---------- */
+const activities = [];
+function labShell(){ const wrap=document.createElement('div'); wrap.className='lab-view'; wrap.innerHTML=`<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`; return wrap; }
+function sl(id,label,min,max,step,val){ return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function seg(id,title,opts,sel){ sel=sel||0; return `<div class="control-group"><label>${title}</label><div class="toggle-group" id="${id}">`+opts.map((o,i)=>`<button class="toggle-btn${i===sel?' active':''}" data-v="${o[0]}">${o[1]}</button>`).join('')+`</div></div>`; }
+function btns(id,title,opts){ return `<div class="control-group">${title?`<label>${title}</label>`:''}<div class="toggle-group" id="${id}">`+opts.map(o=>`<button class="toggle-btn" data-v="${o[0]}">${o[1]}</button>`).join('')+`</div></div>`; }
+function cards(list){ return `<div class="control-group"><div class="result-cards">`+list.map(c=>`<div class="rcard"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}" style="${c[2]?'color:'+c[2]:''}">—</div></div>`).join('')+`</div></div>`; }
+function mkUI(wrap){
+  const $=s=>wrap.querySelector(s);
+  return {$, canvas:$('canvas'), val:id=>parseFloat($('#'+id).value), set:(id,v)=>{$('#'+id).value=v;}, txt:(id,s)=>{ const e=$('#'+id); if(e) e.textContent=s; }};
+}
+const wireSeg=(wrap,id,cb)=>toggleWire(wrap.querySelectorAll('#'+id+' button'),cb);
+const getSeg=(wrap,id)=>wrap.querySelector('#'+id+' .active').dataset.v;
+const press=(wrap,id,v)=>wrap.querySelector('#'+id+' button[data-v="'+v+'"]').click();
+
+/* =====================================================================
+   8.2  DISPLACEMENT CURRENT — Ampère–Maxwell law
+   B(2πr) = μ0 (ic + id),  id = ε0 dΦE/dt.  A loop of radius r around the wire
+   can be capped by a flat disc (ic threads it) or a pot / tiffin box that
+   bulges between the plates (only id threads it). Ampère alone gives B = 0
+   for the pot; adding id gives the same B for every surface.
+   Textbook checks: Ex 8.1 (R = 12 cm, d = 5 cm, i = 0.15 A → C = 8.0 pF,
+   dV/dt = 1.9×10¹⁰ V/s, id = 0.15 A).  Ex 8.2 (R = 6 cm, i0 = 9.8 µA →
+   B at 3 cm in the gap = 16 pT).
+   ===================================================================== */
+function buildDisp(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    seg('law','Law used to find B',[['amp','Ampère only'],['max','Ampère–Maxwell']],1) +
+    seg('surf','Surface on the loop',[['flat','Flat disc'],['pot','Pot'],['box','Tiffin']]) +
+    seg('mode','Current',[['dc','Steady charge'],['ac','AC']]) +
+    sl('I','Current i',-6,0,0.001,-0.824) + sl('R','Plate radius R',2,15,0.5,12) + sl('P','Probe radius r′ in the gap',10,170,1,100) +
+    btns('pre','Textbook',[['1','Ex 8.1'],['2','Ex 8.2']]) +
+    cards([['cIc','ic through surface','var(--f-yellow)'],['cId','id through surface','var(--f-green)'],['cB','B on the loop','var(--f-blue)'],['cBg','B in the gap at r′','var(--f-blue)'],['cC','Capacitance C',null],['cDv','dV/dt',null]]) +
+    `<p class="hint">Peak values · plate gap 5 cm</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  ['law','surf','mode'].forEach(id=>wireSeg(wrap,id));
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.v==='1'){ press(wrap,'mode','dc'); set('I',-0.824); set('R',12); set('P',100); }
+    else { press(wrap,'mode','ac'); set('I',-5.011); set('R',6); set('P',50); } });
+  let t=0, th=0, iS=0, Qs=0, iD=0, QD=0, drift=0, bOff=0;
+  const E={I:val('I'),R:val('R'),P:val('P')};
+  animLoop(dt=>{
+    t+=dt; E.I=approach(E.I,val('I'),8,dt); E.R=approach(E.R,val('R'),8,dt); E.P=approach(E.P,val('P'),8,dt);
+    const mode=getSeg(wrap,'mode'), surf=getSeg(wrap,'surf'), law=getSeg(wrap,'law');
+    let iT,QT;
+    if(mode==='ac'){ th+=TAU*0.3*dt; iT=Math.cos(th); QT=Math.sin(th); }
+    else { const s=t%10, d=s<3?1:(s>=5&&s<8?-1:0); iS=approach(iS,d,7,dt); Qs=clamp(Qs+iS*dt/3,0,1); iT=iS; QT=Qs; }
+    iD=approach(iD,iT,14,dt); QD=approach(QD,QT,14,dt);
+    const I0=Math.pow(10,E.I), Rm=E.R/100, rl=1.35*Rm, rpb=E.P/100*Rm;
+    const contra=(law==='amp'&&surf!=='flat');
+    const Bl=contra?0:MU0*I0/(TAU*rl);
+    const Bg=law==='amp'?0:(rpb<Rm?MU0*I0*rpb/(TAU*Rm*Rm):MU0*I0/(TAU*rpb));
+    const Cap=EPS0*Math.PI*Rm*Rm/0.05;
+    txt('IV',si(Math.pow(10,val('I')),'A')); txt('RV',fmt(val('R'),1)+' cm'); txt('PV',fmt(val('P')*val('R')/100/100*100,1)+' cm');
+    txt('cIc',surf==='flat'?si(I0,'A'):'0'); txt('cId',surf==='flat'?'0':(law==='max'?si(I0,'A'):'ignored'));
+    txt('cB',contra?'0  ✗':si(Bl,'T')); txt('cBg',law==='amp'?'0  ✗':si(Bg,'T')); txt('cC',si(Cap,'F')); txt('cDv',sci(I0/Cap,'V/s'));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h*0.5, svW=w*0.6, cx=svW*0.64, gap=36, Rpx=lerp(h*0.1,h*0.26,(E.R-2)/13), rpx=Rpx*1.35;
+    const xl=cx-gap/2, xr=cx+gap/2, xP=svW*0.2, x0=8, x1=svW-6, sI=Math.sign(iD)||1, aI=Math.abs(iD);
+    drift+=iD*58*dt; bOff+=iD*60*dt;
+    // surface capping the loop
+    ctx.save();
+    if(surf==='flat'){ ctx.beginPath(); ctx.ellipse(xP,cy,9,rpx,0,0,TAU); ctx.fillStyle='rgba(217,160,23,0.20)'; ctx.fill(); }
+    else { const rad=surf==='pot'?rpx*0.7:3, top=cy-rpx, bot=cy+rpx;
+      ctx.beginPath(); ctx.moveTo(xP,top); ctx.lineTo(cx-rad,top); ctx.arcTo(cx,top,cx,top+rad,rad); ctx.lineTo(cx,bot-rad); ctx.arcTo(cx,bot,cx-rad,bot,rad); ctx.lineTo(xP,bot);
+      ctx.fillStyle='rgba(31,157,85,0.11)'; ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.stroke(); }
+    ctx.restore();
+    // E field between the plates
+    const sQ=Math.sign(QD)||1, mQ=Math.abs(QD);
+    if(mQ>0.04) for(let k=-3;k<=3;k++){ const y=cy+k/3*Rpx*0.88; ctx.save(); ctx.globalAlpha=0.25+0.75*mQ; vec(ctx,sQ>0?xl+4:xr-4,y,sQ>0?xr-4:xl+4,y,COL.red,1+3*mQ,5+4*mQ); ctx.restore(); }
+    // plates + charge signs
+    line(ctx,xl,cy-Rpx,xl,cy+Rpx,COL.ink,6); line(ctx,xr,cy-Rpx,xr,cy+Rpx,COL.ink,6);
+    if(mQ>0.04) for(let k=-3;k<=3;k++){ const y=cy+k/3*Rpx*0.88+5; textAt(ctx,sQ>0?'+':'−',xl-12,y,{align:'center',size:15,color:COL.yellow,alpha:Math.min(1,mQ*1.6)}); textAt(ctx,sQ>0?'−':'+',xr+12,y,{align:'center',size:15,color:COL.yellow,alpha:Math.min(1,mQ*1.6)}); }
+    // wires + conduction dots (yellow)
+    line(ctx,x0,cy,xl-3,cy,COL.ink,2.6); line(ctx,xr+3,cy,x1,cy,COL.ink,2.6);
+    const dotsOn=(a,b)=>{ const len=b-a, sp=22, n=Math.floor(len/sp)+1; for(let j=0;j<n;j++){ const x=a+(((j*sp+drift)%len)+len)%len; circ(ctx,x,cy,4.2,'#fff',COL.yellow,1.2); } };
+    dotsOn(x0+4,xl-6); dotsOn(xr+6,x1-4);
+    // displacement current in the gap (green dashes continue the flow)
+    if(aI>0.04) for(let k=-2;k<=2;k++){ const y=cy+k*Rpx*0.42; ctx.save(); ctx.globalAlpha=Math.min(1,aI*1.2); ctx.strokeStyle=COL.green; ctx.lineWidth=2.8; ctx.setLineDash([7,6]); ctx.lineDashOffset=-drift;
+      ctx.beginPath(); ctx.moveTo(xl+3,y); ctx.lineTo(xr-3,y); ctx.stroke(); ctx.restore(); arrowHead(ctx,sI>0?xr-3:xl+3,y,sI>0?0:Math.PI,rgba(COL.green,Math.min(1,aI*1.2)),7); }
+    textAt(ctx,'ic',x0+(xl-x0)*0.5,cy+22,{align:'center',size:13,color:COL.yellow}); textAt(ctx,'id',cx,cy+Rpx+24,{align:'center',size:13,color:COL.green});
+    // the Ampère loop (blue) with B arrows
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6+2*(contra?0:aI); ctx.globalAlpha=contra?0.35:1; ctx.beginPath(); ctx.ellipse(xP,cy,9,rpx,0,0,TAU); ctx.stroke(); ctx.restore();
+    if(!contra && aI>0.05){ ctx.save(); ctx.globalAlpha=Math.min(1,aI*1.3); for(const [al,dir] of [[-Math.PI/2,1],[Math.PI/2,-1]]){ const px=xP+9*Math.cos(al), py=cy+rpx*Math.sin(al); arrowHead(ctx,px,py,(dir>0?0:Math.PI)*(sI>0?1:1)+(sI>0?0:Math.PI),COL.blue,8+7*aI); } ctx.restore(); }
+    textAt(ctx,'B',xP-20,cy-rpx-4,{size:14,color:COL.blue,align:'center'});
+    textAt(ctx,contra?'✗  B = 0':'✓  same B',xP,cy+rpx+24,{align:'center',size:13,color:contra?COL.red:COL.green});
+    textAt(ctx,'side view',svW/2,h-10,{align:'center',size:11,color:COL.mid,weight:500});
+    // cross-section: view along the axis
+    const icx=svW+(w-svW)*0.5, icy=h*0.33, Rc=Math.min((w-svW)*0.2,h*0.2);
+    line(ctx,svW,12,svW,h-12,COL.grid,1.2,[5,5]);
+    circ(ctx,icx,icy,Rc,COL.ink,'rgba(205,214,226,0.22)',3);
+    if(mQ>0.04) for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++){ const px=icx+a*Rc*0.38, py=icy+b*Rc*0.38; if(Math.hypot(px-icx,py-icy)>Rc*0.9) continue; const s=2.5+5*mQ;
+      ctx.save(); ctx.globalAlpha=0.3+0.7*mQ; ctx.strokeStyle=COL.red; ctx.lineWidth=1.8;
+      if(sQ>0){ ctx.beginPath(); ctx.moveTo(px-s,py-s); ctx.lineTo(px+s,py+s); ctx.moveTo(px+s,py-s); ctx.lineTo(px-s,py+s); ctx.stroke(); } else { ctx.beginPath(); ctx.arc(px,py,s,0,TAU); ctx.stroke(); ctx.fillStyle=COL.red; ctx.beginPath(); ctx.arc(px,py,1.6,0,TAU); ctx.fill(); }
+      ctx.restore(); }
+    const rr=Rc*E.P/100, cv=u=>u<1?u:1/u, bn=law==='amp'?0:cv(E.P/100);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.25+0.75*Math.min(1,bn*aI*1.2); ctx.lineWidth=1.6+2.4*bn*aI; ctx.setLineDash([9,7]); ctx.lineDashOffset=-bOff*0.6; ctx.beginPath(); ctx.arc(icx,icy,rr,0,TAU); ctx.stroke(); ctx.restore();
+    if(bn*aI>0.04) for(let k=0;k<6;k++){ const an=k*TAU/6; arrowHead(ctx,icx+rr*Math.cos(an),icy+rr*Math.sin(an),an+Math.PI/2+(iD<0?Math.PI:0),rgba(COL.blue,Math.min(1,bn*aI*1.5)),6+8*bn*aI); }
+    textAt(ctx,'E',icx,icy-Rc-8,{align:'center',size:13,color:COL.red}); textAt(ctx,'B',icx+rr*0.72+8,icy-rr*0.72,{size:13,color:COL.blue});
+    textAt(ctx,'view along the axis',icx,icy+Rc*1.7+16,{align:'center',size:11,color:COL.mid,weight:500});
+    // B(r) profile — rises inside the plates, falls as 1/r outside
+    const PX0=svW+22, PX1=w-20, PY0=h*0.7, PY1=h*0.93, UX=u=>PX0+(u/3)*(PX1-PX0), UY=u=>PY1-cv(u)*(PY1-PY0-8);
+    line(ctx,PX0,PY1,PX1,PY1,COL.ink,1.4); line(ctx,PX0,PY1,PX0,PY0-4,COL.ink,1.4);
+    ctx.save(); ctx.beginPath(); for(let i=0;i<=120;i++){ const u=3*i/120; i?ctx.lineTo(UX(u),UY(u)):ctx.moveTo(UX(u),UY(u)); } ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    line(ctx,UX(1),PY1,UX(1),UY(1),COL.mid,1,[3,4]); textAt(ctx,'R',UX(1),PY1+14,{align:'center',size:11,color:COL.mid}); textAt(ctx,'B',PX0-6,PY0,{align:'right',size:12,color:COL.blue}); textAt(ctx,'r',PX1,PY1+14,{align:'right',size:11,color:COL.mid});
+    const mk=bn*aI; circ(ctx,UX(E.P/100),PY1-mk*(PY1-PY0-8),6,COL.yellow,'#fff',3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.3.1  SOURCES — only an accelerating charge radiates
+   A charge at rest gives a static field; one moving steadily gives a steady
+   field that just slides along; one that oscillates (accelerates) sheds
+   expanding wavefronts, strongest sideways (∝ sin θ) and zero along its axis.
+   The wave leaves at speed c, so a second antenna starts to oscillate only
+   after the delay d/c — and keeps going for that long after the source stops.
+   Frequency of the wave = frequency of the charge.  λ = c/f.
+   ===================================================================== */
+function buildRadiate(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    seg('mode','Charge motion',[['still','At rest'],['drift','Steady'],['osc','Oscillating']],2) +
+    sl('f','Frequency f',10,100,1,50) + sl('A','Swing of the charge',10,100,1,70) +
+    cards([['cF','Wave frequency','var(--f-yellow)'],['cL','Wavelength λ = c/f','var(--f-green)'],['cP','Radiated power','var(--f-red)'],['cR','Receiver signal','var(--f-blue)']]) +
+    `<p class="hint">Wave speed slowed for viewing · f and λ are real</p>`;
+  const {$,canvas,val,txt}=mkUI(wrap);
+  wireSeg(wrap,'mode');
+  const VPX=125; let t=0, th=0, lastN=0, yd=0, amp=0, rp=0; const E={f:val('f'),A:val('A')}; const rings=[], hist=[];
+  animLoop(dt=>{
+    t+=dt; E.f=approach(E.f,val('f'),7,dt); E.A=approach(E.A,val('A'),7,dt);
+    const mode=getSeg(wrap,'mode'), osc=mode==='osc';
+    const lam=4000/E.f, fv=VPX/lam, Apx=6+0.34*E.A, S=(E.A/100)*Math.pow(E.f/100,2), root=Math.sqrt(S);
+    amp=approach(amp,osc?1:0,6,dt); if(osc) th+=TAU*fv*dt;
+    const nHalf=Math.floor(th/Math.PI); if(osc && nHalf>lastN){ rings.push({t0:t,a:0.18+0.82*root,s:nHalf%2?-1:1}); lastN=nHalf; } if(!osc) lastN=Math.floor(th/Math.PI);
+    hist.push([t,Math.sin(th)*Math.min(1,root*1.3)*amp]); while(hist.length>2 && t-hist[0][0]>8) hist.shift();
+    txt('fV',fmt(val('f'),0)+' MHz'); txt('AV',fmt(val('A'),0)+' %');
+    txt('cF',fmt(E.f,0)+' MHz'); txt('cL',fmt(300/E.f,1)+' m'); txt('cP',fmt(Math.pow(E.A/100,2)*Math.pow(E.f/100,4)*100*(osc?1:0),1)+' %');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sx=w*0.2, sy=h*0.5, rx=w*0.8, D=rx-sx;
+    // expanding wavefronts: strongest sideways, none along the axis
+    for(let i=rings.length-1;i>=0;i--){ const g=rings[i], r=VPX*(t-g.t0); if(r>w*1.1){ rings.splice(i,1); continue; } if(r<8) continue;
+      const decay=clamp(110/(r+60),0.15,1), N=72; ctx.save(); ctx.lineWidth=2.6; ctx.setLineDash(g.s>0?[]:[7,6]);
+      for(let k=0;k<N;k++){ const a1=k*TAU/N, a2=(k+1.15)*TAU/N, am=(a1+a2)/2, inten=Math.pow(Math.abs(Math.cos(am)),1.1), al=g.a*decay*inten*(g.s>0?1:0.7); if(al<0.03) continue;
+        ctx.strokeStyle='rgba(217,67,43,'+al.toFixed(3)+')'; ctx.beginPath(); ctx.arc(sx,sy,r,a1,a2); ctx.stroke(); }
+      ctx.restore(); }
+    // source antenna + charge
+    line(ctx,sx,sy-78,sx,sy+78,COL.ink,3.4);
+    let cyc=sy, ca=0;
+    if(mode==='osc'){ cyc=sy-Apx*Math.sin(th)*amp; ca=Math.sin(th)*amp; }
+    else if(mode==='drift'){ yd=(yd+52*dt)%170; cyc=sy+85-yd; }
+    if(mode!=='osc') for(let k=0;k<12;k++){ const an=k*TAU/12; vec(ctx,sx+16*Math.cos(an),cyc+16*Math.sin(an),sx+66*Math.cos(an),cyc+66*Math.sin(an),'rgba(217,67,43,0.65)',1.6,6); }
+    circ(ctx,sx,cyc,10,COL.ink,COL.yellow,2.6); textAt(ctx,'+',sx,cyc+5,{align:'center',size:15,color:COL.ink,weight:700});
+    if(mode==='drift') vec(ctx,sx+22,cyc,sx+22,cyc-44,COL.blue,2.8,8);
+    if(mode==='osc' && Math.abs(ca)>0.05){ const L=-ca*Math.min(70,18+60*root*1.2)*0; vec(ctx,sx+24,cyc,sx+24,cyc+ca*(26+30*E.A/100),COL.green,3,9); }
+    textAt(ctx,mode==='osc'?'a':(mode==='drift'?'v':''),sx+34,cyc+4,{size:13,color:mode==='osc'?COL.green:COL.blue});
+    textAt(ctx,mode==='osc'?'accelerating  →  radiates':'no acceleration  →  no wave',sx,sy+112,{align:'center',size:12,color:mode==='osc'?COL.red:COL.mid});
+    // receiving antenna (Hertz) — responds only after the delay D / c
+    let ts=t-D/VPX, sig=0; for(let i=hist.length-1;i>=0;i--){ if(hist[i][0]<=ts){ sig=hist[i][1]; break; } }
+    rp=approach(rp,sig*sig,5,dt);
+    line(ctx,rx,sy-60,rx,sy+60,COL.ink,3.4);
+    for(let k=-1;k<=1;k++) circ(ctx,rx,sy+k*20+sig*34,6,COL.ink,COL.yellow,2);
+    line(ctx,rx+2,sy,rx+36,sy,COL.ink,2.6); lamp(ctx,rx+52,sy,15,clamp(rp*3.2,0,1));
+    txt('cR',fmt(clamp(Math.sqrt(rp)/0.8,0,1.5)*100*0.8,0)+' %');
+    // distance and delay
+    line(ctx,sx,h-34,rx,h-34,COL.green,2,[6,5]); arrowHead(ctx,rx,h-34,0,COL.green,8); textAt(ctx,'wave travels at c  →  receiver answers after d/c',(sx+rx)/2,h-42,{align:'center',size:12,color:COL.green});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   shared 3-D wave drawing (oblique projection):  z → right (propagation),
+   x ↑ (E, red),  y ↙ (B, blue).  E and B are in phase, ⟂ to each other and to z.
+   ===================================================================== */
+function wave3D(ctx,O,L,o){
+  const N=o.N||72, P=(z,x,y)=>[O.x+z-0.5*y, O.y-x+0.4*y], pts=[];
+  for(let i=0;i<=N;i++){ const z=L*i/N; pts.push({z,s:Math.sin(o.phase(z)),Ea:o.Ea(z),Ba:o.Ba(z)}); }
+  const hairs=(key,amp,color)=>{ pts.forEach((p,i)=>{ const a=P(p.z,0,0), b=key==='E'?P(p.z,p.s*p.Ea,0):P(p.z,0,p.s*p.Ba); const len=Math.hypot(b[0]-a[0],b[1]-a[1]); line(ctx,a[0],a[1],b[0],b[1],rgba(color,0.5),1.4); if(len>10&&i%2===0) arrowHead(ctx,b[0],b[1],Math.atan2(b[1]-a[1],b[0]-a[0]),rgba(color,0.8),6); }); };
+  const curve=(key,color)=>{ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>{ const q=key==='E'?P(p.z,p.s*p.Ea,0):P(p.z,0,p.s*p.Ba); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.strokeStyle=color; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.stroke(); ctx.restore(); };
+  if(o.showB!==false){ hairs('B',0,COL.blue); curve('B',COL.blue); }
+  const a0=P(0,0,0), a1=P(L,0,0); vec(ctx,a0[0],a0[1],a1[0],a1[1],COL.green,2.6,10);
+  if(o.showE!==false){ hairs('E',0,COL.red); curve('E',COL.red); }
+  return {P,pts};
+}
+function axesKey(ctx,x,y){
+  vec(ctx,x,y,x+38,y,COL.green,2.2,7); textAt(ctx,'z',x+46,y+4,{size:12,color:COL.green});
+  vec(ctx,x,y,x,y-36,COL.red,2.2,7); textAt(ctx,'x  (E)',x+4,y-42,{size:12,color:COL.red});
+  vec(ctx,x,y,x-22,y+18,COL.blue,2.2,7); textAt(ctx,'y  (B)',x-26,y+34,{size:12,color:COL.blue,align:'right'});
+}
+
+/* =====================================================================
+   8.3.2  NATURE OF EM WAVES —  Ex = E0 sin(kz − ωt),  By = B0 sin(kz − ωt)
+   B0 = E0/c,  ω = ck,  λ = c/f.   Textbook checks:
+   Ex 8.1: 25 MHz, E = 6.3 V/m → B = 2.1×10⁻⁸ T, λ = 12 m.
+   Ex 8.9: E0 = 120 N/C, 50 MHz → B0 = 4×10⁻⁷ T, ω = 3.14×10⁸ rad/s, k = 1.05 rad/m, λ = 6 m.
+   ===================================================================== */
+function buildWave(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('f','Frequency f',6.7,8.7,0.001,7.398) + sl('E','Electric amplitude E₀',1,150,0.1,60) +
+    btns('pre','Textbook',[['1','Ex 8.1'],['2','Ex 8.9'],['p','⏯ Pause']]) +
+    cards([['cL','Wavelength λ','var(--f-green)'],['cB','B₀ = E₀/c','var(--f-blue)'],['cW','ω = 2πf',null],['cK','k = 2π/λ',null]]) +
+    `<p class="hint">E ⟂ B ⟂ direction · in phase · speed slowed</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  let paused=false, t=0; const E={f:val('f'),E:val('E')};
+  const pb=wrap.querySelector('#pre button[data-v="p"]');
+  wrap.querySelector('#pre button[data-v="1"]').onclick=()=>{ set('f',Math.log10(25e6)); set('E',6.3); };
+  wrap.querySelector('#pre button[data-v="2"]').onclick=()=>{ set('f',Math.log10(50e6)); set('E',120); };
+  pb.onclick=()=>{ paused=!paused; pb.classList.toggle('act',paused); };
+  animLoop(dt=>{
+    if(!paused) t+=dt; E.f=approach(E.f,val('f'),7,dt); E.E=approach(E.E,val('E'),7,dt);
+    const f=Math.pow(10,val('f')), lam=C0/f, B0=val('E')/C0;
+    txt('fV',si(f,'Hz')); txt('EV',fmt(val('E'),1)+' V/m');
+    txt('cL',si(lam,'m')); txt('cB',sci(B0,'T')); txt('cW',sci(TAU*f,'rad/s')); txt('cK',fmt(TAU/lam,3)+' rad/m');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=w*0.8, O={x:w*0.1,y:h*0.52}, nW=1.5+4.5*(E.f-6.7)/2, lamPx=L/nW, k=TAU/lamPx, om=k*105, sc=clamp(h/460,0.8,1.5), Ea=(18+72*Math.sqrt(E.E/150))*sc, Ba=Ea*1.05;
+    const ph=z=>k*z-om*t;
+    // wave-front plane at the probe (E and B lie in it)
+    const zp=L*0.5, Pj=(z,x,y)=>[O.x+z-0.5*y, O.y-x+0.4*y], hx=Ea+22, hy=Ba+22;
+    ctx.save(); ctx.beginPath(); [[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]].forEach((c,i)=>{ const q=Pj(zp,c[0],c[1]); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.closePath(); ctx.fillStyle='rgba(19,42,68,0.04)'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+    wave3D(ctx,O,L,{phase:ph,Ea:()=>Ea,Ba:()=>Ba});
+    // probe: E and B at one point rise and fall together
+    const s=Math.sin(ph(zp)), p0=Pj(zp,0,0), pe=Pj(zp,s*Ea,0), pb2=Pj(zp,0,s*Ba);
+    if(Math.abs(s)>0.05){ vec(ctx,p0[0],p0[1],pe[0],pe[1],COL.red,4.2,11); vec(ctx,p0[0],p0[1],pb2[0],pb2[1],COL.blue,4.2,11); }
+    circ(ctx,p0[0],p0[1],6.5,COL.ink,COL.yellow,2.6);
+    textAt(ctx,'E',pe[0]+12,pe[1]+(s>0?-4:14),{size:14,color:COL.red}); textAt(ctx,'B',pb2[0]-12,pb2[1]+(s>0?16:-4),{size:14,color:COL.blue,align:'right'});
+    const e1=Pj(L,0,0); textAt(ctx,'c',e1[0]-6,e1[1]-14,{size:15,color:COL.green,align:'center'});
+    // one wavelength bracket
+    const bx=O.x+L*0.06, by=O.y+Ea+Ba*0.4+34; line(ctx,bx,by,bx+lamPx,by,COL.green,2); line(ctx,bx,by-5,bx,by+5,COL.green,2); line(ctx,bx+lamPx,by-5,bx+lamPx,by+5,COL.green,2); textAt(ctx,'λ',bx+lamPx/2,by+18,{align:'center',size:14,color:COL.green});
+    axesKey(ctx,w*0.11,h*0.17);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.3.2b  WAVE IN A MEDIUM —  v = 1/√(με)  = c/√(εr μr)
+   Frequency is set by the source and never changes; the speed drops, so the
+   wavelength shrinks by the same factor.  B0 = E0/v, so B grows relative to E.
+   ===================================================================== */
+function buildMedium(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('er','Permittivity ε/ε₀',1,6,0.01,2.25) + sl('mr','Permeability μ/μ₀',1,2,0.01,1) +
+    btns('pre','Medium',[['1,1','Vacuum'],['1.77,1','Water'],['2.25,1','Glass'],['5.86,1','Diamond']]) +
+    cards([['cV','Speed v','var(--f-green)'],['cN','Index n = c/v',null],['cL','Wavelength λ′','var(--f-green)'],['cBr','B₀ / E₀ vs vacuum','var(--f-blue)']]) +
+    `<p class="hint">Source frequency 5 × 10¹⁴ Hz never changes</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{ const [e,m]=b.dataset.v.split(','); set('er',e); set('mr',m); });
+  let t=0; const E={er:val('er'),mr:val('mr')};
+  animLoop(dt=>{
+    t+=dt; E.er=approach(E.er,val('er'),6,dt); E.mr=approach(E.mr,val('mr'),6,dt);
+    const nT=Math.sqrt(val('er')*val('mr')), n=Math.sqrt(E.er*E.mr);
+    txt('erV',fmt(val('er'),2)); txt('mrV',fmt(val('mr'),2));
+    txt('cV',fmt(C0/nT/1e8,2)+' × 10⁸ m/s'); txt('cN',fmt(nT,2)); txt('cL',fmt(600/nT,0)+' nm'); txt('cBr','× '+fmt(nT,2));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=w*0.8, O={x:w*0.1,y:h*0.54}, zb=L*0.38, k1=TAU/(L/3.4), om=k1*100, Ea=44*clamp(h/460,0.8,1.5), Bb=Ea*0.55;
+    const phase=z=>z<=zb?k1*z-om*t:n*k1*(z-zb)+k1*zb-om*t, Bz=z=>Bb*(1+(n-1)*smooth((z-zb)/14));
+    // glass block (wire-frame)
+    const Pj=(z,x,y)=>[O.x+z-0.5*y, O.y-x+0.4*y], hx=Ea+34, hy=Bb*3.2+26;
+    const cor=z=>[[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]].map(c=>Pj(z,c[0],c[1])), A=cor(zb), B=cor(L);
+    const face=(q,al)=>{ ctx.beginPath(); q.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fillStyle='rgba(47,143,224,'+al+')'; ctx.fill(); };
+    ctx.save(); [[A[0],A[1],B[1],B[0]],[A[2],A[3],B[3],B[2]],[A[1],A[2],B[2],B[1]],[A[3],A[0],B[0],B[3]],A,B].forEach(q=>face(q,0.04)); ctx.strokeStyle=rgba(COL.blue,0.55); ctx.lineWidth=1.6;
+    [A,B].forEach(q=>{ ctx.beginPath(); q.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.stroke(); }); for(let i=0;i<4;i++){ ctx.beginPath(); ctx.moveTo(A[i][0],A[i][1]); ctx.lineTo(B[i][0],B[i][1]); ctx.stroke(); } ctx.restore();
+    const wv=wave3D(ctx,O,L,{phase,Ea:()=>Ea,Ba:Bz,N:110});
+    // crest riders: they slow down in the glass
+    for(let m=-40;m<40;m++){ const target=Math.PI/2+TAU*m; let z=(target+om*t)/k1; if(z>zb) z=zb+(target+om*t-k1*zb)/(n*k1); if(z<0||z>L) continue; const q=wv.P(z,Ea,0); circ(ctx,q[0],q[1],5.5,COL.ink,COL.green,2); }
+    // two probes: same frequency, different wavelength
+    const zs=[zb*0.45,zb+(L-zb)*0.55];
+    zs.forEach(z=>{ const s=Math.sin(phase(z)), p0=wv.P(z,0,0), pe=wv.P(z,s*Ea,0); circ(ctx,p0[0],p0[1],6,COL.ink,COL.yellow,2.4); if(Math.abs(s)>0.06) vec(ctx,p0[0],p0[1],pe[0],pe[1],COL.red,4,10); });
+    // wavelength brackets
+    const br=(x,l)=>{ const y=O.y+Ea+Bb*3.1*0.4+40; line(ctx,x,y,x+l,y,COL.green,2); line(ctx,x,y-5,x,y+5,COL.green,2); line(ctx,x+l,y-5,x+l,y+5,COL.green,2); textAt(ctx,l===L/3.4?'λ':'λ′',x+l/2,y+18,{align:'center',size:14,color:COL.green}); };
+    br(O.x+zb*0.1,L/3.4); br(O.x+zb+30,L/3.4/n);
+    textAt(ctx,'vacuum',O.x+zb*0.5,h*0.1,{align:'center',size:13,color:COL.mid}); textAt(ctx,'medium',O.x+zb+(L-zb)*0.5-20,h*0.1,{align:'center',size:13,color:COL.blue});
+    axesKey(ctx,w*0.11,h*0.2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4  ELECTROMAGNETIC SPECTRUM — same speed c, different f and λ
+   λ = c/f,   photon energy E = hf  (h = 4.136×10⁻¹⁵ eV·s).  Bands from Table 8.1.
+   The tuner gives each band equal width so the thin visible band is usable.
+   ===================================================================== */
+const BANDS=[
+  {n:'Radio',      a:3,      b:9.477,  col:'#2f8fe0', make:'Accelerated electrons in aerials',  det:'Receiver aerials'},
+  {n:'Microwave',  a:9.477,  b:11.477, col:'#1f9d55', make:'Klystron · magnetron valve',        det:'Point-contact diodes'},
+  {n:'Infrared',   a:11.477, b:14.632, col:'#d9432b', make:'Vibrating atoms & molecules',       det:'Thermopile · bolometer'},
+  {n:'Visible',    a:14.632, b:14.875, col:'#d9a017', make:'Electrons drop an energy level',    det:'Eye · photocells'},
+  {n:'Ultraviolet',a:14.875, b:17.477, col:'#7a4fd1', make:'Atomic electrons · hot bodies',     det:'Photocells · film'},
+  {n:'X-ray',      a:17.477, b:20.477, col:'#1a3a5c', make:'X-ray tube · inner-shell electrons',det:'Film · Geiger tube'},
+  {n:'Gamma',      a:20.477, b:22,     col:'#b02e7a', make:'Radioactive decay of the nucleus',  det:'Ionisation chamber'}
+];
+function logFromS(s){ s=clamp(s,0,6.9999); const b=Math.floor(s), B=BANDS[b]; return B.a+(s-b)*(B.b-B.a); }
+function sFromLog(lf){ for(let i=0;i<7;i++){ const B=BANDS[i]; if(lf<=B.b||i===6) return i+clamp((lf-B.a)/(B.b-B.a),0,0.9999); } return 0; }
+function specColor(lf){ const nm=C0/Math.pow(10,lf)*1e9; return 'hsl('+clamp(270*(700-nm)/300,0,270).toFixed(0)+',88%,48%)'; }
+function bandIcon(ctx,i,cx,cy,s,col){
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle='#fff'; ctx.lineWidth=2.4; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(i===0){ ctx.beginPath(); ctx.moveTo(cx,cy-s); ctx.lineTo(cx-s*0.45,cy+s); ctx.moveTo(cx,cy-s); ctx.lineTo(cx+s*0.45,cy+s); ctx.moveTo(cx-s*0.28,cy+s*0.25); ctx.lineTo(cx+s*0.28,cy+s*0.25); ctx.moveTo(cx-s*0.15,cy-s*0.4); ctx.lineTo(cx+s*0.15,cy-s*0.4); ctx.stroke();
+    for(const r of [s*0.55,s*0.95]){ ctx.beginPath(); ctx.arc(cx,cy-s,r,Math.PI*1.18,Math.PI*1.82); ctx.stroke(); ctx.beginPath(); ctx.arc(cx,cy-s,r,Math.PI*0.18,Math.PI*0.82); ctx.stroke(); } }
+  else if(i===1){ rrect(ctx,cx-s,cy-s*0.6,s*2,s*1.2,4); ctx.stroke(); rrect(ctx,cx-s*0.8,cy-s*0.4,s*1.1,s*0.8,3); ctx.stroke(); ctx.beginPath(); ctx.arc(cx+s*0.62,cy-s*0.2,s*0.14,0,TAU); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx+s*0.48,cy+s*0.2); ctx.lineTo(cx+s*0.76,cy+s*0.2); ctx.stroke(); }
+  else if(i===2){ ctx.beginPath(); ctx.moveTo(cx,cy-s); ctx.bezierCurveTo(cx+s*1.0,cy-s*0.1,cx+s*0.85,cy+s,cx,cy+s); ctx.bezierCurveTo(cx-s*0.85,cy+s,cx-s*1.0,cy+s*0.15,cx-s*0.15,cy-s*0.45); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx,cy+s*0.1); ctx.bezierCurveTo(cx+s*0.4,cy+s*0.4,cx+s*0.3,cy+s*0.9,cx,cy+s*0.9); ctx.bezierCurveTo(cx-s*0.3,cy+s*0.9,cx-s*0.4,cy+s*0.5,cx,cy+s*0.1); ctx.stroke(); }
+  else if(i===3){ ctx.beginPath(); ctx.moveTo(cx-s,cy); ctx.quadraticCurveTo(cx,cy-s*0.95,cx+s,cy); ctx.quadraticCurveTo(cx,cy+s*0.95,cx-s,cy); ctx.stroke(); ctx.beginPath(); ctx.arc(cx,cy,s*0.36,0,TAU); ctx.stroke(); }
+  else if(i===4){ ctx.beginPath(); ctx.arc(cx,cy,s*0.42,0,TAU); ctx.stroke(); for(let k=0;k<8;k++){ const a=k*TAU/8; ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*s*0.65,cy+Math.sin(a)*s*0.65); ctx.lineTo(cx+Math.cos(a)*s*1.0,cy+Math.sin(a)*s*1.0); ctx.stroke(); } }
+  else if(i===5){ ctx.beginPath(); ctx.moveTo(cx-s*0.62,cy+s*0.62); ctx.lineTo(cx+s*0.62,cy-s*0.62); ctx.stroke(); for(const [dx,dy] of [[-0.8,0.45],[-0.45,0.8],[0.8,-0.45],[0.45,-0.8]]){ ctx.beginPath(); ctx.arc(cx+dx*s,cy+dy*s,s*0.2,0,TAU); ctx.stroke(); } }
+  else { for(const [dx,dy] of [[0,0],[0.42,0.1],[-0.38,0.2],[0.12,-0.42],[-0.1,0.5],[0.42,-0.3],[-0.4,-0.28]]){ ctx.beginPath(); ctx.arc(cx+dx*s,cy+dy*s,s*0.3,0,TAU); ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fill(); ctx.stroke(); } }
+  ctx.restore();
+}
+function buildSpectrum(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('s','Tune across the spectrum',0,7,0.002,sFromLog(14.714)) +
+    btns('pre','Jump to',[['6','AM radio'],['9.389','Microwave oven'],['13.5','TV remote'],['14.714','Yellow light'],['16.5','UV lamp'],['18.5','X-ray tube']]) +
+    btns('sw','',[['sw','▶ Sweep through all']]) +
+    cards([['cF','Frequency f','var(--f-yellow)'],['cL','Wavelength λ','var(--f-green)'],['cE','Photon energy hf','var(--f-red)'],['cN','Band',null]]) +
+    `<div class="control-group"><div class="rcard"><div class="rlabel">Produced by</div><div class="rval sm" id="cMk">—</div></div><div class="rcard" style="margin-top:6px"><div class="rlabel">Detected by</div><div class="rval sm" id="cDt">—</div></div></div>` +
+    `<p class="hint">Every wave travels at c in vacuum · bands not to scale</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  let sweep=false, t=0; const S={x:val('s'),v:0}, ic=BANDS.map(()=>1);
+  const swb=wrap.querySelector('#sw button'); swb.onclick=()=>{ sweep=!sweep; swb.classList.toggle('act',sweep); swb.textContent=sweep?'■ Stop sweep':'▶ Sweep through all'; };
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{ sweep=false; swb.classList.remove('act'); swb.textContent='▶ Sweep through all'; set('s',sFromLog(parseFloat(b.dataset.v))); });
+  $('#s').addEventListener('input',()=>{ sweep=false; swb.classList.remove('act'); swb.textContent='▶ Sweep through all'; });
+  animLoop(dt=>{
+    t+=dt; if(sweep){ let s=val('s')+dt*0.24; if(s>=7) s=0; set('s',s); }
+    const sT=val('s'), lfT=logFromS(sT), fT=Math.pow(10,lfT), bi=Math.min(6,Math.floor(sT)), B=BANDS[bi];
+    springTo(S,sT,70,9.5,dt); const sP=clamp(S.x,0,7), lf=logFromS(sP), bp=Math.min(6,Math.floor(sP));
+    txt('sV',B.n); txt('cF',si(fT,'Hz')); txt('cL',si(C0/fT,'m')); txt('cE',si(HEV*fT,'eV')); txt('cN',B.n); txt('cMk',B.make); txt('cDt',B.det);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // wave: shorter and shorter, same speed
+    const x0=18, x1=w-18, yc=h*0.2, amp=h*0.095, nC=1+11*(lf-3)/19, lamPx=(x1-x0)/nC, k=TAU/lamPx, om=k*130;
+    const wcol=(bp===3)?specColor(lf):BANDS[bp].col;
+    ctx.save(); ctx.beginPath(); for(let i=0;i<=360;i++){ const x=x0+(x1-x0)*i/360, y=yc-amp*Math.sin(k*(x-x0)-om*t); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.strokeStyle=wcol; ctx.lineWidth=3.6; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    const cr=Math.PI/2; let xc=x0+((((cr+om*t)/k)%lamPx)+lamPx)%lamPx; while(xc<x0+10) xc+=lamPx; const by=yc-amp-26;
+    if(xc+lamPx<x1-100){ line(ctx,xc,by,xc+lamPx,by,COL.green,2); line(ctx,xc,by-5,xc,by+5,COL.green,2); line(ctx,xc+lamPx,by-5,xc+lamPx,by+5,COL.green,2); textAt(ctx,'λ',xc+lamPx/2,by-8,{align:'center',size:14,color:COL.green}); }
+    vec(ctx,x1-100,by,x1-30,by,COL.green,2.8,9); textAt(ctx,'c',x1-65,by-9,{align:'center',size:14,color:COL.green}); textAt(ctx,'same speed',x1-65,by+18,{align:'center',size:11,color:COL.mid,weight:500});
+    // spectrum bar
+    const bx=x0, bw=x1-x0, cw=bw/7, by0=h*0.43, bh=h*0.1;
+    BANDS.forEach((b,i)=>{ const cx0=bx+i*cw;
+      if(i===3){ const g=ctx.createLinearGradient(cx0,0,cx0+cw,0); for(let q=0;q<=6;q++) g.addColorStop(q/6,specColor(lerp(b.a,b.b,q/6))); ctx.fillStyle=g; } else ctx.fillStyle=rgba(b.col,i===bp?0.95:0.5);
+      ctx.fillRect(cx0,by0,cw,bh); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.strokeRect(cx0,by0,cw,bh);
+      textAt(ctx,b.n,cx0+cw/2,by0+bh/2+4,{align:'center',size:Math.min(13,cw/7.4),color:i===3?COL.ink:'#fff',weight:700}); });
+    const px=bx+sP*cw; ctx.save(); ctx.fillStyle=COL.ink; ctx.beginPath(); ctx.moveTo(px,by0-2); ctx.lineTo(px-9,by0-18); ctx.lineTo(px+9,by0-18); ctx.closePath(); ctx.fill(); ctx.restore(); line(ctx,px,by0-2,px,by0+bh+3,COL.ink,2.6);
+    textAt(ctx,'longer λ · lower f',bx,by0+bh+20,{size:11,color:COL.mid,weight:500}); textAt(ctx,'shorter λ · higher f',bx+bw,by0+bh+20,{size:11,color:COL.mid,weight:500,align:'right'});
+    // icons
+    BANDS.forEach((b,i)=>{ ic[i]=approach(ic[i],i===bp?1.35:0.82,9,dt); bandIcon(ctx,i,bx+i*cw+cw/2,h*0.68,Math.min(cw*0.3,h*0.075)*ic[i],i===bp?(i===3?COL.yellow:b.col):rgba(COL.mid,0.7)); });
+    // photon energy meter
+    const mx0=bx, mw=bw, my=h*0.88, frac=clamp((Math.log10(HEV*Math.pow(10,lf))+12)/20,0,1);
+    rrect(ctx,mx0,my,mw,14,7); ctx.fillStyle='#f1f5fa'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.4; ctx.stroke();
+    ctx.save(); rrect(ctx,mx0,my,mw,14,7); ctx.clip(); ctx.fillStyle=COL.yellow; ctx.fillRect(mx0,my,mw*frac,14); ctx.restore();
+    textAt(ctx,'photon energy  hf',mx0,my-7,{size:12,color:COL.yellow}); textAt(ctx,si(HEV*Math.pow(10,lf),'eV'),mx0+mw,my-7,{align:'right',size:12,color:COL.yellow});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.2  MICROWAVE OVEN — water molecules resonate near 2.45 GHz
+   Each H2O molecule is a dipole; the oscillating E field torques it back and
+   forth. Modelled as a driven damped oscillator, so the response (and the
+   heating, ∝ damping power) really peaks at the resonance and drops away.
+   ===================================================================== */
+function buildOven(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('f','Microwave frequency f',0.5,6,0.01,2.45) + sl('P','Oven power',200,1000,10,700) +
+    btns('ctl','',[['on','⏻ Magnetron ON'],['res','Tune to 2.45 GHz'],['rst','Fresh food 20 °C']]) +
+    cards([['cF','Frequency','var(--f-yellow)'],['cL','Wavelength λ','var(--f-green)'],['cH','Heating vs maximum','var(--f-red)'],['cT','Food temperature',null]]) +
+    `<p class="hint">Resonance model · motion slowed for viewing</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  let on=true, T=20, pw=1, td=0, x=0, v=0, absAvg=0, t=0, steam=0; const E={f:val('f'),P:val('P')}, ze=0.25, w0=TAU*1.2;
+  const onB=wrap.querySelector('#ctl button[data-v="on"]'); onB.classList.add('act');
+  onB.onclick=()=>{ on=!on; onB.classList.toggle('act',on); onB.classList.toggle('off',!on); onB.textContent=on?'⏻ Magnetron ON':'⏻ Magnetron OFF'; };
+  wrap.querySelector('#ctl button[data-v="res"]').onclick=()=>set('f',2.45);
+  wrap.querySelector('#ctl button[data-v="rst"]').onclick=()=>{ T=20; };
+  const mol=[]; for(let i=0;i<34;i++){ mol.push({u:((0.5+i*0.7548776662)%1),v:((0.5+i*0.5698402910)%1),a:i*2.399,j:i*1.7}); }
+  const g=r=>(r*r)/((1-r*r)*(1-r*r)+(2*ze*r)*(2*ze*r))/4;
+  animLoop(dt=>{
+    t+=dt; E.f=approach(E.f,val('f'),7,dt); E.P=approach(E.P,val('P'),7,dt); pw=approach(pw,on?1:0,5,dt);
+    const wv=w0*(E.f/2.45), Ef=pw*Math.sqrt(E.P/1000), F=1.3*2*ze*w0*w0*Ef;
+    for(let k=0;k<3;k++){ const sub=dt/3, a=F*Math.cos(td)-2*ze*w0*v-w0*w0*x; v+=a*sub; x+=v*sub; td+=wv*sub; }
+    absAvg=approach(absAvg,2*ze*w0*v*v,3,dt); const norm=0.4225*Math.pow(w0,3), hr=clamp(absAvg/norm,0,2);
+    T=clamp(T+(9*hr-0.03*(T-20))*dt,15,100); steam=approach(steam,T>60?clamp((T-60)/40,0,1):0,2,dt);
+    const ana=g(E.f/2.45)*100*Math.sqrt(E.P/1000)*Math.sqrt(E.P/1000);
+    txt('fV',fmt(val('f'),2)+' GHz'); txt('PV',fmt(val('P'),0)+' W'); txt('cF',fmt(val('f'),2)+' GHz'); txt('cL',fmt(30/val('f'),1)+' cm'); txt('cH',fmt(g(val('f')/2.45)*100,0)+' %'); txt('cT',fmt(T,0)+' °C');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ox0=w*0.04, ox1=w*0.6, oy0=h*0.05, oy1=h*0.64;
+    rrect(ctx,ox0,oy0,ox1-ox0,oy1-oy0,16); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.stroke();
+    rrect(ctx,ox0+14,oy0+14,ox1-ox0-28,oy1-oy0-28,10); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.6; ctx.stroke();
+    // microwaves in the cavity: a travelling wave of E arrows (red)
+    const lamPx=190*(2.45/E.f), kx=TAU/lamPx, ytop=oy0+54, ampE=26*Ef;
+    if(Ef>0.02) for(let xx=ox0+34;xx<ox1-26;xx+=Math.max(14,lamPx/10)){ const e=Math.cos(kx*(xx-ox0)-td); const y2=ytop-ampE*e; if(Math.abs(y2-ytop)>3) vec(ctx,xx,ytop,xx,y2,rgba(COL.red,0.75),2,5.5); }
+    if(Ef>0.02) for(let q=0;q<3;q++){ const r=14+((t*40+q*16)%48); ctx.save(); ctx.strokeStyle=rgba(COL.red,0.7*(1-(r-14)/48)*Ef); ctx.lineWidth=2.2; ctx.beginPath(); ctx.arc(ox0,(oy0+oy1)/2-0,r,-0.7,0.7); ctx.stroke(); ctx.restore(); }
+    rrect(ctx,ox0-8,(oy0+oy1)/2-16,16,32,4); ctx.fillStyle=COL.navy; ctx.fill();
+    // bowl of food
+    const bcx=(ox0+ox1)/2+10, bcy=oy1-92, bw=(ox1-ox0)*0.3, bh=64, hot=clamp((T-20)/70,0,1);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(bcx-bw,bcy); ctx.bezierCurveTo(bcx-bw,bcy+bh*1.35,bcx+bw,bcy+bh*1.35,bcx+bw,bcy); ctx.closePath(); ctx.fillStyle=mixCol('#d9ecff','#ffd6c4',hot); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.clip();
+    mol.forEach(m=>{ const mx=bcx-bw*0.85+m.u*bw*1.7, my=bcy+8+m.v*bh*0.78, jit=0.5+hot*2.6; const jx=Math.sin(t*(5+m.j%3)+m.j)*jit, jy=Math.cos(t*(6+m.j%2)+m.a)*jit; h2o(ctx,mx+jx,my+jy,6.5,m.a+x*1.0,1.4); });
+    ctx.restore(); line(ctx,bcx-bw-5,bcy,bcx+bw+5,bcy,COL.ink,3);
+    for(let k=0;k<3;k++){ if(steam<0.05) break; ctx.save(); ctx.strokeStyle=rgba(COL.red,0.6*steam); ctx.lineWidth=2.2; ctx.beginPath(); for(let j=0;j<=14;j++){ const u=j/14, yy=bcy-6-u*34, xx=bcx+(k-1)*22+Math.sin(u*8+t*4+k*2)*5; j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore(); }
+    // thermometer
+    const tx=ox1-48, ty0=oy0+84, ty1=oy1-30; rrect(ctx,tx-6,ty0,12,ty1-ty0,6); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke();
+    ctx.save(); rrect(ctx,tx-6,ty0,12,ty1-ty0,6); ctx.clip(); ctx.fillStyle=COL.red; const fh=(ty1-ty0)*clamp((T-15)/90,0,1); ctx.fillRect(tx-6,ty1-fh,12,fh); ctx.restore();
+    // zoom lens: one molecule, huge
+    const zx0=w*0.64, zx1=w*0.97, zy0=oy0, zy1=oy1, zcx=(zx0+zx1)/2+14, zcy=(zy0+zy1)/2;
+    rrect(ctx,zx0,zy0,zx1-zx0,zy1-zy0,16); ctx.fillStyle='#fbfcfe'; ctx.fill(); ctx.strokeStyle=COL.border; ctx.lineWidth=1.6; ctx.stroke();
+    line(ctx,bcx+bw*0.5,bcy+bh*0.45,zx0,zcy,COL.mid,1.4,[5,5]);
+    const sz=Math.min((zx1-zx0)*0.3,(zy1-zy0)*0.3), ang=-Math.PI/2+clamp(x,-2.4,2.4);
+    h2o(ctx,zcx,zcy,sz,ang,2.6);
+    vec(ctx,zcx,zcy,zcx+Math.cos(ang)*sz*1.7,zcy+Math.sin(ang)*sz*1.7,COL.green,3,10); textAt(ctx,'dipole',zcx+Math.cos(ang)*sz*1.9,zcy+Math.sin(ang)*sz*1.9,{size:12,color:COL.green,align:'center'});
+    const ex=zx0+34, ee=Math.cos(td)*Ef*(zy1-zy0)*0.22; if(Math.abs(ee)>3) vec(ctx,ex,zcy,ex,zcy-ee,COL.red,4.4,11); line(ctx,ex-9,zcy,ex+9,zcy,COL.mid,1.4); textAt(ctx,'E',ex,zy0+26,{align:'center',size:14,color:COL.red});
+    textAt(ctx,'one water molecule',(zx0+zx1)/2,zy1-12,{align:'center',size:11,color:COL.mid,weight:500});
+    // resonance strip
+    const px0=w*0.08, px1=w*0.96, py0=h*0.76, py1=h*0.94, FX=f=>px0+(f-0.5)/5.5*(px1-px0), GY=r=>py1-clamp(r,0,1)*(py1-py0-6);
+    line(ctx,px0,py1,px1,py1,COL.ink,1.4); line(ctx,px0,py1,px0,py0-6,COL.ink,1.4);
+    for(let f=1;f<=6;f++){ line(ctx,FX(f),py1,FX(f),py1+5,COL.ink,1.2); textAt(ctx,String(f),FX(f),py1+18,{align:'center',size:10.5,color:COL.mid,weight:500}); }
+    textAt(ctx,'f (GHz)',px1,py1+18,{align:'right',size:11,color:COL.mid}); textAt(ctx,'heating',px0+6,py0-4,{size:11,color:COL.mid});
+    ctx.save(); ctx.beginPath(); for(let i=0;i<=200;i++){ const f=0.5+5.5*i/200, y=GY(g(f/2.45)); i?ctx.lineTo(FX(f),y):ctx.moveTo(FX(f),y); } ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    line(ctx,FX(2.45),py0,FX(2.45),py1,COL.green,2,[7,5]); textAt(ctx,'2.45',FX(2.45)+5,py0+8,{size:12,color:COL.green});
+    const mx=FX(E.f), my=GY(g(E.f/2.45)); line(ctx,mx,my,mx,py1,COL.yellow,2,[4,4]); circ(ctx,mx,my,8,COL.yellow,'#fff',3.5);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.3  INFRARED & THE GREENHOUSE EFFECT
+   Visible sunlight passes through the air and warms the ground; the ground
+   re-radiates longer-wavelength infrared, which greenhouse molecules absorb
+   and re-emit in all directions, so part of it returns.
+   One absorbing layer, fraction pa:   top flux = Eg (1 − pa/2) = S
+   → T = 255 K · (S/S0)^¼ · (1 − pa/2)^(−¼)   (pa ≈ 0.8 gives ≈ 288 K, today's Earth).
+   ===================================================================== */
+function buildGreenhouse(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('g','Greenhouse gases (CO₂ …)',0,150,1,40) + sl('S','Sunlight',80,120,1,100) +
+    btns('pre','',[['0','No gas'],['40','Today'],['120','Heavy']]) +
+    cards([['cT','Ground temperature','var(--f-red)'],['cD','Warming from gas','var(--f-red)'],['cA','IR absorbed in the air','var(--f-green)'],['cE','IR escaping to space','var(--f-yellow)']]) +
+    `<p class="hint">Yellow: visible in · Red: infrared out</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>set('g',b.dataset.v));
+  const model=(g,S)=>{ const pa=1-Math.exp(-g/25); return {pa,T:255*Math.pow(S/100,0.25)*Math.pow(1/(1-pa/2),0.25)}; };
+  const M0=model(val('g'),val('S')); let T=M0.T, t=0, sunAcc=0, irAcc=0, glow=0; const ph=[], E={g:val('g')};
+  const mol=[]; for(let i=0;i<120;i++) mol.push({u:(i*0.754877666)%1,v:(i*0.569840291)%1,ap:0,exc:0,em:-1,rot:i*1.3});
+  animLoop(dt=>{
+    t+=dt; const gT=val('g'), ST=val('S'); E.g=approach(E.g,gT,6,dt);
+    const M=model(gT,ST), M00=model(0,ST), nMol=Math.round(E.g*0.8);
+    T=approach(T,M.T,0.35,dt); glow=approach(glow,0,2.2,dt);
+    txt('gV',fmt(gT,0)+' %'); txt('SV',fmt(ST,0)+' %'); txt('cT',fmt(T-273.15,0)+' °C'); txt('cD','+ '+fmt(M.T-M00.T,0)+' °C'); txt('cA',fmt(M.pa*100,0)+' %'); txt('cE',fmt(100-M.pa*50,0)+' % of ground IR');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gy=h*0.84, bt=h*0.36, bb=h*0.62, sx=w*0.1, sy=h*0.13, sr=Math.min(h*0.07,34);
+    // air layer
+    ctx.fillStyle='rgba(47,143,224,0.07)'; ctx.fillRect(0,bt,w,bb-bt); line(ctx,0,bt,w,bt,rgba(COL.blue,0.4),1.4,[8,6]); line(ctx,0,bb,w,bb,rgba(COL.blue,0.4),1.4,[8,6]); textAt(ctx,'air',w-14,bt+16,{align:'right',size:11,color:COL.mid,weight:500});
+    // sun
+    circ(ctx,sx,sy,sr,COL.yellow,'#fff6d8',3.4); for(let k=0;k<12;k++){ const a=k*TAU/12+t*0.3; line(ctx,sx+Math.cos(a)*sr*1.25,sy+Math.sin(a)*sr*1.25,sx+Math.cos(a)*sr*1.7,sy+Math.sin(a)*sr*1.7,COL.yellow,2.6); }
+    // ground
+    const gc=mixCol('#8195ab',COL.red,clamp((T-250)/70,0,1)); ctx.fillStyle=rgba(COL.ink,0.05); ctx.fillRect(0,gy,w,h-gy); line(ctx,0,gy,w,gy,gc,5+4*glow);
+    for(let x=10;x<w;x+=22) line(ctx,x,gy+6,x-9,gy+17,rgba(COL.mid,0.5),1.2);
+    // molecules
+    mol.forEach((m,i)=>{ m.ap=approach(m.ap,i<nMol?1:0,6,dt); if(m.exc>0){ m.exc-=dt; if(m.em>=0){ m.em-=dt; if(m.em<0){ const an=Math.random()*TAU; ph.push({x:m.u*w,y:bt+8+m.v*(bb-bt-16),vx:Math.cos(an)*110,vy:Math.sin(an)*110,ty:'ir',age:0,src:i}); } } } });
+    mol.forEach((m,i)=>{ if(m.ap<0.05) return; const mx=m.u*w+Math.sin(t*0.8+m.rot)*4, my=bt+8+m.v*(bb-bt-16)+Math.cos(t*0.7+m.rot)*3, wob=m.exc>0?Math.sin(t*40)*2.2:0, ex=m.exc>0?clamp(m.exc/0.6,0,1):0;
+      ctx.save(); ctx.globalAlpha=m.ap; if(ex>0){ const g=ctx.createRadialGradient(mx,my,2,mx,my,24); g.addColorStop(0,'rgba(217,67,43,'+(0.45*ex).toFixed(2)+')'); g.addColorStop(1,'rgba(217,67,43,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(mx,my,24,0,TAU); ctx.fill(); }
+      const ca=Math.cos(m.rot*0.3+t*0.2), sa=Math.sin(m.rot*0.3+t*0.2); line(ctx,mx-9*ca+wob,my-9*sa,mx+9*ca-wob,my+9*sa,COL.ink,1.6);
+      circ(ctx,mx-9*ca+wob,my-9*sa,4.2,COL.red,'#fff',1.8); circ(ctx,mx+9*ca-wob,my+9*sa,4.2,COL.red,'#fff',1.8); circ(ctx,mx,my,3.2,COL.ink,COL.ink,1); ctx.restore(); });
+    // photons
+    sunAcc+=2.0*ST/100*dt; irAcc+=2.8*Math.pow(T/286,4)*dt;
+    while(sunAcc>=1){ sunAcc-=1; const tx=w*(0.2+Math.random()*0.7), dx=tx-sx, dy=gy-sy, d=Math.hypot(dx,dy); ph.push({x:sx+dx/d*sr*1.6,y:sy+dy/d*sr*1.6,vx:dx/d*175,vy:dy/d*175,ty:'vis',age:0}); }
+    while(irAcc>=1){ irAcc-=1; const an=-Math.PI/2+(Math.random()-0.5)*0.9; ph.push({x:w*(0.08+Math.random()*0.84),y:gy-2,vx:Math.cos(an)*110,vy:Math.sin(an)*110,ty:'ir',age:0,src:-1}); }
+    for(let i=ph.length-1;i>=0;i--){ const p=ph[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.age+=dt;
+      if(p.ty==='vis'){ if(p.y>=gy){ glow=Math.min(1,glow+0.22); ph.splice(i,1); continue; } }
+      else { if(p.y<-30||p.x<-40||p.x>w+40){ ph.splice(i,1); continue; } if(p.y>=gy){ glow=Math.min(1,glow+0.12); ph.splice(i,1); continue; }
+        if(p.y>bt&&p.y<bb){ let hit=false; for(let j=0;j<mol.length;j++){ const m=mol[j]; if(m.ap<0.6||m.exc>0) continue; if(p.src===j&&p.age<0.5) continue; const mx=m.u*w, my=bt+8+m.v*(bb-bt-16); if((p.x-mx)*(p.x-mx)+(p.y-my)*(p.y-my)<324){ m.exc=0.6; m.em=0.38; hit=true; break; } } if(hit){ ph.splice(i,1); continue; } } } }
+    ph.forEach(p=>{ const an=Math.atan2(p.vy,p.vx); if(p.ty==='vis') wavy(ctx,p.x,p.y,an,30,4.6,4,COL.yellow,2.4,t*10); else wavy(ctx,p.x,p.y,an,52,6.5,2,COL.red,2.6,t*6); });
+    // thermometer
+    const tx=w*0.94, ty0=h*0.2, ty1=h*0.74, lv=clamp((T-230)/100,0,1); rrect(ctx,tx-7,ty0,14,ty1-ty0,7); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke();
+    ctx.save(); rrect(ctx,tx-7,ty0,14,ty1-ty0,7); ctx.clip(); ctx.fillStyle=COL.red; ctx.fillRect(tx-7,ty1-(ty1-ty0)*lv,14,(ty1-ty0)*lv); ctx.restore(); circ(ctx,tx,ty1+10,12,COL.ink,COL.red,2.2);
+    textAt(ctx,fmt(T-273.15,0)+' °C',tx,ty0-10,{align:'center',size:13,color:COL.red});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   8.4.5  ULTRAVIOLET, OZONE & GLASS
+   The ozone layer absorbs most solar UV (fraction 1 − e^(−d/22)); ordinary glass
+   absorbs the rest, so there is no tanning behind a window. Visible light is
+   untouched by either. Skin tans with UV dose and burns when it is intense.
+   ===================================================================== */
+function buildUV(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sl('d','Ozone layer',0,100,1,100) + seg('gl','Glass pane overhead',[['0','Removed'],['1','In place']]) +
+    btns('pre','',[['100','Healthy ozone'],['12','Ozone hole']]) +
+    cards([['cA','UV absorbed by ozone','var(--f-blue)'],['cU','UV reaching skin','var(--f-blue)'],['cV','Visible reaching skin','var(--f-yellow)'],['cK','Skin tan',null]]) +
+    `<p class="hint">Blue: ultraviolet · Yellow: visible light</p>`;
+  const {$,canvas,val,set,txt}=mkUI(wrap);
+  wireSeg(wrap,'gl'); wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>set('d',b.dataset.v));
+  let t=0, uvAcc=0, vAcc=0, uvRate=0, tan=0, burn=0, dose=0; const ph=[], E={d:val('d')};
+  const mol=[]; for(let i=0;i<40;i++) mol.push({u:(i*0.754877666)%1,v:(i*0.569840291)%1,ap:0,exc:0,rot:i*1.7});
+  animLoop(dt=>{
+    t+=dt; E.d=approach(E.d,val('d'),5,dt); const dT=val('d'), glass=getSeg(wrap,'gl')==='1', pO=1-Math.exp(-dT/22);
+    uvRate=approach(uvRate,0,0.4,dt); tan=clamp(tan+(0.1*uvRate*(1-tan)-0.004*tan)*dt,0,1); burn=approach(burn,clamp((uvRate-1.1)/1.4,0,1),1.5,dt);
+    txt('dV',fmt(dT,0)+' %'); txt('cA',fmt(pO*100,0)+' %'); txt('cU',fmt((glass?0:1-pO)*100,0)+' %'); txt('cV','100 %'); txt('cK',fmt(tan*100,0)+' %');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gy=h*0.9, bt=h*0.2, bb=h*0.38, sx=w*0.1, sy=h*0.08, sr=Math.min(h*0.06,30), px=w*0.68, pyFeet=gy, ph0=h*0.2, headY=pyFeet-ph0*1.95;
+    const tgt=()=>({x:px+(Math.random()-0.5)*16,y:headY+Math.random()*ph0*1.7});
+    const pathX=(y,tx,ty)=>sx+(tx-sx)*(y-sy)/(ty-sy), paneY=h*0.62;
+    // ozone layer
+    const nM=Math.round(E.d*0.38); ctx.fillStyle='rgba(31,157,85,'+(0.04+0.09*E.d/100).toFixed(3)+')'; ctx.fillRect(0,bt,w,bb-bt); line(ctx,0,bt,w,bt,rgba(COL.green,0.45),1.4,[8,6]); line(ctx,0,bb,w,bb,rgba(COL.green,0.45),1.4,[8,6]); textAt(ctx,'ozone layer',w-14,bt+16,{align:'right',size:11,color:COL.green,weight:500});
+    mol.forEach((m,i)=>{ m.ap=approach(m.ap,i<nM?1:0,6,dt); if(m.exc>0) m.exc-=dt; if(m.ap<0.05) return; const mx=m.u*w, my=bt+8+m.v*(bb-bt-16)+Math.sin(t+m.rot)*2, ex=m.exc>0?clamp(m.exc/0.5,0,1):0, sp=ex*10;
+      ctx.save(); ctx.globalAlpha=m.ap; if(ex>0){ const g=ctx.createRadialGradient(mx,my,2,mx,my,22); g.addColorStop(0,'rgba(47,143,224,'+(0.5*ex).toFixed(2)+')'); g.addColorStop(1,'rgba(47,143,224,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(mx,my,22,0,TAU); ctx.fill(); }
+      const ax=mx-7, bx=mx+7+sp, by=my+5; line(ctx,ax,by,mx,my-3,COL.ink,1.5); line(ctx,mx,my-3,bx,by,COL.ink,1.5); circ(ctx,ax,by,3.8,COL.red,'#fff',1.7); circ(ctx,mx,my-3,3.8,COL.red,'#fff',1.7); circ(ctx,bx,by,3.8,COL.red,'#fff',1.7); ctx.restore(); });
+    // glass pane
+    const gx0=px-w*0.17, gx1=px+w*0.05, gA=glass?1:0; ctx.save(); ctx.globalAlpha=0.18+0.82*gA; rrect(ctx,gx0,paneY-4,gx1-gx0,9,3); ctx.fillStyle='rgba(47,143,224,0.18)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.setLineDash(glass?[]:[6,5]); ctx.stroke(); ctx.restore();
+    textAt(ctx,'glass',gx0-8,paneY+4,{align:'right',size:11,color:COL.blue,weight:500,alpha:0.4+0.6*gA});
+    // sun
+    circ(ctx,sx,sy,sr,COL.yellow,'#fff6d8',3.4); for(let k=0;k<12;k++){ const a=k*TAU/12+t*0.3; line(ctx,sx+Math.cos(a)*sr*1.25,sy+Math.sin(a)*sr*1.25,sx+Math.cos(a)*sr*1.7,sy+Math.sin(a)*sr*1.7,COL.yellow,2.6); }
+    // spawn photons
+    uvAcc+=3*dt; vAcc+=3*dt;
+    const launch=(kind)=>{ const q=tgt(); const dx=q.x-sx, dy=q.y-sy, d=Math.hypot(dx,dy); let stop=q.y, fate='skin';
+      if(kind==='uv'){ if(Math.random()<pO){ stop=bt+6+Math.random()*(bb-bt-12); fate='ozone'; } else if(glass && true){ const gxAt=pathX(paneY,q.x,q.y); if(gxAt>gx0&&gxAt<gx1){ stop=paneY; fate='glass'; } } }
+      ph.push({x:sx+dx/d*sr*1.6,y:sy+dy/d*sr*1.6,vx:dx/d*185,vy:dy/d*185,ty:kind,stop,fate,age:0,ang:Math.atan2(dy,dx)}); };
+    while(uvAcc>=1){ uvAcc-=1; launch('uv'); } while(vAcc>=1){ vAcc-=1; launch('vis'); }
+    for(let i=ph.length-1;i>=0;i--){ const p=ph[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.age+=dt;
+      if(p.y>=p.stop){ if(p.fate==='ozone'){ let bj=-1,bd=1e9; mol.forEach((m,j)=>{ if(m.ap<0.5) return; const dd=Math.hypot(m.u*w-p.x,bt+8+m.v*(bb-bt-16)-p.y); if(dd<bd){bd=dd;bj=j;} }); if(bj>=0) mol[bj].exc=0.5; }
+        else if(p.fate==='skin' && p.ty==='uv'){ uvRate+=0.4; dose+=1; } ph.splice(i,1); } }
+    ph.forEach(p=>{ if(p.ty==='uv') wavy(ctx,p.x,p.y,p.ang,24,4.4,6,COL.blue,2.4,t*14); else wavy(ctx,p.x,p.y,p.ang,40,5.2,2,COL.yellow,2.6,t*7); });
+    // ground + person (line figure; face and hands take the skin colour)
+    line(ctx,0,gy,w,gy,COL.ink,3); for(let x=10;x<w;x+=22) line(ctx,x,gy+4,x-9,gy+15,rgba(COL.mid,0.5),1.2);
+    const skin=mixCol(mixCol('#f2cfae','#7a4a2c',tan),COL.red,burn*0.45), hr=ph0*0.2, hy=pyFeet-ph0*1.75, by0=hy+hr, by1=pyFeet-ph0*0.85;
+    line(ctx,px,by0,px,by1,COL.ink,3.6); line(ctx,px,by0+ph0*0.18,px-ph0*0.42,by0+ph0*0.62,COL.ink,3.4); line(ctx,px,by0+ph0*0.18,px+ph0*0.42,by0+ph0*0.62,COL.ink,3.4);
+    line(ctx,px,by1,px-ph0*0.3,pyFeet,COL.ink,3.6); line(ctx,px,by1,px+ph0*0.3,pyFeet,COL.ink,3.6);
+    circ(ctx,px-ph0*0.42,by0+ph0*0.62,4.6,COL.ink,skin,1.8); circ(ctx,px+ph0*0.42,by0+ph0*0.62,4.6,COL.ink,skin,1.8); circ(ctx,px,hy,hr,COL.ink,skin,3);
+    line(ctx,px-hr*0.4,hy-hr*0.1,px-hr*0.4,hy-hr*0.1,COL.ink,3); line(ctx,px+hr*0.4,hy-hr*0.1,px+hr*0.4,hy-hr*0.1,COL.ink,3);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; ctx.beginPath(); ctx.arc(px,hy+hr*0.15,hr*0.45,0.2,Math.PI-0.2); ctx.stroke(); ctx.restore();
+    // tan gauge
+    const gx=w*0.9, g0=h*0.45, g1=h*0.85; rrect(ctx,gx-8,g0,16,g1-g0,6); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke();
+    ctx.save(); rrect(ctx,gx-8,g0,16,g1-g0,6); ctx.clip(); ctx.fillStyle=mixCol('#c28a5c','#7a4a2c',tan); ctx.fillRect(gx-8,g1-(g1-g0)*tan,16,(g1-g0)*tan); ctx.restore(); textAt(ctx,'tan',gx,g0-8,{align:'center',size:12,color:COL.muted});
+    if(burn>0.25) textAt(ctx,'sunburn risk',px,headY-ph0*0.25,{align:'center',size:12,color:COL.red,alpha:burn});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   ROUTER
+   ===================================================================== */
+activities.push(
+  {num:'8.2',   title:'Displacement Current',   desc:'A changing E field acts like a current · Ampère–Maxwell law', build:buildDisp},
+  {num:'8.3.1', title:'Radiating Charge',       desc:'Only an accelerating charge sends out waves', build:buildRadiate},
+  {num:'8.3.2', title:'The EM Wave',            desc:'E ⟂ B ⟂ direction · B₀ = E₀/c', build:buildWave},
+  {num:'8.3.2b',title:'Wave in a Medium',       desc:'Frequency stays · speed and wavelength shrink', build:buildMedium},
+  {num:'8.4',   title:'EM Spectrum',            desc:'One speed c · from radio to gamma', build:buildSpectrum},
+  {num:'8.4.2', title:'Microwave Oven',         desc:'Water molecules resonate near 2.45 GHz', build:buildOven},
+  {num:'8.4.3', title:'Infrared · Greenhouse',  desc:'Heat waves trapped by the air', build:buildGreenhouse},
+  {num:'8.4.5', title:'Ultraviolet · Ozone',    desc:'Ozone and glass stop UV · skin tans', build:buildUV}
+);
+let currentIndex = 0;
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{ const b=document.createElement('button'); b.className='nav-item'+(i===currentIndex?' active':'');
+    b.innerHTML=`<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`; b.onclick=()=>{currentIndex=i; render();}; nav.appendChild(b); });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num; document.getElementById('panelTitle').textContent=a.title; document.getElementById('panelDesc').textContent=a.desc||'';
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

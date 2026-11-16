@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Maths Part 1 · Chapter 5 — Continuity and Differentiability | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📈</div>
+    <div>
+      <div class="chip">Grade 12 · Maths Part 1 · Ch 5</div>
+      <h1>Continuity and Differentiability</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Function · right side</span>
+      <span><i style="background:var(--f-red)"></i>Slope · left side</span>
+      <span><i style="background:var(--f-green)"></i>Result · agreement</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — MATHS PART 1 — CHAPTER 5: CONTINUITY AND DIFFERENTIABILITY
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame — beads slide along curves, a car really drives (and falls)
+   across a road, a ladder really slides, a wheel really rolls. Nothing jumps.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e6edf5'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  if(Math.hypot(x2-x1,y2-y1)<3) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; const s=Number(x.toFixed(d)); return (Object.is(s,-0)?0:s).toString(); }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function tagBox(ctx,txt,x,y,color,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  let bx=align==='right'?x-tw-10:align==='center'?x-tw/2-5:x; bx=clamp(bx,4,(ctx.canvas._w||9999)-tw-14);
+  ctx.save(); rrect(ctx,bx,y-11,tw+10,22,6); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+5,y+4,{size:12,weight:700,color});
+}
+
+/* ---------------------------------------------------------------------
+   0a. GRAPH HELPERS  (math ↔ pixel views, axes, curves, lines)
+   --------------------------------------------------------------------- */
+function mkView(R,xr,yr){
+  const sx=(R.r-R.l)/(xr[1]-xr[0]), sy=(R.b-R.t)/(yr[1]-yr[0]);
+  return {R,xr,yr,sx,sy,X:x=>R.l+(x-xr[0])*sx, Y:y=>R.b-(y-yr[0])*sy};
+}
+/* equal-aspect view: centre (cx,cy), half-height hy in y-units */
+function mkViewEq(R,cx,cy,hy){
+  const sy=(R.b-R.t)/(2*hy), hx=(R.r-R.l)/(2*sy);
+  return mkView(R,[cx-hx,cx+hx],[cy-hy,cy+hy]);
+}
+function clipView(ctx,V){ ctx.beginPath(); ctx.rect(V.R.l,V.R.t,V.R.r-V.R.l,V.R.b-V.R.t); ctx.clip(); }
+function niceStep(span,target){ const raw=span/target, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function axes(ctx,V,opts){
+  opts=opts||{};
+  const sx=opts.sx||niceStep(V.xr[1]-V.xr[0],clamp((V.R.r-V.R.l)/75,3,9)), sy=opts.sy||niceStep(V.yr[1]-V.yr[0],clamp((V.R.b-V.R.t)/40,2,7));
+  const R=V.R;
+  ctx.save(); clipView(ctx,V);
+  ctx.fillStyle='#fff'; ctx.fillRect(R.l,R.t,R.r-R.l,R.b-R.t);
+  for(let x=Math.ceil(V.xr[0]/sx)*sx; x<=V.xr[1]+1e-9; x+=sx) line(ctx,V.X(x),R.t,V.X(x),R.b,COL.grid,1);
+  for(let y=Math.ceil(V.yr[0]/sy)*sy; y<=V.yr[1]+1e-9; y+=sy) line(ctx,R.l,V.Y(y),R.r,V.Y(y),COL.grid,1);
+  if(V.yr[0]<=0&&V.yr[1]>=0) line(ctx,R.l,V.Y(0),R.r,V.Y(0),COL.mid,1.6);
+  if(V.xr[0]<=0&&V.xr[1]>=0) line(ctx,V.X(0),R.t,V.X(0),R.b,COL.mid,1.6);
+  ctx.restore();
+  if(!opts.noLabels){
+    const ay=clamp(V.Y(0),R.t+12,R.b-3), ax=clamp(V.X(0),R.l+3,R.r-16);
+    for(let x=Math.ceil(V.xr[0]/sx)*sx; x<=V.xr[1]+1e-9; x+=sx){ if(Math.abs(x)<sx*0.01) continue; textAt(ctx,fmt(x,2),V.X(x),Math.min(R.b-3,ay+(V.yr[0]<=0&&V.yr[1]>=0?13:-4)),{size:10,color:COL.mid,align:'center'}); }
+    for(let y=Math.ceil(V.yr[0]/sy)*sy; y<=V.yr[1]+1e-9; y+=sy){ if(Math.abs(y)<sy*0.01) continue; textAt(ctx,fmt(y,2),Math.max(R.l+3,ax-4),V.Y(y)+3,{size:10,color:COL.mid,align:ax-4<R.l+3?'left':'right'}); }
+  }
+  ctx.save(); ctx.strokeStyle=COL.border||'#dbe4f0'; ctx.strokeStyle='#c2d1e5'; ctx.lineWidth=1.2; ctx.strokeRect(R.l,R.t,R.r-R.l,R.b-R.t); ctx.restore();
+}
+function plotFn(ctx,V,f,a,b,color,lw,n,dash){
+  ctx.save(); clipView(ctx,V); ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); let pen=false, py=0; n=n||420;
+  for(let i=0;i<=n;i++){
+    const x=a+(b-a)*i/n, y=f(x);
+    if(!isFinite(y)){ pen=false; continue; }
+    const px=V.X(x), qy=V.Y(y);
+    if(pen && Math.abs(qy-py)>(V.R.b-V.R.t)*1.2) pen=false;
+    if(pen) ctx.lineTo(px,qy); else ctx.moveTo(px,qy);
+    pen=true; py=qy;
+  }
+  ctx.stroke(); ctx.restore();
+}
+/* parametric curve */
+function plotPar(ctx,V,fx,fy,a,b,color,lw,n,dash){
+  ctx.save(); clipView(ctx,V); ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.lineJoin='round'; if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); n=n||300;
+  for(let i=0;i<=n;i++){ const t=a+(b-a)*i/n, px=V.X(fx(t)), py=V.Y(fy(t)); i?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+  ctx.stroke(); ctx.restore();
+}
+/* straight line through (x0,y0) with slope m, spanning the whole view */
+function slopeLine(ctx,V,x0,y0,m,color,lw,dash,half){
+  ctx.save(); clipView(ctx,V);
+  let xa=V.xr[0], xb=V.xr[1];
+  if(half!==undefined){ xa=Math.max(xa,x0-half); xb=Math.min(xb,x0+half); }
+  if(Math.abs(m)>1e4){ line(ctx,V.X(x0),V.R.t,V.X(x0),V.R.b,color,lw||2.2,dash); }
+  else line(ctx,V.X(xa),V.Y(y0+m*(xa-x0)),V.X(xb),V.Y(y0+m*(xb-x0)),color,lw||2.2,dash);
+  ctx.restore();
+}
+function dot(ctx,V,x,y,r,stroke,fill,lw){ circ(ctx,V.X(x),V.Y(y),r,stroke,fill,lw); }
+function bead(ctx,V,x,y,color,r){ const px=V.X(x), py=V.Y(y); circ(ctx,px,py,r||7,color,'#fff',3); circ(ctx,px,py,2.4,color,color,1); }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function rcard(label,id,color,wide){ return `<div class="rcard${wide?' wide':''}"><div class="rlabel">${label}</div><div class="rval" id="${id}"${color?` style="color:${color}"`:''}>—</div></div>`; }
+function setFb(el,cls,txt){ el.className='fb '+cls; el.textContent=txt; }
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'5.1',  title:'Closing In on a Point', desc:'Squeeze from both sides · walk the curve · does the pen lift?', build: buildA1 },
+  { num:'5.2',  title:'Join the Road', desc:'Tune a and b until the two roads meet at x = 3', build: buildA2 },
+  { num:'5.3',  title:'Smooth or Sharp?', desc:'Zoom in on a point · secant becomes tangent (or not)', build: buildA3 },
+  { num:'5.4',  title:'The Chain Rule', desc:'A wiggle is magnified at every link of the chain', build: buildA4 },
+  { num:'5.5',  title:'The Sliding Ladder', desc:'Implicit differentiation on x² + y² = 25', build: buildA5 },
+  { num:'5.6',  title:'Inverse Mirror', desc:'Fold the graph over y = x · slopes become reciprocals', build: buildA6 },
+  { num:'5.7',  title:'The Special Base e', desc:'Find the base whose slope equals its height', build: buildA7 },
+  { num:'5.8',  title:'Logarithmic Differentiation', desc:'Tame y = u(x)^v(x) by taking log first', build: buildA8 },
+  { num:'5.9',  title:'Parametric Motion', desc:'x(θ), y(θ) · velocity components give the slope', build: buildA9 },
+  { num:'5.10', title:'Second Derivative', desc:'f, f′, f″ stacked · a ball rolls along the curve', build: buildA10 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+
+/* =====================================================================
+   5.1 CLOSING IN ON A POINT   (Section 5.2, Examples 10, 11, 13, 15)
+   f is continuous at c  ⇔  lim(x→c⁻) f = lim(x→c⁺) f = f(c).
+   Two beads (red from the left, blue from the right) are squeezed in
+   towards x = c along the curve; a pen then walks the whole curve and
+   physically lifts (a ballistic hop) wherever the graph jumps.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label>
+      <div class="chip-wrap" id="fnB">
+        <button class="chip-btn active" data-k="j1">Jump · Ex 10</button>
+        <button class="chip-btn" data-k="j2">Jump + dot · Ex 11</button>
+        <button class="chip-btn" data-k="sm">Joined · Ex 13</button>
+        <button class="chip-btn" data-k="hole">Hole</button>
+        <button class="chip-btn" data-k="fl">[x] · Ex 15</button>
+        <button class="chip-btn" data-k="wg">x·sin(1/x)</button>
+      </div></div>
+    <div class="control-group"><label>Point c <span class="val" id="cV"></span></label><input type="range" id="cR" min="-2.5" max="2.5" step="0.01" value="1"></div>
+    <div class="control-group hidden" id="hvG"><label>Value f(1) <span class="val" id="hvV"></span></label><input type="range" id="hvR" min="-1" max="4" step="0.05" value="0.5"></div>
+    <div class="control-group"><label>Gap δ <span class="val" id="dV"></span></label><input type="range" id="dR" min="0.005" max="1" step="0.005" value="0.9">
+      <div class="toggle-group"><button class="toggle-btn navy" id="sqB">Squeeze δ → 0</button><button class="toggle-btn play" id="wkB">▶ Walk the curve</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Left limit','lV',COL.red)}${rcard('Right limit','rV',COL.blue)}${rcard('f(c)','fV',COL.yellow)}${rcard('Test','tV')}
+      </div><div class="fb ok" id="vd">—</div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), cR=$('#cR'), dR=$('#dR'), hvR=$('#hvR');
+  let hv=0.5;
+  const FN={
+    j1:{xr:[-3,3],yr:[-3.2,5.2],cd:1,br:[1],f:x=>x<=1?x+2:x-2,segs:[[-3,1],[1,3]],dots:()=>[[1,3,1],[1,-1,0]]},
+    j2:{xr:[-3,3],yr:[-3.2,5.2],cd:1,br:[1],f:x=>Math.abs(x-1)<1e-9?0:(x<1?x+2:x-2),segs:[[-3,1],[1,3]],dots:()=>[[1,3,0],[1,-1,0],[1,0,1]]},
+    sm:{xr:[-2.5,2.5],yr:[-1,4.5],cd:0,br:[],f:x=>x<0?x*x:x,segs:[[-2.5,2.5]],dots:()=>[[0,0,1]]},
+    hole:{xr:[-2,4],yr:[-1.5,5],cd:1,br:[],f:x=>Math.abs(x-1)<1e-9?hv:x+1,segs:[[-2,4]],dots:()=>[[1,2,0],[1,hv,1]]},
+    fl:{xr:[-3,3],yr:[-3.6,3.6],cd:1,br:[-3,-2,-1,0,1,2,3],f:Math.floor,segs:[[-3,-2],[-2,-1],[-1,0],[0,1],[1,2],[2,3]],dots:()=>{const d=[];for(let k=-3;k<=2;k++){d.push([k,k,1]);d.push([k+1,k,0]);}return d;}},
+    wg:{xr:[-0.3,0.3],yr:[-0.3,0.3],cd:0,br:[],f:x=>Math.abs(x)<1e-12?0:x*Math.sin(1/x),segs:[[-0.3,0.3]],dots:()=>[[0,0,1]],dense:true}
+  };
+  let fk='j1', t=0, sq=false;
+  const C={x:1}, D={x:0.9};
+  const W={on:false,x:0,y:0,fl:null,trail:[]};
+  function setFn(k){
+    fk=k; const F=FN[k];
+    cR.min=F.xr[0]; cR.max=F.xr[1]; cR.value=F.cd; $('#hvG').classList.toggle('hidden',k!=='hole');
+    sq=false; dR.value=0.9; W.on=false; W.trail=[]; $('#wkB').textContent='▶ Walk the curve';
+  }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(b.dataset.k));
+  $('#sqB').onclick=()=>{ sq=!sq; if(!sq) return; if(+dR.value<=0.006) dR.value=0.9; };
+  $('#wkB').onclick=()=>{
+    const F=FN[fk];
+    if(W.on){ W.on=false; $('#wkB').textContent='▶ Walk the curve'; return; }
+    W.on=true; W.x=F.xr[0]; W.y=F.f(W.x); W.fl=null; W.trail=[]; $('#wkB').textContent='■ Stop';
+  };
+  const lim=(F,c,s)=>F.f(c+s*1e-6);
+
+  animLoop((dt)=>{
+    t+=dt;
+    const F=FN[fk]; hv=+hvR.value;
+    const cT=+cR.value; C.x=approach(C.x,cT,9,dt); if(Math.abs(C.x-cT)<0.003) C.x=cT;
+    if(sq){ const u=Math.max(0.005,+dR.value*Math.exp(-1.15*dt)); dR.value=u; if(u<=0.0051) sq=false; }
+    const span=F.xr[1]-F.xr[0];
+    D.x=approach(D.x,+dR.value,14,dt);
+    const dl=D.x*span*0.25, c=C.x;
+    $('#cV').textContent=fmt(c,2); $('#hvV').textContent=fmt(hv,2); $('#dV').textContent=fmt(dl,3);
+    const L=lim(F,c,-1), Rr=lim(F,c,1), Fc=F.f(c);
+    const tol=0.02*(F.yr[1]-F.yr[0])/8;
+    const jump=Math.abs(L-Rr)>tol, mism=Math.abs(Rr-Fc)>tol;
+    const okc=!jump&&!mism;
+    $('#lV').textContent=fmt(L,3); $('#rV').textContent=fmt(Rr,3); $('#fV').textContent=fmt(Fc,3);
+    $('#tV').textContent=okc?'Continuous ✓':'Broken ✗';
+    setFb($('#vd'),okc?'ok':'bad', okc?'Left limit = right limit = f(c)':(jump?'Left limit ≠ right limit — the graph jumps':'Limit exists but ≠ f(c) — the dot is misplaced'));
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=mkView({l:50,t:16,r:w-18,b:h-26},F.xr,F.yr);
+    axes(ctx,V);
+    F.segs.forEach(s=>plotFn(ctx,V,F.f,s[0]+(s[0]===s[1]?0:1e-9),s[1]-1e-9,COL.ink,2.8,F.dense?1800:420));
+    F.dots().forEach(d=>dot(ctx,V,d[0],d[1],5.2,COL.ink,d[2]?COL.ink:'#fff',2.2));
+    // x = c marker
+    ctx.save(); clipView(ctx,V); line(ctx,V.X(c),V.R.t,V.X(c),V.R.b,COL.mid,1.2,[5,5]); ctx.restore();
+    textAt(ctx,'c',V.X(c),V.R.b-4,{size:12,weight:700,align:'center',color:COL.mid});
+    // yellow bracket across a jump
+    if(jump){ const y1=V.Y(L), y2=V.Y(Rr), bx=V.X(c)+10;
+      line(ctx,bx,y1,bx,y2,COL.yellow,3); line(ctx,bx-4,y1,bx+4,y1,COL.yellow,3); line(ctx,bx-4,y2,bx+4,y2,COL.yellow,3);
+      textAt(ctx,'jump '+fmt(Math.abs(L-Rr),2),bx+9,(y1+y2)/2+4,{size:12,weight:700,color:COL.yellow}); }
+    // tracer beads
+    const xl=c-dl, xr=c+dl;
+    [[xl,COL.red,'L'],[xr,COL.blue,'R']].forEach(([x,col,nm])=>{
+      if(x<F.xr[0]||x>F.xr[1]) return;
+      const y=F.f(x); const px=V.X(x), py=V.Y(y);
+      ctx.save(); clipView(ctx,V); line(ctx,px,py,V.R.l,py,col,1.4,[4,4]); line(ctx,px,py,px,V.R.b,col,1,[2,4]); ctx.restore();
+      arrowHead(ctx,V.R.l+1,py,Math.PI,col,8);
+      bead(ctx,V,x,y,col,7.5);
+    });
+    // f(c)
+    ring: {
+      const px=V.X(c), py=V.Y(Fc); circ(ctx,px,py,10+2*Math.sin(t*5),okc?COL.green:COL.yellow,null,2.6);
+    }
+    // the pen
+    if(W.on){
+      const x0=W.x; W.x+=span*0.2*dt;
+      F.br.forEach(b=>{ if(x0<b&&W.x>=b){ const a=lim(F,b,-1), z=lim(F,b,1); if(Math.abs(a-z)>tol) W.fl={t:0,a,z}; } });
+      let pd=true, yw;
+      if(W.fl){ W.fl.t+=dt/0.55; const u=Math.min(1,W.fl.t); yw=lerp(W.fl.a,W.fl.z,smooth01(0,1,u))+Math.sin(Math.PI*u)*0.16*(F.yr[1]-F.yr[0]); pd=false; if(u>=1) W.fl=null; }
+      else yw=F.f(W.x);
+      if(pd && W.trail.length) { const q=W.trail[W.trail.length-1]; if(q.pd) W.trail.push({x:W.x,y:yw,pd:true,x0:q.x,y0:q.y}); else W.trail.push({x:W.x,y:yw,pd:true,x0:W.x,y0:yw}); }
+      else W.trail.push({x:W.x,y:yw,pd:false,x0:W.x,y0:yw});
+      if(W.trail.length>900) W.trail.shift();
+      W.y=yw;
+      if(W.x>=F.xr[1]){ W.on=false; $('#wkB').textContent='▶ Walk the curve'; }
+    }
+    if(W.trail.length){
+      ctx.save(); clipView(ctx,V); ctx.strokeStyle=COL.green; ctx.lineWidth=4.4; ctx.lineCap='round'; ctx.beginPath();
+      W.trail.forEach(q=>{ if(q.pd){ ctx.moveTo(V.X(q.x0),V.Y(q.y0)); ctx.lineTo(V.X(q.x),V.Y(q.y)); } }); ctx.stroke(); ctx.restore();
+      if(W.on || W.fl){
+        const px=V.X(W.x), py=V.Y(W.y);
+        ctx.save(); ctx.lineCap='round'; line(ctx,px,py,px+16,py-34,COL.ink,8); line(ctx,px+1,py-2,px+16,py-34,'#fff',4); ctx.restore();
+        circ(ctx,px,py,3.4,COL.yellow,COL.yellow,1);
+        if(W.fl) tagBox(ctx,'pen lifted!',px+22,py-40,COL.yellow);
+      }
+    }
+  });
+  setFn('j1');
+  return wrap;
+}
+
+/* =====================================================================
+   5.2 JOIN THE ROAD   (Section 5.2, Exercise Q17)
+   f(x) = ax + 1 (x ≤ 3),  bx + 3 (x > 3)  is continuous at 3  ⇔  3a + 1 = 3b + 3.
+   A car actually drives the road: if the roads do not meet it drops off the
+   edge (ballistic fall) or slams into the step.
+   ===================================================================== */
+function drawCar(ctx,x,y,ang,L,wa){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.fillStyle='#fff';
+  const r=L*0.14, by=-r*1.9;
+  ctx.beginPath(); ctx.moveTo(-L*0.5,by+r*0.9); ctx.lineTo(-L*0.5,by-L*0.1); ctx.lineTo(-L*0.22,by-L*0.14); ctx.lineTo(-L*0.1,by-L*0.34);
+  ctx.lineTo(L*0.2,by-L*0.34); ctx.lineTo(L*0.34,by-L*0.14); ctx.lineTo(L*0.5,by-L*0.08); ctx.lineTo(L*0.5,by+r*0.9); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-L*0.06,by-L*0.16); ctx.lineTo(-L*0.03,by-L*0.29); ctx.lineTo(L*0.17,by-L*0.29); ctx.lineTo(L*0.27,by-L*0.16); ctx.closePath(); ctx.strokeStyle=COL.blue; ctx.stroke();
+  line(ctx,L*0.05,by-L*0.29,L*0.05,by-L*0.16,COL.blue,1.6);
+  circ(ctx,L*0.46,by-L*0.02,2.4,COL.yellow,COL.yellow,1);
+  [-0.28,0.28].forEach(wx=>{ const cx=L*wx, cy=-r; circ(ctx,cx,cy,r,COL.ink,'#fff',2.4);
+    for(let i=0;i<3;i++){ const a=wa+i*Math.PI/3; line(ctx,cx-Math.cos(a)*r*0.85,cy-Math.sin(a)*r*0.85,cx+Math.cos(a)*r*0.85,cy+Math.sin(a)*r*0.85,COL.mid,1.4); } });
+  ctx.restore();
+}
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Left road slope a <span class="val" id="aV"></span></label><input type="range" id="aR" min="-1" max="1.5" step="0.01" value="0.9"></div>
+    <div class="control-group"><label>Right road slope b <span class="val" id="bV"></span></label><input type="range" id="bR" min="-1" max="1.5" step="0.001" value="-0.4">
+      <div class="toggle-group"><button class="toggle-btn navy" id="fitB">Auto-fit b</button><button class="toggle-btn play" id="drvB">🚗 Drive</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Left end 3a + 1','yl',COL.red)}${rcard('Right start 3b + 3','yr',COL.blue)}${rcard('Gap','gp',COL.yellow)}${rcard('a − b needed','nd',COL.green)}
+      </div><div class="fb warn" id="vd">—</div><p class="hint">Continuity at 3 needs 3a + 1 = 3b + 3, i.e. a − b = ⅔.</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), aR=$('#aR'), bR=$('#bR');
+  const A={x:0.9,v:0}, B={x:-0.4,v:0}, bump={x:0,v:0};
+  const car={m:'idle',x:-1.7,y:0,vx:0,vy:0,wa:0,t:0};
+  let t=0, joined=false, pulse=9, flag=0;
+  $('#fitB').onclick=()=>{ bR.value=clamp(+aR.value-2/3,+bR.min,+bR.max); };
+  $('#drvB').onclick=()=>{ car.m='drive'; car.x=-1.7; car.vx=1.9; car.vy=0; flag=0; };
+  const roadY=(x,a,b)=>x<=3?a*x+1:b*x+3;
+  animLoop((dt)=>{
+    t+=dt;
+    springTo(A,+aR.value,90,11,dt); springTo(B,+bR.value,90,11,dt);
+    const a=+aR.value, b=+bR.value;
+    $('#aV').textContent=fmt(a,2); $('#bV').textContent=fmt(b,2);
+    const yl=3*a+1, yr=3*b+3, gap=yr-yl, ok=Math.abs(gap)<0.025;
+    $('#yl').textContent=fmt(yl,2); $('#yr').textContent=fmt(yr,2); $('#gp').textContent=fmt(gap,2); $('#nd').textContent=fmt(a-b,2)+' vs ⅔';
+    setFb($('#vd'),ok?'ok':'bad',ok?'Roads meet — f is continuous at x = 3':(gap>0?'Right road starts above — a step up':'Right road starts below — a drop'));
+    if(ok&&!joined) pulse=0; joined=ok; pulse+=dt;
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=mkView({l:50,t:16,r:w-18,b:h-26},[-2,5.5],[-4,12.5]);
+    axes(ctx,V,{sx:1,sy:2});
+    const ax=A.x, bx=B.x;
+    // road bodies
+    const road=(xa,xb,col,fy)=>{
+      ctx.save(); clipView(ctx,V); ctx.strokeStyle=col; ctx.lineWidth=6; ctx.lineCap='butt';
+      ctx.beginPath(); ctx.moveTo(V.X(xa),V.Y(fy(xa))); ctx.lineTo(V.X(xb),V.Y(fy(xb))); ctx.stroke();
+      ctx.strokeStyle=COL.ink; ctx.lineWidth=1; ctx.beginPath();
+      for(let x=xa+0.15;x<xb;x+=0.3){ const px=V.X(x), py=V.Y(fy(x)); ctx.moveTo(px,py+3); ctx.lineTo(px-7,py+16); } ctx.stroke(); ctx.restore();
+    };
+    road(-2,3,COL.red,x=>ax*x+1); road(3,5.5,COL.blue,x=>bx*x+3);
+    const ylA=ax*3+1, yrA=bx*3+3;
+    line(ctx,V.X(3),V.R.t,V.X(3),V.R.b,COL.mid,1.2,[5,5]);
+    textAt(ctx,'x = 3',V.X(3)+5,V.R.t+14,{size:11,weight:700,color:COL.mid});
+    if(Math.abs(yrA-ylA)>0.05){ const x=V.X(3)+14; line(ctx,x,V.Y(ylA),x,V.Y(yrA),COL.yellow,3.4); line(ctx,x-5,V.Y(ylA),x+5,V.Y(ylA),COL.yellow,3); line(ctx,x-5,V.Y(yrA),x+5,V.Y(yrA),COL.yellow,3);
+      textAt(ctx,'gap '+fmt(yrA-ylA,2),x+9,(V.Y(ylA)+V.Y(yrA))/2+4,{size:12,weight:700,color:COL.yellow}); }
+    if(pulse<1.2){ const r=8+pulse*34; ctx.save(); ctx.globalAlpha=1-pulse/1.2; circ(ctx,V.X(3),V.Y(ylA),r,COL.green,null,3); ctx.restore(); }
+    circ(ctx,V.X(3),V.Y(ylA),5,COL.red,'#fff',2.4); circ(ctx,V.X(3),V.Y(yrA),5,COL.blue,'#fff',2.4);
+
+    // ---- car physics ----
+    const sl=x=>x<=3?ax:bx;
+    if(car.m==='drive'){
+      car.wa+=car.vx*dt*5/0.5; car.x+=car.vx*dt;
+      if(car.x>=3&&car.x-car.vx*dt<3){
+        const g=yrA-ylA;
+        if(Math.abs(g)<0.12){ /* smooth ride */ }
+        else if(g>0){ car.m='crash'; car.t=0; car.x=2.93; }
+        else { car.m='fly'; car.y=ylA; car.vy=ax*car.vx; car.x=3; }
+      }
+      if(car.m==='drive'){ car.y=roadY(car.x,ax,bx); if(car.x>=5.3){ car.m='done'; car.t=0; flag=1; } }
+    } else if(car.m==='fly'){
+      car.x+=car.vx*dt; car.y+=car.vy*dt; car.vy-=7*dt; car.wa+=car.vx*dt*10;
+      if(car.x>3 && car.y<=bx*car.x+3){ car.y=bx*car.x+3; car.m='drive'; bump.v=-car.vy*28; }
+      if(car.y<-5){ car.m='lost'; car.t=0; }
+    } else if(car.m==='crash'){
+      car.t+=dt; car.x-=0.5*dt*Math.max(0,1-car.t*2); if(car.t>1.5){ car.m='idle'; car.x=-1.7; }
+    } else if(car.m==='lost'||car.m==='done'){
+      car.t+=dt; if(car.t>1.4){ car.m='idle'; car.x=-1.7; }
+    }
+    if(car.m==='idle') { car.y=roadY(car.x,ax,bx); car.vx=0; }
+    springTo(bump,0,260,16,dt);
+    const cx=V.X(car.x), cy=V.Y(car.m==='lost'?car.y:(car.m==='fly'?car.y:roadY(Math.min(car.x,car.m==='crash'?2.95:car.x),ax,bx))) - (car.m==='drive'?bump.x:0);
+    let ang;
+    if(car.m==='fly') ang=Math.atan2(-car.vy*V.sy,car.vx*V.sx);
+    else ang=Math.atan2(-sl(car.x)*V.sy,V.sx);
+    if(car.m==='crash'){ ang*=1; }
+    if(car.m!=='lost'||car.y>-4.8) drawCar(ctx,cx,cy-3,ang+(car.m==='fly'?0.0:0),Math.min(70,V.sx*0.62),car.wa);
+    if(car.m==='crash'&&car.t<0.8){ for(let i=0;i<9;i++){ const aa=i/9*Math.PI*2, r1=10+car.t*30, r2=r1+10; line(ctx,V.X(3)-8+Math.cos(aa)*r1,cy-30+Math.sin(aa)*r1,V.X(3)-8+Math.cos(aa)*r2,cy-30+Math.sin(aa)*r2,COL.red,3); } tagBox(ctx,'Hit the step!',V.X(3)-70,cy-72,COL.red); }
+    if(car.m==='fly') tagBox(ctx,'Fell off the edge!',cx+30,cy-48,COL.red);
+    if(car.m==='lost') tagBox(ctx,'Fell into the gap',V.X(3),V.R.b-30,COL.red,'center');
+    if(car.m==='done') tagBox(ctx,'Smooth crossing ✓',V.X(4.2),V.Y(roadY(4.2,ax,bx))-48,COL.green,'center');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3 SMOOTH OR SHARP?   (Section 5.3, Theorem 3)
+   f′(c) exists  ⇔  left slope = right slope as h → 0.
+   The lens zooms in by 1/h: a smooth curve straightens into its tangent,
+   a corner stays a corner, x·sin(1/x) never settles.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label>
+      <div class="chip-wrap" id="fnB">
+        <button class="chip-btn active" data-k="sq">x²</button>
+        <button class="chip-btn" data-k="ab">|x|</button>
+        <button class="chip-btn" data-k="cb">∛x</button>
+        <button class="chip-btn" data-k="sw">x·sin(1/x)</button>
+      </div></div>
+    <div class="control-group"><label>Point c <span class="val" id="cV"></span></label><input type="range" id="cR" min="-2" max="2" step="0.01" value="0.6"></div>
+    <div class="control-group"><label>Step h <span class="val" id="hV"></span></label><input type="range" id="hR" min="0" max="100" step="0.5" value="10">
+      <div class="toggle-group"><button class="toggle-btn navy" id="shB">Shrink h → 0</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Left slope','mL',COL.red)}${rcard('Right slope','mR',COL.blue)}${rcard('Continuous','co',COL.green)}${rcard('Differentiable','di')}
+      </div><div class="fb ok" id="vd">—</div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), cR=$('#cR'), hR=$('#hR');
+  const DF={
+    sq:{f:x=>x*x,c0:0.6,cr:[-2,2],hmax:1.2,cy:1.6,hy:2.6},
+    ab:{f:Math.abs,c0:0,cr:[-2,2],hmax:1.2,cy:1.1,hy:2.2},
+    cb:{f:Math.cbrt,c0:0,cr:[-1.6,1.6],hmax:1.0,cy:0,hy:2.0},
+    sw:{f:x=>Math.abs(x)<1e-14?0:x*Math.sin(1/x),c0:0,cr:[-0.5,0.5],hmax:0.3,cy:0,hy:0.55}
+  };
+  let fk='sq', t=0, sh=false; const C={x:0.6}, H={x:0.1};
+  function setFn(k){ fk=k; const F=DF[k]; cR.min=F.cr[0]; cR.max=F.cr[1]; cR.value=F.c0; hR.value=10; sh=false; }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(b.dataset.k));
+  $('#shB').onclick=()=>{ sh=true; };
+  const hOf=(F,s)=>F.hmax*Math.pow(10,-2.7*s/100);
+  animLoop((dt)=>{
+    t+=dt; const F=DF[fk], f=F.f;
+    if(sh){ const s=Math.min(100,+hR.value+38*dt); hR.value=s; if(s>=100) sh=false; }
+    const cT=+cR.value; C.x=approach(C.x,cT,9,dt); if(Math.abs(C.x-cT)<0.003) C.x=cT;
+    const c=C.x; H.x=approach(H.x,hOf(F,+hR.value),16,dt); const h=Math.max(1e-6,H.x);
+    $('#cV').textContent=fmt(c,2); $('#hV').textContent=h>=0.01?fmt(h,3):h.toExponential(1);
+    const fc=f(c), mL=(fc-f(c-h))/h, mR=(f(c+h)-fc)/h;
+    // verdict from the true limit
+    let diff=true, big=false;
+    [1e-3,1e-4,1e-5].forEach(e=>{ const l=(f(c)-f(c-e))/e, r=(f(c+e)-f(c))/e; if(Math.abs(l-r)>0.05*Math.max(1,Math.abs(l))) diff=false; if(Math.abs(l)>40||Math.abs(r)>40) big=true; });
+    if(big) diff=false;
+    $('#mL').textContent=fmt(mL,3); $('#mR').textContent=fmt(mR,3); $('#co').textContent='Yes ✓'; $('#di').textContent=diff?'Yes ✓':'No ✗';
+    const e0=1e-5, m0=((f(c+e0)-f(c))/e0+(f(c)-f(c-e0))/e0)/2;
+    setFb($('#vd'),diff?'ok':'bad', diff?'Slopes agree → f′(c) = '+fmt(m0,2)+' (tangent exists)': big?'Slope blows up → vertical tangent, no f′(c)': fk==='sw'?'Slopes keep swinging → no limit':'Left ≠ right → a corner, no f′(c)');
+
+    const {ctx,w,h2}=(()=>{const o=fitCanvas(canvas); return {ctx:o.ctx,w:o.w,h2:o.h};})();
+    ctx.clearRect(0,0,w,h2);
+    const split=Math.max(w*0.56,Math.min(w-260,w*0.6));
+    const V=mkViewEq({l:46,t:14,r:split-8,b:h2-26},0,F.cy,F.hy);
+    axes(ctx,V);
+    plotFn(ctx,V,f,V.xr[0],V.xr[1],COL.ink,2.8,fk==='sw'?2500:500);
+    // zoom window box on main view
+    const zhy=2.2*Math.max(h,Math.abs(f(c+h)-fc),Math.abs(f(c-h)-fc)), zhx=zhy;
+    ctx.save(); clipView(ctx,V); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+    ctx.strokeRect(V.X(c-zhx),V.Y(fc+zhy),2*zhx*V.sx,2*zhy*V.sy); ctx.restore();
+    const pair=(Vv,rad)=>{
+      slopeLine(ctx,Vv,c,fc,mL,COL.red,2.2); slopeLine(ctx,Vv,c,fc,mR,COL.blue,2.2);
+      if(diff) slopeLine(ctx,Vv,c,fc,m0,COL.green,2.6,[8,5]);
+      [[c-h,COL.red],[c+h,COL.blue]].forEach(([x,col])=>bead(ctx,Vv,x,f(x),col,rad));
+      dot(ctx,Vv,c,fc,5,COL.ink,COL.ink,1);
+    };
+    pair(V,6);
+    // the zoom lens
+    const zr=Math.min((w-split-20)/2,(h2-70)/2), zx=split+(w-split)/2, zy=h2/2-6;
+    if(zr>40){
+      const ZV=mkViewEq({l:zx-zr,t:zy-zr,r:zx+zr,b:zy+zr},c,fc,zhy);
+      ctx.save(); ctx.beginPath(); ctx.arc(zx,zy,zr,0,Math.PI*2); ctx.clip();
+      ctx.fillStyle='#f9fbfd'; ctx.fillRect(zx-zr,zy-zr,2*zr,2*zr);
+      for(let i=-6;i<=6;i++){ line(ctx,zx+i*zr/3,zy-zr,zx+i*zr/3,zy+zr,COL.grid,1); line(ctx,zx-zr,zy+i*zr/3,zx+zr,zy+i*zr/3,COL.grid,1); }
+      plotFn(ctx,ZV,f,ZV.xr[0],ZV.xr[1],COL.ink,3,fk==='sw'?2500:400);
+      pair(ZV,7);
+      ctx.restore();
+      circ(ctx,zx,zy,zr+3,COL.yellow,null,5);
+      line(ctx,V.X(c+zhx),V.Y(fc+zhy),zx-zr*0.7,zy-zr*0.7,COL.yellow,1.2,[3,4]);
+      textAt(ctx,'zoom × '+fmt(ZV.sy/V.sy,1),zx,zy+zr+22,{size:12,weight:700,align:'center',color:COL.yellow});
+    }
+  });
+  setFn('sq');
+  return wrap;
+}
+
+/* =====================================================================
+   5.4 THE CHAIN RULE   (Section 5.3.1, Theorem 4)
+   y = v(t), t = u(x):   dy/dx = (dv/dt)·(dt/dx).
+   A bead wiggles on x; the wiggle is magnified by u′ into t, then by v′
+   into y. Three linked graphs show every link of the chain.
+   ===================================================================== */
+const CHN=[
+  {name:'sin(x²)', un:'t = x²', vn:'y = sin t', u:x=>x*x, du:x=>2*x, v:Math.sin, dv:Math.cos, xr:[0.1,2.4]},
+  {name:'sin²x', un:'t = sin x', vn:'y = t²', u:Math.sin, du:Math.cos, v:t=>t*t, dv:t=>2*t, xr:[0.1,3.0]},
+  {name:'e^(−x)', un:'t = −x', vn:'y = eᵗ', u:x=>-x, du:()=>-1, v:Math.exp, dv:Math.exp, xr:[0.1,2.6]},
+  {name:'sin(log x)', un:'t = log x', vn:'y = sin t', u:Math.log, du:x=>1/x, v:Math.sin, dv:Math.cos, xr:[0.25,3.0]},
+];
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Composite y = v(u(x))</label>
+      <div class="chip-wrap" id="fnB">${CHN.map((c,i)=>`<button class="chip-btn${i?'':' active'}" data-k="${i}">${c.name}</button>`).join('')}</div></div>
+    <div class="control-group"><label>Point x₀ <span class="val" id="xV"></span></label><input type="range" id="xR" min="0.3" max="2.2" step="0.01" value="1.1"></div>
+    <div class="control-group"><label>Wiggle size ±Δx <span class="val" id="aV"></span></label><input type="range" id="aR" min="0.02" max="0.35" step="0.01" value="0.18">
+      <div class="toggle-group"><button class="toggle-btn navy" id="plB">⏸ Pause wiggle</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('dt/dx  (u′)','du',COL.red)}${rcard('dy/dt  (v′)','dv',COL.blue)}
+      ${rcard('dy/dx = u′ · v′','pr',COL.green,true)}</div><p class="hint" id="ck"></p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR'), aR=$('#aR');
+  let k=0, play=true, ph=0; const X0={x:1.1}, AM={x:0.18};
+  let P=null;
+  function setFn(i){
+    k=i; const F=CHN[i];
+    xR.min=F.xr[0]+0.15; xR.max=F.xr[1]-0.15; xR.value=lerp(F.xr[0],F.xr[1],0.45);
+    const samp=(g,a,b)=>{ let lo=1e9,hi=-1e9; for(let j=0;j<=200;j++){ const y=g(a+(b-a)*j/200); lo=Math.min(lo,y); hi=Math.max(hi,y); } const p=(hi-lo)*0.12||0.5; return [lo-p,hi+p]; };
+    const yr1=samp(F.u,F.xr[0],F.xr[1]), yr2=samp(F.v,yr1[0],yr1[1]), yr3=samp(x=>F.v(F.u(x)),F.xr[0],F.xr[1]);
+    P={xr1:F.xr,yr1,xr2:yr1,yr2,xr3:F.xr,yr3};
+  }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(+b.dataset.k));
+  $('#plB').onclick=()=>{ play=!play; $('#plB').textContent=play?'⏸ Pause wiggle':'▶ Play wiggle'; };
+  animLoop((dt)=>{
+    const F=CHN[k]; if(play) ph+=dt*2.6;
+    X0.x=approach(X0.x,+xR.value,10,dt); AM.x=approach(AM.x,+aR.value,10,dt);
+    const x0=X0.x, A=AM.x; $('#xV').textContent=fmt(x0,2); $('#aV').textContent=fmt(+aR.value,2);
+    const t0=F.u(x0), du=F.du(x0), dv=F.dv(t0), pr=du*dv;
+    $('#du').textContent=fmt(du,3); $('#dv').textContent=fmt(dv,3); $('#pr').textContent=fmt(du,2)+' × '+fmt(dv,2)+' = '+fmt(pr,3);
+    const e=1e-5, num=(F.v(F.u(x0+e))-F.v(F.u(x0-e)))/(2*e);
+    $('#ck').textContent='Direct slope of y = v(u(x)) at x₀: '+fmt(num,3)+'  ✓';
+    const xw=x0+A*Math.sin(ph), tw=F.u(xw), yw=F.v(tw);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gap=14, pw=(w-gap*4)/3, top=36, bot=h-74;
+    const R=[0,1,2].map(i=>({l:gap+i*(pw+gap)+(i?0:14),t:top,r:gap+i*(pw+gap)+pw,b:bot}));
+    const V1=mkView(R[0],P.xr1,P.yr1), V2=mkView(R[1],P.xr2,P.yr2), V3=mkView(R[2],P.xr3,P.yr3);
+    [V1,V2,V3].forEach(V=>axes(ctx,V,{noLabels:false}));
+    textAt(ctx,F.un,R[0].l+4,top-12,{size:13,weight:700,color:COL.red});
+    textAt(ctx,F.vn,R[1].l+4,top-12,{size:13,weight:700,color:COL.blue});
+    textAt(ctx,'y = v(u(x))',R[2].l+4,top-12,{size:13,weight:700,color:COL.green});
+    plotFn(ctx,V1,F.u,P.xr1[0],P.xr1[1],COL.ink,2.6); plotFn(ctx,V2,F.v,P.xr2[0],P.xr2[1],COL.ink,2.6); plotFn(ctx,V3,x=>F.v(F.u(x)),P.xr3[0],P.xr3[1],COL.ink,2.6);
+    // tangents
+    slopeLine(ctx,V1,x0,t0,du,COL.red,2.2); slopeLine(ctx,V2,t0,F.v(t0),dv,COL.blue,2.2); slopeLine(ctx,V3,x0,F.v(t0),pr,COL.green,2.4);
+    // amplitude bars on axes
+    const barX=(V,a,b,col)=>{ const y=V.R.b-2; line(ctx,V.X(a),y,V.X(b),y,col,6); };
+    const barY=(V,a,b,col)=>{ const x=V.R.l+2; line(ctx,x,V.Y(a),x,V.Y(b),col,6); };
+    barX(V1,x0-A,x0+A,COL.yellow); barY(V1,t0-du*A,t0+du*A,COL.red);
+    barX(V2,t0-du*A,t0+du*A,COL.red); barY(V2,F.v(t0)-dv*du*A,F.v(t0)+dv*du*A,COL.blue);
+    barX(V3,x0-A,x0+A,COL.yellow); barY(V3,F.v(t0)-pr*A,F.v(t0)+pr*A,COL.green);
+    // live projections
+    [[V1,xw,tw,COL.red],[V2,tw,yw,COL.blue],[V3,xw,yw,COL.green]].forEach(([V,px,py,col])=>{
+      ctx.save(); clipView(ctx,V); line(ctx,V.X(px),V.Y(py),V.X(px),V.R.b,col,1,[3,4]); line(ctx,V.X(px),V.Y(py),V.R.l,V.Y(py),col,1,[3,4]); ctx.restore();
+      bead(ctx,V,px,py,col,7);
+    });
+    // chain arrows between panels
+    [[0,1,COL.red],[1,2,COL.blue]].forEach(([a,b,col])=>{ const x1=R[a].r+2, x2=R[b].l-2, y=top+(bot-top)/2; vec(ctx,x1,y,x2,y,COL.mid,2); });
+    // equation strip
+    const ey=h-26;
+    textAt(ctx,'dy/dx',w*0.5-210,ey,{size:18,weight:700,align:'center',color:COL.green});
+    textAt(ctx,'=',w*0.5-170,ey,{size:18,weight:700,align:'center'});
+    textAt(ctx,'dy/dt',w*0.5-120,ey,{size:18,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,'×',w*0.5-72,ey,{size:18,weight:700,align:'center'});
+    textAt(ctx,'dt/dx',w*0.5-26,ey,{size:18,weight:700,align:'center',color:COL.red});
+    textAt(ctx,'=  '+fmt(dv,2)+' × '+fmt(du,2)+' = '+fmt(pr,2),w*0.5+36,ey,{size:18,weight:700,color:COL.green});
+    textAt(ctx,'wiggle ±'+fmt(A,2)+' → ±'+fmt(Math.abs(du*A),2)+' → ±'+fmt(Math.abs(pr*A),2),w*0.5,h-50,{size:12,weight:600,align:'center',color:COL.mid});
+  });
+  setFn(0);
+  return wrap;
+}
+
+/* =====================================================================
+   5.5 THE SLIDING LADDER   (Section 5.3.2, implicit functions)
+   x² + y² = L²  ⇒  2x + 2y·dy/dx = 0  ⇒  dy/dx = −x/y.
+   The foot is pulled out along the floor; the top slides down the wall,
+   faster and faster. The same point P(x, y) runs round the circle and its
+   tangent slope is exactly −x/y.
+   ===================================================================== */
+function buildA5(){
+  const L=5;
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Foot distance x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0.2" max="4.9" step="0.01" value="1.5"></div>
+    <div class="control-group"><label>Foot speed dx/dt <span class="val" id="sV"></span></label><input type="range" id="sR" min="0.2" max="2" step="0.05" value="0.8">
+      <div class="toggle-group"><button class="toggle-btn play" id="slB">▶ Pull the foot out</button><button class="toggle-btn navy" id="rsB">↺ Reset</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Top height y','yV',COL.blue)}${rcard('dy/dx = −x/y','mV',COL.red)}
+      ${rcard('Top speed dy/dt','vV',COL.red,true)}</div><div class="fb ok" id="vd">—</div>
+      <p class="hint">Differentiate x² + y² = 25 on both sides: 2x + 2y·(dy/dx) = 0.</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR'), sR=$('#sR');
+  const X={x:1.5}; let sl=false, speed=0, t=0;
+  xR.oninput=()=>{ sl=false; $('#slB').textContent='▶ Pull the foot out'; };
+  $('#slB').onclick=()=>{ if(+xR.value>=4.85) xR.value=1.5; sl=!sl; $('#slB').textContent=sl?'⏸ Pause':'▶ Pull the foot out'; };
+  $('#rsB').onclick=()=>{ sl=false; speed=0; xR.value=1.5; $('#slB').textContent='▶ Pull the foot out'; };
+  animLoop((dt)=>{
+    t+=dt;
+    const sT=+sR.value; $('#sV').textContent=fmt(sT,2)+' m/s';
+    if(sl){ speed=approach(speed,sT,6,dt); const nx=Math.min(4.9,+xR.value+speed*dt); xR.value=nx; X.x=nx; if(nx>=4.9){ sl=false; $('#slB').textContent='▶ Pull the foot out'; } }
+    else { speed=approach(speed,0,8,dt); X.x=approach(X.x,+xR.value,12,dt); }
+    const x=X.x, y=Math.sqrt(L*L-x*x), m=-x/y, vy=m*speed;
+    $('#xV').textContent=fmt(x,2)+' m'; $('#yV').textContent=fmt(y,2)+' m'; $('#mV').textContent=fmt(m,3); $('#vV').textContent=fmt(vy,3)+' m/s';
+    setFb($('#vd'),Math.abs(m)<1?'ok':'warn',Math.abs(m)<1?'Top slides slower than the foot (|dy/dx| < 1)':'Top now falls faster than the foot is pulled (|dy/dx| > 1)');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sw=w*0.54;
+    // ---------- ladder scene ----------
+    const S=mkViewEqW({l:34,t:14,r:sw,b:h-14},L/2,L/2-0.05,L/2+0.7);
+    // wall (x = 0 line) and floor (y = 0 line)
+    const wallX=S.X(0), floorY=S.Y(0);
+    line(ctx,wallX,S.R.t,wallX,floorY,COL.ink,3.4); line(ctx,wallX,floorY,S.R.r,floorY,COL.ink,3.4);
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1;
+    for(let yy=S.R.t+8;yy<floorY;yy+=14){ ctx.beginPath(); ctx.moveTo(wallX,yy); ctx.lineTo(wallX-9,yy+9); ctx.stroke(); }
+    for(let xx=wallX;xx<S.R.r;xx+=14){ ctx.beginPath(); ctx.moveTo(xx,floorY); ctx.lineTo(xx-9,floorY+9); ctx.stroke(); } ctx.restore();
+    // dashed right triangle
+    line(ctx,wallX,floorY,S.X(x),floorY,COL.blue,2.2,[6,5]); line(ctx,wallX,floorY,wallX,S.Y(y),COL.blue,2.2,[6,5]);
+    textAt(ctx,'x = '+fmt(x,2),(wallX+S.X(x))/2,floorY-8,{size:12,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,'y = '+fmt(y,2),wallX+8,(floorY+S.Y(y))/2,{size:12,weight:700,color:COL.blue});
+    // ladder rails + rungs
+    const fx=S.X(x), fy=floorY, tx=wallX, ty=S.Y(y), len=Math.hypot(fx-tx,fy-ty), ux=(fx-tx)/len, uy=(fy-ty)/len, nx=-uy*7, ny=ux*7;
+    ctx.save(); ctx.lineCap='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(tx+nx,ty+ny); ctx.lineTo(fx+nx,fy+ny); ctx.moveTo(tx-nx,ty-ny); ctx.lineTo(fx-nx,fy-ny); ctx.stroke();
+    ctx.lineWidth=2; ctx.strokeStyle=COL.mid; ctx.beginPath();
+    const nr=Math.max(4,Math.round(len/26)); for(let i=0;i<=nr;i++){ const u=i/nr; ctx.moveTo(lerp(tx,fx,u)+nx,lerp(ty,fy,u)+ny); ctx.lineTo(lerp(tx,fx,u)-nx,lerp(ty,fy,u)-ny); } ctx.stroke(); ctx.restore();
+    textAt(ctx,'L = 5',(tx+fx)/2+20*uy+8,(ty+fy)/2-6,{size:12,weight:700,color:COL.ink});
+    // velocity arrows: foot (yellow, what you set) and top (red, result)
+    const k=S.sx*0.9;
+    if(speed>0.02){ vec(ctx,fx,fy-14,fx+speed*k,fy-14,COL.yellow,3.4); textAt(ctx,'dx/dt',fx+speed*k+4,fy-18,{size:11,weight:700,color:COL.yellow});
+      vec(ctx,tx+16,ty,tx+16,ty-vy*k,COL.red,3.4); textAt(ctx,'dy/dt',tx+22,ty-vy*k*0.5,{size:11,weight:700,color:COL.red}); }
+    circ(ctx,fx,fy,5,COL.ink,COL.yellow,2); circ(ctx,tx,ty,5,COL.ink,COL.red,2);
+    // ---------- circle graph ----------
+    const G=mkViewEqW({l:sw+34,t:14,r:w-14,b:h-30},L/2,L/2,L/2+0.7);
+    axes(ctx,G,{sx:1,sy:1});
+    plotPar(ctx,G,t=>L*Math.cos(t),t=>L*Math.sin(t),0,Math.PI*2,COL.grid,2,200);
+    plotPar(ctx,G,t=>L*Math.cos(t),t=>L*Math.sin(t),0,Math.PI/2,COL.ink,3,120);
+    textAt(ctx,'x² + y² = 25',G.X(2.2),G.Y(L*0.97)-30,{size:12,weight:700,color:COL.ink});
+    slopeLine(ctx,G,x,y,m,COL.red,2.6,null,2.6);
+    line(ctx,G.X(0),G.Y(0),G.X(x),G.Y(y),COL.blue,2.2,[6,5]);
+    // right-angle mark between radius and tangent
+    { const rl=Math.hypot(x,y), rx=x/rl, ry=y/rl, tl=Math.hypot(1,m), tx2=1/tl, ty2=m/tl; const s=10;
+      const px=G.X(x), py=G.Y(y);
+      const ax2=-rx*s, ay2=ry*s, bx2=tx2*s, by2=-ty2*s; // pixel dirs: back along radius, along tangent (screen y flipped)
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(px+ax2,py+ay2); ctx.lineTo(px+ax2+bx2,py+ay2+by2); ctx.lineTo(px+bx2,py+by2); ctx.stroke(); ctx.restore(); }
+    bead(ctx,G,x,y,COL.red,8);
+    tagBox(ctx,'slope = −x/y = '+fmt(m,2),G.X(x)+14,G.Y(y)-18,COL.red);
+    textAt(ctx,'P(x, y) runs on the circle',G.R.l+8,G.R.b-8,{size:11,weight:600,color:COL.mid});
+  });
+  return wrap;
+}
+
+function mkViewEqW(R,cx,cy,hx){
+  const sx=(R.r-R.l)/(2*hx), hy=(R.b-R.t)/(2*sx);
+  return mkView(R,[cx-hx,cx+hx],[cy-hy,cy+hy]);
+}
+
+/* =====================================================================
+   5.6 INVERSE MIRROR   (Section 5.3.3, inverse trigonometric functions)
+   The graph of f⁻¹ is the graph of f reflected in y = x, so every slope
+   becomes its reciprocal:  (f⁻¹)′(x) = 1 / f′(f⁻¹(x)).
+   The curve is physically folded over the hinge y = x (cos-foreshortening).
+   ===================================================================== */
+const INV={
+  asin:{f:Math.sin, df:Math.cos, a0:-Math.PI/2, a1:Math.PI/2, inv:Math.asin, ur:[-0.95,0.95], u0:0.5, fm:'1/√(1−x²)', dinv:u=>1/Math.sqrt(1-u*u)},
+  acos:{f:Math.cos, df:a=>-Math.sin(a), a0:0, a1:Math.PI, inv:Math.acos, ur:[-0.95,0.95], u0:0.5, fm:'−1/√(1−x²)', dinv:u=>-1/Math.sqrt(1-u*u)},
+  atan:{f:Math.tan, df:a=>1/(Math.cos(a)*Math.cos(a)), a0:-1.38, a1:1.38, inv:Math.atan, ur:[-3,3], u0:1, fm:'1/(1+x²)', dinv:u=>1/(1+u*u)}
+};
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label>
+      <div class="chip-wrap" id="fnB"><button class="chip-btn active" data-k="asin">sin⁻¹ x</button><button class="chip-btn" data-k="acos">cos⁻¹ x</button><button class="chip-btn" data-k="atan">tan⁻¹ x</button></div></div>
+    <div class="control-group"><label>Fold over y = x <span class="val" id="sV"></span></label><input type="range" id="sR" min="0" max="1" step="0.01" value="0">
+      <div class="toggle-group"><button class="toggle-btn play" id="flB">⟲ Flip the graph</button></div></div>
+    <div class="control-group"><label>Point x on the inverse <span class="val" id="uV"></span></label><input type="range" id="uR" min="-0.95" max="0.95" step="0.01" value="0.5"></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Slope of f at P','m1',COL.red)}${rcard('Slope of f⁻¹ at Q','m2',COL.blue)}
+      ${rcard('Formula','fm',COL.green,true)}</div><div class="fb ok" id="vd">—</div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), sR=$('#sR'), uR=$('#uR');
+  let fk='asin', t=0; const S={x:0,v:0}, U={x:0.5};
+  function setFn(k){ fk=k; const F=INV[k]; uR.min=F.ur[0]; uR.max=F.ur[1]; uR.value=F.u0; }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(b.dataset.k));
+  $('#flB').onclick=()=>{ sR.value=+sR.value>0.5?0:1; };
+  animLoop((dt)=>{
+    t+=dt; const F=INV[fk];
+    springTo(S,+sR.value,34,9,dt); U.x=approach(U.x,+uR.value,10,dt);
+    const s=S.x, u=U.x, a=F.inv(u), m=F.df(a), mi=1/m, fv=F.dinv(u);
+    $('#sV').textContent=fmt(+sR.value*100,0)+'%'; $('#uV').textContent=fmt(u,2);
+    $('#m1').textContent=fmt(m,3); $('#m2').textContent=fmt(mi,3); $('#fm').textContent=F.fm+' = '+fmt(fv,3);
+    setFb($('#vd'),Math.abs(mi-fv)<1e-6?'ok':'bad','Reciprocal slopes: 1 ÷ '+fmt(m,2)+' = '+fmt(mi,3)+' = formula ✓');
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const V=mkViewEq({l:14,t:14,r:w-14,b:h-14},0,0,2.8);
+    axes(ctx,V,{sx:1,sy:1});
+    const FOLD=(x,y)=>{ const mx=(x+y)/2, dx=(x-y)/2, c=Math.cos(Math.PI*s); return [mx+dx*c, mx-dx*c]; };
+    // mirror hinge
+    ctx.save(); clipView(ctx,V); line(ctx,V.X(V.xr[0]),V.Y(V.xr[0]),V.X(V.xr[1]),V.Y(V.xr[1]),COL.yellow,2.4,[9,6]); ctx.restore();
+    textAt(ctx,'mirror  y = x',V.X(2.3),V.Y(2.3)-18,{size:12,weight:700,color:COL.yellow});
+    // original (red) and folding copy (blue)
+    plotFn(ctx,V,F.f,F.a0,F.a1,COL.red,3,300);
+    ctx.save(); clipView(ctx,V); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.2; ctx.lineJoin='round'; ctx.beginPath(); let pen=false;
+    for(let i=0;i<=300;i++){ const aa=F.a0+(F.a1-F.a0)*i/300, yy=F.f(aa); if(Math.abs(yy)>5){ pen=false; continue; } const q=FOLD(aa,yy); const px=V.X(q[0]), py=V.Y(q[1]); pen?ctx.lineTo(px,py):ctx.moveTo(px,py); pen=true; }
+    ctx.stroke(); ctx.restore();
+    // tangents: original (red) and its folded image (blue)
+    const hl=0.9/Math.hypot(1,m);
+    const tt=[FOLD(a-hl,u-hl*m),FOLD(a+hl,u+hl*m)];
+    slopeLine(ctx,V,a,u,m,COL.red,2,[7,5],1.1);
+    ctx.save(); clipView(ctx,V); line(ctx,V.X(tt[0][0]),V.Y(tt[0][1]),V.X(tt[1][0]),V.Y(tt[1][1]),COL.blue,3); ctx.restore();
+    // hinge string P → image
+    const Q=FOLD(a,u);
+    line(ctx,V.X(a),V.Y(u),V.X(Q[0]),V.Y(Q[1]),COL.yellow,1.6,[4,4]);
+    bead(ctx,V,a,u,COL.red,7.5); bead(ctx,V,Q[0],Q[1],COL.blue,8);
+    tagBox(ctx,'P  slope '+fmt(m,2),V.X(a)+12,V.Y(u)+(m>0?20:-20),COL.red);
+    if(s>0.9) tagBox(ctx,'Q  slope '+fmt(mi,2),V.X(Q[0])+12,V.Y(Q[1])+(mi>0?-22:22),COL.blue);
+    if(s>0.03&&s<0.97){ const sx=V.X(-2.6), sy=V.Y(-2.6); ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(sx,sy,16,-0.6,Math.PI*0.9); ctx.stroke(); ctx.restore(); }
+  });
+  setFn('asin');
+  return wrap;
+}
+
+/* =====================================================================
+   5.7 THE SPECIAL BASE e   (Section 5.4, Theorem 5)
+   d/dx (bˣ) = bˣ · ln b.  Slope = height only when ln b = 1, i.e. b = e.
+   The mirror y = log_b x then has slope 1/x.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Base b <span class="val" id="bV"></span></label><input type="range" id="bR" min="1.4" max="4.6" step="0.005" value="2">
+      <div class="toggle-group"><button class="toggle-btn play" id="eB">Take me to e</button><button class="toggle-btn navy" id="lgB">Show log mirror</button></div></div>
+    <div class="control-group"><label>Point x₀ <span class="val" id="xV"></span></label><input type="range" id="xR" min="-1" max="2.2" step="0.01" value="1"></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Height y = bˣ','hY',COL.blue)}${rcard('Slope m','mS',COL.red)}
+      ${rcard('Slope ÷ height = ln b','rt',COL.green,true)}</div><div class="fb warn" id="vd">—</div>
+      <p class="hint" id="lgH"></p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), bR=$('#bR'), xR=$('#xR');
+  const B={x:2,v:0}, X={x:1}; let showLog=false, t=0;
+  $('#eB').onclick=()=>{ bR.value=Math.E; };
+  $('#lgB').onclick=()=>{ showLog=!showLog; $('#lgB').textContent=showLog?'Hide log mirror':'Show log mirror'; };
+  animLoop((dt)=>{
+    t+=dt; springTo(B,+bR.value,60,7,dt); X.x=approach(X.x,+xR.value,10,dt);
+    const b=Math.max(1.05,B.x), lb=Math.log(b), x0=X.x, y0=Math.pow(b,x0), m=y0*lb, isE=Math.abs(+bR.value-Math.E)<0.01;
+    $('#bV').textContent=fmt(+bR.value,3)+(isE?'  (≈ e)':''); $('#xV').textContent=fmt(x0,2);
+    $('#hY').textContent=fmt(y0,3); $('#mS').textContent=fmt(m,3); $('#rt').textContent=fmt(m/y0,3);
+    setFb($('#vd'),isE?'ok':'warn',isE?'b = e : slope equals height everywhere — (eˣ)′ = eˣ':(lb>1?'Slope > height — base is bigger than e':'Slope < height — base is smaller than e'));
+    $('#lgH').textContent=showLog?'Mirror image: slope of log_b x at Q = 1/m = '+fmt(1/m,3)+' = 1 / (x·ln b)'+(isE?' → (log x)′ = 1/x':''):'';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const barW=150;
+    const V=mkViewEq({l:14,t:14,r:w-barW,b:h-14},1.3,3.1,4.6);
+    axes(ctx,V,{sx:1,sy:1});
+    ctx.save(); clipView(ctx,V); line(ctx,V.X(V.xr[0]),V.Y(V.xr[0]),V.X(V.xr[1]),V.Y(V.xr[1]),COL.yellow,1.6,[8,6]); ctx.restore();
+    plotFn(ctx,V,x=>Math.pow(b,x),V.xr[0],V.xr[1],COL.blue,3.2,300);
+    if(showLog){
+      plotFn(ctx,V,x=>Math.log(x)/lb,0.004,V.xr[1],COL.ink,2.6,300,[7,5]);
+      const qx=y0, qy=x0; slopeLine(ctx,V,qx,qy,1/m,COL.green,2.6,null,1.8);
+      line(ctx,V.X(x0),V.Y(y0),V.X(qx),V.Y(qy),COL.yellow,1.4,[4,4]);
+      bead(ctx,V,qx,qy,COL.green,7.5);
+    }
+    line(ctx,V.X(x0),V.Y(0),V.X(x0),V.Y(y0),COL.blue,2.4,[5,4]);
+    slopeLine(ctx,V,x0,y0,m,COL.red,2.8,null,2.2);
+    bead(ctx,V,x0,y0,COL.red,8.5);
+    ctx.save(); clipView(ctx,V); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(V.X(x0),V.Y(y0)); ctx.lineTo(V.X(x0+1),V.Y(y0)); ctx.lineTo(V.X(x0+1),V.Y(y0+m)); ctx.stroke(); ctx.restore();
+    // comparison bars: height vs slope on the same y-scale
+    const bx1=w-barW+34, bx2=w-barW+92, base=V.Y(0), cap=V.R.t+2;
+    const top1=Math.max(cap,V.Y(y0)), top2=Math.max(cap,V.Y(m));
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.16)'; ctx.fillRect(bx1-16,top1,32,base-top1); ctx.fillStyle='rgba(217,67,43,0.16)'; ctx.fillRect(bx2-16,top2,32,base-top2); ctx.restore();
+    ctx.save(); ctx.lineWidth=3; ctx.strokeStyle=COL.blue; ctx.strokeRect(bx1-16,top1,32,base-top1); ctx.strokeStyle=COL.red; ctx.strokeRect(bx2-16,top2,32,base-top2); ctx.restore();
+    const eq=Math.abs(m-y0)<0.02*Math.max(1,y0);
+    line(ctx,bx1-30,top1,bx2+30,top1,COL.blue,1.2,[3,4]); line(ctx,bx1-30,top2,bx2+30,top2,COL.red,1.2,[3,4]);
+    textAt(ctx,'y',bx1,base+13,{size:12,weight:700,align:'center',color:COL.blue}); textAt(ctx,'slope',bx2,base+13,{size:12,weight:700,align:'center',color:COL.red});
+    textAt(ctx,eq?'=':'≠',(bx1+bx2)/2,Math.min(top1,top2)-14,{size:26,weight:700,align:'center',color:eq?COL.green:COL.yellow});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.8 LOGARITHMIC DIFFERENTIATION   (Section 5.5)
+   y = u(x)^v(x):  ln y = v·ln u  ⇒  (1/y)·y′ = (ln y)′  ⇒  y′ = y·(ln y)′.
+   A linked bead rides both graphs: the slope of ln y (green), multiplied by
+   the height y (blue), gives the slope of y (red).
+   ===================================================================== */
+const LG=[
+  {name:'xˣ', y:x=>Math.pow(x,x), g:x=>x*Math.log(x), dg:x=>Math.log(x)+1, gl:'ln y = x ln x', dl:'(ln y)′ = ln x + 1'},
+  {name:'x^(sin x)', y:x=>Math.pow(x,Math.sin(x)), g:x=>Math.sin(x)*Math.log(x), dg:x=>Math.cos(x)*Math.log(x)+Math.sin(x)/x, gl:'ln y = sin x · ln x', dl:'(ln y)′ = cos x·ln x + sin x / x'},
+  {name:'(sin x)ˣ', y:x=>Math.pow(Math.sin(x),x), g:x=>x*Math.log(Math.sin(x)), dg:x=>Math.log(Math.sin(x))+x/Math.tan(x), gl:'ln y = x · ln(sin x)', dl:'(ln y)′ = ln(sin x) + x cot x'}
+];
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Function y = u^v</label>
+      <div class="chip-wrap" id="fnB">${LG.map((c,i)=>`<button class="chip-btn${i?'':' active'}" data-k="${i}">${c.name}</button>`).join('')}</div></div>
+    <div class="control-group"><label>Point x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0.3" max="2.9" step="0.01" value="1.5">
+      <div class="toggle-group"><button class="toggle-btn play" id="swB">▶ Sweep along the curve</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Height y','yV',COL.blue)}${rcard('Slope of ln y','gV',COL.green)}
+      ${rcard('y′ = y · (ln y)′','pV',COL.red,true)}</div><p class="hint" id="ck"></p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR');
+  let k=0, sweep=false, t=0, P=null; const X={x:1.5};
+  function setFn(i){ k=i; const F=LG[i]; let lo=1e9,hi=-1e9,lo2=1e9,hi2=-1e9; for(let j=0;j<=200;j++){ const x=0.1+2.95*j/200, y=F.y(x), g=F.g(x); lo=Math.min(lo,y);hi=Math.max(hi,y);lo2=Math.min(lo2,g);hi2=Math.max(hi2,g);} const p1=(hi-lo)*0.1, p2=(hi2-lo2)*0.1; P={yr1:[Math.min(0,lo)-p1*0.3,hi+p1],yr2:[lo2-p2,hi2+p2]}; }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(+b.dataset.k));
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').textContent=sweep?'⏸ Stop sweeping':'▶ Sweep along the curve'; };
+  animLoop((dt)=>{
+    t+=dt; const F=LG[k];
+    if(sweep){ xR.value=1.6+1.25*Math.sin(t*0.9); }
+    X.x=approach(X.x,+xR.value,sweep?30:10,dt); const x=X.x;
+    const y=F.y(x), g1=F.dg(x), yp=y*g1;
+    $('#xV').textContent=fmt(x,2); $('#yV').textContent=fmt(y,3); $('#gV').textContent=fmt(g1,3); $('#pV').textContent=fmt(y,2)+' × '+fmt(g1,2)+' = '+fmt(yp,3);
+    const e=1e-5; $('#ck').textContent='Direct slope of y at x: '+fmt((F.y(x+e)-F.y(x-e))/(2*e),3)+'  ✓';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gp=18, pw=(w-3*gp)/2, top=40, bot=h-96;
+    const V1=mkView({l:gp,t:top,r:gp+pw,b:bot},[0.1,3.05],P.yr1), V2=mkView({l:2*gp+pw,t:top,r:2*gp+2*pw,b:bot},[0.1,3.05],P.yr2);
+    axes(ctx,V1); axes(ctx,V2);
+    textAt(ctx,'y = '+F.name,V1.R.l+6,top-14,{size:13,weight:700,color:COL.blue});
+    textAt(ctx,F.gl,V2.R.l+6,top-14,{size:13,weight:700,color:COL.green});
+    plotFn(ctx,V1,F.y,0.1,3.05,COL.blue,3,400); plotFn(ctx,V2,F.g,0.1,3.05,COL.green,3,400);
+    slopeLine(ctx,V1,x,y,yp,COL.red,2.6,null,0.9); slopeLine(ctx,V2,x,F.g(x),g1,COL.green,2.6,[8,5],0.9);
+    line(ctx,V1.X(x),V1.R.b,V1.X(x),V1.Y(y),COL.mid,1.2,[4,4]); line(ctx,V2.X(x),V2.R.b,V2.X(x),V2.Y(F.g(x)),COL.mid,1.2,[4,4]);
+    bead(ctx,V1,x,y,COL.red,8); bead(ctx,V2,x,F.g(x),COL.green,8);
+    vec(ctx,V1.R.r+2,(top+bot)/2,V2.R.l-2,(top+bot)/2,COL.mid,2);
+    textAt(ctx,'take ln',(V1.R.r+V2.R.l)/2,(top+bot)/2-8,{size:10.5,weight:700,align:'center',color:COL.mid});
+    const ey=h-22, cx0=w*0.5;
+    textAt(ctx,F.dl,cx0,h-70,{size:13,weight:600,align:'center',color:COL.green});
+    textAt(ctx,"y′",cx0-175,ey,{size:19,weight:700,align:'center',color:COL.red});
+    textAt(ctx,'=',cx0-145,ey,{size:19,weight:700,align:'center'});
+    textAt(ctx,'y',cx0-115,ey,{size:19,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,'× (ln y)′',cx0-50,ey,{size:19,weight:700,align:'center',color:COL.green});
+    textAt(ctx,'=  '+fmt(y,2)+' × '+fmt(g1,2)+' = '+fmt(yp,2),cx0+95,ey,{size:19,weight:700,align:'center',color:COL.red});
+  });
+  setFn(0);
+  return wrap;
+}
+
+/* =====================================================================
+   5.9 PARAMETRIC MOTION   (Section 5.6)
+   x = f(θ), y = g(θ):   dy/dx = (dy/dθ) / (dx/dθ).
+   A bead really travels the path; its horizontal (green) and vertical
+   (blue) velocity components add up to the tangent vector (red).
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Path</label>
+      <div class="chip-wrap" id="fnB"><button class="chip-btn active" data-k="circ">Circle</button><button class="chip-btn" data-k="ell">Ellipse</button><button class="chip-btn" data-k="cyc">Cycloid · rolling wheel</button></div></div>
+    <div class="control-group hidden" id="bG"><label>Squash b / a <span class="val" id="bV"></span></label><input type="range" id="bR" min="0.4" max="1.6" step="0.05" value="0.6"></div>
+    <div class="control-group"><label>Parameter θ <span class="val" id="tV"></span></label><input type="range" id="tR" min="0" max="6.2832" step="0.005" value="0.8">
+      <div class="toggle-group"><button class="toggle-btn play" id="pB">▶ Run</button></div></div>
+    <div class="control-group"><label>Speed dθ/dt <span class="val" id="wV"></span></label><input type="range" id="wR" min="0.2" max="2.5" step="0.05" value="0.9"></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('dx/dθ','dxV',COL.green)}${rcard('dy/dθ','dyV',COL.blue)}
+      ${rcard('dy/dx = (dy/dθ)/(dx/dθ)','sV',COL.red,true)}</div><div class="fb ok" id="vd">—</div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), tR=$('#tR'), wR=$('#wR'), bR=$('#bR');
+  let k='circ', play=false, om=0, t=0; const TH={x:0.8}, BQ={x:0.6,v:0};
+  const CV=a=>({
+    circ:{x:th=>1.5*Math.cos(th),y:th=>1.5*Math.sin(th),dx:th=>-1.5*Math.sin(th),dy:th=>1.5*Math.cos(th),T:Math.PI*2,fm:'dy/dx = −cot θ'},
+    ell:{x:th=>1.8*Math.cos(th),y:th=>1.8*a*Math.sin(th),dx:th=>-1.8*Math.sin(th),dy:th=>1.8*a*Math.cos(th),T:Math.PI*2,fm:'dy/dx = −(b/a)·cot θ'},
+    cyc:{x:th=>th-Math.sin(th),y:th=>1-Math.cos(th),dx:th=>1-Math.cos(th),dy:th=>Math.sin(th),T:Math.PI*4,fm:'dy/dx = sin θ / (1 − cos θ) = cot(θ/2)'}
+  }[k]);
+  function setK(kk){ k=kk; $('#bG').classList.toggle('hidden',k!=='ell'); const T=CV(BQ.x).T; tR.max=T; tR.value=Math.min(+tR.value,T-0.01); play=false; $('#pB').textContent='▶ Run'; }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setK(b.dataset.k));
+  tR.oninput=()=>{ play=false; $('#pB').textContent='▶ Run'; };
+  $('#pB').onclick=()=>{ play=!play; $('#pB').textContent=play?'⏸ Pause':'▶ Run'; };
+  animLoop((dt)=>{
+    t+=dt; springTo(BQ,+bR.value,80,14,dt);
+    const C=CV(BQ.x), T=C.T; $('#wV').textContent=fmt(+wR.value,2)+' rad/s'; $('#bV').textContent=fmt(+bR.value,2);
+    om=approach(om,play?+wR.value:0,7,dt);
+    if(play||om>0.01){ let nv=+tR.value+om*dt; if(nv>=T) nv-=T; tR.value=nv; TH.x=nv; } else TH.x=approach(TH.x,+tR.value,10,dt);
+    const th=TH.x, px=C.x(th), py=C.y(th), dx=C.dx(th), dy=C.dy(th), m=Math.abs(dx)<1e-6?Infinity:dy/dx;
+    $('#tV').textContent=fmt(th,2)+' rad'; $('#dxV').textContent=fmt(dx,3); $('#dyV').textContent=fmt(dy,3); $('#sV').textContent=isFinite(m)&&Math.abs(m)<1e3?fmt(m,3):'∞ (vertical)';
+    setFb($('#vd'),'ok',C.fm);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R={l:14,t:14,r:w-14,b:h-14};
+    const V=k==='cyc'?mkViewEqW(R,2*Math.PI,1.1,7.4):mkViewEq(R,0,0,2.7);
+    if(k==='cyc'){ axes(ctx,V,{sx:1,sy:1,noLabels:true}); line(ctx,R.l,V.Y(0),R.r,V.Y(0),COL.ink,3); }
+    else axes(ctx,V,{sx:1,sy:1});
+    plotPar(ctx,V,C.x,C.y,0,T,COL.ink,2.8,420);
+    if(k==='cyc'){
+      const cx=th, cy=1;
+      circ(ctx,V.X(cx),V.Y(cy),V.sx,COL.ink,'rgba(246,249,252,0.8)',2.6);
+      for(let i=0;i<8;i++){ const a=-th+i*Math.PI/4; line(ctx,V.X(cx),V.Y(cy),V.X(cx+Math.sin(a)),V.Y(cy-Math.cos(a)),COL.mid,1.2); }
+      line(ctx,V.X(cx),V.Y(cy),V.X(px),V.Y(py),COL.yellow,2.2);
+      circ(ctx,V.X(cx),V.Y(cy),4,COL.ink,COL.ink,1);
+    } else {
+      line(ctx,V.X(0),V.Y(0),V.X(px),V.Y(py),COL.yellow,2,[6,5]);
+    }
+    const kk=k==='cyc'?0.9:0.8, ex=px+dx*kk, ey=py+dy*kk;
+    line(ctx,V.X(ex),V.Y(py),V.X(ex),V.Y(ey),COL.mid,1.2,[3,4]); line(ctx,V.X(px),V.Y(ey),V.X(ex),V.Y(ey),COL.mid,1.2,[3,4]);
+    vec(ctx,V.X(px),V.Y(py),V.X(ex),V.Y(py),COL.green,3.4);
+    vec(ctx,V.X(px),V.Y(py),V.X(px),V.Y(ey),COL.blue,3.4);
+    slopeLine(ctx,V,px,py,m,COL.red,1.8,[7,5],1.7);
+    vec(ctx,V.X(px),V.Y(py),V.X(ex),V.Y(ey),COL.red,3.6);
+    bead(ctx,V,px,py,COL.red,8.5);
+    textAt(ctx,'dx/dθ',V.X(ex),V.Y(py)+(dy>0?16:-8),{size:11,weight:700,align:'center',color:COL.green});
+    textAt(ctx,'dy/dθ',V.X(px)+(dx>0?-8:8),V.Y(ey),{size:11,weight:700,align:dx>0?'right':'left',color:COL.blue});
+  });
+  setK('circ');
+  return wrap;
+}
+
+/* =====================================================================
+   5.10 SECOND DERIVATIVE   (Section 5.7)
+   f″ is the slope of the slope. f, f′ and f″ are stacked on one x-axis; a
+   ball rolls on f (real gravity along the slope) and the yellow parabola
+   y = f + f′·h + ½f″·h² hugs the curve — its bend IS f″.
+   ===================================================================== */
+const SD=[
+  {name:'x³ − 3x', f:x=>x*x*x-3*x, d1:x=>3*x*x-3, d2:x=>6*x, xr:[-2.4,2.4], x0:-1.6},
+  {name:'sin x', f:Math.sin, d1:Math.cos, d2:x=>-Math.sin(x), xr:[-4.2,4.2], x0:-2.6},
+  {name:'x⁴/4 − x²', f:x=>x*x*x*x/4-x*x, d1:x=>x*x*x-2*x, d2:x=>3*x*x-2, xr:[-2.4,2.4], x0:-1.9}
+];
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label>
+      <div class="chip-wrap" id="fnB">${SD.map((c,i)=>`<button class="chip-btn${i?'':' active'}" data-k="${i}">${c.name}</button>`).join('')}</div></div>
+    <div class="control-group"><label>Point x₀ <span class="val" id="xV"></span></label><input type="range" id="xR" min="-2.3" max="2.3" step="0.01" value="-1.6">
+      <div class="toggle-group"><button class="toggle-btn play" id="rlB">⚽ Release the ball</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('f(x₀)','fV',COL.blue)}${rcard('f′(x₀) slope','d1V',COL.red)}
+      ${rcard('f″(x₀) bend','d2V',COL.green)}${rcard('Shape','shV')}</div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), xR=$('#xR');
+  let k=0, rolling=false, t=0, P=null; const X={x:-1.6}, ball={x:-1.6,v:0};
+  function setFn(i){
+    k=i; const F=SD[i]; xR.min=F.xr[0]+0.1; xR.max=F.xr[1]-0.1; xR.value=F.x0; X.x=F.x0; ball.x=F.x0; ball.v=0; rolling=false; $('#rlB').textContent='⚽ Release the ball';
+    const sm=g=>{ let lo=1e9,hi=-1e9; for(let j=0;j<=200;j++){ const y=g(F.xr[0]+(F.xr[1]-F.xr[0])*j/200); lo=Math.min(lo,y); hi=Math.max(hi,y);} const p=(hi-lo)*0.14||0.5; return [lo-p,hi+p]; };
+    P={y1:sm(F.f),y2:sm(F.d1),y3:sm(F.d2)};
+  }
+  toggleWire(wrap.querySelectorAll('#fnB button'),b=>setFn(+b.dataset.k));
+  xR.oninput=()=>{ rolling=false; $('#rlB').textContent='⚽ Release the ball'; ball.v=0; };
+  $('#rlB').onclick=()=>{ rolling=!rolling; ball.x=+xR.value; ball.v=0; $('#rlB').textContent=rolling?'■ Hold the ball':'⚽ Release the ball'; };
+  animLoop((dt)=>{
+    t+=dt; const F=SD[k];
+    if(rolling){
+      const n=4; for(let i=0;i<n;i++){ const d=dt/n, s=F.d1(ball.x); ball.v+=(-9*s/(1+s*s)-0.28*ball.v)*d; ball.x+=ball.v*d;
+        const lo=F.xr[0]+0.1, hi=F.xr[1]-0.1; if(ball.x<lo){ ball.x=lo; ball.v=Math.abs(ball.v)*0.5; } if(ball.x>hi){ ball.x=hi; ball.v=-Math.abs(ball.v)*0.5; } }
+      xR.value=ball.x; X.x=ball.x;
+    } else X.x=approach(X.x,+xR.value,10,dt);
+    const x0=X.x, y0=F.f(x0), d1=F.d1(x0), d2=F.d2(x0);
+    $('#xV').textContent=fmt(x0,2); $('#fV').textContent=fmt(y0,3); $('#d1V').textContent=fmt(d1,3); $('#d2V').textContent=fmt(d2,3);
+    $('#shV').textContent=Math.abs(d2)<0.06?'Inflection':d2>0?'Concave up ∪':'Concave down ∩';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gap=22, ph=(h-20-gap*2-24)/3, l=44, r=w-18;
+    const Rs=[0,1,2].map(i=>({l,r,t:14+i*(ph+gap)+(i?12:0),b:14+i*(ph+gap)+(i?12:0)+ph}));
+    const V1=mkView(Rs[0],F.xr,P.y1), V2=mkView(Rs[1],F.xr,P.y2), V3=mkView(Rs[2],F.xr,P.y3);
+    [V1,V2,V3].forEach(V=>axes(ctx,V));
+    const lab=(V,txt,col)=>textAt(ctx,txt,V.R.l+8,V.R.t+16,{size:13,weight:700,color:col});
+    lab(V1,'f(x) = '+F.name,COL.blue); lab(V2,"f′(x)  — slope of f",COL.red); lab(V3,"f″(x)  — slope of f′",COL.green);
+    ctx.save(); clipView(ctx,V3); ctx.beginPath(); let st=false; for(let i=0;i<=300;i++){ const x=F.xr[0]+(F.xr[1]-F.xr[0])*i/300, y=F.d2(x); const px=V3.X(x), py=V3.Y(y); st?ctx.lineTo(px,py):ctx.moveTo(px,py); st=true; }
+    ctx.lineTo(V3.X(F.xr[1]),V3.Y(0)); ctx.lineTo(V3.X(F.xr[0]),V3.Y(0)); ctx.closePath(); ctx.fillStyle='rgba(31,157,85,0.10)'; ctx.fill(); ctx.restore();
+    plotFn(ctx,V1,F.f,F.xr[0],F.xr[1],COL.blue,3,400); plotFn(ctx,V2,F.d1,F.xr[0],F.xr[1],COL.red,3,400); plotFn(ctx,V3,F.d2,F.xr[0],F.xr[1],COL.green,3,400);
+    slopeLine(ctx,V1,x0,y0,d1,COL.red,2.2,null,0.9);
+    slopeLine(ctx,V2,x0,d1,d2,COL.green,2.4,null,0.9);
+    plotFn(ctx,V1,x=>y0+d1*(x-x0)+0.5*d2*(x-x0)*(x-x0),x0-1.0,x0+1.0,COL.yellow,3,60,[7,4]);
+    line(ctx,V1.X(x0),V1.R.t,V3.X(x0),V3.R.b,COL.mid,1,[3,5]);
+    { const ang=Math.atan2(-d1*V1.sy,V1.sx), px=V1.X(x0), py=V1.Y(y0), rr=10; const nxp=Math.sin(ang)*rr, nyp=-Math.cos(ang)*rr;
+      circ(ctx,px+nxp,py+nyp,rr,COL.blue,'#fff',3);
+      ctx.save(); ctx.translate(px+nxp,py+nyp); ctx.rotate(x0*3); line(ctx,0,0,rr*0.8,0,COL.blue,2); ctx.restore(); }
+    bead(ctx,V2,x0,d1,COL.red,7); bead(ctx,V3,x0,d2,COL.green,7);
+    if(Math.abs(d2)>=0.06) textAt(ctx,d2>0?'yellow parabola: bends upward':'yellow parabola: bends downward',V1.R.r-8,V1.R.t+16,{size:11.5,weight:700,align:'right',color:COL.yellow});
+  });
+  setFn(0);
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

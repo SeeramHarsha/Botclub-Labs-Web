@@ -15,8 +15,10 @@ const SITE = path.resolve(arg('--site', path.join(FROM, '..', '..', 'index.html'
 const OUT = path.join(__dirname, '..', 'content');
 
 if (!fs.existsSync(path.join(FROM, 'Class - 8'))) { console.error('Cannot find the lessons in ' + FROM + '. Pass --from <folder>.'); process.exit(1); }
-fs.rmSync(OUT, { recursive: true, force: true });
+// Class 11 and 12 come from scripts/import-class-11-12.js, so they are kept when the rest is rebuilt
+const KEEP = new Set(['Class - 11', 'Class - 12', 'titles-extra.json', 'groups.json']);
 fs.mkdirSync(OUT, { recursive: true });
+for (const e of fs.readdirSync(OUT)) if (!KEEP.has(e)) fs.rmSync(path.join(OUT, e), { recursive: true, force: true });
 
 let files = 0, bytes = 0;
 function copy(src, dst) {

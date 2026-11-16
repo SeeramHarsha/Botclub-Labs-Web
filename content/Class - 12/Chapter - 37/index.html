@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 7 — Probability | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.formula{font-size:var(--fs-md); font-weight:600; text-align:center; padding:8px 6px; background:#f1f6fc; border:1px dashed var(--border-strong); border-radius:9px; color:var(--navy-2); line-height:1.5;}
+.formula b{color:var(--text-1);} .formula .y{color:var(--f-yellow);} .formula .b{color:var(--f-blue);} .formula .g{color:var(--f-green);} .formula .r{color:var(--f-red);}
+.verdict{font-size:var(--fs-sm); font-weight:700; text-align:center; padding:7px; border-radius:8px; margin-top:7px;}
+.verdict.ok{background:#e4f7ec; color:#1f6b3d;} .verdict.bad{background:#fdece7; color:#a4331c;} .verdict.warn{background:#fdf4dc; color:#8a6410;}
+.slim .control-group{padding:7px 11px;} .slim .control-group input[type=range]{margin-top:4px;}
+.lab-side .toggle-group .toggle-btn{padding:9px 6px;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🎲</div>
+    <div>
+      <div class="chip">Grade 12 · Ch 7</div>
+      <h1>Probability</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>Given · what you set</span>
+      <span><i style="background:var(--f-blue)"></i>Event E / A</span>
+      <span><i style="background:var(--f-green)"></i>Both · favourable</span>
+      <span><i style="background:var(--f-red)"></i>Ruled out · defective</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">7.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 7: PROBABILITY  (NCERT Part 2, Ch 13 text)
+   Conditional probability · multiplication rule · independence ·
+   total probability · Bayes' theorem.
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Coins and dice tumble, bounce and settle; balls fall and
+   pile; particles travel the branches of the tree.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', faint:'#dbe4f0'};
+
+/* ---------------------------------------------------------------------
+   0. PURE MATHS (checked against the textbook examples — see test block)
+   --------------------------------------------------------------------- */
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
+function fr(n,d){ if(!d) return '—'; const g=gcd(n,d); n/=g; d/=g; return d===1?String(n):n+'/'+d; }
+function cnt(o,c){ let k=0; for(const x of o) if(x===c) k++; return k; }
+function condP(nEF,nF){ return nF? nEF/nF : NaN; }                          // P(E|F)=n(E∩F)/n(F)
+function bayes(priors,likes){ const tot=priors.reduce((s,p,i)=>s+p*likes[i],0); return {tot, post:priors.map((p,i)=>tot? p*likes[i]/tot : NaN)}; }
+function pFirstWins(p){ return p/(1-(1-p)*(1-p)); }                          // A throws first, success prob p each throw
+
+/* ---------------------------------------------------------------------
+   0a. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function box(ctx,x,y,w,h,stroke,fill,lw,r,dash){
+  ctx.save(); rrect(ctx,x,y,w,h,r===undefined?6:r);
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(lw!==0){ ctx.lineWidth=lw||2.2; ctx.strokeStyle=stroke; ctx.setLineDash(dash||[]); ctx.stroke(); } ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){
+  ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2);
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.stroke(); } ctx.restore();
+}
+function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function pct(x,d){ return isFinite(x)? fmt(x*100,d===undefined?1:d)+'%' : '—'; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function rgba(h,a){ const c=hexRgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function easeOut(u){ return 1-Math.pow(1-clamp(u,0,1),3); }
+function easeIO(u){ u=clamp(u,0,1); return u*u*(3-2*u); }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function arcPt(x0,y0,x1,y1,u,hgt){ return {x:lerp(x0,x1,u), y:lerp(y0,y1,u)-hgt*4*u*(1-u)}; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(s,target,k,damping,dt){
+  const acc=(target-s.x)*k - s.v*damping;
+  s.v+=acc*dt; s.x+=s.v*dt; return s.x;
+}
+
+/* ---------------------------------------------------------------------
+   0c. TUMBLING THINGS — ballistic flight with real bounces
+   h(t): height above the ground; gravity g, restitution e.
+   --------------------------------------------------------------------- */
+function flight(D0,vUp,g,e){
+  g=g||2600; e=e||0.42;
+  const vi=Math.sqrt(vUp*vUp+2*g*D0), t0=(vUp+vi)/g, bounces=[];
+  let vb=vi*e, total=t0;
+  while(vb>70 && bounces.length<7){ bounces.push([total,vb]); total+=2*vb/g; vb*=e; }
+  return {total, h(t){
+    if(t<t0) return Math.max(0,D0+vUp*t-0.5*g*t*t);
+    for(let i=bounces.length-1;i>=0;i--) if(t>=bounces[i][0]){ const s=t-bounces[i][0]; return Math.max(0,bounces[i][1]*s-0.5*g*s*s); }
+    return 0; }};
+}
+/** kind 'coin' | 'die'. val: 'H'/'T' or 1..6. */
+function newRoll(kind,x0,x1,gy,D0,vUp,val,delay){
+  const f=flight(D0,vUp);
+  return {kind,x0,x1,gy,f,t:-(delay||0),val,seed:Math.random()*20,dir:Math.random()<0.5?-1:1,
+          spin:2+Math.floor(Math.random()*2), nh:6+2*Math.floor(Math.random()*3)+(val==='T'?1:0)};
+}
+function rollDone(r){ return r.t>=r.f.total; }
+function rollPose(r){
+  const tt=Math.max(0,r.t), u=clamp(tt/r.f.total,0,1), eo=easeOut(u);
+  return {x:lerp(r.x0,r.x1,eo), y:r.gy-r.f.h(tt), u, eo, tt};
+}
+function dieFace(r,p){ return p.u<0.72 ? 1+Math.floor(p.tt*16+r.seed)%6 : r.val; }
+function drawDie(ctx,x,y,s,rot,val,col,hi){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+  box(ctx,-s/2,-s/2,s,s,col,hi?rgba(hi,0.18):'#fff',2.8,s*0.18);
+  const P={1:[[0,0]],2:[[-1,-1],[1,1]],3:[[-1,-1],[0,0],[1,1]],4:[[-1,-1],[1,-1],[-1,1],[1,1]],5:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],6:[[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]};
+  (P[val]||[]).forEach(q=>{ ctx.beginPath(); ctx.arc(q[0]*s*0.26,q[1]*s*0.26,s*0.075,0,Math.PI*2); ctx.fillStyle=col; ctx.fill(); });
+  ctx.restore();
+}
+function drawCoin(ctx,x,y,R,ang,col){
+  const c=Math.cos(ang), sy=Math.max(0.07,Math.abs(c));
+  ctx.save(); ctx.translate(x,y); ctx.scale(1,sy);
+  circ(ctx,0,0,R,col,'#fff',3.2); circ(ctx,0,0,R*0.74,rgba(col,0.45),null,1.4);
+  if(sy>0.3) textAt(ctx,c>0?'H':'T',0,R*0.34,{align:'center',size:R*1.0,weight:700,color:col,alpha:Math.min(1,(sy-0.3)*3)});
+  ctx.restore();
+}
+function shadow(ctx,x,y,R,h){ const k=clamp(1-h/260,0.25,1); ctx.save(); ctx.strokeStyle=rgba(COL.ink,0.25*k); ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(x,y,R*1.05*k,R*0.2*k,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); }
+
+/* ---------------------------------------------------------------------
+   0d. RIGHT-COLUMN UI BUILDERS
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML=`<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side slim"></div>`;
+  return wrap;
+}
+function chipsHTML(id,label,opts,sel){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">${opts.map((o,i)=>`<button class="chip-btn${i===(sel||0)?' active':''}" data-i="${i}">${o}</button>`).join('')}</div></div>`;
+}
+function wireChips(root,id,cb){
+  const bs=[...root.querySelectorAll('#'+id+' .chip-btn')];
+  const set=i=>{ bs.forEach(x=>x.classList.remove('active')); bs[i].classList.add('active'); };
+  bs.forEach((b,i)=>b.onclick=()=>{ set(i); cb(i); });
+  return set;
+}
+function sliderHTML(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function wireSlider(root,id,show,cb){
+  const el=root.querySelector('#'+id), v=root.querySelector('#'+id+'V');
+  const upd=()=>{ v.textContent=show(+el.value); };
+  el.addEventListener('input',()=>{ upd(); if(cb) cb(+el.value); }); upd();
+  return {el, get:()=>+el.value, set:x=>{ el.value=x; upd(); }, upd};
+}
+function cardsHTML(list,cols){
+  return `<div class="control-group"><div class="result-cards${cols===3?' three':''}">${list.map(c=>`<div class="rcard${c[3]?' wide':''}"><div class="rlabel">${c[1]}</div><div class="rval" id="${c[0]}" ${c[4]?`style="color:var(--${c[4]})"`:''}>${c[2]||'—'}</div></div>`).join('')}</div></div>`;
+}
+function btnRow(list){ return `<div class="toggle-group" style="margin-top:0">${list.map(b=>`<button class="toggle-btn ${b[2]||''}" id="${b[0]}">${b[1]}</button>`).join('')}</div>`; }
+
+/* =====================================================================
+   7.1 THREE COINS — THE SAMPLE SPACE SHRINKS
+   P(E|F) = n(E∩F) / n(F)      (textbook §13.2)
+   Check: E = at least two heads, F = first coin tail → 1/4 ; Ex 13.1 Q6 → 1/2, 3/7, 6/7.
+   Coins are thrown with real ballistic flight + bounces; the number of
+   half-turns is fixed in advance so the face shown on landing is the outcome.
+   ===================================================================== */
+const S8=['HHH','HHT','HTH','THH','HTT','THT','TTH','TTT'];
+const COIN_F=[
+  {n:'None (whole S)', f:o=>true},
+  {n:'1st coin is tail', f:o=>o[0]==='T'},
+  {n:'Heads on first two', f:o=>o[0]==='H'&&o[1]==='H'},
+  {n:'At most two heads', f:o=>cnt(o,'H')<=2},
+  {n:'At least one tail', f:o=>cnt(o,'T')>=1}];
+const COIN_E=[
+  {n:'At least two heads', f:o=>cnt(o,'H')>=2},
+  {n:'Head on 3rd coin', f:o=>o[2]==='H'},
+  {n:'At most two tails', f:o=>cnt(o,'T')<=2}];
+function buildA1(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['go','🪙 Toss 3 coins','play'],['go50','× 50 tosses'],['rs','↺']])
+    + chipsHTML('cf','Given  F',COIN_F.map(e=>e.n),1)
+    + chipsHTML('ce','Event  E',COIN_E.map(e=>e.n),0)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rEF','n(E ∩ F)','1',0,'green'],['rF','n(F)','4',0,'yellow'],['rP','P(E | F)','1/4',0,'blue'],['rX','Your tosses: E among F','—',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let fi=1, ei=0, t=0, W=900, H=600, cur=null, pending=null, coins;
+  const hist={}; S8.forEach(o=>hist[o]=0);
+  const cards=S8.map(o=>({o,x:null,y:0,s:1,a:1}));
+  wireChips(wrap,'cf',i=>{ fi=i; }); wireChips(wrap,'ce',i=>{ ei=i; });
+  function mkCoins(vals){
+    const floor=H*0.40, vUp=Math.sqrt(2*2600*H*0.30);
+    coins=[0,1,2].map(i=>{ const x=W*(0.3+0.2*i); return newRoll('coin',x+(Math.random()-0.5)*40,x,floor,0,vUp,vals[i],i*0.12); });
+  }
+  mkCoins(['H','H','H']); coins.forEach(c=>c.t=c.f.total+1);
+  $('#go').onclick=()=>{ if(pending) return; pending=pick(S8); mkCoins([...pending]); };
+  $('#go50').onclick=()=>{ if(pending) return; for(let i=0;i<49;i++) hist[pick(S8)]++; pending=pick(S8); mkCoins([...pending]); };
+  $('#rs').onclick=()=>{ S8.forEach(o=>hist[o]=0); cur=null; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const F=COIN_F[fi].f, E=COIN_E[ei].f, inF=S8.map(F), inE=S8.map(E);
+    const nFt=inF.filter(Boolean).length, nEFt=S8.filter((o,i)=>inF[i]&&inE[i]).length;
+    // ---- coins in flight
+    const floor=h*0.40, R=clamp(Math.min(h*0.08,w*0.055),18,40), gy=floor+R*1.12;
+    line(ctx,w*0.14,gy,w*0.86,gy,COL.ink,2.4);
+    let allDone=true;
+    coins.forEach((c,i)=>{
+      c.t+=dt; if(!rollDone(c)) allDone=false;
+      const p=rollPose(c), hh=c.f.h(Math.max(0,c.t));
+      shadow(ctx,p.x,gy,R,hh); drawCoin(ctx,p.x,p.y,R,Math.PI*c.nh*p.eo,COL.ink);
+      textAt(ctx,'coin '+(i+1),p.x,gy+22,{align:'center',size:11,weight:600,color:COL.mid});
+    });
+    if(pending && allDone){ hist[pending]++; cur=pending; pending=null; }
+    // ---- cards: F stays and re-centres, the rest drop away
+    const cwid=clamp((w*0.9)/8-8,46,96), chgt=cwid*0.56, pitch=cwid+8, y1=h*0.64, y2=h*0.84;
+    cards.forEach((c,i)=>{
+      let tx,ty,ts,ta;
+      if(inF[i]){ const idx=inF.slice(0,i).filter(Boolean).length; tx=w/2+(idx-(nFt-1)/2)*pitch; ty=y1; ts=1; ta=1; }
+      else { tx=w/2+(i-3.5)*pitch; ty=y2; ts=0.7; ta=0.22; }
+      if(c.x===null){ c.x=tx; c.y=ty; c.s=ts; c.a=ta; }
+      c.x=approach(c.x,tx,7,dt); c.y=approach(c.y,ty,7,dt); c.s=approach(c.s,ts,7,dt); c.a=approach(c.a,ta,7,dt);
+    });
+    textAt(ctx,fi===0?'Sample space S   n = 8':'New sample space = F   n = '+nFt,w/2,y1-chgt*0.5-14,{align:'center',size:13,weight:700,color:fi===0?COL.muted:COL.yellow});
+    cards.forEach((c,i)=>{
+      const f=inF[i], e=inE[i], noC=fi===0;
+      const col=f&&e&&!noC?COL.green:e?COL.blue:f&&!noC?COL.yellow:COL.mid;
+      const fill=f&&e&&!noC?rgba(COL.green,0.22):f&&!noC?rgba(COL.yellow,0.2):e&&f?rgba(COL.blue,0.15):'#fff';
+      const pulse=(cur===c.o&&!pending)?1+0.06*Math.sin(t*6):1, cw=cwid*c.s*pulse, ch=chgt*c.s*pulse;
+      ctx.save(); ctx.globalAlpha=c.a;
+      box(ctx,c.x-cw/2,c.y-ch/2,cw,ch,col,fill,f||e?3:2,8,(!f&&e)?[5,4]:[]);
+      textAt(ctx,c.o,c.x,c.y+ch*0.17,{align:'center',size:cwid*0.25*c.s,weight:700});
+      ctx.restore();
+      if(cur===c.o && !pending) box(ctx,c.x-cw/2-5,c.y-ch/2-5,cw+10,ch+10,COL.ink,null,2,11);
+    });
+    const ex=Math.round(Math.min(11,w/60));
+    textAt(ctx,'P(E | F)  =  n(E∩F) / n(F)  =  '+nEFt+' / '+nFt+'  =  '+fr(nEFt,nFt),w/2,h*0.955,{align:'center',size:Math.max(14,ex+6),weight:700,color:COL.ink});
+    // ---- readouts
+    let tF=0,tEF=0; S8.forEach((o,i)=>{ if(inF[i]){ tF+=hist[o]; if(inE[i]) tEF+=hist[o]; } });
+    $('#rEF').textContent=nEFt; $('#rF').textContent=nFt; $('#rP').textContent=fr(nEFt,nFt)+' = '+fmt(nEFt/nFt,3);
+    $('#rX').textContent=tF? tEF+' / '+tF+' = '+pct(tEF/tF,0) : '—';
+    $('#fm').innerHTML=`<span class="g">n(E∩F)</span> / <span class="y">n(F)</span> = <span class="g">${nEFt}</span> / <span class="y">${nFt}</span> = <b>${fr(nEFt,nFt)}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.2 TWO DICE — THE 6 × 6 GRID
+   Same rule on 36 outcomes.  Checks (textbook): Ex 6  sum 6, a 4 shows → 2/5
+   Ex 13.1 Q10(a) Die 1 = 5, sum > 9 → 1/3 · Q10(b) Die 2 < 4, sum 8 → 1/9
+   Q14 dice differ, sum 4 → 1/15
+   ===================================================================== */
+const D2F=[
+  {n:'None', f:(a,b,k)=>true},
+  {n:'Sum = k', f:(a,b,k)=>a+b===k, r:[2,12,6]},
+  {n:'Die 1 = k', f:(a,b,k)=>a===k, r:[1,6,5]},
+  {n:'Die 2 < k', f:(a,b,k)=>b<k, r:[2,6,4]},
+  {n:'Dice differ', f:(a,b,k)=>a!==b}];
+const D2E=[
+  {n:'Sum > 9', f:(a,b)=>a+b>9},
+  {n:'Sum = 8', f:(a,b)=>a+b===8},
+  {n:'A 4 shows', f:(a,b)=>a===4||b===4},
+  {n:'Sum = 4', f:(a,b)=>a+b===4},
+  {n:'Both odd', f:(a,b)=>a%2===1&&b%2===1}];
+function buildA2(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['go','🎲 Roll both dice','play'],['go100','× 100 rolls'],['rs','↺']])
+    + chipsHTML('cf','Given  F',D2F.map(e=>e.n),1)
+    + sliderHTML('k','k  =',1,12,1,6)
+    + chipsHTML('ce','Event  E',D2E.map(e=>e.n),2)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rEF','n(E ∩ F)','2',0,'green'],['rF','n(F)','5',0,'yellow'],['rP','P(E | F)','2/5',0,'blue'],['rX','Your rolls: E among F','—',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let fi=1, ei=2, t=0, W=900, H=600, pending=null, last=null, mark={x:1,v:0}, dice;
+  const hist=Array.from({length:36},()=>0);
+  const cells=Array.from({length:36},()=>({a:1,e:0,f:0}));
+  const ks=wireSlider(wrap,'k',v=>v,null);
+  function setK(){ const r=D2F[fi].r; ks.el.disabled=!r; ks.el.parentElement.style.opacity=r?1:0.4; if(r){ ks.el.min=r[0]; ks.el.max=r[1]; ks.set(r[2]); } }
+  wireChips(wrap,'cf',i=>{ fi=i; setK(); }); wireChips(wrap,'ce',i=>{ ei=i; });
+  setK();
+  function mk(a,b){
+    const gs=Math.min(H*0.8,W*0.55), gx=W*0.075, dzx=gx+gs+(W-gx-gs)/2, ds=clamp(gs*0.17,34,64);
+    dice=[a,b].map((v,i)=>newRoll('die',dzx+(i?1:-1)*ds*2.2,dzx+(i?1:-1)*ds*0.85,H*0.5,H*0.4,0,v,i*0.1));
+  }
+  function randPair(){ return [1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)]; }
+  mk(3,4); dice.forEach(d=>d.t=d.f.total+1);
+  $('#go').onclick=()=>{ if(pending) return; pending=randPair(); mk(...pending); };
+  $('#go100').onclick=()=>{ if(pending) return; for(let i=0;i<99;i++){ const p=randPair(); hist[(p[0]-1)*6+p[1]-1]++; } pending=randPair(); mk(...pending); };
+  $('#rs').onclick=()=>{ hist.fill(0); last=null; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const k=ks.get(), F=D2F[fi].f, E=D2E[ei].f, noC=fi===0;
+    const gs=Math.min(h*0.8,w*0.55), gx=w*0.075, gy0=(h-gs)/2+10, c=gs/6;
+    let nFt=0,nEFt=0, tF=0, tEF=0;
+    for(let r=0;r<6;r++) for(let q=0;q<6;q++){ // q = die 1 (column), r = die 2 (row)
+      const a=q+1, b=r+1, i=r*6+q, f=F(a,b,k), e=E(a,b), cl=cells[i];
+      if(f){ nFt++; if(e) nEFt++; }
+      const hh=hist[q*6+r]; if(f){ tF+=hh; if(e) tEF+=hh; }
+      cl.a=approach(cl.a,f?1:0.13,8,dt); cl.f=approach(cl.f,f&&!noC?1:0,8,dt); cl.e=approach(cl.e,e?1:0,8,dt);
+    }
+    textAt(ctx,'Die 1',gx+gs/2,gy0-24,{align:'center',size:12,weight:700,color:COL.muted});
+    textAt(ctx,'Die 2',gx-34,gy0+gs/2,{align:'center',size:12,weight:700,color:COL.muted});
+    for(let i=0;i<6;i++){
+      textAt(ctx,i+1,gx+c*(i+0.5),gy0-8,{align:'center',size:12,weight:600,color:COL.mid});
+      textAt(ctx,i+1,gx-10,gy0+c*(i+0.5)+4,{align:'center',size:12,weight:600,color:COL.mid});
+    }
+    for(let r=0;r<6;r++) for(let q=0;q<6;q++){
+      const a=q+1, b=r+1, i=r*6+q, cl=cells[i], x=gx+q*c, y=gy0+r*c, both=cl.f*cl.e;
+      ctx.save(); ctx.globalAlpha=cl.a;
+      if(cl.f>0.01){ ctx.fillStyle=rgba(COL.yellow,0.22*cl.f*(1-cl.e)); ctx.fillRect(x+1,y+1,c-2,c-2); }
+      if(cl.e>0.01){ ctx.fillStyle=noC?rgba(COL.blue,0.2*cl.e):rgba(COL.green,0.28*cl.e*cl.f+0.1*cl.e*(1-cl.f)); ctx.fillRect(x+1,y+1,c-2,c-2); }
+      ctx.strokeStyle=cl.e>0.5?(noC||cl.f<0.5?COL.blue:COL.green):cl.f>0.5?COL.yellow:COL.faint; ctx.lineWidth=cl.e>0.5||cl.f>0.5?2.4:1.2; ctx.strokeRect(x+1.5,y+1.5,c-3,c-3);
+      textAt(ctx,a+b,x+c/2,y+c/2+4,{align:'center',size:Math.max(10,c*0.3),weight:600,color:COL.muted,alpha:0.7});
+      const hh=hist[q*6+r]; if(hh>0) textAt(ctx,hh,x+c-4,y+12,{align:'right',size:10,weight:700,color:COL.ink});
+      ctx.restore();
+    }
+    // sample-space bracket
+    textAt(ctx,noC?'S = 36 outcomes':'n(F) = '+nFt+' of 36',gx,gy0+gs+22,{size:13,weight:700,color:noC?COL.muted:COL.yellow});
+    // ---- dice
+    const dzx=gx+gs+(w-gx-gs)/2, ds=clamp(gs*0.17,34,64), floor=h*0.5;
+    line(ctx,gx+gs+24,floor+ds/2,w-18,floor+ds/2,COL.ink,2.4);
+    let allDone=true;
+    dice.forEach((d,i)=>{
+      d.t+=dt; if(!rollDone(d)) allDone=false;
+      const p=rollPose(d); shadow(ctx,p.x,floor+ds/2,ds*0.5,d.f.h(Math.max(0,d.t)));
+      drawDie(ctx,p.x,p.y,ds,d.dir*d.spin*Math.PI*0.5*4*(1-p.eo),dieFace(d,p),COL.ink);
+    });
+    if(pending && allDone){ hist[(pending[0]-1)*6+pending[1]-1]++; last=pending; pending=null; mark.x=2.2; mark.v=0; }
+    if(last){ springTo(mark,1,260,16,dt); const x=gx+(last[0]-1)*c, y=gy0+(last[1]-1)*c, s=mark.x;
+      box(ctx,x+c/2-c*s/2,y+c/2-c*s/2,c*s,c*s,COL.ink,null,3,6); }
+    // ---- big readout
+    const rx=gx+gs+(w-gx-gs)/2;
+    textAt(ctx,'P(E | F) = n(E∩F) / n(F)',rx,h*0.74,{align:'center',size:14,weight:600,color:COL.muted});
+    textAt(ctx,nEFt+' / '+nFt+' = '+fr(nEFt,nFt),rx,h*0.74+34,{align:'center',size:26,weight:700,color:COL.ink});
+    $('#rEF').textContent=nEFt; $('#rF').textContent=nFt; $('#rP').textContent=fr(nEFt,nFt)+' = '+fmt(nEFt/nFt,3);
+    $('#rX').textContent=tF? tEF+' / '+tF+' = '+pct(tEF/tF,0) : '—';
+    $('#fm').innerHTML=`<span class="g">n(E∩F)</span> / <span class="y">n(F)</span> = <span class="g">${nEFt}</span> / <span class="y">${nFt}</span> = <b>${fr(nEFt,nFt)}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.3 URN, WITHOUT REPLACEMENT — MULTIPLICATION RULE
+   P(E∩F) = P(E)·P(F|E).  Ex 8: 10 black + 5 white, two drawn → 10/15 × 9/14 = 3/7.
+   Balls are a real pile (gravity, wall + ball collisions); a random ball
+   is lifted out on an arc, so the draw really is proportional to the pile.
+   ===================================================================== */
+function stepBalls(balls,dt,x0,x1,y1,r){
+  const n=3, h=dt/n;
+  for(let s=0;s<n;s++){
+    balls.forEach(b=>{
+      b.vy+=1900*h; b.x+=b.vx*h; b.y+=b.vy*h;
+      if(b.x<x0+r){ b.x=x0+r; b.vx*=-0.3; } if(b.x>x1-r){ b.x=x1-r; b.vx*=-0.3; }
+      if(b.y>y1-r){ b.y=y1-r; b.vy*=-0.25; b.vx*=0.92; }
+    });
+    for(let i=0;i<balls.length;i++) for(let j=i+1;j<balls.length;j++){
+      const a=balls[i], c=balls[j]; let dx=c.x-a.x, dy=c.y-a.y, d=Math.hypot(dx,dy);
+      if(d<2*r && d>0.001){
+        const nx=dx/d, ny=dy/d, ov=(2*r-d)/2;
+        a.x-=nx*ov; a.y-=ny*ov; c.x+=nx*ov; c.y+=ny*ov;
+        const rv=(c.vx-a.vx)*nx+(c.vy-a.vy)*ny;
+        if(rv<0){ const j2=-rv*0.6; a.vx-=nx*j2; a.vy-=ny*j2; c.vx+=nx*j2; c.vy+=ny*j2; }
+        a.vx*=0.995; c.vx*=0.995;
+      }
+    }
+  }
+}
+function drawBall(ctx,x,y,r,c,ring){
+  const fill={b:COL.ink,k:COL.ink,r:COL.red,w:'#fff'}[c];
+  circ(ctx,x,y,r,COL.ink,fill,2.2);
+  if(c!=='w') circ(ctx,x-r*0.3,y-r*0.3,r*0.22,null,'rgba(255,255,255,0.55)');
+  if(ring) circ(ctx,x,y,r+4,ring,null,2.6);
+}
+function buildA3(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['go','🫳 Draw two balls','play'],['go100','× 100 trials'],['rs','↺']])
+    + sliderHTML('nb','Black balls',1,15,1,10) + sliderHTML('nw','White balls',1,15,1,5)
+    + chipsHTML('md','Draw',['Without replacement','With replacement'],0)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rE','P(E)  1st black','2/3',0,'blue'],['rFE','P(F | E)  2nd black','9/14',0,'yellow'],['rEF','P(E ∩ F)','3/7',0,'green'],['rX','Your trials: both black','—',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, W=900, H=600, replace=false, balls=[], fly=[], slots=[null,null], dr=null, needSync=true;
+  let trials=0, hits=0;
+  const sb=wireSlider(wrap,'nb',v=>v,()=>{ needSync=true; }), sw=wireSlider(wrap,'nw',v=>v,()=>{ needSync=true; });
+  wireChips(wrap,'md',i=>{ replace=i===1; });
+  const geo=()=>{ const jx0=W*0.05, jx1=W*0.29, jy0=H*0.26, jy1=H*0.9; return {jx0,jx1,jy0,jy1,r:clamp((jx1-jx0)/9,8,17)}; };
+  function syncBalls(){
+    const g=geo(), want={b:sb.get(), w:sw.get()};
+    ['b','w'].forEach(c=>{
+      let have=balls.filter(q=>q.c===c).length;
+      while(have<want[c]){ balls.push({x:g.jx0+g.r+Math.random()*(g.jx1-g.jx0-2*g.r),y:g.jy0-g.r-Math.random()*90,vx:(Math.random()-0.5)*60,vy:0,c}); have++; }
+      while(have>want[c]){ const idx=balls.map((q,i)=>q.c===c?i:-1).filter(i=>i>=0); balls.splice(pick(idx),1); have--; }
+    });
+    needSync=false;
+  }
+  const slotXY=k=>({x:W*0.385,y:H*(0.36+0.3*k)});
+  function launch(k){
+    const g=geo(), i=Math.floor(Math.random()*balls.length), b=balls.splice(i,1)[0], s=slotXY(k);
+    dr.res[k]=b.c; fly.push({x0:b.x,y0:b.y,x1:s.x,y1:s.y,t:0,dur:0.8,c:b.c,hgt:H*0.22,done:()=>{ slots[k]={c:b.c}; }});
+  }
+  function sendBack(k){
+    const g=geo(), s=slots[k]; if(!s) return; slots[k]=null; const p=slotXY(k);
+    fly.push({x0:p.x,y0:p.y,x1:(g.jx0+g.jx1)/2+(Math.random()-0.5)*40,y1:g.jy0-20,t:0,dur:0.8,c:s.c,hgt:H*0.2,done:()=>{ balls.push({x:(g.jx0+g.jx1)/2+(Math.random()-0.5)*40,y:g.jy0-20,vx:0,vy:0,c:s.c}); }});
+  }
+  $('#go').onclick=()=>{ if(!dr && !needSync) dr={step:0,t:0,res:[]}; };
+  $('#go100').onclick=()=>{
+    const b=sb.get(), n=b+sw.get();
+    for(let i=0;i<100;i++){ const p1=Math.random()*n<b; const bl=replace?b:b-(p1?1:0), tot=replace?n:n-1; const p2=Math.random()*tot<bl; trials++; if(p1&&p2) hits++; }
+  };
+  $('#rs').onclick=()=>{ trials=0; hits=0; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const g=geo(), b0=sb.get(), w0=sw.get(), N=b0+w0;
+    if(needSync && !dr) syncBalls();
+    stepBalls(balls,dt,g.jx0+3,g.jx1-3,g.jy1-3,g.r);
+    // ---- draw sequence (state machine)
+    if(dr){ dr.t+=dt;
+      if(dr.step===0){ launch(0); dr.step=1; dr.t=0; }
+      else if(dr.step===1 && dr.t>1.1){ dr.step=2; dr.t=0; }
+      else if(dr.step===2 && dr.t>0.5){ if(replace) sendBack(0); dr.step=3; dr.t=0; }
+      else if(dr.step===3 && dr.t>(replace?1.0:0.2)){ launch(1); dr.step=4; dr.t=0; }
+      else if(dr.step===4 && dr.t>1.1){ trials++; if(dr.res[0]==='b'&&dr.res[1]==='b') hits++; dr.step=5; dr.t=0; }
+      else if(dr.step===5 && dr.t>1.6){ sendBack(0); sendBack(1); dr.step=6; dr.t=0; }
+      else if(dr.step===6 && dr.t>1.3){ dr=null; }
+    }
+    // ---- jar
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.beginPath();
+    ctx.moveTo(g.jx0,g.jy0); ctx.lineTo(g.jx0,g.jy1-14); ctx.quadraticCurveTo(g.jx0,g.jy1,g.jx0+14,g.jy1); ctx.lineTo(g.jx1-14,g.jy1); ctx.quadraticCurveTo(g.jx1,g.jy1,g.jx1,g.jy1-14); ctx.lineTo(g.jx1,g.jy0); ctx.stroke(); ctx.restore();
+    balls.forEach(q=>drawBall(ctx,q.x,q.y,g.r,q.c));
+    const nb=balls.filter(q=>q.c==='b').length, nw=balls.length-nb;
+    textAt(ctx,'urn:  '+nb+' black · '+nw+' white',(g.jx0+g.jx1)/2,g.jy1+22,{align:'center',size:12,weight:700,color:COL.muted});
+    // ---- slots
+    ['1st','2nd'].forEach((lab,k)=>{ const s=slotXY(k); circ(ctx,s.x,s.y,g.r+9,COL.yellow,rgba(COL.yellow,0.1),2.4);
+      ctx.save(); ctx.setLineDash([4,4]); ctx.restore(); textAt(ctx,lab+' draw',s.x,s.y-g.r-16,{align:'center',size:11,weight:700,color:COL.yellow});
+      if(slots[k]) drawBall(ctx,s.x,s.y,g.r,slots[k].c); });
+    fly=fly.filter(f=>{ f.t+=dt/f.dur; const u=Math.min(1,f.t), p=arcPt(f.x0,f.y0,f.x1,f.y1,easeIO(u),f.hgt); drawBall(ctx,p.x,p.y,g.r,f.c,COL.yellow); if(f.t>=1){ f.done(); return false; } return true; });
+    // ---- tree
+    const R0={x:w*0.52,y:h*0.5}, L1=[{x:w*0.69,y:h*0.27},{x:w*0.69,y:h*0.73}], L2=[{x:w*0.90,y:h*0.15},{x:w*0.90,y:h*0.39},{x:w*0.90,y:h*0.61},{x:w*0.90,y:h*0.85}];
+    const den2=replace?N:N-1, bB=replace?b0:b0-1, wW=replace?w0:w0-1;
+    const e1=[[b0,N],[w0,N]], e2=[[[bB,den2],[w0,den2]],[[b0,den2],[wW,den2]]];
+    const leaf=[[replace?b0*b0:b0*(b0-1),replace?N*N:N*(N-1)],[b0*w0,replace?N*N:N*(N-1)],[w0*b0,replace?N*N:N*(N-1)],[replace?w0*w0:w0*(w0-1),replace?N*N:N*(N-1)]];
+    const names=['BB','BW','WB','WW'];
+    const tk=(a,b,x1,y1,x2,y2,p,col,hi)=>{ line(ctx,x1,y1,x2,y2,hi?COL.yellow:col,1.5+p*7); };
+    const path1=dr&&dr.res[0]&&dr.step>=2?(dr.res[0]==='b'?0:1):-1, path2=dr&&dr.res[1]&&dr.step>=5?path1*2+(dr.res[1]==='b'?0:1):-1;
+    L1.forEach((p,i)=>{ const pr=e1[i][0]/e1[i][1]; tk(0,0,R0.x,R0.y,p.x,p.y,pr,i===0?COL.green:COL.mid,path1===i); });
+    L2.forEach((p,j)=>{ const i=j>>1, q=e2[i][j&1], pr=q[0]/q[1]; tk(0,0,L1[i].x,L1[i].y,p.x,p.y,pr,j===0?COL.green:COL.mid,path2===j); });
+    const lab=(x,y,txt,col)=>{ ctx.save(); ctx.font='600 12px Poppins'; const tw=ctx.measureText(txt).width; ctx.restore(); box(ctx,x-tw/2-5,y-10,tw+10,20,col,'#fff',1.4,6); textAt(ctx,txt,x,y+4,{align:'center',size:12,weight:700,color:col===COL.mid?COL.muted:col}); };
+    L1.forEach((p,i)=>lab((R0.x+p.x)/2,(R0.y+p.y)/2,fr(e1[i][0],e1[i][1]),i===0?COL.green:COL.mid));
+    L2.forEach((p,j)=>{ const i=j>>1, q=e2[i][j&1]; lab((L1[i].x+p.x)/2,(L1[i].y+p.y)/2,fr(q[0],q[1]),j===0?COL.green:COL.mid); });
+    circ(ctx,R0.x,R0.y,9,COL.ink,'#fff',2.4);
+    L1.forEach((p,i)=>drawBall(ctx,p.x,p.y,11,i===0?'b':'w',path1===i?COL.yellow:null));
+    L2.forEach((p,j)=>{ const hi=path2===j; drawBall(ctx,p.x,p.y-1,10,j<2?(j===0?'b':'w'):(j===2?'b':'w'),hi?COL.yellow:null);
+      const s2=leaf[j]; textAt(ctx,names[j]+'  '+fr(s2[0],s2[1]),p.x+17,p.y+4,{size:12,weight:700,color:j===0?COL.green:COL.muted}); });
+    textAt(ctx,'1st',w*0.69,h*0.055,{align:'center',size:11,weight:700,color:COL.mid}); textAt(ctx,'2nd',w*0.90,h*0.055,{align:'center',size:11,weight:700,color:COL.mid});
+    textAt(ctx,'E = 1st black     F = 2nd black',w*0.74,h*0.965,{align:'center',size:12,weight:700,color:COL.blue});
+    // ---- readouts
+    const pE=fr(b0,N), pFE=fr(bB,den2), pEF=fr(leaf[0][0],leaf[0][1]);
+    $('#rE').textContent=pE; $('#rFE').textContent=pFE; $('#rEF').textContent=pEF+' = '+fmt(leaf[0][0]/leaf[0][1],3);
+    $('#rX').textContent=trials? hits+' / '+trials+' = '+pct(hits/trials,1) : '—';
+    $('#fm').innerHTML=`P(E∩F) = <span class="b">P(E)</span> · <span class="y">P(F|E)</span><br><span class="b">${pE}</span> × <span class="y">${pFE}</span> = <b class="g">${pEF}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.4 INDEPENDENT EVENTS — THE AREA MODEL
+   Independent ⇔ P(A∩B) = P(A)·P(B) ⇔ P(B|A) = P(B).
+   The unit square is cut into A / A′ columns (width ∝ P(A)); inside each,
+   B takes the fraction P(B|A) or P(B|A′) of the height.  When the two
+   cuts sit on the same dashed line, the events are independent.
+   Checks: spade & ace 1/52 = 1/4·1/13 ✓ · multiple of 3 & even 1/6 = 1/3·1/2 ✓
+           Ex 12: (E,F) independent, (E,G) not.
+   Raindrops fall into the square and tally the same fractions empirically.
+   ===================================================================== */
+const IND_PRESETS=[
+  {n:'Card: spade, ace', a:1/4, b:1/13, ab:1/52},
+  {n:'Die: ×3, even', a:1/3, b:1/2, ab:1/6},
+  {n:'3 coins: E, F', a:1/4, b:1/2, ab:1/8},
+  {n:'3 coins: E, G', a:1/4, b:7/8, ab:1/8}];
+function buildA4(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = chipsHTML('ps','Textbook cases',IND_PRESETS.map(p=>p.n),0)
+    + sliderHTML('pa','P(A)',0.02,0.98,0.005,0.25) + sliderHTML('pb','P(B)',0.02,0.98,0.005,0.077) + sliderHTML('pab','P(A ∩ B)',0,1,0.001,0.019)
+    + btnRow([['ind','Make independent','navy'],['exc','Make exclusive']])
+    + `<div class="verdict" id="vd"></div>`
+    + cardsHTML([['rAB','P(A ∩ B)','',0,'green'],['rPP','P(A)·P(B)','',0,'yellow'],['rBA','P(B | A)','',0,'blue'],['rB','P(B)','',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let t=0, W=900, H=600, tA=0.25, tB=1/13, tAB=1/52, cA=tA, cB=tB, cAB=tAB, dots=[], rain=0;
+  const f3=v=>fmt(v,3);
+  const sa=wireSlider(wrap,'pa',f3,v=>{ tA=v; fit(); }), sbb=wireSlider(wrap,'pb',f3,v=>{ tB=v; fit(); }), sab=wireSlider(wrap,'pab',f3,v=>{ tAB=v; });
+  function fit(){ const lo=Math.max(0,tA+tB-1), hi=Math.min(tA,tB); tAB=clamp(tAB,lo,hi); sab.el.min=lo; sab.el.max=hi; sab.set(tAB); }
+  function load(i){ const p=IND_PRESETS[i]; tA=p.a; tB=p.b; tAB=p.ab; sa.set(tA); sbb.set(tB); const lo=Math.max(0,tA+tB-1), hi=Math.min(tA,tB); sab.el.min=lo; sab.el.max=hi; sab.set(tAB); dots=[]; }
+  const setP=wireChips(wrap,'ps',load); load(0);
+  $('#ind').onclick=()=>{ tAB=tA*tB; fit(); document.querySelectorAll('#ps .chip-btn').forEach(x=>x.classList.remove('active')); };
+  $('#exc').onclick=()=>{ tAB=0; fit(); document.querySelectorAll('#ps .chip-btn').forEach(x=>x.classList.remove('active')); };
+  ['pa','pb','pab'].forEach(id=>$('#'+id).addEventListener('input',()=>document.querySelectorAll('#ps .chip-btn').forEach(x=>x.classList.remove('active'))));
+  const cls=(u,v)=>{ const inA=u<tA, fB=inA? tAB/tA : (tB-tAB)/(1-tA); return {A:inA, B:v<fB}; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    cA=approach(cA,tA,7,dt); cB=approach(cB,tB,7,dt); cAB=approach(cAB,tAB,7,dt);
+    const S=Math.min(h*0.74,w*0.62), x0=w*0.08+Math.max(0,(w*0.62-S)/2), y0=(h-S)/2+8;
+    // rain
+    rain+=dt*22; while(rain>=1){ rain--; if(dots.length>700) dots.shift(); const u=Math.random(), v=Math.random(); dots.push({u,v,y:y0-30-Math.random()*160,vy:0,done:false}); }
+    // regions (B on top)
+    const fA=cAB/cA, fAc=(cB-cAB)/(1-cA), wA=S*cA;
+    const R=[ {x:x0,y:y0,w:wA,h:S*fA,c:COL.green,n:'A∩B',v:cAB}, {x:x0,y:y0+S*fA,w:wA,h:S*(1-fA),c:COL.blue,n:'A∩B′',v:cA-cAB},
+              {x:x0+wA,y:y0,w:S-wA,h:S*fAc,c:COL.yellow,n:'A′∩B',v:cB-cAB}, {x:x0+wA,y:y0+S*fAc,w:S-wA,h:S*(1-fAc),c:COL.mid,n:'A′∩B′',v:1-cA-cB+cAB} ];
+    R.forEach(r=>{ ctx.fillStyle=rgba(r.c,0.2); ctx.fillRect(r.x,r.y,Math.max(0,r.w),Math.max(0,r.h)); });
+    R.forEach(r=>{ ctx.strokeStyle=r.c; ctx.lineWidth=2.4; ctx.strokeRect(r.x,r.y,Math.max(0,r.w),Math.max(0,r.h)); if(r.w>46&&r.h>30){ textAt(ctx,r.n,r.x+r.w/2,r.y+r.h/2-2,{align:'center',size:12,weight:700,color:r.c===COL.mid?COL.muted:r.c}); textAt(ctx,f3(r.v),r.x+r.w/2,r.y+r.h/2+14,{align:'center',size:11,weight:600,color:COL.muted}); } });
+    // reference line at height P(B)
+    line(ctx,x0-10,y0+S*cB,x0+S+10,y0+S*cB,COL.ink,2.2,[7,5]);
+    textAt(ctx,'P(B) = '+f3(tB),x0+S+14,y0+S*cB+4,{size:12,weight:700,color:COL.ink});
+    // column labels
+    textAt(ctx,'A   P(A) = '+f3(tA),x0+wA/2,y0-12,{align:'center',size:12,weight:700,color:COL.blue});
+    textAt(ctx,'A′   '+f3(1-tA),x0+wA+(S-wA)/2,y0-12,{align:'center',size:12,weight:700,color:COL.muted});
+    // dots
+    let nA=0,nB=0,nAB=0;
+    dots.forEach(d=>{
+      const ly=y0+d.v*S; if(!d.done){ d.vy+=2600*dt; d.y+=d.vy*dt; if(d.y>=ly){ d.y=ly; d.vy*=-0.3; if(Math.abs(d.vy)<80){ d.done=true; d.y=ly; } } }
+      const c=cls(d.u,d.v); if(d.done){ if(c.A) nA++; if(c.B) nB++; if(c.A&&c.B) nAB++; }
+      const col=c.A&&c.B?COL.green:c.A?COL.blue:c.B?COL.yellow:COL.mid;
+      circ(ctx,x0+d.u*S,d.y,3.2,COL.ink,col,1);
+    });
+    const N=dots.filter(d=>d.done).length;
+    const pab=tAB, pp=tA*tB, ind=Math.abs(pab-pp)<0.0015;
+    const vd=$('#vd'); if(ind){ vd.className='verdict ok'; vd.textContent='Independent ✓  P(A∩B) = P(A)·P(B)'; }
+    else if(tAB<0.0015){ vd.className='verdict warn'; vd.textContent='Mutually exclusive — yet NOT independent'; }
+    else { vd.className='verdict bad'; vd.textContent='Dependent ✗  P(A∩B) ≠ P(A)·P(B)'; }
+    $('#rAB').textContent=f3(pab); $('#rPP').textContent=f3(pp); $('#rBA').textContent=f3(tAB/tA); $('#rB').textContent=f3(tB);
+    // empirical strip
+    textAt(ctx,N? 'rain test:  B among A = '+pct(nA?nAB/nA:NaN,0)+'   ·   B overall = '+pct(N?nB/N:NaN,0) : '',x0,y0+S+24,{size:12,weight:700,color:COL.muted});
+    textAt(ctx,ind?'cuts line up → independent':'cuts step → dependent',x0+S/2,y0+S+44,{align:'center',size:13,weight:700,color:ind?COL.green:COL.red});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.5 THEOREM OF TOTAL PROBABILITY — BALLS DOWN A TREE
+   P(A) = P(B)·P(A|B) + P(B′)·P(A|B′).
+   Ex 15: P(strike)=0.65, P(on time | strike)=0.32, P(on time | no strike)=0.80
+   → 0.65×0.32 + 0.35×0.80 = 0.208 + 0.28 = 0.488.
+   Each ball takes a branch with the slider probability; bar heights are
+   the relative frequencies, so they settle onto the theory ticks.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['auto','⏸ Auto-drop','play'],['one','Drop 1'],['big','× 500'],['rs','↺']])
+    + sliderHTML('pb','P(strike)  = P(B)',0,1,0.01,0.65)
+    + sliderHTML('p1','P(on time | strike)',0,1,0.01,0.32)
+    + sliderHTML('p2','P(on time | no strike)',0,1,0.01,0.8)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rAB','P(B)·P(A|B)','',0,'red'],['rAC','P(B′)·P(A|B′)','',0,'green'],['rA','P(A)  total','',0,'blue'],['rX','Your drops: on time','—',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const f2=v=>fmt(v,2);
+  const sB=wireSlider(wrap,'pb',f2), s1=wireSlider(wrap,'p1',f2), s2=wireSlider(wrap,'p2',f2);
+  let t=0, W=900, H=600, auto=true, acc=0, parts=[], cnt4=[0,0,0,0], N=0, scaleMax=0.4;
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Auto-drop':'▶ Auto-drop'; };
+  function spawn(){
+    const pB=sB.get(), b1=Math.random()<pB, ok=Math.random()<(b1?s1.get():s2.get());
+    parts.push({s:0,t:0,b1,ok,leaf:(b1?0:2)+(ok?0:1)});
+  }
+  $('#one').onclick=spawn;
+  $('#big').onclick=()=>{ for(let i=0;i<500;i++){ const b1=Math.random()<sB.get(), ok=Math.random()<(b1?s1.get():s2.get()); cnt4[(b1?0:2)+(ok?0:1)]++; N++; } };
+  $('#rs').onclick=()=>{ cnt4=[0,0,0,0]; N=0; parts=[]; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const pB=sB.get(), a1=s1.get(), a2=s2.get();
+    const th=[pB*a1,pB*(1-a1),(1-pB)*a2,(1-pB)*(1-a2)], PA=th[0]+th[2];
+    if(auto){ acc+=dt*7; while(acc>=1){ acc--; if(parts.length<40) spawn(); } }
+    scaleMax=approach(scaleMax,Math.max(0.12,...th),4,dt);
+    const root={x:w*0.5,y:h*0.1}, nd=[{x:w*0.27,y:h*0.31},{x:w*0.73,y:h*0.31}];
+    const bw=Math.min(w*0.17,150), bx=[w*0.14,w*0.39,w*0.61,w*0.86], by0=h*0.46, bh=h*0.34, byB=by0+bh;
+    const bcol=[COL.blue,COL.mid,COL.blue,COL.mid], ncol=[COL.red,COL.green];
+    // ---- branches (thickness = probability)
+    nd.forEach((p,i)=>{ const pr=i?1-pB:pB; line(ctx,root.x,root.y,p.x,p.y,ncol[i],2+pr*9); });
+    [0,1,2,3].forEach(j=>{ const i=j>>1, pr=j&1? 1-(i?a2:a1) : (i?a2:a1); line(ctx,nd[i].x,nd[i].y,bx[j],by0-6,ncol[i],2+pr*9); });
+    const lab=(x,y,txt,col)=>{ ctx.save(); ctx.font='700 12px Poppins'; const tw=ctx.measureText(txt).width; ctx.restore(); box(ctx,x-tw/2-5,y-10,tw+10,20,col,'#fff',1.4,6); textAt(ctx,txt,x,y+4,{align:'center',size:12,weight:700,color:col}); };
+    lab((root.x+nd[0].x)/2,(root.y+nd[0].y)/2,f2(pB),COL.red); lab((root.x+nd[1].x)/2,(root.y+nd[1].y)/2,f2(1-pB),COL.green);
+    [0,1,2,3].forEach(j=>{ const i=j>>1, pr=j&1? 1-(i?a2:a1) : (i?a2:a1); lab((nd[i].x+bx[j])/2,(nd[i].y+by0-6)/2,f2(pr),ncol[i]); });
+    circ(ctx,root.x,root.y,9,COL.ink,'#fff',2.4);
+    textAt(ctx,'start',root.x,root.y-16,{align:'center',size:11,weight:700,color:COL.mid});
+    circ(ctx,nd[0].x,nd[0].y,15,COL.red,'#fff',3); textAt(ctx,'B',nd[0].x,nd[0].y+5,{align:'center',size:14,weight:700,color:COL.red});
+    circ(ctx,nd[1].x,nd[1].y,15,COL.green,'#fff',3); textAt(ctx,"B′",nd[1].x,nd[1].y+5,{align:'center',size:14,weight:700,color:COL.green});
+    textAt(ctx,'strike',nd[0].x-24,nd[0].y+5,{align:'right',size:11,weight:600,color:COL.muted}); textAt(ctx,'no strike',nd[1].x+24,nd[1].y+5,{size:11,weight:600,color:COL.muted});
+    // ---- balls in flight
+    parts=parts.filter(p=>{
+      p.t+=dt; const i=p.b1?0:1; let x,y;
+      if(p.s===0){ const u=easeIO(p.t/0.6); x=lerp(root.x,nd[i].x,u); y=lerp(root.y,nd[i].y,u); if(p.t>=0.6){ p.s=1; p.t=0; } }
+      else if(p.s===1){ const u=easeIO(p.t/0.6); x=lerp(nd[i].x,bx[p.leaf],u); y=lerp(nd[i].y,by0-14,u); if(p.t>=0.6){ p.s=2; p.t=0; p.vy=0; p.y=by0-14; } }
+      else { p.vy+=2400*dt; p.y+=p.vy*dt; x=bx[p.leaf]; y=p.y; const floor=byB-Math.min(bh,(cnt4[p.leaf]/Math.max(1,N))/scaleMax*bh)-6; if(y>=floor){ cnt4[p.leaf]++; N++; return false; } }
+      circ(ctx,x,y,6,COL.ink,p.b1?COL.red:COL.green,1.8); return true;
+    });
+    // ---- bins: relative frequency (solid) vs theory (dashed tick)
+    const names=['B∩A','B∩A′','B′∩A','B′∩A′'];
+    [0,1,2,3].forEach(j=>{
+      const fq=N? cnt4[j]/N : 0, hh=fq/scaleMax*bh*0.94, th_h=th[j]/scaleMax*bh*0.94, x=bx[j]-bw/2;
+      ctx.fillStyle=rgba(bcol[j],j%2?0.28:0.5); ctx.fillRect(x,byB-hh,bw,hh);
+      ctx.strokeStyle=ncol[j>>1]; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(x,by0-4); ctx.lineTo(x,byB); ctx.lineTo(x+bw,byB); ctx.lineTo(x+bw,by0-4); ctx.stroke();
+      line(ctx,x-4,byB-th_h,x+bw+4,byB-th_h,COL.ink,2,[6,4]);
+      textAt(ctx,names[j],bx[j],byB+19,{align:'center',size:12,weight:700,color:ncol[j>>1]});
+      textAt(ctx,f2(th[j])+(N>20?'  ('+f2(fq)+')':''),bx[j],byB+36,{align:'center',size:12,weight:700,color:COL.ink});
+    });
+    // ---- P(A) stacked bar: the two blue bins add up
+    const sx=w*0.12, sw=w*0.76, sy=h*0.935, sh=18;
+    box(ctx,sx,sy,sw,sh,COL.faint,'#fff',1.6,4);
+    ctx.fillStyle=rgba(COL.red,0.55); ctx.fillRect(sx,sy,sw*th[0],sh); ctx.fillStyle=rgba(COL.green,0.55); ctx.fillRect(sx+sw*th[0],sy,sw*th[2],sh);
+    box(ctx,sx,sy,sw*PA,sh,COL.blue,null,2.6,4);
+    textAt(ctx,'P(A) = '+f2(th[0])+' + '+f2(th[2])+' = '+fmt(PA,3),sx+sw*PA+10,sy+14,{size:13,weight:700,color:COL.blue});
+    if(N>20){ const e=(cnt4[0]+cnt4[2])/N; line(ctx,sx+sw*e,sy-5,sx+sw*e,sy+sh+5,COL.ink,2.6); }
+    textAt(ctx,'0',sx,sy-6,{align:'center',size:10,color:COL.mid}); textAt(ctx,'1',sx+sw,sy-6,{align:'center',size:10,color:COL.mid});
+    $('#rAB').textContent=fmt(th[0],3); $('#rAC').textContent=fmt(th[2],3); $('#rA').textContent=fmt(PA,3);
+    $('#rX').textContent=N? fmt((cnt4[0]+cnt4[2])/N,3)+'  (n='+N+')' : '—';
+    $('#fm').innerHTML=`P(A) = <span class="r">${f2(pB)}×${f2(a1)}</span> + <span class="g">${f2(1-pB)}×${f2(a2)}</span><br>= ${fmt(th[0],3)} + ${fmt(th[2],3)} = <b class="b">${fmt(PA,3)}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.6 BAYES' THEOREM — TWO BAGS
+   P(E₂|A) = P(E₂)P(A|E₂) / [P(E₁)P(A|E₁) + P(E₂)P(A|E₂)]
+   Ex 16: Bag I 3R 4B, Bag II 5R 6B, equal priors, red drawn → 35/68.
+   Every draw picks a bag by the prior, then a ball by its composition.
+   Balls of the observed colour are KEPT in the pile under their bag;
+   the rest are thrown away — so the piles *are* the reverse probability.
+   ===================================================================== */
+function drawSack(ctx,cx,cy,s,col,list,t,hop){
+  ctx.save(); ctx.translate(cx,cy-hop);
+  ctx.lineJoin='round'; ctx.strokeStyle=col; ctx.lineWidth=3.2;
+  ctx.beginPath(); ctx.moveTo(-s*0.17,-s*0.46); ctx.quadraticCurveTo(-s*0.2,-s*0.3,-s*0.42,-s*0.2); ctx.quadraticCurveTo(-s*0.62,0.05*s,-s*0.5,s*0.38);
+  ctx.quadraticCurveTo(-s*0.4,s*0.56,0,s*0.57); ctx.quadraticCurveTo(s*0.4,s*0.56,s*0.5,s*0.38); ctx.quadraticCurveTo(s*0.62,0.05*s,s*0.42,-s*0.2); ctx.quadraticCurveTo(s*0.2,-s*0.3,s*0.17,-s*0.46);
+  ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-s*0.2,-s*0.4); ctx.quadraticCurveTo(0,-s*0.3,s*0.2,-s*0.4); ctx.stroke();      // rope tie
+  const r=s*0.07, cols=5;
+  list.forEach((c,i)=>{ const row=Math.floor(i/cols), co=i%cols, x=(co-(cols-1)/2)*s*0.16+(row%2?s*0.04:-s*0.04)+Math.sin(t*2+i)*0.8, y=s*0.42-row*s*0.15;
+    drawBall(ctx,x,y,r,c); });
+  ctx.restore();
+}
+function buildA6(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['one','Draw 1','play'],['auto','▶ Auto'],['big','× 200'],['rs','↺']])
+    + chipsHTML('ob','Ball seen is',['Red','Black'],0)
+    + sliderHTML('pr','P(Bag I)  prior',0.05,0.95,0.05,0.5)
+    + sliderHTML('r1','Bag I · red',0,10,1,3) + sliderHTML('k1','Bag I · black',1,10,1,4)
+    + sliderHTML('r2','Bag II · red',0,10,1,5) + sliderHTML('k2','Bag II · black',1,10,1,6)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rA1','P(A | Bag I)','',0,'blue'],['rA2','P(A | Bag II)','',0,'green'],['rPA','P(A)  total','',0],['rP2','P(Bag II | A)','',0,'green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const f2=v=>fmt(v,2);
+  const sPr=wireSlider(wrap,'pr',f2), sR1=wireSlider(wrap,'r1',v=>v), sK1=wireSlider(wrap,'k1',v=>v), sR2=wireSlider(wrap,'r2',v=>v), sK2=wireSlider(wrap,'k2',v=>v);
+  let t=0, W=900, H=600, obs='r', auto=false, acc=0, fly=[], keep=[0,0], seen=0, hop=[{x:0,v:0},{x:0,v:0}], cache=[null,null];
+  wireChips(wrap,'ob',i=>{ obs=i?'k':'r'; keep=[0,0]; seen=0; fly=[]; });
+  $('#one').onclick=()=>draw(true); $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Auto':'▶ Auto'; };
+  $('#rs').onclick=()=>{ keep=[0,0]; seen=0; fly=[]; };
+  const comp=()=>[[sR1.get(),sK1.get()],[sR2.get(),sK2.get()]];
+  const geo=()=>{ const s=Math.min(W*0.2,H*0.36); return {s, bx:[W*0.19,W*0.48], by:H*0.3, pileY:H*0.95}; };
+  function sample(){ const c=comp(), j=Math.random()<sPr.get()?0:1, red=Math.random()*(c[j][0]+c[j][1])<c[j][0]; return {j,col:red?'r':'k'}; }
+  function draw(anim){
+    const g=geo(), d=sample(); seen++;
+    if(d.col!==obs){ if(anim){ hop[d.j].v=-260; const x0=g.bx[d.j], y0=g.by-g.s*0.4; fly.push({x0,y0,x1:x0+(d.j?1:-1)*g.s*0.9,y1:g.by-g.s*0.1,t:0,dur:0.7,col:d.col,j:d.j,keep:false}); } }
+    else if(anim){ hop[d.j].v=-260; const x0=g.bx[d.j], y0=g.by-g.s*0.4; fly.push({x0,y0,x1:x0,y1:pileTop(g,d.j),t:0,dur:0.8,col:d.col,j:d.j,keep:true}); }
+    else keep[d.j]++;
+  }
+  const pileTop=(g,j)=>{ const i=Math.min(keep[j]+fly.filter(f=>f.keep&&f.j===j).length,35); return g.pileY-12-Math.floor(i/6)*20; };
+  $('#big').onclick=()=>{ for(let i=0;i<200;i++){ const d=sample(); seen++; if(d.col===obs) keep[d.j]++; } };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const g=geo(), c=comp(), pr=sPr.get(), pri=[pr,1-pr];
+    if(auto){ acc+=dt*3.2; while(acc>=1){ acc--; if(fly.length<8) draw(true); } }
+    const idx=obs==='r'?0:1, like=c.map(q=>q[idx]/(q[0]+q[1])), bz=bayes(pri,like), post=bz.post;
+    hop.forEach(hh=>springTo(hh,0,220,13,dt));
+    // bags
+    [0,1].forEach(j=>{
+      const key=c[j].join(','); if(!cache[j]||cache[j].key!==key){ const R=rng(7+j*13), l=[...'r'.repeat(c[j][0]),...'k'.repeat(c[j][1])]; for(let i=l.length-1;i>0;i--){ const q=Math.floor(R()*(i+1)); [l[i],l[q]]=[l[q],l[i]]; } cache[j]={key,list:l}; }
+      drawSack(ctx,g.bx[j],g.by,g.s,j?COL.green:COL.blue,cache[j].list,t,Math.max(0,-hop[j].x));
+      textAt(ctx,j?'Bag II':'Bag I',g.bx[j],g.by-g.s*0.56,{align:'center',size:14,weight:700,color:j?COL.green:COL.blue});
+      textAt(ctx,'prior '+f2(pri[j]),g.bx[j],g.by+g.s*0.76,{align:'center',size:12,weight:700,color:COL.yellow});
+      textAt(ctx,'P(A|E'+(j+1)+') = '+(c[j][idx])+'/'+(c[j][0]+c[j][1]),g.bx[j],g.by+g.s*0.76+16,{align:'center',size:12,weight:600,color:COL.muted});
+      // pile
+      const n=Math.min(keep[j],36), col=j?COL.green:COL.blue;
+      line(ctx,g.bx[j]-62,g.pileY,g.bx[j]+62,g.pileY,COL.ink,2.2);
+      for(let i=0;i<n;i++){ const row=Math.floor(i/6), co=i%6; drawBall(ctx,g.bx[j]+(co-2.5)*20,g.pileY-10-row*20,8.5,obs,col); }
+      textAt(ctx,'kept from Bag '+(j?'II':'I')+':  '+keep[j],g.bx[j],g.pileY-10-Math.ceil(Math.max(1,n)/6)*20-12,{align:'center',size:12,weight:700,color:col});
+    });
+    // flying balls
+    fly=fly.filter(f=>{ f.t+=dt/f.dur; const u=Math.min(1,f.t), p=arcPt(f.x0,f.y0,f.x1,f.y1,easeIO(u),H*0.16);
+      ctx.save(); ctx.globalAlpha=f.keep?1:1-u*0.8; drawBall(ctx,p.x,p.y,8.5,f.col); ctx.restore();
+      if(!f.keep && u>0.55) textAt(ctx,'✗',p.x+12,p.y-6,{size:14,weight:700,color:COL.red,alpha:1-u});
+      if(f.t>=1){ if(f.keep) keep[f.j]++; return false; } return true; });
+    // ---- posterior bars
+    const rx=w*0.68, rw=w*0.27, ry=h*0.2;
+    textAt(ctx,'Which bag gave the '+(obs==='r'?'red':'black')+' ball?',rx+rw/2,ry-26,{align:'center',size:13,weight:700,color:COL.ink});
+    const ktot=keep[0]+keep[1];
+    [0,1].forEach(j=>{
+      const y=ry+j*h*0.2, col=j?COL.green:COL.blue; textAt(ctx,'Bag '+(j?'II':'I'),rx,y-6,{size:12,weight:700,color:col});
+      box(ctx,rx,y,rw,22,COL.faint,'#fff',1.6,5);
+      ctx.fillStyle=rgba(col,0.5); ctx.fillRect(rx,y,rw*(isFinite(post[j])?post[j]:0),22);
+      box(ctx,rx,y,rw*pri[j],22,COL.yellow,null,2.2,5,[5,4]);                    // prior ghost
+      box(ctx,rx,y,rw,22,COL.faint,null,1.6,5);
+      if(ktot>5){ const e=keep[j]/ktot; line(ctx,rx+rw*e,y-4,rx+rw*e,y+26,COL.ink,3); }
+      textAt(ctx,'posterior '+(isFinite(post[j])?fmt(post[j],3):'—'),rx,y+40,{size:12,weight:700,color:col});
+    });
+    textAt(ctx,'┆ prior   ▌ posterior   | your draws',rx,ry+h*0.4+14,{size:11,weight:600,color:COL.muted});
+    textAt(ctx,seen+' draws · '+ktot+' kept',rx,ry+h*0.4+34,{size:12,weight:600,color:COL.muted});
+    // ---- cards
+    $('#rA1').textContent=fr(c[0][idx],c[0][0]+c[0][1]); $('#rA2').textContent=fr(c[1][idx],c[1][0]+c[1][1]);
+    $('#rPA').textContent=fmt(bz.tot,3);
+    const half=Math.abs(pr-0.5)<1e-9, fr2=half? fr(c[1][idx]*(c[0][0]+c[0][1]), c[0][idx]*(c[1][0]+c[1][1])+c[1][idx]*(c[0][0]+c[0][1])) : null;
+    $('#rP2').textContent=isFinite(post[1])? fmt(post[1],3)+(half?'  = '+fr2:'') : '—';
+    $('#fm').innerHTML=`<span class="g">P(E₂)P(A|E₂)</span> ÷ [<span class="b">P(E₁)P(A|E₁)</span> + <span class="g">P(E₂)P(A|E₂)</span>]<br>= <span class="g">${fmt(pri[1]*like[1],3)}</span> ÷ <span class="b">${fmt(pri[0]*like[0],3)}</span>+<span class="g">${fmt(pri[1]*like[1],3)}</span> = <b>${isFinite(post[1])?fmt(post[1],3):'—'}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.7 THREE BOXES OF COINS  (Ex 17)
+   Gold-gold, silver-silver, gold-silver boxes; a gold coin comes out —
+   what is the chance the other coin is gold?  Bayes with equal priors:
+   P(GG | gold) = 2·nGG / (2·nGG + nGS)   → 2/3 for one box of each kind.
+   A spotlight spins over the boxes and slows to a stop, then one coin
+   hops out of the chosen box.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['one','Pick box & coin','play'],['big','× 100'],['rs','↺']])
+    + sliderHTML('gg','Boxes: gold + gold',0,3,1,1) + sliderHTML('ss','Boxes: silver + silver',0,3,1,1) + sliderHTML('gs','Boxes: gold + silver',0,3,1,1)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rG','Gold coins in play','3',0,'yellow'],['rP','P(other is gold | gold)','2/3',0,'green'],['rN','Gold drawn','0',0],['rX','…other also gold','—',0,'green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const sGG=wireSlider(wrap,'gg',v=>v), sSS=wireSlider(wrap,'ss',v=>v), sGS=wireSlider(wrap,'gs',v=>v);
+  let t=0, W=900, H=600, st=null, nG=0, nGG=0;
+  const mkBoxes=()=>{ const l=[]; for(let i=0;i<sGG.get();i++) l.push(['G','G']); for(let i=0;i<sSS.get();i++) l.push(['S','S']); for(let i=0;i<sGS.get();i++) l.push(Math.random()<0.5?['G','S']:['S','G']); return l; };
+  let boxes=mkBoxes(), key='';
+  const lay=()=>{ const B=Math.max(1,boxes.length), pitch=W*0.9/B, bw=Math.min(pitch*0.82,128); return {B,pitch,bw,bh:bw*0.6,y:H*0.36,x:i=>W*0.05+(i+0.5)*pitch}; };
+  [sGG,sSS,sGS].forEach(s=>s.el.addEventListener('input',()=>{ if(!st){ boxes=mkBoxes(); nG=0; nGG=0; } }));
+  $('#one').onclick=()=>{
+    if(st||!boxes.length) return; const L=lay(), tgt=Math.floor(Math.random()*L.B), K=L.B*Math.ceil(14/L.B)+tgt;
+    st={ph:'spin',k:0,tm:0,K,tgt,coin:Math.floor(Math.random()*2),dur:0.05};
+  };
+  $('#big').onclick=()=>{ if(st||!boxes.length) return; for(let i=0;i<100;i++){ const b=pick(boxes), c=Math.floor(Math.random()*2); if(b[c]==='G'){ nG++; if(b[1-c]==='G') nGG++; } } };
+  $('#rs').onclick=()=>{ nG=0; nGG=0; };
+  const coin=(ctx,x,y,r,m,ring)=>{ circ(ctx,x,y,r,m==='G'?COL.yellow:COL.mid,m==='G'?rgba(COL.yellow,0.55):'#eef3f9',2.8); textAt(ctx,m,x,y+r*0.34,{align:'center',size:r*0.95,weight:700,color:m==='G'?'#7a5a06':COL.muted}); if(ring) circ(ctx,x,y,r+5,ring,null,3); };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const L=lay(), cr=L.bw*0.17;
+    // ---- state machine
+    let spot=-1, pop=null;
+    if(st){
+      st.tm+=dt;
+      if(st.ph==='spin'){ spot=st.k%L.B; if(st.tm>=st.dur){ st.tm=0; st.k++; st.dur*=1.09; if(st.k>st.K){ st.ph='pop'; st.k=st.tgt; } } }
+      else if(st.ph==='pop'){ spot=st.tgt; pop={u:Math.min(1,st.tm/0.8)}; if(st.tm>=0.8){ st.ph='show'; st.tm=0; const b=boxes[st.tgt]; if(b[st.coin]==='G'){ nG++; if(b[1-st.coin]==='G') nGG++; } } }
+      else if(st.ph==='show'){ spot=st.tgt; pop={u:1}; if(st.tm>2.0) st=null; }
+    }
+    // ---- boxes
+    boxes.forEach((b,i)=>{
+      const x=L.x(i), y=L.y, on=spot===i;
+      if(on) box(ctx,x-L.bw/2-8,y-L.bh/2-8,L.bw+16,L.bh+16,COL.yellow,rgba(COL.yellow,0.12),3,12);
+      box(ctx,x-L.bw/2,y-L.bh/2,L.bw,L.bh,COL.ink,'#fff',2.8,6);
+      line(ctx,x-L.bw/2,y-L.bh/2+L.bh*0.18,x+L.bw/2,y-L.bh/2+L.bh*0.18,COL.ink,2);
+      [0,1].forEach(c=>{ const cx=x+(c?1:-1)*L.bw*0.22, cy=y+L.bh*0.08;
+        const out=pop&&st&&st.tgt===i&&st.coin===c; if(out) return; coin(ctx,cx,cy,cr,b[c],(pop&&st&&st.tgt===i&&st.ph==='show'&&b[st.coin]==='G')?(b[c]==='G'?COL.green:COL.red):null); });
+      textAt(ctx,b[0]==='G'&&b[1]==='G'?'G G':b[0]==='S'&&b[1]==='S'?'S S':'G S',x,y+L.bh/2+22,{align:'center',size:12,weight:700,color:COL.muted});
+      if(st&&st.tgt===i&&pop){ // the chosen coin hops out
+        const c=st.coin, cx=x+(c?1:-1)*L.bw*0.22, cy=y+L.bh*0.08, p=arcPt(cx,cy,x,y-L.bh*0.95,easeIO(pop.u),L.bh*0.7);
+        coin(ctx,p.x,p.y,cr*1.25,b[c],st.ph==='show'?(b[c]==='G'?COL.yellow:COL.red):null);
+        if(st.ph==='show'){ textAt(ctx,b[c]==='G'?'gold!':'silver — discard',x,p.y-cr*1.25-10,{align:'center',size:12,weight:700,color:b[c]==='G'?COL.yellow:COL.red}); }
+      }
+    });
+    // ---- the equal-chance gold coins
+    const golds=[]; boxes.forEach((b,i)=>b.forEach((m,c)=>{ if(m==='G') golds.push({i,c,partnerG:b[1-c]==='G'}); }));
+    const nGold=golds.length, good=golds.filter(g=>g.partnerG).length;
+    const gy=h*0.72, gp=Math.min(w*0.9/Math.max(nGold,1),70), gx0=w/2-(nGold-1)*gp/2;
+    textAt(ctx,'Every gold coin is equally likely to be the one drawn',w/2,gy-48,{align:'center',size:13,weight:700,color:COL.muted});
+    golds.forEach((g,k)=>{
+      const x=gx0+k*gp, hit=st&&st.ph==='show'&&st.tgt===g.i&&st.coin===g.c, hop=hit?-8*Math.abs(Math.sin(t*7)):0;
+      coin(ctx,x,gy+hop,15,'G',g.partnerG?COL.green:COL.red);
+      line(ctx,x,gy+22,x,gy+30,g.partnerG?COL.green:COL.red,2.4);
+    });
+    if(nGold){ textAt(ctx,'partner is gold: '+good+' of '+nGold+'   →   '+fr(good,nGold),w/2,gy+60,{align:'center',size:20,weight:700,color:COL.ink});
+      textAt(ctx,'green ring = partner gold   ·   red ring = partner silver',w/2,gy+82,{align:'center',size:11,weight:600,color:COL.mid}); }
+    else textAt(ctx,'No gold coins — add a box with gold',w/2,gy,{align:'center',size:14,weight:700,color:COL.red});
+    $('#rG').textContent=nGold; $('#rP').textContent=nGold? fr(good,nGold)+' = '+fmt(good/nGold,3) : '—';
+    $('#rN').textContent=nG; $('#rX').textContent=nG? nGG+' / '+nG+' = '+pct(nGG/nG,0) : '—';
+    const a=sGG.get(), c=sGS.get();
+    $('#fm').innerHTML=nGold? `<span class="g">2·${a}</span> ÷ (<span class="g">2·${a}</span> + <span class="y">${c}</span>) = <b>${fr(good,nGold)}</b>` : '—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8 THE MEDICAL TEST  (Ex 18) — why a positive result is not a verdict
+   P(HIV | +ve) = P(E)P(A|E) / [P(E)P(A|E) + P(E′)P(A|E′)]
+   Ex 18: P(E)=0.001, P(+|E)=0.9, P(+|E′)=0.01 → 90/1089 ≈ 0.083.
+   100 000 people are tested; every positive result drops into the pool:
+   red = truly infected, blue = healthy (false alarm).  The red share of
+   the pool IS the Bayes posterior.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['go','▶ Test 100 000 people','play']])
+    + sliderHTML('pv','Infected in population',0.1,30,0.1,0.1) + sliderHTML('se','Test detects the infected',50,100,1,90) + sliderHTML('fp','False alarms among healthy',0,10,0.1,1)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rTP','Infected & +ve','',0,'red'],['rFP','Healthy & +ve','',0,'blue'],['rPo','P(infected | +ve)','',0,'green'],['rK','Scale','',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const sPv=wireSlider(wrap,'pv',v=>fmt(v,1)+' %'), sSe=wireSlider(wrap,'se',v=>v+' %'), sFp=wireSlider(wrap,'fp',v=>fmt(v,1)+' %');
+  let t=0, prog=0, run=true, ring=0, key='', rank=[];
+  const MAXD=1600, dots=Array.from({length:MAXD},()=>({off:-9999,v:0,on:false,u:Math.random()}));
+  $('#go').onclick=()=>{ prog=0; run=true; dots.forEach(d=>{ d.on=false; d.off=-9999; }); };
+  const NT=100000, SC=[1,2,5,10,20,50,100,200,500,1000,2000,5000];
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pv=sPv.get()/100, se=sSe.get()/100, fp=sFp.get()/100;
+    const I=NT*pv, Hh=NT-I, TP=I*se, FN=I-TP, FP=Hh*fp, TN=Hh-FP, post=(TP+FP)>0? TP/(TP+FP) : 0;
+    if(run){ prog=Math.min(1,prog+dt*0.33); if(prog>=1) run=false; }
+    // ---- bars
+    const bx=w*0.06, BW=w*0.88;
+    const bar=(y,label,total,left,lcol,rcol,lt,rt)=>{
+      textAt(ctx,label,bx,y-8,{size:12,weight:700,color:COL.ink});
+      box(ctx,bx,y,BW,22,COL.faint,'#fff',1.6,4);
+      const lw=Math.max(left>0?3:0,BW*left/total);
+      ctx.fillStyle=lcol; ctx.fillRect(bx,y,lw,22); ctx.fillStyle=rcol; ctx.fillRect(bx+lw,y,BW-lw,22);
+      box(ctx,bx,y,BW,22,COL.ink,null,1.8,4);
+      textAt(ctx,lt,bx+lw+8,y+16,{size:12,weight:700,color:COL.ink}); textAt(ctx,rt,bx+BW-8,y+16,{align:'right',size:12,weight:700,color:COL.muted});
+    };
+    const f0=n=>Math.round(n).toLocaleString('en-US');
+    bar(h*0.075,'Everyone tested: '+f0(NT)+' people',NT,I,COL.red,rgba(COL.mid,0.25),f0(I)+' infected',f0(Hh)+' healthy');
+    bar(h*0.2,'The '+f0(I)+' infected people',Math.max(I,1),TP,rgba(COL.red,0.85),rgba(COL.red,0.12),f0(TP)+' test +ve',f0(FN)+' missed');
+    bar(h*0.325,'The '+f0(Hh)+' healthy people',Math.max(Hh,1),FP,rgba(COL.blue,0.85),rgba(COL.blue,0.1),f0(FP)+' false alarms',f0(TN)+' test −ve');
+    // ---- pool of positives
+    let k=1; for(const c of SC){ k=c; if((TP+FP)/c<=MAXD) break; }
+    const nTP=Math.round(TP/k), nFP=Math.round(FP/k), nD=nTP+nFP;
+    const px=w*0.06, py=h*0.45, pw=w*0.55, ph=h*0.5;
+    const kk=nD+'|'+nTP; if(kk!==key){ key=kk; const ord=Array.from({length:nD},(_,i)=>i).sort((a,b)=>dots[a].u-dots[b].u); rank=new Array(nD); ord.forEach((di,r)=>rank[di]=r); }
+    box(ctx,px,py,pw,ph,COL.ink,'#fbfdff',2.4,10);
+    textAt(ctx,'Everyone who tested positive: '+f0(TP+FP),px+10,py-8,{size:12,weight:700,color:COL.ink});
+    const cs=clamp(Math.sqrt((pw-12)*(ph-12)/Math.max(nD,1))*0.97,4.5,18), cols=Math.max(1,Math.floor((pw-12)/cs)), rd=cs*0.4;
+    ctx.save(); rrect(ctx,px+2,py+2,pw-4,ph-4,8); ctx.clip();
+    const lim=Math.floor(nD*prog);
+    for(let i=0;i<nD;i++){
+      const d=dots[i];
+      if(i<lim){ if(!d.on){ d.on=true; d.off=-(ph+30+Math.random()*120); d.v=0; } d.v+=2800*dt; d.off+=d.v*dt; if(d.off>=0){ d.off=0; d.v*=-0.32; if(Math.abs(d.v)<50) d.v=0; } }
+      else { d.on=false; d.off=-9999; }
+      if(!d.on) continue;
+      const col=Math.floor(i/cols), row=i%cols; // fill left→right then up
+      const r_=Math.floor(i/cols), c_=i%cols, x=px+8+c_*cs+cs/2, y=py+ph-8-r_*cs-cs/2+Math.min(0,d.off);
+      circ(ctx,x,y,rd,null,rank[i]<nTP?COL.red:COL.blue,1);
+    }
+    ctx.restore();
+    // ---- verdict ring
+    const cx=w*0.8, cy=h*0.66, R=Math.min(w*0.12,h*0.2);
+    ring=approach(ring,post,6,dt);
+    ctx.save(); ctx.lineWidth=R*0.32; ctx.lineCap='butt'; ctx.strokeStyle=rgba(COL.blue,0.75); ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+    ctx.strokeStyle=COL.red; ctx.beginPath(); ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*ring); ctx.stroke(); ctx.restore();
+    textAt(ctx,pct(ring,1),cx,cy+R*0.14,{align:'center',size:R*0.5,weight:700,color:COL.ink});
+    textAt(ctx,'of positives are really infected',cx,cy+R+34,{align:'center',size:12,weight:700,color:COL.muted});
+    textAt(ctx,f0(TP)+' / ('+f0(TP)+' + '+f0(FP)+')',cx,cy+R+54,{align:'center',size:13,weight:700,color:COL.ink});
+    textAt(ctx,'1 dot = '+k+(k===1?' person':' people'),px+pw-8,py+ph+18,{align:'right',size:11,weight:600,color:COL.mid});
+    $('#rTP').textContent=f0(TP); $('#rFP').textContent=f0(FP); $('#rPo').textContent=fmt(post,3); $('#rK').textContent='1 dot = '+k;
+    $('#fm').innerHTML=`<span class="r">${fmt(pv,3)}×${fmt(se,2)}</span> ÷ (<span class="r">${fmt(pv,3)}×${fmt(se,2)}</span> + <span class="b">${fmt(1-pv,3)}×${fmt(fp,3)}</span>)<br>= <b class="g">${fmt(post,3)}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.9 THE BOLT FACTORY  (Ex 19)
+   Machines A, B, C make 25 %, 35 %, 40 % of the bolts and 5 %, 4 %, 2 % of
+   their output is defective.  A defective bolt is found: P(from B) =
+   0.35×0.04 / (0.25×0.05 + 0.35×0.04 + 0.40×0.02) = 28/69 ≈ 0.406.
+   Bolts drop onto a belt; an inspector arm knocks defective ones into the
+   reject bin.  The bin's make-up converges to the Bayes posterior.
+   ===================================================================== */
+function drawBolt(ctx,x,y,s,col,def,rot){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0);
+  const hh=s*0.55;
+  ctx.lineJoin='round'; ctx.lineWidth=2.2; ctx.strokeStyle=def?COL.red:COL.ink; ctx.fillStyle=rgba(col,0.5);
+  ctx.beginPath(); ctx.moveTo(-s*0.5,-hh*0.5); ctx.lineTo(-s*0.5,hh*0.5); ctx.lineTo(-s*0.28,hh*0.5); ctx.lineTo(-s*0.28,-hh*0.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.rect(-s*0.28,-hh*0.26,s*0.78,hh*0.52); ctx.fill(); ctx.stroke();
+  for(let i=0;i<4;i++) line(ctx,-s*0.14+i*s*0.16,-hh*0.26,-s*0.14+i*s*0.16+s*0.07,hh*0.26,def?COL.red:COL.mid,1.3);
+  if(def){ line(ctx,s*0.05,-hh*0.2,s*0.2,hh*0.35,COL.red,2.4); }
+  ctx.restore();
+}
+function buildA9(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = chipsHTML('sp','Production speed',['Normal','Fast','Turbo'],1)
+    + btnRow([['big','Skip 1000 bolts','play'],['rs','↺']])
+    + sliderHTML('sa','Machine A makes',5,90,1,25) + sliderHTML('sb','Machine B makes',5,90,1,35)
+    + sliderHTML('da','A defective',0,10,0.5,5) + sliderHTML('db','B defective',0,10,0.5,4) + sliderHTML('dc','C defective',0,10,0.5,2)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rC','Machine C makes','40 %',0,'green'],['rD','Defective found','0',0,'red'],['rPB','P(B | defective)','28/69',0,'yellow'],['rX','Your bin: B','—',0]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const sA=wireSlider(wrap,'sa',v=>v+' %',()=>{ if(sA.get()+sB.get()>95) sB.set(95-sA.get()); }), sB=wireSlider(wrap,'sb',v=>v+' %',()=>{ if(sA.get()+sB.get()>95) sA.set(95-sB.get()); });
+  const dA=wireSlider(wrap,'da',v=>fmt(v,1)+' %'), dB=wireSlider(wrap,'db',v=>fmt(v,1)+' %'), dC=wireSlider(wrap,'dc',v=>fmt(v,1)+' %');
+  let t=0, W=900, H=600, speed=1, acc=0, bolts=[], belt=0, rej=[0,0,0], made=[0,0,0], arm={x:0,v:0}, mk=[{x:0,v:0},{x:0,v:0},{x:0,v:0}];
+  wireChips(wrap,'sp',i=>{ speed=i; });
+  const MCOL=[COL.blue,COL.yellow,COL.green], MN=['A','B','C'];
+  const share=()=>{ const a=sA.get()/100, b=sB.get()/100; return [a,b,Math.max(0,1-a-b)]; };
+  const dr=()=>[dA.get()/100,dB.get()/100,dC.get()/100];
+  const pickM=()=>{ const s=share(), r=Math.random(); return r<s[0]?0:r<s[0]+s[1]?1:2; };
+  $('#big').onclick=()=>{ const d=dr(); for(let i=0;i<1000;i++){ const m=pickM(); made[m]++; if(Math.random()<d[m]) rej[m]++; } };
+  $('#rs').onclick=()=>{ rej=[0,0,0]; made=[0,0,0]; bolts=[]; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const sh=share(), d=dr(), rate=[2.5,10,36][speed], vb=[120,260,460][speed];
+    const beltY=h*0.46, mxs=[w*0.17,w*0.31,w*0.45], xi=w*0.66, xEnd=w*0.97;
+    belt=(belt+vb*dt)%28;
+    // ---- machines
+    mxs.forEach((x,i)=>{ springTo(mk[i],0,260,14,dt);
+      const y=h*0.17+mk[i].x;
+      box(ctx,x-w*0.05,y-h*0.08,w*0.1,h*0.15,MCOL[i],rgba(MCOL[i],0.1),3,10);
+      circ(ctx,x-w*0.018,y-h*0.01,Math.min(w,h)*0.022,MCOL[i],null,2.4);
+      for(let q=0;q<6;q++){ const a=q*Math.PI/3+t*(1+i*0.3); line(ctx,x-w*0.018,y-h*0.01,x-w*0.018+Math.cos(a)*Math.min(w,h)*0.03,y-h*0.01+Math.sin(a)*Math.min(w,h)*0.03,MCOL[i],1.6); }
+      line(ctx,x,y+h*0.07,x,beltY-h*0.05,MCOL[i],5);
+      textAt(ctx,MN[i],x+w*0.026,y-h*0.035,{align:'center',size:18,weight:700,color:MCOL[i]});
+      textAt(ctx,Math.round(sh[i]*100)+' % · '+fmt(d[i]*100,1)+' % bad',x,y-h*0.095,{align:'center',size:11,weight:700,color:COL.muted});
+    });
+    // ---- belt
+    line(ctx,w*0.1,beltY+18,xEnd,beltY+18,COL.ink,3); line(ctx,w*0.1,beltY+30,xEnd,beltY+30,COL.ink,3);
+    for(let x=w*0.1-belt;x<xEnd;x+=28){ if(x>w*0.1) line(ctx,x,beltY+18,x,beltY+30,COL.mid,2); }
+    [w*0.1,xEnd].forEach(x=>circ(ctx,x,beltY+24,14,COL.ink,'#fff',3));
+    // ---- spawn
+    acc+=dt*rate; while(acc>=1){ acc--; if(bolts.length<80){ const m=pickM(); mk[m].v=-90; bolts.push({m,def:Math.random()<d[m],x:mxs[m]+(Math.random()-0.5)*8,y:h*0.17+h*0.09,vy:0,vx:0,st:0,rot:(Math.random()-0.5)*0.4}); made[m]++; } }
+    // ---- inspector
+    springTo(arm,0,300,18,dt);
+    const ay=beltY-h*0.2;
+    line(ctx,xi,ay,xi,beltY-26,COL.ink,3); box(ctx,xi-16,ay-18,32,22,COL.ink,'#fff',2.6,5); circ(ctx,xi,ay-7,5,COL.red,null,2);
+    line(ctx,xi-34,beltY-26+arm.x*0,xi-34+arm.x*0,beltY-26,COL.red,0);
+    const pushX=xi-26+Math.max(0,arm.x);
+    box(ctx,pushX-6,beltY-34,10,44,COL.red,rgba(COL.red,0.2),2.6,3);
+    line(ctx,pushX-60,beltY-12,pushX-6,beltY-12,COL.red,3);
+    textAt(ctx,'inspector',xi,ay-26,{align:'center',size:11,weight:700,color:COL.muted});
+    // bin
+    const binX=xi+30, binW=w*0.17, binY=beltY+h*0.12;
+    // ---- bolts
+    bolts=bolts.filter(b=>{
+      if(b.st===0){ b.vy+=2400*dt; b.y+=b.vy*dt; if(b.y>=beltY){ b.y=beltY; b.vy*=-0.3; if(Math.abs(b.vy)<60){ b.vy=0; b.st=1; } } }
+      else if(b.st===1){ b.x+=vb*dt; b.rot*=0.9; if(b.def && b.x>=xi-6){ b.st=2; b.vx=170; b.vy=-240; arm.x=0; arm.v=520; } else if(b.x>xEnd){ return false; } }
+      else if(b.st===2){ b.vy+=2400*dt; b.x+=b.vx*dt; b.y+=b.vy*dt; b.rot+=dt*6; if(b.y>=binY+binW*0.0+h*0.2-8){ rej[b.m]++; return false; } }
+      drawBolt(ctx,b.x,b.y,22,MCOL[b.m],b.def,b.rot); return true;
+    });
+    // bin outline
+    ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(binX,beltY+h*0.1); ctx.lineTo(binX+8,beltY+h*0.22); ctx.lineTo(binX+binW-8,beltY+h*0.22); ctx.lineTo(binX+binW,beltY+h*0.1); ctx.stroke(); ctx.restore();
+    textAt(ctx,'reject bin',binX+binW/2,beltY+h*0.22+18,{align:'center',size:11,weight:700,color:COL.red});
+    // ---- reject make-up bars (empirical) vs Bayes (theory)
+    const bz=bayes(sh,d), tot=rej[0]+rej[1]+rej[2], by0=h*0.74, bw=w*0.7, bx=w*0.08;
+    textAt(ctx,'Who made the defective bolts?',bx,by0-14,{size:13,weight:700,color:COL.ink});
+    [0,1,2].forEach(i=>{
+      const y=by0+i*h*0.075, th=bz.post[i], em=tot? rej[i]/tot : 0;
+      textAt(ctx,MN[i],bx-4,y+14,{align:'right',size:14,weight:700,color:MCOL[i]});
+      box(ctx,bx+6,y,bw,20,COL.faint,'#fff',1.6,4);
+      ctx.fillStyle=rgba(MCOL[i],0.5); ctx.fillRect(bx+6,y,bw*em,20);
+      if(isFinite(th)) line(ctx,bx+6+bw*th,y-3,bx+6+bw*th,y+23,COL.ink,3,[4,3]);
+      box(ctx,bx+6,y,bw,20,COL.faint,null,1.6,4);
+      textAt(ctx,(isFinite(th)?fmt(th,3):'—')+(tot>9?'  ('+fmt(em,3)+')':''),bx+bw+16,y+15,{size:12,weight:700,color:COL.ink});
+    });
+    textAt(ctx,'dashed = Bayes · bar = bolts in the bin ('+tot+')',bx+6,by0+h*0.075*3+6,{size:11,weight:600,color:COL.muted});
+    $('#rC').textContent=Math.round(sh[2]*100)+' %'; $('#rD').textContent=tot;
+    const ints=[sA.get()*dA.get()*2,sB.get()*dB.get()*2,(100-sA.get()-sB.get())*dC.get()*2], isum=ints[0]+ints[1]+ints[2];
+    $('#rPB').textContent=isFinite(bz.post[1])? (isum? fr(ints[1],isum):'—')+' = '+fmt(bz.post[1],3) : '—';
+    $('#rX').textContent=tot? rej[1]+' / '+tot+' = '+pct(rej[1]/tot,0) : '—';
+    $('#fm').innerHTML=`<span class="y">${fmt(sh[1],2)}×${fmt(d[1],3)}</span> ÷ (<span class="b">${fmt(sh[0],2)}×${fmt(d[0],3)}</span> + <span class="y">${fmt(sh[1],2)}×${fmt(d[1],3)}</span> + <span class="g">${fmt(sh[2],2)}×${fmt(d[2],3)}</span>)<br>= <b>${isFinite(bz.post[1])?fmt(bz.post[1],3):'—'}</b>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.10 DICE DUEL  (Ex 23)
+   A and B throw a die in turn; first to get a 6 wins.  With A first:
+   P(A wins) = p + q²p + q⁴p + … = p/(1−q²) = 6/11,  P(B wins) = 5/11.
+   Choose how many faces win (p = k/6) and who throws first.
+   The curves are the running totals of that geometric series.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(), side=wrap.querySelector('.lab-side');
+  side.innerHTML = btnRow([['one','🎲 Play a game','play'],['auto','▶ Auto'],['big','× 1000'],['rs','↺']])
+    + sliderHTML('kf','Winning faces  (1 = just a 6)',1,6,1,1)
+    + chipsHTML('fs','Who throws first',['A','B'],0)
+    + `<div class="control-group"><div class="formula" id="fm"></div></div>`
+    + cardsHTML([['rA','P(A wins)','6/11',0,'blue'],['rB','P(B wins)','5/11',0,'green'],['rWA','A won','0',0,'blue'],['rWB','B won','0',0,'green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const sK=wireSlider(wrap,'kf',v=>v+' of 6',()=>{ reveal=0; });
+  let t=0, W=900, H=600, first=0, auto=false, g=null, roll=null, wins=[0,0], reveal=0, hold=0;
+  wireChips(wrap,'fs',i=>{ first=i; reveal=0; });
+  const NMAX=22;
+  const newGame=()=>{ g={turn:first,n:0,seq:[],winner:-1,idle:0}; roll=null; };
+  $('#one').onclick=()=>{ if(!g) newGame(); };
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Auto':'▶ Auto'; if(auto&&!g) newGame(); };
+  $('#big').onclick=()=>{ const p=sK.get()/6; for(let i=0;i<1000;i++){ let turn=first; for(;;){ if(Math.random()<p){ wins[turn]++; break; } turn^=1; } } };
+  $('#rs').onclick=()=>{ wins=[0,0]; g=null; roll=null; };
+  animLoop(dt=>{
+    t+=dt; const {ctx,w,h}=fitCanvas(canvas); W=w; H=h; ctx.clearRect(0,0,w,h);
+    const k=sK.get(), p=k/6, q=1-p, pf=p/(1-q*q), PA=first===0?pf:1-pf, PB=1-PA;
+    reveal=Math.min(NMAX,reveal+dt*9);
+    const px=[w*0.16,w*0.84], cx=w/2, floor=h*0.33, ds=clamp(Math.min(w*0.07,h*0.12),34,64);
+    // ---- players
+    [0,1].forEach(i=>{
+      const on=g&&g.winner<0&&g.turn===i, won=g&&g.winner===i, col=i?COL.green:COL.blue, x=px[i], y=h*0.17;
+      if(on||won) circ(ctx,x,y,ds*0.8,won?COL.green:COL.yellow,rgba(won?COL.green:COL.yellow,0.12),3);
+      circ(ctx,x,y,ds*0.56,col,'#fff',3.4); textAt(ctx,i?'B':'A',x,y+ds*0.2,{align:'center',size:ds*0.6,weight:700,color:col});
+      line(ctx,x,y+ds*0.56,x,y+ds*1.15,col,3.4); line(ctx,x,y+ds*0.8,x+(i?-1:1)*ds*0.55,y+ds*0.66,col,3.4);
+      textAt(ctx,'wins '+wins[i],x,y+ds*1.45,{align:'center',size:12,weight:700,color:col});
+      if(won) textAt(ctx,'WINS!',x,y-ds*0.95,{align:'center',size:15,weight:700,color:COL.green});
+    });
+    line(ctx,w*0.3,floor+ds/2,w*0.7,floor+ds/2,COL.ink,2.4);
+    // ---- game machine
+    if(g){
+      if(g.winner<0){
+        if(!roll){ const x0=px[g.turn]+(g.turn?-1:1)*ds*0.7, val=1+Math.floor(Math.random()*6); roll=newRoll('die',x0,cx+(g.turn?1:-1)*ds*0.0+(Math.random()-0.5)*ds,floor,h*0.25,0,val,0.15); roll.who=g.turn; }
+        roll.t+=dt;
+        if(rollDone(roll)){ const win=roll.val<=k; g.seq.push({v:roll.val,win,who:roll.who}); g.n++; if(win){ g.winner=roll.who; wins[roll.who]++; g.idle=0; } else g.turn^=1; roll.settled=true; roll=null; }
+      } else { g.idle+=dt; if(g.idle>1.6){ if(auto) newGame(); else g=null; } }
+    }
+    if(roll){ const pp=rollPose(roll); shadow(ctx,pp.x,floor+ds/2,ds*0.5,roll.f.h(Math.max(0,roll.t))); drawDie(ctx,pp.x,pp.y,ds,roll.dir*roll.spin*Math.PI*2*(1-pp.eo),dieFace(roll,pp),COL.ink); }
+    else if(g&&g.seq.length){ const L=g.seq[g.seq.length-1]; drawDie(ctx,cx,floor,ds,0,L.v,COL.ink,L.win?COL.green:null); }
+    else drawDie(ctx,cx,floor,ds,0,6,COL.mid);
+    // ---- throw strip
+    const sy=h*0.5, sp=Math.min(w*0.9/NMAX,34), sx=w/2-(NMAX-1)*sp/2;
+    for(let i=0;i<NMAX;i++){ const s=g&&g.seq[i], x=sx+i*sp, who=(i+first)%2, col=who?COL.green:COL.blue;
+      circ(ctx,x,sy,sp*0.38,s?(s.win?COL.green:col):COL.faint,s?(s.win?rgba(COL.green,0.35):'#fff'):null,2.2);
+      if(s) textAt(ctx,s.v,x,sy+4,{align:'center',size:11,weight:700,color:COL.ink});
+      textAt(ctx,who?'B':'A',x,sy+sp*0.38+14,{align:'center',size:9,weight:700,color:rgba(col,0.8)}); }
+    // ---- partial-sum plot
+    const gx=w*0.09, gy=h*0.63, gw=w*0.8, gh=h*0.3;
+    line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.ink,2); line(ctx,gx,gy,gx,gy+gh,COL.ink,2);
+    textAt(ctx,'P(wins within n throws)',gx+4,gy-6,{size:11,weight:700,color:COL.muted}); textAt(ctx,'n throws →',gx+gw,gy+gh+16,{align:'right',size:11,weight:600,color:COL.muted});
+    const X=n=>gx+gw*n/NMAX, Y=v=>gy+gh-gh*v;
+    [[PA,COL.blue],[PB,COL.green]].forEach(([lim,col])=>line(ctx,gx,Y(lim),gx+gw,Y(lim),col,1.8,[6,5]));
+    textAt(ctx,'A → '+(first===0?fr(6,12-k):fr(6-k,12-k))+' = '+fmt(PA,3),gx+gw+4,Y(PA)-1,{size:11,weight:700,color:COL.blue});
+    textAt(ctx,'B → '+(first===1?fr(6,12-k):fr(6-k,12-k))+' = '+fmt(PB,3),gx+gw+4,Y(PB)+13,{size:11,weight:700,color:COL.green});
+    const cum=[0,0]; const pts=[[],[]]; let reach=1;
+    for(let n=0;n<=NMAX;n++){ if(n>0){ const who=(n-1+first)%2; cum[who]+=reach*p; reach*=q; }
+      if(n<=reveal){ pts[0].push([X(n),Y(cum[0])]); pts[1].push([X(n),Y(cum[1])]); } }
+    [0,1].forEach(i=>{ const col=i?COL.green:COL.blue; ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+      pts[i].forEach((P,j)=>{ if(j===0) ctx.moveTo(P[0],P[1]); else { ctx.lineTo(P[0],pts[i][j-1][1]); ctx.lineTo(P[0],P[1]); } }); ctx.stroke(); ctx.restore(); });
+    if(g&&g.n>0){ const x=X(Math.min(g.n,NMAX)); line(ctx,x,gy,x,gy+gh,COL.yellow,3); textAt(ctx,'throw '+g.n,x,gy-6,{align:'center',size:11,weight:700,color:COL.yellow}); }
+    for(let n=0;n<=NMAX;n+=4) textAt(ctx,n,X(n),gy+gh+14,{align:'center',size:10,color:COL.mid});
+    const tw=wins[0]+wins[1];
+    $('#rA').textContent=(first===0?fr(6,12-k):fr(6-k,12-k)); $('#rB').textContent=(first===1?fr(6,12-k):fr(6-k,12-k));
+    $('#rWA').textContent=wins[0]+(tw? '  ('+pct(wins[0]/tw,0)+')':''); $('#rWB').textContent=wins[1]+(tw? '  ('+pct(wins[1]/tw,0)+')':'');
+    $('#fm').innerHTML=`P(${first?'B':'A'} wins) = <b>p + q²p + q⁴p + …</b><br>= p / (1 − q²) = ${fr(k,6)} / (1 − (${fr(6-k,6)})²) = <b class="b">${fr(6,12-k)}</b>`;
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'7.1', title:'Three Coins', desc:'Given F, the sample space shrinks', build: buildA1 },
+  { num:'7.2', title:'Two Dice Grid', desc:'36 outcomes · condition · event', build: buildA2 },
+  { num:'7.3', title:'Urn Draws', desc:'P(E∩F) = P(E)·P(F|E)', build: buildA3 },
+  { num:'7.4', title:'Independent Events', desc:'Do the cuts line up?', build: buildA4 },
+  { num:'7.5', title:'Total Probability', desc:'Add the paths to A', build: buildA5 },
+  { num:'7.6', title:'Bayes: Two Bags', desc:'Reverse the question', build: buildA6 },
+  { num:'7.7', title:'Three Boxes of Coins', desc:'Gold seen — is the other gold?', build: buildA7 },
+  { num:'7.8', title:'The Medical Test', desc:'Why a positive is not a verdict', build: buildA8 },
+  { num:'7.9', title:'Bolt Factory', desc:'Which machine made the faulty bolt?', build: buildA9 },
+  { num:'7.10', title:'Dice Duel', desc:'First 6 wins · geometric series', build: buildA10 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn=document.createElement('button'); btn.className='nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML='<span class="n-num">'+a.num+'</span><span class="n-title">'+a.title+'</span>';
+    btn.onclick=()=>{ currentIndex=i; render(); }; nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc||'';
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

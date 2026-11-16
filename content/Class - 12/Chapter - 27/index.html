@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 3 — Matrices | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">▦</div>
+    <div>
+      <div class="chip">Grade 12 · Maths Part 1 · Ch 3</div>
+      <h1>Matrices</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Rows · Matrix A</span>
+      <span><i style="background:var(--f-green)"></i>Columns · Matrix B</span>
+      <span><i style="background:var(--f-red)"></i>Diagonal · Result · Mismatch</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">3.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 3: MATRICES
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or flies toward it every frame.
+   Numbers count, cells travel, balances wobble, shapes morph — nothing jumps.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHAPTER-3 HELPERS — control builders, matrix drawing, number format
+   --------------------------------------------------------------------- */
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function num(v,d){ if(!isFinite(v)) return '—'; d=d===undefined?1:d; const p=Math.pow(10,d); let r=Math.round(v*p)/p; if(Object.is(r,-0)) r=0; return String(r).replace('-','−'); }
+const SUB=['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+function sub(i,j){ return 'a'+SUB[i]+SUB[j]; }
+function cellTxt(ctx,txt,x,y,size,color,weight,alpha){ textAt(ctx,txt,x,y,{align:'center',baseline:'middle',size,weight:weight||600,color:color||COL.ink,alpha}); }
+function bracket(ctx,x,y,w,h,col,lwid){
+  ctx.save(); ctx.strokeStyle=col||COL.ink; ctx.lineWidth=lwid||3; ctx.lineCap='round'; ctx.lineJoin='round';
+  const a=Math.min(12,6+w*0.02);
+  ctx.beginPath(); ctx.moveTo(x+a,y); ctx.lineTo(x,y); ctx.lineTo(x,y+h); ctx.lineTo(x+a,y+h);
+  ctx.moveTo(x+w-a,y); ctx.lineTo(x+w,y); ctx.lineTo(x+w,y+h); ctx.lineTo(x+w-a,y+h); ctx.stroke(); ctx.restore();
+}
+function box(ctx,x,y,w,h,stroke,fill,lw,r){ ctx.save(); rrect(ctx,x,y,w,h,r===undefined?8:r); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.stroke();} ctx.restore(); }
+function glowBox(ctx,x,y,w,h,col,a){ ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=14*a; box(ctx,x,y,w,h,col,null,3,9); ctx.restore(); }
+function curveArrow(ctx,x1,y1,x2,y2,bend,col,lw,dash){
+  const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1;
+  const cx=mx-dy/L*bend, cy=my+dx/L*bend;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(cx,cy,x2,y2); ctx.stroke(); ctx.restore();
+  arrowHead(ctx,x2,y2,Math.atan2(y2-cy,x2-cx),col,8);
+}
+/* control builders */
+const SL=(id,label,min,max,step,val)=>`<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+const TG=(id,label,items)=>`<div class="control-group">${label?`<label style="margin-bottom:6px">${label}</label>`:''}<div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn${i===0?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')}</div></div>`;
+const BTN=(id,txt,cls)=>`<div class="control-group"><button class="toggle-btn ${cls||'navy'}" id="${id}" style="margin-top:0;width:100%">${txt}</button></div>`;
+const RC=(cls,items)=>`<div class="control-group"><div class="result-cards ${cls||''}">${items.map(it=>`<div class="rcard${it[3]?' wide':''}"><div class="rlabel">${it[0]}</div><div class="rval" id="${it[1]}" style="color:${it[2]||'var(--text-1)'}">—</div></div>`).join('')}</div></div>`;
+const HINT=(txt,id)=>`<div class="control-group"><div class="hint" ${id?`id="${id}"`:''} style="margin-top:0">${txt}</div></div>`;
+function ui(wrap){
+  const $=s=>wrap.querySelector(s);
+  const sl=(id,f)=>{ const v=parseFloat($('#'+id).value); const o=$('#'+id+'V'); if(o) o.textContent=f?f(v):num(v,1); return v; };
+  const set=(id,v)=>{ $('#'+id).value=v; };
+  const txt=(id,s)=>{ const e=$('#'+id); if(e&&e.textContent!==s) e.textContent=s; };
+  return {$,sl,set,txt};
+}
+
+/* =====================================================================
+   3.1 ROWS, COLUMNS AND ORDER      (§3.2, §3.2.1)
+   A matrix with m rows and n columns has order m × n and mn elements.
+   Textbook check: Radha 15 notebooks, 6 pens … 3 × 2 matrix, 6 elements.
+   ===================================================================== */
+function buildM1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    SL('mR','Rows  m',1,4,1,3)+SL('nC','Columns  n',1,4,1,2)+SL('iR','Pick row  i',1,4,1,2)+SL('jC','Pick column  j',1,4,1,1)+
+    BTN('cnt','▶  Count the elements')+
+    RC('three',[['Order','oV','var(--f-blue)'],['Elements','eV','var(--f-red)'],['Entry','aV','var(--f-yellow)']])+
+    HINT('Entry aᵢⱼ sits in row i and column j.');
+  const {$,sl,txt}=ui(wrap), canvas=$('canvas');
+  const V=[[15,6,8,4],[10,2,7,9],[13,5,3,11],[12,14,1,16]];
+  const names=['Radha','Fauzia','Simran','Meera'], items=['Notebooks','Pens','Rulers','Erasers'];
+  const S=[...Array(4)].map(()=>[...Array(4)].map(()=>({x:0,v:0})));
+  const dim={w:0,h:0}, rowA={x:1}, colA={x:1};
+  const cnt={on:false,k:0,t:0,hold:0};
+  let t=0;
+  $('#cnt').onclick=()=>{ cnt.on=true; cnt.k=0; cnt.t=0; cnt.hold=0; };
+  animLoop(dt=>{
+    t+=dt;
+    const m=sl('mR'), n=sl('nC'); const i=Math.min(sl('iR'),m), j=Math.min(sl('jC'),n);
+    $('#iRV').textContent=i; $('#jCV').textContent=j;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cw=Math.min(w*0.15,118), ch=Math.min(h*0.125,74);
+    const gx=(w-4*cw)/2+34, gy=h*0.17;
+    dim.w=approach(dim.w,n*cw,9,dt); dim.h=approach(dim.h,m*ch,9,dt);
+    rowA.x=approach(rowA.x,i,12,dt); colA.x=approach(colA.x,j,12,dt);
+    // highlight bands (row = blue, column = green)
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.fillRect(gx,gy+(rowA.x-1)*ch,dim.w,ch);
+    ctx.fillStyle='rgba(31,157,85,0.14)'; ctx.fillRect(gx+(colA.x-1)*cw,gy,cw,dim.h); ctx.restore();
+    bracket(ctx,gx-8,gy-8,dim.w+16,dim.h+16,COL.ink,3.4);
+    for(let r=0;r<4;r++){
+      const a=clamp(S[r][0].x,0,1);
+      if(r<m) textAt(ctx,names[r],gx-22,gy+r*ch+ch/2+4,{align:'right',size:12.5,weight:700,color:r+1===i?COL.blue:COL.muted});
+    }
+    for(let c=0;c<4;c++) if(c<n) textAt(ctx,items[c],gx+c*cw+cw/2,gy-18,{align:'center',size:12.5,weight:700,color:c+1===j?COL.green:COL.muted});
+    for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+      const st=S[r][c]; springTo(st,(r<m&&c<n)?1:0,70,9,dt);
+      const s=Math.max(0,st.x); if(s<0.02) continue;
+      const cx=gx+c*cw+cw/2, cy=gy+r*ch+ch/2, bw=(cw-12)*s, bh=(ch-10)*s;
+      const sel=(r+1===i&&c+1===j);
+      box(ctx,cx-bw/2,cy-bh/2,bw,bh,sel?COL.yellow:COL.mid,'#fff',sel?3.2:1.4,8);
+      if(s>0.5){
+        cellTxt(ctx,String(V[r][c]),cx,cy-3,ch*0.4*s,COL.ink,700,clamp(s,0,1));
+        ctx.save(); ctx.globalAlpha=clamp(s,0,1); ctx.fillStyle=COL.blue; ctx.fillRect(cx-bw*0.4,cy+bh*0.32,bw*0.8*V[r][c]/16,3.4); ctx.restore();
+      }
+      if(sel) glowBox(ctx,cx-bw/2-3,cy-bh/2-3,bw+6,bh+6,COL.yellow,0.5+0.5*Math.sin(t*5));
+    }
+    // counting pointer
+    if(cnt.on){
+      cnt.t+=dt;
+      if(cnt.k<m*n && cnt.t>0.3){ cnt.t=0; cnt.k++; }
+      if(cnt.k>=m*n){ cnt.hold+=dt; if(cnt.hold>2.2) cnt.on=false; }
+      for(let q=0;q<Math.min(cnt.k,m*n);q++){
+        const r=Math.floor(q/n), c=q%n, cx=gx+c*cw+cw/2, cy=gy+r*ch+ch/2;
+        const pop=q===cnt.k-1?1+0.25*Math.exp(-cnt.t*9):1;
+        circ(ctx,cx+cw*0.3,cy-ch*0.3,11*pop,COL.red,COL.red,1);
+        cellTxt(ctx,String(q+1),cx+cw*0.3,cy-ch*0.3,11.5*pop,'#fff',700);
+      }
+    }
+    // dimension arrows
+    const ax=gx+dim.w+30, ay=gy+dim.h+34;
+    dimArrow(ctx,ax,gy,gy+dim.h,COL.blue); textAt(ctx,'m = '+m+(m>1?' rows':' row'),ax+10,gy+dim.h/2+4,{size:13,weight:700,color:COL.blue});
+    line(ctx,gx,ay,gx+dim.w,ay,COL.green,1.8); arrowHead(ctx,gx,ay,Math.PI,COL.green,6); arrowHead(ctx,gx+dim.w,ay,0,COL.green,6);
+    textAt(ctx,'n = '+n+(n>1?' columns':' column'),gx+dim.w/2,ay+19,{align:'center',size:13,weight:700,color:COL.green});
+    const total=cnt.on?Math.min(cnt.k,m*n):m*n;
+    textAt(ctx,'Order  '+m+' × '+n,w/2,h-58,{align:'center',size:22,weight:700,color:COL.ink});
+    textAt(ctx,'Elements  =  '+m+' × '+n+'  =  '+(cnt.on?total+' counted':m*n),w/2,h-26,{align:'center',size:16,weight:700,color:COL.red});
+    txt('oV',m+' × '+n); txt('eV',String(m*n)); txt('aV',sub(i,j)+' = '+V[i-1][j-1]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.2 MATRIX OF A FIGURE           (§3.2 note)
+   A point is a column [x y]ᵀ; vertices of a polygon form X (2 × 4) or its
+   rows-for-vertices form Y (4 × 2).  Textbook: A(1,0) B(3,2) C(1,3) D(−1,2).
+   ===================================================================== */
+function buildM2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    TG('vtx','Vertex to move',[['0','A'],['1','B'],['2','C'],['3','D']])+
+    SL('px','x-coordinate',-5,5,0.5,1)+SL('py','y-coordinate',-3,6,0.5,0)+
+    TG('form','Write the figure as',[['X','X  (2 × 4)'],['Y','Y  (4 × 2)']])+
+    RC('',[['Order','oV','var(--f-blue)'],['Elements','eV','var(--f-red)']])+
+    HINT('Columns of X are the vertices. Y is X with rows and columns swapped.');
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const VC=[COL.red,COL.blue,COL.green,COL.yellow], VN=['A','B','C','D'];
+  const tgt=[[1,0],[3,2],[1,3],[-1,2]];
+  const P=tgt.map(p=>[{x:p[0],v:0},{x:p[1],v:0}]);
+  let sel=0, form='X', t=0; const fl={x:0};
+  toggleWire(wrap.querySelectorAll('#vtx button'),b=>{ sel=+b.dataset.v; set('px',tgt[sel][0]); set('py',tgt[sel][1]); });
+  toggleWire(wrap.querySelectorAll('#form button'),b=>form=b.dataset.v);
+  animLoop(dt=>{
+    t+=dt;
+    tgt[sel][0]=sl('px'); tgt[sel][1]=sl('py');
+    for(let k=0;k<4;k++){ springTo(P[k][0],tgt[k][0],55,9,dt); springTo(P[k][1],tgt[k][1],55,9,dt); }
+    fl.x=approach(fl.x,form==='Y'?1:0,6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // --- plane
+    const u=Math.min(w*0.6/12,h*0.9/10), ox=w*0.05+5.2*u, oy=h-h*0.07-3.2*u;
+    const X=x=>ox+x*u, Y=y=>oy-y*u;
+    ctx.save(); ctx.strokeStyle='#e4ebf4'; ctx.lineWidth=1;
+    for(let g=-5;g<=7;g++){ ctx.beginPath(); ctx.moveTo(X(g),Y(-3)); ctx.lineTo(X(g),Y(7)); ctx.stroke(); }
+    for(let g=-3;g<=7;g++){ ctx.beginPath(); ctx.moveTo(X(-5),Y(g)); ctx.lineTo(X(7),Y(g)); ctx.stroke(); }
+    ctx.restore();
+    vec(ctx,X(-5),Y(0),X(7),Y(0),COL.ink,1.8); vec(ctx,X(0),Y(-3),X(0),Y(7),COL.ink,1.8);
+    textAt(ctx,'x',X(7)-4,Y(0)+16,{size:13,weight:700}); textAt(ctx,'y',X(0)+8,Y(7)+4,{size:13,weight:700});
+    for(let g=-4;g<=6;g++) if(g) textAt(ctx,String(g).replace('-','−'),X(g),Y(0)+14,{align:'center',size:10,color:COL.mid});
+    for(let g=-2;g<=6;g++) if(g) textAt(ctx,String(g).replace('-','−'),X(0)-8,Y(g)+4,{align:'right',size:10,color:COL.mid});
+    ctx.save(); ctx.beginPath(); P.forEach((p,k)=>k?ctx.lineTo(X(p[0].x),Y(p[1].x)):ctx.moveTo(X(p[0].x),Y(p[1].x))); ctx.closePath();
+    ctx.fillStyle='rgba(47,143,224,0.09)'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    P.forEach((p,k)=>{
+      const px=X(p[0].x), py=Y(p[1].x), on=k===sel;
+      if(on){ line(ctx,px,py,px,Y(0),COL.yellow,1.8,[5,4]); line(ctx,px,py,X(0),py,COL.yellow,1.8,[5,4]); circ(ctx,px,py,11+2*Math.sin(t*6),COL.yellow,null,2.6); }
+      circ(ctx,px,py,6,VC[k],VC[k],1);
+      textAt(ctx,VN[k]+'('+num(p[0].x)+', '+num(p[1].x)+')',px+(p[0].x>=0?10:-10),py-10,{align:p[0].x>=0?'left':'right',size:12,weight:700,color:VC[k]});
+    });
+    // --- matrix (cells fly between X and Y layouts)
+    const cs=Math.min(w*0.075,62), mx=w*0.68, my=h*0.3, f=smooth01(0,1,fl.x);
+    const colsN=lerp(4,2,f), rowsN=lerp(2,4,f);
+    textAt(ctx,f<0.5?'X =':'Y =',mx-18,my+rowsN*cs/2+6,{align:'right',size:22,weight:700,color:COL.ink});
+    bracket(ctx,mx-8,my-8,colsN*cs+16,rowsN*cs+16,COL.ink,3.4);
+    for(let k=0;k<4;k++){
+      textAt(ctx,VN[k],lerp(mx+k*cs+cs/2,mx-26,f),lerp(my-16,my+k*cs+cs/2+5,f),{align:'center',size:14,weight:700,color:VC[k]});
+      for(let r=0;r<2;r++){
+        const bump=0.38*Math.sin(Math.PI*f)*(k>r?1:(k<r?-1:0));
+        const gx=lerp(k,r,f)+bump, gy=lerp(r,k,f)-bump;
+        const cx=mx+gx*cs+cs/2, cy=my+gy*cs+cs/2;
+        cellTxt(ctx,num(P[k][r].x),cx,cy,cs*0.38,VC[k],700);
+      }
+    }
+    const order=f<0.5?'2 × 4':'4 × 2';
+    textAt(ctx,'Order  '+order,mx+colsN*cs/2,my+rowsN*cs+38,{align:'center',size:16,weight:700,color:COL.blue});
+    textAt(ctx,'Rows ↔ columns swapped',mx+colsN*cs/2,my+rowsN*cs+62,{align:'center',size:11.5,weight:600,color:COL.mid,alpha:Math.sin(Math.PI*f)});
+    txt('oV',order); txt('eV','8');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.3 TYPES OF MATRICES            (§3.3)
+   Row, column, square, diagonal, scalar, identity, zero.
+   ===================================================================== */
+function buildM3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px">Type</label><div class="chip-wrap" id="ty">
+      ${[['row','Row'],['col','Column'],['sq','Square'],['diag','Diagonal'],['sca','Scalar'],['id','Identity'],['zero','Zero']].map((c,i)=>`<button class="chip-btn${i===2?' active':''}" data-v="${c[0]}">${c[1]}</button>`).join('')}</div></div>`+
+    SL('sz','Size',1,4,1,3)+SL('kv','Scalar value  k',-5,5,1,3)+
+    RC('',[['Order','oV','var(--f-blue)'],['Rule','rV','var(--f-red)',true]]);
+  const {$,sl,txt}=ui(wrap), canvas=$('canvas');
+  const B=[[3,-1,2,5],[4,2,-6,1],[-2,7,1,3],[5,-3,4,2]], DG=[3,-2,4,6];
+  const S=[...Array(4)].map(()=>[...Array(4)].map(()=>({x:0,v:0})));
+  const D=[...Array(4)].map(()=>[...Array(4)].map(()=>0));
+  let type='sq', t=0;
+  wrap.querySelectorAll('#ty button').forEach(b=>b.onclick=()=>{ wrap.querySelectorAll('#ty button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); type=b.dataset.v; });
+  const RULE={row:'Only one row:  1 × n',col:'Only one column:  m × 1',sq:'Rows = columns:  m = n',diag:'Square, and aᵢⱼ = 0 when i ≠ j',sca:'Diagonal, all diagonal entries = k',id:'Scalar with k = 1:  Iₙ',zero:'Every entry is 0:  O'};
+  animLoop(dt=>{
+    t+=dt;
+    const s=sl('sz'), k=sl('kv');
+    let m=s,n=s;
+    if(type==='row'){ m=1; } else if(type==='col'){ n=1; } else if(type==='zero'){ n=Math.min(4,s+1); }
+    const val=(r,c)=>{
+      if(type==='zero') return 0;
+      if(type==='id') return r===c?1:0;
+      if(type==='sca') return r===c?k:0;
+      if(type==='diag') return r===c?DG[r]:0;
+      return B[r][c];
+    };
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cs=Math.min(w*0.15,h*0.17,112), gx=(w-4*cs)/2, gy=h*0.17;
+    const BWd=approach(S._w||0,n*cs,9,dt), BHt=approach(S._h||0,m*cs,9,dt); S._w=BWd; S._h=BHt;
+    const sq=type!=='row'&&type!=='col'&&m===n;
+    bracket(ctx,gx-10,gy-10,BWd+20,BHt+20,COL.ink,3.6);
+    // main diagonal guide + travelling red dot
+    if(sq&&m>1&&BWd>cs*1.5){
+      line(ctx,gx,gy,gx+m*cs,gy+m*cs,COL.red,1.6,[7,6]);
+      const q=(t*0.9)%m, ci=Math.floor(q), fr=q-ci;
+      circ(ctx,gx+(q+0.5)*cs,gy+(q+0.5)*cs,7,COL.red,COL.red,1);
+    }
+    for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+      const st=S[r][c]; springTo(st,(r<m&&c<n)?1:0,70,9,dt);
+      D[r][c]=approach(D[r][c],val(r,c),9,dt);
+      const sc=Math.max(0,st.x); if(sc<0.02) continue;
+      const cx=gx+c*cs+cs/2, cy=gy+r*cs+cs/2, bw=(cs-10)*sc, on=(r===c&&sq);
+      const isZero=Math.abs(D[r][c])<0.35;
+      box(ctx,cx-bw/2,cy-bw/2,bw,bw,on?COL.red:(isZero?COL.blue:COL.mid),isZero?'rgba(47,143,224,0.10)':'#fff',on?3.2:1.5,9);
+      if(sc>0.5) cellTxt(ctx,num(D[r][c],Math.abs(D[r][c]-Math.round(D[r][c]))<0.04?0:1),cx,cy,cs*0.4*sc,isZero?COL.blue:(on?COL.red:COL.ink),700,clamp(sc,0,1));
+    }
+    const names={row:'Row matrix',col:'Column matrix',sq:'Square matrix',diag:'Diagonal matrix',sca:'Scalar matrix',id:'Identity matrix  Iₙ',zero:'Zero matrix  O'};
+    textAt(ctx,names[type],w/2,h-62,{align:'center',size:24,weight:700,color:COL.ink});
+    textAt(ctx,'Order  '+m+' × '+n+'   ·   '+RULE[type],w/2,h-30,{align:'center',size:14.5,weight:600,color:COL.blue});
+    textAt(ctx,'red = diagonal   ·   blue = zero entries',w/2,gy-26,{align:'center',size:11.5,weight:600,color:COL.mid});
+    txt('oV',m+' × '+n); txt('rV',RULE[type]);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.4 EQUAL MATRICES               (§3.3.1)
+   Equal ⇔ same order and aᵢⱼ = bᵢⱼ.  Textbook Example 5:
+   [2a+b  a−2b ; 5c−d  4c+3d] = [4 −3 ; 11 24]  →  a=1, b=2, c=3, d=4.
+   Each entry gets its own balance scale; the beam tilts with the gap.
+   ===================================================================== */
+function buildM4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    TG('eq','Equation',[['0','Example 5'],['1','Exercise 7']])+
+    SL('va','a',-6,8,1,0)+SL('vb','b',-6,8,1,0)+SL('vc','c',-6,8,1,0)+SL('vd','d',-6,8,1,0)+
+    RC('',[['Entries equal','okV','var(--f-green)'],['Verdict','vV','var(--f-red)']])+
+    HINT('Tilt the beams level: every pair must balance.');
+  const {$,sl,txt}=ui(wrap), canvas=$('canvas');
+  const EQ=[
+    [['2a+b',v=>2*v.a+v.b,4],['a−2b',v=>v.a-2*v.b,-3],['5c−d',v=>5*v.c-v.d,11],['4c+3d',v=>4*v.c+3*v.d,24]],
+    [['a−b',v=>v.a-v.b,-1],['2a+c',v=>2*v.a+v.c,5],['2a−b',v=>2*v.a-v.b,0],['3c+d',v=>3*v.c+v.d,13]]
+  ];
+  const VCOL={a:COL.red,b:COL.blue,c:COL.green,d:COL.yellow};
+  const beam=[0,1,2,3].map(()=>({x:0,v:0})), dv=[0,0,0,0], glow={x:0};
+  let eq=0, t=0;
+  toggleWire(wrap.querySelectorAll('#eq button'),b=>eq=+b.dataset.v);
+  function expr(ctx,s,cx,y,size){
+    ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif'; const tw=ctx.measureText(s).width; ctx.restore();
+    let x=cx-tw/2;
+    for(const ch of s){ const col=VCOL[ch]||COL.ink; textAt(ctx,ch,x,y,{size,weight:700,color:col}); ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif'; x+=ctx.measureText(ch).width; ctx.restore(); }
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const v={a:sl('va'),b:sl('vb'),c:sl('vc'),d:sl('vd')};
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const E=EQ[eq]; let okN=0;
+    E.forEach((e,i)=>{ const L=e[1](v), d=L-e[2]; if(d===0) okN++; dv[i]=approach(dv[i],L,10,dt); springTo(beam[i],clamp(d*0.035,-0.42,0.42),38,3.2,dt); });
+    glow.x=approach(glow.x,okN===4?1:0,6,dt);
+    // top: the two matrices
+    const cs=Math.min(w*0.11,98), mh=cs*0.9, y0=h*0.07;
+    const mw=2*cs, lx=w/2-mw-cs*0.55, rx=w/2+cs*0.55;
+    [[lx,true],[rx,false]].forEach(([x0,left])=>{
+      bracket(ctx,x0-8,y0-6,mw+16,2*mh+12,COL.ink,3.4);
+      for(let i=0;i<4;i++){
+        const r=i>>1,c=i&1, cx=x0+c*cs+cs/2, cy=y0+r*mh+mh/2, ok=(E[i][1](v)===E[i][2]);
+        if(left){ expr(ctx,E[i][0],cx,cy-2,cs*0.2); cellTxt(ctx,num(dv[i],0),cx,cy+mh*0.27,cs*0.17,ok?COL.green:COL.red,700); }
+        else { cellTxt(ctx,num(E[i][2],0),cx,cy,cs*0.3,COL.ink,700); }
+        if(!left&&ok) circ(ctx,cx+cs*0.38,cy-mh*0.32,7,COL.green,COL.green,1);
+      }
+    });
+    textAt(ctx,'=',w/2,y0+mh+10,{align:'center',size:34,weight:700,color:okN===4?COL.green:COL.red});
+    // bottom: four balances
+    const bw=w/4, by=h*0.5, bl=Math.min(bw*0.32,110);
+    E.forEach((e,i)=>{
+      const cx=bw*i+bw/2, th=beam[i].x, L=e[1](v), R=e[2], ok=L===R;
+      const col=ok?COL.green:COL.red;
+      // stand
+      line(ctx,cx,by+8,cx,by+bl*1.55,COL.ink,3);
+      ctx.save(); ctx.beginPath(); ctx.moveTo(cx-bl*0.55,by+bl*1.55); ctx.lineTo(cx+bl*0.55,by+bl*1.55); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+      circ(ctx,cx,by,5,COL.ink,'#fff',2.4);
+      // beam: left side lower when th>0
+      const ex=Math.cos(th)*bl, ey=Math.sin(th)*bl;
+      line(ctx,cx-ex,by+ey,cx+ex,by-ey,col,4);
+      const lx2=cx-ex, ly2=by+ey, rx2=cx+ex, ry2=by-ey;
+      const hang=bl*0.55;
+      [[lx2,ly2,L,COL.blue],[rx2,ry2,R,COL.ink]].forEach(([px,py,val,pc])=>{
+        line(ctx,px,py,px-bl*0.3,py+hang,COL.mid,1.4); line(ctx,px,py,px+bl*0.3,py+hang,COL.mid,1.4);
+        ctx.save(); ctx.beginPath(); ctx.arc(px,py+hang,bl*0.3,0,Math.PI); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+        circ(ctx,px,py+hang-bl*0.16,bl*0.17,pc,'#fff',2.2);
+        cellTxt(ctx,num(val,0),px,py+hang-bl*0.16,bl*0.17,pc,700);
+      });
+      textAt(ctx,ok?'balanced':'off by '+num(Math.abs(L-R),0),cx,by+bl*1.55+24,{align:'center',size:12.5,weight:700,color:col});
+      textAt(ctx,'('+((i>>1)+1)+','+((i&1)+1)+')',cx,by-bl*0.85,{align:'center',size:11.5,weight:600,color:COL.mid});
+    });
+    if(glow.x>0.02){ ctx.save(); ctx.globalAlpha=glow.x; textAt(ctx,'A = B   ✓   a = '+v.a+', b = '+v.b+', c = '+v.c+', d = '+v.d,w/2,h-22,{align:'center',size:18,weight:700,color:COL.green}); ctx.restore(); }
+    txt('okV',okN+' / 4'); txt('vV',okN===4?'Equal':'Not equal');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.5 ADDING MATRICES              (§3.4.1)
+   (A+B)ᵢⱼ = aᵢⱼ + bᵢⱼ — only for matrices of the SAME order.
+   Textbook: Fatima's factories A and B, sport shoes in 3 price categories.
+   ===================================================================== */
+function buildM5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    SL('mg','Merge the factories',0,1,0.01,0)+BTN('play','▶  Play the merge','play')+
+    TG('bsh','Matrix B has order',[['ok','3 × 2'],['bad','2 × 3']])+
+    TG('ord','Add in the order',[['AB','A + B'],['BA','B + A']])+
+    RC('',[['Order of sum','oV','var(--f-red)'],['Total shoes','tV','var(--f-yellow)']])+
+    HINT('Same order → add entry by entry. Different order → not defined.');
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const A=[[80,60],[75,65],[90,85]], Bok=[[90,50],[70,55],[75,75]], Bbad=[[90,70,75],[50,55,75]];
+  let bad=false, order='AB', auto=0, t=0; const mgS={x:0};
+  toggleWire(wrap.querySelectorAll('#bsh button'),b=>bad=b.dataset.v==='bad');
+  toggleWire(wrap.querySelectorAll('#ord button'),b=>order=b.dataset.v);
+  $('#play').onclick=()=>{ set('mg',0); mgS.x=0; auto=1; };
+  function bars(ctx,M,x0,y0,cs,col,prog,ghost){
+    for(let r=0;r<M.length;r++) for(let c=0;c<M[0].length;c++){
+      const cx=x0+c*cs+cs/2, base=y0+r*cs+cs*0.9, hh=M[r][c]/100*cs*0.62*(prog===undefined?1:prog[r][c]);
+      ctx.save(); ctx.fillStyle=col; ctx.globalAlpha=0.25; ctx.fillRect(cx-cs*0.2,base-hh,cs*0.4,hh); ctx.globalAlpha=1; ctx.strokeStyle=col; ctx.lineWidth=2; ctx.strokeRect(cx-cs*0.2,base-hh,cs*0.4,hh); ctx.restore();
+    }
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ const v=Math.min(1,parseFloat($('#mg').value)+dt*0.28); set('mg',v); if(v>=1) auto=0; }
+    const target=sl('mg',v=>Math.round(v*100)+'%'); mgS.x=approach(mgS.x,target,6,dt);
+    const mg=mgS.x, B=bad?Bbad:Bok, ok=!bad;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cs=Math.min(w*0.1,h*0.2,92), y0=h*0.22;
+    const first=order==='AB'?A:B, second=order==='AB'?B:A;
+    const fc=order==='AB'?COL.blue:COL.yellow, sc=order==='AB'?COL.yellow:COL.blue;
+    const fN=order==='AB'?'A':'B', sN=order==='AB'?'B':'A';
+    const gap=cs*0.7;
+    const wA=first[0].length*cs, wB=second[0].length*cs, wC=2*cs;
+    const total=wA+wB+wC+gap*4, x0=(w-total)/2+gap*0.4;
+    const xa=x0, xb=xa+wA+gap*1.6, xc=xb+wB+gap*1.6;
+    const mat=(M,x,cl,name,okc)=>{
+      bracket(ctx,x-7,y0-7,M[0].length*cs+14,M.length*cs+14,okc||cl,3.4);
+      textAt(ctx,name,x+M[0].length*cs/2,y0-22,{align:'center',size:17,weight:700,color:okc||cl});
+      textAt(ctx,M.length+' × '+M[0].length,x+M[0].length*cs/2,y0+M.length*cs+28,{align:'center',size:12.5,weight:700,color:okc||COL.muted});
+    };
+    mat(first,xa,fc,fN,(!ok&&order==='BA')?COL.red:null); mat(second,xb,sc,sN,(!ok&&order==='AB')?COL.red:null);
+    mat(A.map(r=>r.map(()=>0)),xc,COL.red,'A + B',ok?null:COL.red);
+    textAt(ctx,'+',xa+wA+gap*0.8+7,y0+1.5*cs+8,{align:'center',size:30,weight:700,color:COL.ink});
+    textAt(ctx,'=',xb+wB+gap*0.8+7,y0+1.5*cs+8,{align:'center',size:30,weight:700,color:COL.ink});
+    const FM=order==='AB'?A:B, SM=order==='AB'?B:A;
+    // static input cells (numbers + bars)
+    bars(ctx,first,xa,y0,cs,fc);
+    bars(ctx,second,xb,y0,cs,sc);
+    const cell=(M,x,r,c)=>({x:x+c*cs+cs/2,y:y0+r*cs+cs/2});
+    for(let r=0;r<first.length;r++) for(let c=0;c<first[0].length;c++){ const p=cell(first,xa,r,c); cellTxt(ctx,String(first[r][c]),p.x,p.y-cs*0.28,cs*0.2,fc,700); }
+    for(let r=0;r<second.length;r++) for(let c=0;c<second[0].length;c++){ const p=cell(second,xb,r,c); cellTxt(ctx,String(second[r][c]),p.x,p.y-cs*0.28,cs*0.2,ok?sc:COL.red,700); }
+    let tot=0;
+    if(ok){
+      for(let r=0;r<3;r++) for(let c=0;c<2;c++){
+        const dst=cell(A,xc,r,c), idx=r*2+c, stag=idx*0.045;
+        const pF=smooth01(stag,stag+0.4,mg), pS=smooth01(0.3+stag,0.3+stag+0.4,mg);
+        const src1=cell(first,xa,r,c), src2=cell(second,xb,r,c);
+        // result bars: first stacked from bottom, second on top
+        const base=y0+r*cs+cs*0.9, h1=first[r][c]/100*cs*0.62*pF, h2=second[r][c]/100*cs*0.62*pS, cx=dst.x;
+        ctx.save(); ctx.fillStyle=fc; ctx.globalAlpha=0.25; ctx.fillRect(cx-cs*0.2,base-h1,cs*0.4,h1); ctx.strokeStyle=fc; ctx.lineWidth=2; ctx.strokeRect(cx-cs*0.2,base-h1,cs*0.4,h1);
+        ctx.fillStyle=sc; ctx.fillRect(cx-cs*0.2,base-h1-h2,cs*0.4,h2); ctx.strokeStyle=sc; ctx.strokeRect(cx-cs*0.2,base-h1-h2,cs*0.4,h2); ctx.restore();
+        const sum=first[r][c]*pF+second[r][c]*pS; tot+= (first[r][c]+second[r][c])*Math.min(pF,pS);
+        const done=pF>0.99&&pS>0.99;
+        cellTxt(ctx,num(sum,0),dst.x,dst.y-cs*0.28,cs*(done?0.24:0.2),COL.red,700);
+        if(done&&mg<1) {}
+        // flying chips
+        [[pF,src1,first[r][c],fc],[pS,src2,second[r][c],sc]].forEach(([p,s,val,cl])=>{
+          if(p>0.01&&p<0.99){ const x=lerp(s.x,dst.x,p), y=lerp(s.y,dst.y,p)-Math.sin(Math.PI*p)*cs*0.9;
+            box(ctx,x-cs*0.22,y-cs*0.14,cs*0.44,cs*0.28,cl,'#fff',2,7); cellTxt(ctx,String(val),x,y,cs*0.19,cl,700); }
+        });
+      }
+    } else {
+      // order mismatch: chips try to fly, bounce back, red cross appears
+      for(let r=0;r<3;r++) for(let c=0;c<2;c++){
+        const src=cell(first,xa,r,c), dst=cell(A,xc,r,c);
+        const p=0.32*Math.sin(Math.PI*clamp(mg*1.6,0,1));
+        if(p>0.01){ const x=lerp(src.x,dst.x,p), y=lerp(src.y,dst.y,p); box(ctx,x-cs*0.22,y-cs*0.14,cs*0.44,cs*0.28,fc,'#fff',2,7); cellTxt(ctx,String(first[r][c]),x,y,cs*0.19,fc,700); }
+      }
+      const sh=Math.sin(t*22)*2*smooth01(0,0.4,mg)*(mg<0.98?1:0);
+      const cx=xc+cs+sh, cy=y0+1.5*cs;
+      line(ctx,cx-cs*0.5,cy-cs*0.5,cx+cs*0.5,cy+cs*0.5,COL.red,6); line(ctx,cx+cs*0.5,cy-cs*0.5,cx-cs*0.5,cy+cs*0.5,COL.red,6);
+    }
+    // order of sum label
+    textAt(ctx,ok?'Sum has order  3 × 2':'Orders differ  →  A + B is not defined',(xa+xc+wC)/2,y0+3*cs+68,{align:'center',size:17,weight:700,color:ok?COL.red:COL.red});
+    if(ok) textAt(ctx,'cᵢⱼ = aᵢⱼ + bᵢⱼ',(xa+xc+wC)/2,y0+3*cs+94,{align:'center',size:13.5,weight:600,color:COL.muted});
+    // legend for bars
+    textAt(ctx,'bar height = pairs of shoes (boys / girls × category)',w/2,h-14,{align:'center',size:11,weight:600,color:COL.mid});
+    txt('oV',ok?'3 × 2':'None'); txt('tV',ok?String(Math.round(tot)):'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.6 SCALING AND SUBTRACTING      (§3.4.2)
+   kA multiplies every entry by k;  A − B = A + (−1)B.
+   Textbook Example 7:  2A − B = [−1 5 3 ; 5 6 0].
+   ===================================================================== */
+function buildM6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    SL('kk','Scalar  k  (multiplies A)',-3,3,0.5,2)+SL('ll','Scalar  l  (multiplies B)',-3,3,0.5,-1)+
+    `<div class="control-group"><label style="margin-bottom:4px">Quick set</label><div class="chip-wrap" id="pre">
+      <button class="chip-btn active" data-k="2" data-l="-1">2A − B</button><button class="chip-btn" data-k="1" data-l="1">A + B</button>
+      <button class="chip-btn" data-k="-1" data-l="0">−A</button><button class="chip-btn" data-k="2" data-l="0">2A</button><button class="chip-btn" data-k="0" data-l="0">0</button></div></div>`+
+    RC('',[['Result','rV','var(--f-red)',true]])+
+    HINT('Dashed outline = original entry. Solid bar = after scaling.');
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const A=[[1,2,3],[2,3,1]], B=[[3,-1,3],[-1,0,2]];
+  const kS={x:2,v:0}, lS={x:-1,v:0}; let t=0;
+  wrap.querySelectorAll('#pre button').forEach(b=>b.onclick=()=>{ wrap.querySelectorAll('#pre button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); set('kk',b.dataset.k); set('ll',b.dataset.l); });
+  function signedBar(ctx,cx,mid,val,unit,col,ghost,cs){
+    const hh=-val*unit;
+    ctx.save();
+    if(ghost!==undefined){ ctx.setLineDash([4,3]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; const gh=-ghost*unit; ctx.strokeRect(cx-cs*0.18,Math.min(mid,mid+gh),cs*0.36,Math.abs(gh)); ctx.setLineDash([]); }
+    ctx.fillStyle=col; ctx.globalAlpha=0.28; ctx.fillRect(cx-cs*0.18,Math.min(mid,mid+hh),cs*0.36,Math.abs(hh));
+    ctx.globalAlpha=1; ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.strokeRect(cx-cs*0.18,Math.min(mid,mid+hh),cs*0.36,Math.abs(hh)); ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const k=sl('kk'), l=sl('ll'); springTo(kS,k,46,6.5,dt); springTo(lS,l,46,6.5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cs=Math.min(w*0.078,h*0.2,96), y0=h*0.28, unit=cs*0.42/9;
+    const gap=cs*0.55, mw=3*cs, total=3*mw+gap*2+cs*0.9, x0=(w-total)/2+6;
+    const xs=[x0, x0+mw+gap+cs*0.3, x0+2*mw+2*gap+cs*1.1];
+    const defs=[
+      {x:xs[0],M:A,s:kS.x,col:COL.blue,name:()=>num(kS.x,1)+' A'},
+      {x:xs[1],M:B,s:lS.x,col:COL.yellow,name:()=>num(lS.x,1)+' B'},
+      {x:xs[2],M:null,col:COL.red,name:()=>'kA + lB'}];
+    defs.forEach((d,mi)=>{
+      bracket(ctx,d.x-7,y0-7,mw+14,2*cs+14,d.col,3.4);
+      textAt(ctx,d.name(),d.x+mw/2,y0-24,{align:'center',size:17,weight:700,color:d.col});
+      for(let r=0;r<2;r++) for(let c=0;c<3;c++){
+        const cx=d.x+c*cs+cs/2, mid=y0+r*cs+cs*0.5;
+        line(ctx,cx-cs*0.3,mid,cx+cs*0.3,mid,'#dbe4f0',1);
+        let val;
+        if(mi<2){ val=d.M[r][c]*d.s; signedBar(ctx,cx,mid,val,unit,d.col,d.M[r][c],cs); }
+        else { val=A[r][c]*kS.x+B[r][c]*lS.x; signedBar(ctx,cx,mid,val,unit*0.75,d.col,undefined,cs); }
+        cellTxt(ctx,num(val,1),cx,mid+(val>=0?cs*0.4:-cs*0.4),cs*0.24,val<0?COL.red:d.col,700);
+      }
+    });
+    textAt(ctx,'+',xs[0]+mw+gap/2+cs*0.15,y0+cs+8,{align:'center',size:30,weight:700});
+    textAt(ctx,'=',xs[1]+mw+gap/2+cs*0.15,y0+cs+8,{align:'center',size:30,weight:700});
+    const ks=num(k,1), ls=l<0?'− '+num(-l,1):'+ '+num(l,1);
+    textAt(ctx,ks+'A  '+ls+'B',w/2,h-52,{align:'center',size:24,weight:700,color:COL.ink});
+    textAt(ctx,'each entry:  kaᵢⱼ + lbᵢⱼ',w/2,h-24,{align:'center',size:14,weight:600,color:COL.muted});
+    const R=[0,1].map(r=>[0,1,2].map(c=>A[r][c]*k+B[r][c]*l));
+    txt('rV',R.map(r=>'['+r.map(v=>num(v,1)).join('  ')+']').join('  '));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.7 MULTIPLYING MATRICES         (§3.4.5)
+   AB is defined only if columns of A = rows of B.
+   cᵢₖ = Σⱼ aᵢⱼ bⱼₖ — row i of A meets column k of B.
+   Textbook: Meera & Nadeem's shopping → [260 208 ; 540 432].
+   ===================================================================== */
+function buildM7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:4px">Example</label><div class="chip-wrap" id="pr">
+      <button class="chip-btn active" data-v="shop">Shopping</button><button class="chip-btn" data-v="cd">CD (2×3 · 3×2)</button>
+      <button class="chip-btn" data-v="e12">Ex.12  AB</button><button class="chip-btn" data-v="e12r">Ex.12  BA</button></div></div>`+
+    SL('si','Row of A   i',1,2,1,1)+SL('sk','Column of B   k',1,3,1,1)+SL('sp','Speed',0.5,2.5,0.1,1)+
+    TG('au','Mode',[['auto','Sweep all'],['one','Repeat this one']])+
+    BTN('rs','↺  Clear results','toggle-btn')+
+    RC('',[['Product order','oV','var(--f-red)'],['Verdict','vV','var(--f-green)']]);
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const PRE={
+    shop:{F:[[2,5],[8,10]],G:[[5,4],[50,40]],fn:'Requirements',gn:'Prices'},
+    cd:{F:[[1,-1,2],[0,3,4]],G:[[2,7],[-1,1],[5,-4]],fn:'C',gn:'D'},
+    e12:{F:[[6,9],[2,3]],G:[[2,6,0],[7,9,8]],fn:'A',gn:'B'},
+    e12r:{F:[[2,6,0],[7,9,8]],G:[[6,9],[2,3]],fn:'B',gn:'A'}
+  };
+  let pk='shop', mode='auto', t=0, cyc=0, done={}, ci=0, ck=0;
+  const comp=(P,i,k)=>P.F[i].reduce((s,v,j)=>s+v*P.G[j][k],0);
+  function reset(){ done={}; cyc=0; ci=0; ck=0; }
+  wrap.querySelectorAll('#pr button').forEach(b=>b.onclick=()=>{ wrap.querySelectorAll('#pr button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); pk=b.dataset.v; reset(); set('si',1); set('sk',1); });
+  toggleWire(wrap.querySelectorAll('#au button'),b=>{ mode=b.dataset.v; });
+  $('#rs').onclick=reset;
+  animLoop(dt=>{
+    t+=dt;
+    const P=PRE[pk], F=P.F, G=P.G, m=F.length, n=F[0].length, n2=G.length, p=G[0].length, ok=(n===n2);
+    $('#si').max=m; $('#sk').max=p;
+    const spd=sl('sp',v=>num(v,1)+'×');
+    if(mode==='one'){ ci=Math.min(sl('si')-1,m-1); ck=Math.min(sl('sk')-1,p-1); } else { sl('si'); sl('sk'); set('si',ci+1); set('sk',ck+1); $('#siV').textContent=ci+1; $('#skV').textContent=ck+1; }
+    if(ci>=m) ci=0; if(ck>=p) ck=0;
+    const tau=1.0, hold=0.9; const cycLen=n*tau+hold;
+    if(ok){ cyc+=dt*spd; if(cyc>=cycLen){ cyc=0; done[ci+','+ck]=true; if(mode==='auto'){ ck++; if(ck>=p){ ck=0; ci++; if(ci>=m){ ci=0; } } } } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const N=Math.max(n,n2);
+    const cs=Math.min(w*0.78/(N+p+0.9), h*0.6/(N+m+0.5), 84);
+    const gap=cs*0.55;
+    const totW=N*cs+gap+p*cs, totH=N*cs+gap+m*cs;
+    const x0=(w-totW)/2, y0=h*0.07+(h*0.74-totH)/2;
+    const Fx=x0+(N-n)*cs, Fy=y0+N*cs+gap;
+    const Gx=x0+N*cs+gap, Gy=y0+(N-n2)*cs;
+    const Cx=Gx, Cy=Fy;
+    const okc=ok?null:COL.red;
+    // frames
+    bracket(ctx,Fx-6,Fy-6,n*cs+12,m*cs+12,okc||COL.blue,3.2); bracket(ctx,Gx-6,Gy-6,p*cs+12,n2*cs+12,okc||COL.green,3.2); bracket(ctx,Cx-6,Cy-6,p*cs+12,m*cs+12,COL.red,3.2);
+    textAt(ctx,P.fn+'  ('+m+'×'+n+')',Fx+n*cs/2,Fy+m*cs+26,{align:'center',size:13,weight:700,color:okc||COL.blue});
+    textAt(ctx,P.gn+'  ('+n2+'×'+p+')',Gx+p*cs/2,Gy-14,{align:'center',size:13,weight:700,color:okc||COL.green});
+    textAt(ctx,ok?'Product  ('+m+'×'+p+')':'not defined',Cx+p*cs/2,Cy+m*cs+26,{align:'center',size:13,weight:700,color:COL.red});
+    if(ok){
+      // row / column highlight (live)
+      ctx.save(); ctx.fillStyle='rgba(47,143,224,0.13)'; ctx.fillRect(Fx-4,Fy+ci*cs,(Cx+(ck+1)*cs)-(Fx-4),cs);
+      ctx.fillStyle='rgba(31,157,85,0.13)'; ctx.fillRect(Gx+ck*cs,Gy-4,cs,(Cy+(ci+1)*cs)-(Gy-4)); ctx.restore();
+    }
+    const fcell=(r,c)=>({x:Fx+c*cs+cs/2,y:Fy+r*cs+cs/2}), gcell=(r,c)=>({x:Gx+c*cs+cs/2,y:Gy+r*cs+cs/2}), ccell=(r,c)=>({x:Cx+c*cs+cs/2,y:Cy+r*cs+cs/2});
+    for(let r=0;r<m;r++) for(let c=0;c<n;c++){ const q=fcell(r,c); cellTxt(ctx,String(F[r][c]),q.x,q.y,cs*0.34,okc||COL.blue,700,r===ci?1:0.55); }
+    for(let r=0;r<n2;r++) for(let c=0;c<p;c++){ const q=gcell(r,c); cellTxt(ctx,String(G[r][c]),q.x,q.y,cs*0.34,okc||COL.green,700,c===ck?1:0.55); }
+    if(!ok){
+      // inner dimensions disagree: the two edges refuse to meet
+      const sh=Math.sin(t*20)*3;
+      line(ctx,Fx+n*cs+sh,Fy,Fx+n*cs+sh,Fy+m*cs,COL.red,5); line(ctx,Gx,Gy+sh,Gx+p*cs,Gy+sh,COL.red,5);
+      textAt(ctx,'columns of '+P.fn+' = '+n+',  rows of '+P.gn+' = '+n2,w/2,h-58,{align:'center',size:17,weight:700,color:COL.red});
+      textAt(ctx,'n ≠ n′  →  '+P.fn+P.gn+' cannot be formed',w/2,h-28,{align:'center',size:14,weight:600,color:COL.red});
+      const cx=Cx+p*cs/2, cy=Cy+m*cs/2;
+      line(ctx,cx-cs*0.5,cy-cs*0.5,cx+cs*0.5,cy+cs*0.5,COL.red,6); line(ctx,cx+cs*0.5,cy-cs*0.5,cx-cs*0.5,cy+cs*0.5,COL.red,6);
+      txt('oV','None'); txt('vV','Not defined');
+      return;
+    }
+    // results already computed
+    for(let r=0;r<m;r++) for(let c=0;c<p;c++){ if(done[r+','+c]){ const q=ccell(r,c); cellTxt(ctx,String(comp(P,r,c)),q.x,q.y,cs*0.34,COL.red,700); } else { const q=ccell(r,c); cellTxt(ctx,'?',q.x,q.y,cs*0.3,COL.mid,600,0.5); } }
+    // live dot product for cell (ci,ck)
+    const dst=ccell(ci,ck); let acc=0; const parts=[];
+    for(let j=0;j<n;j++){
+      const u=(cyc-j*tau)/tau; // 0..1 inside this term's window
+      const a=F[ci][j], b=G[j][ck], s1=fcell(ci,j), s2=gcell(j,ck);
+      if(u>=1){ acc+=a*b; parts.push(a+'×'+b); continue; }
+      if(u<=0) continue;
+      const tr=smooth01(0,0.5,u), mg=smooth01(0.5,0.68,u), fin=smooth01(0.7,1,u);
+      if(mg<1){
+        const x1=lerp(s1.x,dst.x,tr), y1=s1.y, x2=s2.x, y2=lerp(s2.y,dst.y,tr);
+        box(ctx,x1-cs*0.22,y1-cs*0.17,cs*0.44,cs*0.34,COL.blue,'#fff',2.4,8); cellTxt(ctx,String(a),x1,y1,cs*0.26,COL.blue,700);
+        box(ctx,x2-cs*0.22,y2-cs*0.17,cs*0.44,cs*0.34,COL.green,'#fff',2.4,8); cellTxt(ctx,String(b),x2,y2,cs*0.26,COL.green,700);
+      }
+      if(mg>0){
+        const py=lerp(dst.y,dst.y-cs*0.0,fin), sc=1+0.2*Math.sin(Math.PI*mg);
+        ctx.save(); ctx.globalAlpha=1-fin; box(ctx,dst.x-cs*0.3*sc,py-cs*0.2*sc,cs*0.6*sc,cs*0.4*sc,COL.red,'#fff',2.6,9); cellTxt(ctx,String(a*b),dst.x,py,cs*0.26*sc,COL.red,700); ctx.restore();
+      }
+      if(fin>0.5){ parts.push(a+'×'+b); acc+=a*b*fin; } else if(mg>0.2){ parts.push(a+'×'+b); }
+    }
+    glowBox(ctx,dst.x-cs/2+4,dst.y-cs/2+4,cs-8,cs-8,COL.yellow,0.5+0.5*Math.sin(t*5));
+    if(!done[ci+','+ck]) cellTxt(ctx,num(acc,0),dst.x,dst.y,cs*0.34,COL.red,700);
+    const fm='c'+SUB[ci+1]+SUB[ck+1]+'  =  '+(parts.length?parts.join('  +  ')+'  =  '+num(acc,0):'…');
+    textAt(ctx,fm,w/2,h-40,{align:'center',size:20,weight:700,color:COL.ink});
+    textAt(ctx,'row '+(ci+1)+' of '+P.fn+'  ·  column '+(ck+1)+' of '+P.gn,w/2,h-14,{align:'center',size:12,weight:600,color:COL.muted});
+    txt('oV',m+' × '+p); txt('vV',Object.keys(done).length===m*p?'Complete':'Defined ✓');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   Shared: 2×2 matrices acting on a plane shape (3.8, 3.11)
+   --------------------------------------------------------------------- */
+const I2=[[1,0],[0,1]];
+function mmul(X,Y){ return [[X[0][0]*Y[0][0]+X[0][1]*Y[1][0], X[0][0]*Y[0][1]+X[0][1]*Y[1][1]],[X[1][0]*Y[0][0]+X[1][1]*Y[1][0], X[1][0]*Y[0][1]+X[1][1]*Y[1][1]]]; }
+function mlerp(X,Y,u){ return [[lerp(X[0][0],Y[0][0],u),lerp(X[0][1],Y[0][1],u)],[lerp(X[1][0],Y[1][0],u),lerp(X[1][1],Y[1][1],u)]]; }
+function mapPt(M,p){ return [M[0][0]*p[0]+M[0][1]*p[1], M[1][0]*p[0]+M[1][1]*p[1]]; }
+function meq(X,Y){ return X.every((r,i)=>r.every((v,j)=>Math.abs(v-Y[i][j])<1e-9)); }
+function mstr(M,d){ return '['+M.map(r=>r.map(v=>num(v,d===undefined?2:d)).join(' ')).join(' ; ')+']'; }
+/* an "F" — asymmetric, so reflections and rotations are visible */
+const FSHAPE=[[0,0],[.35,0],[.35,.8],[.8,.8],[.8,1.1],[.35,1.1],[.35,1.65],[1,1.65],[1,2],[0,2]].map(p=>[p[0]-.5,p[1]-1]);
+function drawShape(ctx,M,X,Y,col,fill,lw,dash){
+  ctx.save(); ctx.beginPath();
+  FSHAPE.forEach((p,i)=>{ const q=mapPt(M,p); i?ctx.lineTo(X(q[0]),Y(q[1])):ctx.moveTo(X(q[0]),Y(q[1])); });
+  ctx.closePath(); if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  ctx.strokeStyle=col; ctx.lineWidth=lw||2.6; ctx.lineJoin='round'; if(dash) ctx.setLineDash(dash); ctx.stroke(); ctx.restore();
+}
+function drawPlane(ctx,x0,y0,pw,ph,u,M,extent,t){
+  const cx=x0+pw/2, cy=y0+ph/2, X=v=>cx+v*u, Y=v=>cy-v*u;
+  ctx.save(); ctx.beginPath(); ctx.rect(x0,y0,pw,ph); ctx.clip();
+  ctx.strokeStyle='#e4ebf4'; ctx.lineWidth=1;
+  const R=Math.ceil(extent+2);
+  for(let g=-R;g<=R;g++){
+    [[g,-R,g,R],[-R,g,R,g]].forEach(s=>{ const a=mapPt(M,[s[0],s[1]]), b=mapPt(M,[s[2],s[3]]); ctx.beginPath(); ctx.moveTo(X(a[0]),Y(a[1])); ctx.lineTo(X(b[0]),Y(b[1])); ctx.stroke(); });
+  }
+  ctx.restore();
+  return {X,Y,cx,cy};
+}
+
+/* =====================================================================
+   3.8 AB  vs  BA                   (§3.4.5, Examples 13–15)
+   Multiplication is not commutative.  AB means "first B, then A".
+   Textbook Example 14: A = [1 0; 0 −1], B = [0 1; 1 0] → AB = [0 1; −1 0], BA = [0 −1; 1 0].
+   ===================================================================== */
+function buildM8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:4px">Pick A and B</label><div class="chip-wrap" id="pr">
+      <button class="chip-btn active" data-v="0">Ex.14  flip · swap</button><button class="chip-btn" data-v="1">Shear · turn</button>
+      <button class="chip-btn" data-v="2">Diagonal pair</button><button class="chip-btn" data-v="3">Ex.15  zero product</button></div></div>`+
+    SL('ss','Apply both  (0 → 2)',0,2,0.01,0)+BTN('play','▶  Play','play')+
+    RC('',[['A','aV','var(--f-blue)',true],['B','bV','var(--f-green)',true],['AB','abV','var(--f-red)',true],['BA','baV','var(--f-red)',true]])+
+    HINT('Left: do B first, then A.  Right: do A first, then B.');
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const PR=[
+    {A:[[1,0],[0,-1]],B:[[0,1],[1,0]],an:'flip in x-axis',bn:'swap x ↔ y'},
+    {A:[[1,1],[0,1]],B:[[0,-1],[1,0]],an:'shear',bn:'turn 90°'},
+    {A:[[1,0],[0,2]],B:[[3,0],[0,4]],an:'stretch y ×2',bn:'stretch ×3, ×4'},
+    {A:[[0,-1],[0,2]],B:[[3,5],[0,0]],an:'A',bn:'B'}];
+  let pi=0, auto=0, t=0; const sS={x:0};
+  wrap.querySelectorAll('#pr button').forEach(b=>b.onclick=()=>{ wrap.querySelectorAll('#pr button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); pi=+b.dataset.v; set('ss',0); sS.x=0; });
+  $('#play').onclick=()=>{ set('ss',0); sS.x=0; auto=1; };
+  const step=(first,second,s)=> s<=1 ? mlerp(I2,first,s) : mmul(mlerp(I2,second,s-1),first);
+  const ext=(P)=>{ const AB=mmul(P.A,P.B),BA=mmul(P.B,P.A); let e=1.7; [P.A,P.B,AB,BA].forEach(M=>FSHAPE.forEach(p=>{ const q=mapPt(M,p); e=Math.max(e,Math.abs(q[0]),Math.abs(q[1])); })); return e; };
+  const E={x:3};
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ const v=Math.min(2,parseFloat($('#ss').value)+dt*0.4); set('ss',v); if(v>=2) auto=0; }
+    const target=sl('ss',v=>num(v,2)); sS.x=approach(sS.x,target,7,dt);
+    const P=PR[pi], A=P.A, B=P.B, AB=mmul(A,B), BA=mmul(B,A), same=meq(AB,BA);
+    E.x=approach(E.x,ext(P),5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pw=w/2-8, ph=h-110, u=Math.min(pw,ph)/(2*E.x+1);
+    const s=sS.x;
+    [[0,B,A,AB,COL.green,COL.blue,'AB   (B first, then A)'],[1,A,B,BA,COL.blue,COL.green,'BA   (A first, then B)']].forEach(([k,first,second,res,c1,c2,title])=>{
+      const x0=k*(w/2)+4, y0=44;
+      const M=step(first,second,s), pl=drawPlane(ctx,x0,y0,pw,ph,u,M,E.x,t);
+      const X=pl.X,Y=pl.Y;
+      ctx.save(); ctx.beginPath(); ctx.rect(x0,y0,pw,ph); ctx.clip();
+      line(ctx,x0,pl.cy,x0+pw,pl.cy,COL.ink,1.2); line(ctx,pl.cx,y0,pl.cx,y0+ph,COL.ink,1.2);
+      drawShape(ctx,I2,X,Y,COL.mid,null,1.6,[5,4]);
+      // final result of the OTHER order as a red ghost for comparison
+      if(s>1.6) drawShape(ctx,k===0?BA:AB,X,Y,COL.red,null,1.6,[3,4]);
+      const act=s<=1?c1:c2;
+      drawShape(ctx,M,X,Y,act,act==='#2f8fe0'?'rgba(47,143,224,0.14)':'rgba(31,157,85,0.14)',3);
+      // basis arrows
+      const e1=mapPt(M,[1,0]), e2=mapPt(M,[0,1]);
+      vec(ctx,pl.cx,pl.cy,X(e1[0]),Y(e1[1]),COL.red,2.2); vec(ctx,pl.cx,pl.cy,X(e2[0]),Y(e2[1]),COL.yellow,2.2);
+      ctx.restore();
+      rect(ctx,x0,y0,pw,ph,'#dbe4f0',null,1.4);
+      textAt(ctx,title,x0+pw/2,28,{align:'center',size:16,weight:700,color:COL.ink});
+      textAt(ctx,'stage '+(s<=1?'1':'2')+':  '+(s<=1?(k===0?'B':'A'):(k===0?'A':'B'))+' acting',x0+8,y0+ph-10,{size:12,weight:700,color:act});
+      textAt(ctx,(k===0?'AB':'BA')+' = '+mstr(res,1),x0+pw/2,y0+ph+26,{align:'center',size:14,weight:700,color:COL.red});
+    });
+    const done=s>1.97;
+    textAt(ctx,done?(same?'AB = BA   ✓  these two commute':'AB ≠ BA   ✗  different results'):'Drag “Apply both” from 0 to 2',w/2,h-18,{align:'center',size:18,weight:700,color:done?(same?COL.green:COL.red):COL.muted});
+    txt('aV',mstr(A,0)+'  '+P.an); txt('bV',mstr(B,0)+'  '+P.bn); txt('abV',mstr(AB,0)); txt('baV',mstr(BA,0));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.9 TRANSPOSE                    (§3.5)
+   Aᵀ: row i becomes column i;  entry aᵢⱼ lands in position (j, i).
+   Entries are numbered ij so you can follow where each one goes.
+   ===================================================================== */
+function buildM9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    SL('mm','Rows  m',1,4,1,3)+SL('nn','Columns  n',1,4,1,2)+SL('fl','Fold along the diagonal',0,1,0.01,0)+BTN('play','⇄  Flip it','play')+
+    RC('',[['A','oV','var(--f-blue)'],['Aᵀ','tV','var(--f-red)'],['Shown','sV','var(--f-yellow)',true]])+
+    HINT('Flip again: (Aᵀ)ᵀ = A.');
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const RCOL=[COL.red,COL.blue,COL.green,COL.yellow];
+  const fl={x:0}, dims={m:3,n:2}; let t=0, auto=false, dir=0, flips=0;
+  $('#play').onclick=()=>{ const cur=parseFloat($('#fl').value); dir=cur<0.5?1:0; auto=true; flips++; };
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ const cur=parseFloat($('#fl').value); const nv=dir?Math.min(1,cur+dt*0.55):Math.max(0,cur-dt*0.55); set('fl',nv); if(nv===dir) auto=false; }
+    const m=sl('mm'), n=sl('nn'), target=sl('fl',v=>Math.round(v*100)+'%');
+    dims.m=approach(dims.m,m,10,dt); dims.n=approach(dims.n,n,10,dt);
+    fl.x=approach(fl.x,target,8,dt); const f=smooth01(0,1,fl.x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cs=Math.min(w*0.15,h*0.16,104), gx=(w-4*cs)/2, gy=h*0.16;
+    const rows=lerp(dims.m,dims.n,f), cols=lerp(dims.n,dims.m,f);
+    // diagonal crease
+    const dl=4*cs; ctx.save(); ctx.globalAlpha=0.35+0.65*Math.sin(Math.PI*f);
+    line(ctx,gx-10,gy-10,gx+dl*0.98,gy+dl*0.98,COL.red,2.4,[9,6]); ctx.restore();
+    textAt(ctx,'diagonal',gx+dl*0.98-4,gy+dl*0.98+18,{align:'right',size:11.5,weight:700,color:COL.red});
+    bracket(ctx,gx-8,gy-8,cols*cs+16,rows*cs+16,COL.ink,3.6);
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++){
+      const exist=(i<m&&j<n)?1:0;
+      const st=dims['e'+i+j]=dims['e'+i+j]||0; dims['e'+i+j]=approach(st,exist,10,dt);
+      const a=dims['e'+i+j]; if(a<0.03) continue;
+      const bump=0.45*Math.sin(Math.PI*f)*(j>i?1:(j<i?-1:0));
+      const gc=lerp(j,i,f)+bump, gr=lerp(i,j,f)-bump, shr=1-0.22*Math.sin(Math.PI*f);
+      const cx=gx+gc*cs+cs/2, cy=gy+gr*cs+cs/2, col=RCOL[i], sz=(cs-12)*a*shr;
+      box(ctx,cx-sz/2,cy-sz/2,sz,sz,col,'#fff',2.4,9);
+      if(a>0.5){ cellTxt(ctx,String((i+1)*10+(j+1)),cx,cy-2,cs*0.34*a,col,700,a); }
+    }
+    for(let i=0;i<m;i++){
+      const lx=lerp(gx-24,gx+i*cs+cs/2,f), ly=lerp(gy+i*cs+cs/2,gy-22,f);
+      textAt(ctx,'row '+(i+1),lx,ly+4,{align:i<m&&f<0.5?'right':'center',size:12,weight:700,color:RCOL[i]});
+    }
+    const oA=m+' × '+n, oT=n+' × '+m, shown=f<0.5?'A':'Aᵀ';
+    textAt(ctx,f<0.5?'A  ('+oA+')':'Aᵀ  ('+oT+')',w/2,h-52,{align:'center',size:24,weight:700,color:COL.ink});
+    textAt(ctx,'entry in row i, column j  →  row j, column i',w/2,h-24,{align:'center',size:14,weight:600,color:COL.muted});
+    txt('oV',oA); txt('tV',oT); txt('sV',shown+(flips>1&&f<0.05?'  = (Aᵀ)ᵀ':''));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.10 SYMMETRIC AND SKEW-SYMMETRIC  (§3.6)
+   S = ½(A + Aᵀ) is symmetric,  K = ½(A − Aᵀ) is skew-symmetric,  A = S + K.
+   Textbook Example 22: B = [2 −2 −4; −1 3 4; 1 −2 −3].
+   ===================================================================== */
+function buildM10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:4px">Start from</label><div class="chip-wrap" id="pr">
+      <button class="chip-btn active" data-v="ex22">Example 22</button><button class="chip-btn" data-v="sym">Symmetric</button><button class="chip-btn" data-v="skew">Skew</button></div></div>`+
+    SL('ri','Edit row  i',1,3,1,1)+SL('cj','Edit column  j',1,3,1,2)+SL('vv','New value of aᵢⱼ',-9,9,1,-2)+
+    SL('mg','Add S + K back together',0,1,0.01,0)+
+    RC('',[['A is','kV','var(--f-red)',true]]);
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  const T=[[2,-2,-4],[-1,3,4],[1,-2,-3]];
+  const D=T.map(r=>r.map(v=>({x:v,v:0})));
+  const PRE={ex22:[[2,-2,-4],[-1,3,4],[1,-2,-3]], sym:[[1,2,3],[2,4,5],[3,5,6]], skew:[[0,2,-3],[-2,0,4],[3,-4,0]]};
+  let t=0, lastSel='', mgS=0;
+  wrap.querySelectorAll('#pr button').forEach(b=>b.onclick=()=>{ wrap.querySelectorAll('#pr button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); PRE[b.dataset.v].forEach((r,i)=>r.forEach((v,j)=>T[i][j]=v)); lastSel=''; set('vv',T[sl('ri')-1][sl('cj')-1]); });
+  animLoop(dt=>{
+    t+=dt;
+    const i=sl('ri')-1, j=sl('cj')-1; $('#vvV').textContent=''; const sel=i+','+j;
+    if(sel!==lastSel){ lastSel=sel; set('vv',T[i][j]); } else { T[i][j]=parseFloat($('#vv').value); }
+    $('#vvV').textContent=num($('#vv').value*1,0);
+    const mgT=sl('mg',v=>Math.round(v*100)+'%'); mgS=approach(mgS,mgT,6,dt);
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++) springTo(D[r][c],T[r][c],60,8.5,dt);
+    const A=D.map(r=>r.map(c=>c.x));
+    const S=A.map((r,a)=>r.map((v,b)=>(v+A[b][a])/2)), K=A.map((r,a)=>r.map((v,b)=>(v-A[b][a])/2));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cs=Math.min(w*0.085,h*0.15,70), mw=3*cs, gap=Math.min(w*0.07,60);
+    const total=3*mw+2*gap, x0=(w-total)/2, y0=h*0.18;
+    const xs=[x0,x0+mw+gap,x0+2*(mw+gap)];
+    const cc=(k,r,c)=>({x:xs[k]+c*cs+cs/2,y:y0+r*cs+cs/2});
+    const mats=[[A,COL.blue,'A'],[S,COL.green,'S = ½(A + Aᵀ)'],[K,COL.red,'K = ½(A − Aᵀ)']];
+    mats.forEach(([M,col,name],k)=>{
+      const sy=(k===0&&mgS>0.98)?COL.green:col;
+      bracket(ctx,xs[k]-7,y0-7,mw+14,mw+14,sy,3.4);
+      textAt(ctx,name,xs[k]+mw/2,y0-22,{align:'center',size:15.5,weight:700,color:col});
+      // mirror pairing lines (S joins equal pairs, K joins opposite pairs)
+      if(k>0){
+        for(let r=0;r<3;r++) for(let c=r+1;c<3;c++){
+          const a=cc(k,r,c), b=cc(k,c,r), ph=(t*0.7+r*0.3+c*0.2)%1;
+          ctx.save(); ctx.strokeStyle=col; ctx.globalAlpha=0.35; ctx.lineWidth=1.8; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.restore();
+          circ(ctx,lerp(a.x,b.x,ph),lerp(a.y,b.y,ph),3.4,col,col,1);
+        }
+      }
+      line(ctx,xs[k],y0,xs[k]+mw,y0+mw,'rgba(217,67,43,0.35)',1.4,[6,5]);
+      for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+        const p=cc(k,r,c), v=M[r][c], isSel=(k===0&&r===i&&c===j);
+        if(isSel) glowBox(ctx,p.x-cs*0.42,p.y-cs*0.38,cs*0.84,cs*0.76,COL.yellow,0.5+0.5*Math.sin(t*5));
+        const fadeIn=(k===0)?1:1-0.0;
+        cellTxt(ctx,num(v,1),p.x,p.y,cs*0.3,k===0?col:(Math.abs(v)<0.05?COL.mid:col),700,(k>0&&mgS>0.02)?1-0.65*mgS:1);
+      }
+    });
+    // merge: S and K entries fly into A
+    if(mgS>0.01&&mgS<0.995){
+      for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+        const dst=cc(0,r,c);
+        [[1,COL.green,S[r][c]],[2,COL.red,K[r][c]]].forEach(([k,col,val])=>{
+          const src=cc(k,r,c), p=smooth01(k===1?0:0.25,k===1?0.75:1,mgS), x=lerp(src.x,dst.x,p), y=lerp(src.y,dst.y,p)-Math.sin(Math.PI*p)*cs*0.9;
+          if(p>0.02&&p<0.98){ box(ctx,x-cs*0.25,y-cs*0.17,cs*0.5,cs*0.34,col,'#fff',2,7); cellTxt(ctx,num(val,1),x,y,cs*0.2,col,700); }
+        });
+      }
+    }
+    const isSym=meq(A.map(r=>r.map(v=>Math.round(v*1e6)/1e6)),A.map((r,a)=>r.map((v,b)=>Math.round(A[b][a]*1e6)/1e6)));
+    const isSkew=A.every((r,a)=>r.every((v,b)=>Math.abs(v+A[b][a])<1e-6));
+    const kind=isSym&&isSkew?'zero matrix (both)':isSym?'Symmetric  (A = Aᵀ)':isSkew?'Skew-symmetric  (A = −Aᵀ)':'Neither';
+    textAt(ctx,'A  =  S  +  K',w/2,y0+mw+62,{align:'center',size:26,weight:700,color:mgS>0.98?COL.green:COL.ink});
+    textAt(ctx,'green pairs are equal · red pairs are opposite · red diagonal of K is always 0',w/2,y0+mw+92,{align:'center',size:12.5,weight:600,color:COL.muted});
+    textAt(ctx,'A is  '+kind,w/2,h-26,{align:'center',size:19,weight:700,color:isSym||isSkew?COL.green:COL.red});
+    txt('kV',kind);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.11 INVERSE OF A MATRIX         (§3.7)
+   B is the inverse of A when AB = BA = I.  A matrix acts on the plane;
+   the inverse undoes it.  A flat (zero-area) result cannot be undone.
+   Textbook: A = [2 3; 1 2], A⁻¹ = [2 −3; −1 2].
+   ===================================================================== */
+function buildM11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:4px">Quick set</label><div class="chip-wrap" id="pr">
+      <button class="chip-btn active" data-v="2,3,1,2">Textbook</button><button class="chip-btn" data-v="1,1,0,1">Shear</button>
+      <button class="chip-btn" data-v="0,-1,1,0">Turn 90°</button><button class="chip-btn" data-v="1,2,1,2">Squash flat</button></div></div>`+
+    SL('a','a',-3,3,1,2)+SL('b','b',-3,3,1,3)+SL('c','c',-3,3,1,1)+SL('d','d',-3,3,1,2)+
+    SL('ss','Apply A, then A⁻¹',0,2,0.01,0)+BTN('play','▶  Play','play')+
+    RC('',[['A','rA','var(--f-blue)',true],['A⁻¹','rI','var(--f-green)',true],['A · A⁻¹','rP','var(--f-red)',true]]);
+  const {$,sl,set,txt}=ui(wrap), canvas=$('canvas');
+  let auto=0, t=0; const sS={x:0}, Q=[[{x:2,v:0},{x:3,v:0}],[{x:1,v:0},{x:2,v:0}]];
+  wrap.querySelectorAll('#pr button').forEach(bt=>bt.onclick=()=>{ wrap.querySelectorAll('#pr button').forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const v=bt.dataset.v.split(',').map(Number); ['a','b','c','d'].forEach((id,k)=>set(id,v[k])); set('ss',0); sS.x=0; });
+  $('#play').onclick=()=>{ set('ss',0); sS.x=0; auto=1; };
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ const v=Math.min(2,parseFloat($('#ss').value)+dt*0.32); set('ss',v); if(v>=2) auto=0; }
+    const a=sl('a',v=>num(v,0)), b=sl('b',v=>num(v,0)), c=sl('c',v=>num(v,0)), d=sl('d',v=>num(v,0));
+    const target=sl('ss',v=>num(v,2)); sS.x=approach(sS.x,target,7,dt);
+    springTo(Q[0][0],a,50,8,dt); springTo(Q[0][1],b,50,8,dt); springTo(Q[1][0],c,50,8,dt); springTo(Q[1][1],d,50,8,dt);
+    const A=[[a,b],[c,d]], Aq=[[Q[0][0].x,Q[0][1].x],[Q[1][0].x,Q[1][1].x]];
+    const det=a*d-b*c, ok=det!==0;
+    const Inv=ok?[[d/det,-b/det],[-c/det,a/det]]:null;
+    const s=sS.x;
+    const M = s<=1 ? mlerp(I2,Aq,s) : (ok ? mmul(mlerp(I2,Inv,s-1),Aq) : Aq);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const u=Math.min(w,h)*0.058, pl=drawPlane(ctx,0,0,w,h-60,u,M,6,t);
+    const X=pl.X,Y=pl.Y;
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,w,h-60); ctx.clip();
+    line(ctx,0,pl.cy,w,pl.cy,'#9fb2c8',1.2); line(ctx,pl.cx,0,pl.cx,h-60,'#9fb2c8',1.2);
+    drawShape(ctx,I2,X,Y,COL.mid,null,1.6,[5,4]);
+    const flat=Math.abs(M[0][0]*M[1][1]-M[0][1]*M[1][0])<0.05;
+    const col=s<=1?COL.blue:COL.green;
+    drawShape(ctx,M,X,Y,flat?COL.red:col,flat?'rgba(217,67,43,0.14)':(s<=1?'rgba(47,143,224,0.14)':'rgba(31,157,85,0.14)'),3.2);
+    // unit square (yellow) rides along
+    const sq=[[0,0],[1,0],[1,1],[0,1]].map(p=>mapPt(M,p));
+    ctx.beginPath(); sq.forEach((q,k)=>k?ctx.lineTo(X(q[0]),Y(q[1])):ctx.moveTo(X(q[0]),Y(q[1]))); ctx.closePath(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.stroke();
+    const e1=mapPt(M,[1,0]), e2=mapPt(M,[0,1]);
+    vec(ctx,pl.cx,pl.cy,X(e1[0]),Y(e1[1]),COL.red,2.6); vec(ctx,pl.cx,pl.cy,X(e2[0]),Y(e2[1]),COL.green,2.6);
+    ctx.restore();
+    const msg = s<0.02 ? 'Start: identity — nothing moved'
+      : s<=1 ? 'A is acting on the plane'
+      : ok ? (s>=1.97 ? 'A⁻¹ undid A  →  AA⁻¹ = A⁻¹A = I' : 'A⁻¹ is undoing it…')
+      : 'Squashed flat — A⁻¹ does not exist';
+    const bad=!ok&&s>1;
+    textAt(ctx,msg,w/2,h-28,{align:'center',size:17,weight:700,color:bad?COL.red:(ok&&s>=1.97?COL.green:COL.ink)});
+    textAt(ctx,'red arrow = (1,0)   ·   green arrow = (0,1)   ·   yellow = unit square',w/2,28,{align:'center',size:11.5,weight:600,color:COL.mid});
+    txt('rA',mstr(A,0)+(ok?'':'   ← zero area'));
+    txt('rI',ok?mstr(Inv,2):'does not exist');
+    txt('rP',ok?mstr(mmul(A,Inv),0).replace(/-0/g,'0'):'—');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'3.1',  title:'Rows, Columns & Order', desc:'§3.2 · Build a matrix · count its entries', build: buildM1 },
+  { num:'3.2',  title:'Matrix of a Figure',     desc:'§3.2 · Move the vertices · X and Y forms', build: buildM2 },
+  { num:'3.3',  title:'Types of Matrices',      desc:'§3.3 · Row, column, diagonal, identity…', build: buildM3 },
+  { num:'3.4',  title:'Equal Matrices',         desc:'§3.3.1 · Balance every entry', build: buildM4 },
+  { num:'3.5',  title:'Adding Matrices',        desc:'§3.4.1 · Merge two factories', build: buildM5 },
+  { num:'3.6',  title:'Scaling & Subtracting',  desc:'§3.4.2 · kA + lB', build: buildM6 },
+  { num:'3.7',  title:'Multiplying Matrices',   desc:'§3.4.5 · Row meets column', build: buildM7 },
+  { num:'3.8',  title:'AB versus BA',           desc:'§3.4.5 · Order of multiplication matters', build: buildM8 },
+  { num:'3.9',  title:'Transpose',              desc:'§3.5 · Rows become columns', build: buildM9 },
+  { num:'3.10', title:'Symmetric & Skew',       desc:'§3.6 · A = S + K', build: buildM10 },
+  { num:'3.11', title:'Inverse Matrix',         desc:'§3.7 · Undo what A did', build: buildM11 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

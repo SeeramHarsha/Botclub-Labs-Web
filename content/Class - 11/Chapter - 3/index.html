@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 1 · Chapter 3 — Motion in a Plane | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.danger{background:var(--f-red); border-color:var(--f-red); color:#fff;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🧭</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 1 · Ch 3</div>
+      <h1>Motion in a Plane</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">3.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — PHYSICS PART 1 — CHAPTER 3: MOTION IN A PLANE
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or is integrated from the real
+   equation every frame — it never jumps to the new value.
+   Each simulator is checked against the NCERT worked example it comes from.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e6edf6'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS + MATH HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||8; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,dash){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<2) return;
+  const hs=Math.min(9,L*0.5);
+  const ux=(x2-x1)/L, uy=(y2-y1)/L;
+  line(ctx,x1,y1,x2-ux*hs*0.6,y2-uy*hs*0.6,color,width||2.8,dash);
+  arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,hs);
+}
+function dimArrow(ctx,x1,y1,x2,y2,color){
+  line(ctx,x1,y1,x2,y2,color,1.6); const a=Math.atan2(y2-y1,x2-x1);
+  arrowHead(ctx,x2,y2,a,color,6); arrowHead(ctx,x1,y1,a+Math.PI,color,6);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+/* text with a white halo so it stays legible over lines */
+function tl(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||700)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.93)'; ctx.strokeText(txt,x,y);
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function niceStep(range,n){ const raw=Math.max(range,1e-9)/n, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; return (f<1.5?1:f<3?2:f<7?5:10)*p; }
+/* arc between two screen-space angles, the short way round */
+function angArc(ctx,x,y,r,a1,a2,color,lw){
+  const d=angDiff(a2,a1); ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2; ctx.beginPath(); ctx.arc(x,y,r,a1,a1+d,d<0); ctx.stroke(); ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(); let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop); return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(s,target,k,damping,dt){
+  const acc=(target-s.x)*k - s.v*damping; s.v+=acc*dt; s.x+=s.v*dt; return s.x;
+}
+const sp=(x)=>({x:x,v:0});
+
+/* ---------------------------------------------------------------------
+   0c. CONTROL HELPERS
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function slider(id,label,min,max,step,val,unit){
+  return `<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" data-unit="${unit||''}"></div>`;
+}
+function rd(wrap,id,dec){
+  const e=wrap.querySelector('#'+id); const v=+e.value;
+  wrap.querySelector('#'+id+'V').textContent=fmt(v,dec===undefined?1:dec)+(e.dataset.unit||''); return v;
+}
+function setS(wrap,id,v){ wrap.querySelector('#'+id).value=v; }
+function chipRow(wrap,sel,items,cb,startIdx){
+  const box=wrap.querySelector(sel); box.innerHTML='';
+  items.forEach((it,i)=>{
+    const b=document.createElement('button'); b.className='chip-btn'+(i===startIdx?' active':''); b.textContent=it.label;
+    b.onclick=()=>{ [...box.children].forEach(c=>c.classList.remove('active')); b.classList.add('active'); cb(it,i); };
+    box.appendChild(b);
+  });
+}
+function card(id,label,color,wide){ return `<div class="rcard${wide?' wide':''}"><div class="rlabel">${label}</div><div class="rval" id="${id}"${color?` style="color:${color}"`:''}>—</div></div>`; }
+function drawBall(ctx,x,y,r,col,spin){
+  circ(ctx,x,y,r,col,'#fff',2.6);
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(x,y,r*0.62,spin||0,(spin||0)+1.7); ctx.stroke(); ctx.restore();
+}
+function stickman(ctx,x,y,s,phase,armA,col){
+  // feet at (x,y); height ≈ 46*s
+  col=col||COL.ink; const hy=y-46*s, sy=y-34*s, hipy=y-20*s;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.6*Math.max(.8,s); ctx.lineCap='round';
+  ctx.beginPath(); ctx.arc(x,hy,5.5*s,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x,hy+5.5*s); ctx.lineTo(x,hipy);
+  ctx.moveTo(x,hipy); ctx.lineTo(x+Math.sin(phase)*9*s,y); ctx.moveTo(x,hipy); ctx.lineTo(x-Math.sin(phase)*9*s,y);
+  ctx.moveTo(x,sy); ctx.lineTo(x+Math.cos(armA)*14*s,sy+Math.sin(armA)*14*s);
+  ctx.moveTo(x,sy); ctx.lineTo(x-Math.sin(phase)*8*s,sy+10*s);
+  ctx.stroke(); ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const LEG_STD=[[COL.yellow,'What you change'],[COL.blue,'Velocity · y-part'],[COL.green,'Result · Displacement'],[COL.red,'Acceleration · x-part']];
+const activities = [
+  { num:'3.1', title:'Path or Displacement?', desc:'Walk a route · compare how far with how far away', legend:[[COL.yellow,'Start r'],[COL.blue,'Path walked'],[COL.green,'Displacement Δr'],[COL.red,'Position vector r′']], build: buildA1 },
+  { num:'3.2', title:'Adding Vectors', desc:'Boat + river current · head-to-tail', legend:[[COL.yellow,'Boat A (you change)'],[COL.blue,'Current B'],[COL.green,'Resultant R'],[COL.red,'Angle']], build: buildA2 },
+  { num:'3.3', title:'Resolving a Vector', desc:'One velocity, two independent shadows', legend:[[COL.yellow,'What you change'],[COL.green,'Velocity v'],[COL.red,'x-component vₓ'],[COL.blue,'y-component v_y']], build: buildA3 },
+  { num:'3.4', title:'Velocity as Δt → 0', desc:'Shrink the interval · chord becomes tangent', legend:[[COL.yellow,'Δt (you change)'],[COL.green,'Average velocity'],[COL.blue,'Instantaneous velocity'],[COL.red,'Gap angle']], build: buildA4 },
+  { num:'3.5', title:'Constant Acceleration in a Plane', desc:'x and y motions run independently', legend:[[COL.yellow,'Start v₀ (you change)'],[COL.blue,'Velocity'],[COL.red,'Acceleration'],[COL.green,'Path']], build: buildA5 },
+  { num:'3.6', title:'Projectile Motion', desc:'Aim · fire · read height, time, range', legend:[[COL.yellow,'Launch v₀ (you change)'],[COL.red,'Horizontal vₓ'],[COL.blue,'Vertical v_y'],[COL.green,'Velocity · Range']], build: buildA6 },
+  { num:'3.7', title:'Equal Ranges (Galileo)', desc:'45° ± δ land on the same spot', legend:[[COL.yellow,'Speed · δ (you change)'],[COL.blue,'45° − δ'],[COL.red,'45° + δ'],[COL.green,'45° (longest)']], build: buildA7 },
+  { num:'3.8', title:'Thrown vs Dropped', desc:'Cliff · horizontal and vertical are independent', legend:[[COL.yellow,'What you change'],[COL.green,'Thrown stone'],[COL.blue,'Dropped stone · v_y'],[COL.red,'Horizontal vₓ']], build: buildA8 },
+  { num:'3.9', title:'Uniform Circular Motion', desc:'Whirl a stone · then cut the string', legend:[[COL.yellow,'Radius · period'],[COL.blue,'Velocity (tangent)'],[COL.red,'Acceleration (to centre)'],[COL.green,'Angle swept']], build: buildA9 },
+];
+let currentIndex = 0;
+function setLegend(arr){
+  document.getElementById('legend').innerHTML = arr.map(a=>`<span><i style="background:${a[0]}"></i>${a[1]}</span>`).join('');
+}
+function buildNav(){
+  const nav=document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn=document.createElement('button'); btn.className='nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML=`<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick=()=>{ currentIndex=i; render(); }; nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a=activities[currentIndex];
+  document.getElementById('panelBadge').textContent=a.num;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc||'';
+  setLegend(a.legend||LEG_STD);
+  const body=document.getElementById('panelBody'); body.innerHTML=''; body.appendChild(a.build());
+}
+
+/* =====================================================================
+   3.1 PATH OR DISPLACEMENT?   (§3.2 — scalars and vectors)
+   Path length = Σ segment lengths (scalar).  Δr = r′ − r (vector).
+   A round trip gives path > 0 but displacement = 0.
+   Walker speed eases up and brakes to a stop at the end of the route.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label>Route</label><div class="chip-wrap" id="rt"></div></div>
+    ${slider('sp','Walking speed',0.5,3,0.1,1.5,' blocks/s')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:10px">▶ Walk</button><button class="toggle-btn" id="rs" style="padding:10px">↺ Start again</button></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Distance walked','var(--f-blue)')}${card('r2','|Displacement|','var(--f-green)')}${card('r3','Displacement direction','',true)}
+    </div></div>
+    <div class="hint">1 block = 100 m</div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const ROUTES=[
+    {label:'Straight',pts:[[0,0],[4,3]]},
+    {label:'Around the block',pts:[[0,0],[4,0],[4,3]]},
+    {label:'Wandering',pts:[[0,0],[0,3],[2,3],[2,1],[4,1],[4,3]]},
+    {label:'Round trip',pts:[[0,0],[4,0],[4,3],[0,3],[0,0]]},
+  ];
+  const S0=[1,1]; // start, measured from the map origin O
+  let route, cum, total, s=0, v=0, walking=false, phase=0, t=0, ri=1;
+  function setRoute(i){
+    ri=i; route=ROUTES[i].pts; cum=[0];
+    for(let k=1;k<route.length;k++) cum.push(cum[k-1]+Math.hypot(route[k][0]-route[k-1][0],route[k][1]-route[k-1][1]));
+    total=cum[cum.length-1]; s=0; v=0; walking=false;
+  }
+  function posAt(d){
+    for(let k=1;k<route.length;k++) if(d<=cum[k]+1e-9){ const u=(d-cum[k-1])/(cum[k]-cum[k-1]||1);
+      return [route[k-1][0]+(route[k][0]-route[k-1][0])*u, route[k-1][1]+(route[k][1]-route[k-1][1])*u]; }
+    return route[route.length-1];
+  }
+  chipRow(wrap,'#rt',ROUTES,(it,i)=>setRoute(i),1); setRoute(1);
+  $('#go').onclick=()=>{ if(s>=total-0.01){ s=0; v=0; } walking=true; };
+  $('#rs').onclick=()=>{ s=0; v=0; walking=false; };
+  animLoop(dt=>{
+    t+=dt; const spd=rd(wrap,'sp',1);
+    if(walking){
+      const rem=total-s, vt=Math.min(spd, rem*2.2+0.06);
+      v=approach(v,vt,4,dt); s=Math.min(total,s+v*dt);
+      if(total-s<0.004){ s=total; walking=false; v=0; }
+    } else v=approach(v,0,6,dt);
+    phase+=v*dt*7;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=56,B=h-44,T=24,Rr=24, bw=w-L-Rr, bh=B-T, WU=6.4, HU=5;
+    const sc=Math.min(bw/WU,bh/HU), ox=L+(bw-WU*sc)/2, oy=B-(bh-HU*sc)/2;
+    const X=u=>ox+u*sc, Y=u=>oy-u*sc;
+    // city blocks
+    for(let i=0;i<6;i++) for(let j=0;j<5;j++){
+      ctx.save(); rrect(ctx,X(i)+7,Y(j+1)+7,sc-14,sc-14,6); ctx.fillStyle='#f3f7fc'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    }
+    // axes
+    line(ctx,X(0),Y(0),X(6.3),Y(0),COL.mid,1.6); line(ctx,X(0),Y(0),X(0),Y(5),COL.mid,1.6);
+    for(let i=1;i<=6;i++){ line(ctx,X(i),Y(0),X(i),Y(0)+5,COL.mid,1.4); textAt(ctx,i*100,X(i),Y(0)+19,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    for(let j=1;j<=4;j++){ line(ctx,X(0),Y(j),X(0)-5,Y(j),COL.mid,1.4); textAt(ctx,j*100,X(0)-9,Y(j)+4,{align:'right',size:10.5,color:COL.mid,weight:600}); }
+    textAt(ctx,'x (m)',X(6.3),Y(0)+34,{align:'right',size:11,color:COL.muted,weight:700});
+    textAt(ctx,'y (m)',X(0)+8,Y(5)+4,{size:11,color:COL.muted,weight:700});
+    circ(ctx,X(0),Y(0),4,COL.ink,COL.ink,1); tl(ctx,'O',X(0)-14,Y(0)-8,{size:13});
+    // planned route (faint) and path walked (solid blue)
+    ctx.save(); ctx.strokeStyle='rgba(129,149,171,0.55)'; ctx.lineWidth=3; ctx.setLineDash([2,7]); ctx.lineCap='round'; ctx.beginPath();
+    route.forEach((p,k)=>{ const x=X(S0[0]+p[0]), y=Y(S0[1]+p[1]); k?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=5; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(X(S0[0]+route[0][0]),Y(S0[1]+route[0][1]));
+    for(let k=1;k<route.length;k++){ if(cum[k]<=s) ctx.lineTo(X(S0[0]+route[k][0]),Y(S0[1]+route[k][1])); else { const p=posAt(s); ctx.lineTo(X(S0[0]+p[0]),Y(S0[1]+p[1])); break; } }
+    if(s>=total) ctx.lineTo(X(S0[0]+route[route.length-1][0]),Y(S0[1]+route[route.length-1][1]));
+    ctx.stroke(); ctx.restore();
+    // flag at the end
+    const E=route[route.length-1], ex=X(S0[0]+E[0]), ey=Y(S0[1]+E[1]);
+    line(ctx,ex,ey,ex,ey-26,COL.ink,2.2); ctx.save(); ctx.fillStyle=COL.green; ctx.beginPath(); ctx.moveTo(ex,ey-26); ctx.lineTo(ex+16,ey-20+Math.sin(t*5)*1.5); ctx.lineTo(ex,ey-14); ctx.closePath(); ctx.fill(); ctx.restore();
+    // start marker
+    circ(ctx,X(S0[0]),Y(S0[1]),6,COL.yellow,'#fff',3); tl(ctx,'Start',X(S0[0])-12,Y(S0[1])+22,{size:11.5,color:COL.yellow});
+    // vectors: r (to start), r′ (to walker), Δr (start → walker)
+    const p=posAt(s), wx=X(S0[0]+p[0]), wy=Y(S0[1]+p[1]), sx=X(S0[0]), sy=Y(S0[1]);
+    vec(ctx,X(0),Y(0),sx,sy,COL.yellow,2.6);
+    vec(ctx,X(0),Y(0),wx,wy,COL.red,2.6,[7,5]);
+    const dispPx=Math.hypot(wx-sx,wy-sy);
+    if(dispPx>6) vec(ctx,sx,sy,wx,wy,COL.green,4);
+    if(dispPx>6) tl(ctx,'Δr',(sx+wx)/2-14,(sy+wy)/2-10,{color:COL.green,size:14});
+    tl(ctx,'r',(X(0)+sx)/2-12,(Y(0)+sy)/2+4,{color:COL.yellow,size:13});
+    if(Math.hypot(wx,wy)>0) tl(ctx,'r′',(X(0)+wx)/2+8,(Y(0)+wy)/2+16,{color:COL.red,size:13});
+    // walker
+    ctx.save(); ctx.fillStyle='rgba(19,42,68,0.12)'; ctx.beginPath(); ctx.ellipse(wx,wy+1,12,4,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+    stickman(ctx,wx,wy-Math.abs(Math.sin(phase))*2,1.15,phase,Math.PI*0.5+Math.sin(phase)*0.5);
+    const dm=Math.hypot((p[0]),(p[1]))*100, ang=Math.atan2(p[1],p[0])*180/Math.PI;
+    $('#r1').textContent=fmt(s*100,0)+' m'; $('#r2').textContent=fmt(dm,0)+' m';
+    $('#r3').textContent=dm<1?'— (back at start)':fmt(ang,0)+'° above east';
+    $('#go').textContent=walking?'⏳ Walking…':(s>=total-0.01?'▶ Walk again':'▶ Walk');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.2 ADDING VECTORS   (§3.4 / §3.6 — Example 3.3, motorboat)
+   R² = A² + B² + 2AB cosθ ;  tanφ = B sinθ /(A + B cosθ)
+   Check: A = 25, B = 10, θ = 120°  →  R = 21.8 km/h, φ = 23.4° from A.
+   The boat points along A but travels along R; its wake stays with the water.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('A','Boat speed A',0,30,0.5,25,' km/h')}
+    ${slider('B','Current speed B',0,20,0.5,10,' km/h')}
+    ${slider('th','Angle between A and B',0,180,1,120,'°')}
+    <div class="control-group"><label>Try</label><div class="chip-wrap" id="pr"></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','|R| km/h','var(--f-green)')}${card('r2','R from A (φ)','var(--f-green)')}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  chipRow(wrap,'#pr',[{label:'Example 3.3',a:25,b:10,t:120},{label:'Same way 0°',a:25,b:10,t:0},{label:'Right angle',a:25,b:15,t:90},{label:'Against 180°',a:25,b:25,t:180}],
+    it=>{ setS(wrap,'A',it.a); setS(wrap,'B',it.b); setS(wrap,'th',it.t); },0);
+  const sA=sp(25), sB=sp(10), sT=sp(120);
+  const K=7;                   // px per (km/h) per second of travel
+  let t=0, bx=null, by=null, roll=sp(0);
+  const streaks=Array.from({length:46},()=>({x:Math.random(),y:Math.random()}));
+  const posts=[[.12,.2],[.45,.12],[.82,.25],[.2,.8],[.6,.86],[.88,.7],[.5,.5]];
+  let wake=[], wakeT=0;
+  animLoop(dt=>{
+    t+=dt;
+    const tA=rd(wrap,'A',1), tB=rd(wrap,'B',1), tT=rd(wrap,'th',0);
+    springTo(sA,tA,70,12,dt); springTo(sB,tB,70,12,dt); springTo(sT,tT,70,12,dt);
+    const A=Math.max(0,sA.x), B=Math.max(0,sB.x), th=sT.x*Math.PI/180;
+    const ax=0, ay=-A, bxv=Math.sin(th)*B, byv=-Math.cos(th)*B;         // screen vectors (km/h), y down
+    const rx=ax+bxv, ry=ay+byv, Rm=Math.hypot(rx,ry);
+    const phi=Math.atan2(B*Math.sin(th),A+B*Math.cos(th))*180/Math.PI;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sw=Math.min(w*0.6,w-300), x0=8,y0=8,sh=h-16;
+    // ---- water scene (world frame) ----
+    ctx.save(); rrect(ctx,x0,y0,sw,sh,12); ctx.clip(); ctx.fillStyle='#f4f9fe'; ctx.fillRect(x0,y0,sw,sh);
+    streaks.forEach(q=>{
+      q.x+=bxv*K*dt/sw; q.y+=byv*K*dt/sh; q.x=(q.x%1+1)%1; q.y=(q.y%1+1)%1;
+      const px=x0+q.x*sw, py=y0+q.y*sh, len=Math.max(5,B*1.4), ux=B>0.2?bxv/B:1, uy=B>0.2?byv/B:0;
+      line(ctx,px,py,px+ux*len,py+uy*len,'rgba(47,143,224,0.45)',1.8);
+    });
+    posts.forEach(p=>{ const px=x0+p[0]*sw, py=y0+p[1]*sh; circ(ctx,px,py,6,COL.ink,'#fff',2.2); line(ctx,px,py,px,py-18,COL.ink,2.2); ctx.save(); ctx.fillStyle=COL.red; ctx.beginPath(); ctx.moveTo(px,py-18); ctx.lineTo(px+11,py-14); ctx.lineTo(px,py-10); ctx.fill(); ctx.restore(); });
+    if(bx===null){ bx=x0+sw*0.5; by=y0+sh*0.5; }
+    bx+=rx*K*dt; by+=ry*K*dt;
+    const m=40; if(bx<x0-m) bx+=sw+2*m; if(bx>x0+sw+m) bx-=sw+2*m; if(by<y0-m) by+=sh+2*m; if(by>y0+sh+m) by-=sh+2*m;
+    // wake: spawned at the stern, then drifts with the WATER (velocity B)
+    wakeT+=dt; if(wakeT>0.035 && A>0.3){ wakeT=0; wake.push({x:bx-(0)*1, y:by+26, age:0}); }
+    wake.forEach(q=>{ q.age+=dt; q.x+=bxv*K*dt; q.y+=byv*K*dt; });
+    wake=wake.filter(q=>q.age<2.4);
+    wake.forEach(q=>circ(ctx,q.x,q.y,2+q.age*3,'rgba(47,143,224,'+(0.55*(1-q.age/2.4)).toFixed(2)+')',null,1.5));
+    // boat: hull points along A (up); rolls with a spring
+    springTo(roll,Math.sin(t*2.1)*0.04+bxv*0.0035,30,5,dt);
+    ctx.save(); ctx.translate(bx,by); ctx.rotate(roll.x);
+    ctx.beginPath(); ctx.moveTo(0,-36); ctx.bezierCurveTo(16,-14,15,10,13,30); ctx.lineTo(-13,30); ctx.bezierCurveTo(-15,10,-16,-14,0,-36); ctx.closePath();
+    ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineJoin='round'; ctx.stroke();
+    rrect(ctx,-8,-4,16,22,4); ctx.stroke(); line(ctx,-13,30,13,30,COL.ink,4);
+    ctx.restore();
+    // arrows from the boat (px per km/h = 3.4)
+    const ka=3.4;
+    vec(ctx,bx,by,bx+ax*ka,by+ay*ka,COL.yellow,3.4);
+    vec(ctx,bx,by,bx+bxv*ka,by+byv*ka,COL.blue,3.4);
+    vec(ctx,bx,by,bx+rx*ka,by+ry*ka,COL.green,4);
+    ctx.restore();
+    rect(ctx,x0,y0,sw,sh,COL.border,null,1.5);
+    // ---- vector triangle (right) ----
+    const ps=Math.min(h*0.5/50,(w-sw-30)/2/21), ox=x0+sw+(w-sw-x0)/2, oy=h*0.74;
+    textAt(ctx,'Head-to-tail',ox,24,{align:'center',size:12,weight:700,color:COL.muted});
+    const Ax=ax*ps,Ay=ay*ps,Bx=bxv*ps,By=byv*ps;
+    vec(ctx,ox+Bx,oy+By,ox+Bx+Ax,oy+By+Ay,COL.yellow,1.8,[5,5]);       // parallelogram (dashed)
+    vec(ctx,ox,oy,ox+Bx,oy+By,COL.blue,1.8,[5,5]);
+    vec(ctx,ox,oy,ox+Ax,oy+Ay,COL.yellow,3.6);                         // A
+    vec(ctx,ox+Ax,oy+Ay,ox+Ax+Bx,oy+Ay+By,COL.blue,3.6);               // B on the head of A
+    vec(ctx,ox,oy,ox+Ax+Bx,oy+Ay+By,COL.green,4.6);                    // R
+    if(A>1&&B>1){
+      angArc(ctx,ox,oy,26,-Math.PI/2,Math.atan2(By,Bx),COL.red,2.4);
+      tl(ctx,Math.round(sT.x)+'°',ox+ (Math.cos((-Math.PI/2+Math.atan2(By,Bx))/2))*40-8,oy+(Math.sin((-Math.PI/2+Math.atan2(By,Bx))/2))*40+4,{color:COL.red,size:12});
+    }
+    tl(ctx,'A',ox+Ax-14,oy+Ay/2,{color:COL.yellow,size:14});
+    tl(ctx,'B',ox+Ax+Bx/2+8,oy+Ay+By/2,{color:COL.blue,size:14});
+    tl(ctx,'R',ox+(Ax+Bx)/2+10,oy+(Ay+By)/2+14,{color:COL.green,size:14});
+    $('#r1').textContent=fmt(Rm,1); $('#r2').textContent=fmt(phi,1)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.3 RESOLVING A VECTOR   (§3.5)
+   vₓ = v cosθ ,  v_y = v sinθ ,  v = √(vₓ² + v_y²)
+   Check: (3 i + 4 j) → v = 5, θ = 53.1°.
+   The ball casts a shadow on each axis; each shadow moves at its own component.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('v','Speed v',0,10,0.1,5,' units/s')}
+    ${slider('th','Direction θ',0,360,1,53,'°')}
+    <div class="control-group"><label>Try</label><div class="chip-wrap" id="pr"></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','vₓ = v cosθ','var(--f-red)')}${card('r2','v_y = v sinθ','var(--f-blue)')}${card('r3','√(vₓ² + v_y²)','var(--f-green)',true)}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  chipRow(wrap,'#pr',[{label:'3 î + 4 ĵ',v:5,t:53.13},{label:'45°',v:6,t:45},{label:'Along x',v:6,t:0},{label:'Along y',v:6,t:90},{label:'Backwards',v:5,t:233}],
+    it=>{ setS(wrap,'v',it.v); setS(wrap,'th',it.t); },0);
+  const sV=sp(5), sT=sp(53);
+  let px=3, py=2, t=0, hist=[], spin=0;
+  animLoop(dt=>{
+    t+=dt; const tv=rd(wrap,'v',1), tt=rd(wrap,'th',0);
+    springTo(sV,tv,60,11,dt); springTo(sT,tt,60,11,dt);
+    const v=Math.max(0,sV.x), a=sT.x*Math.PI/180, vx=v*Math.cos(a), vy=v*Math.sin(a);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=58,B=h-48,T=18,Rr=22, bw=w-L-Rr, bh=B-T, WU=20, sc=bw/WU, HU=bh/sc;
+    const X=u=>L+u*sc, Y=u=>B-u*sc;
+    rect(ctx,L,T,bw,bh,COL.border,'#fbfdff',1.5);
+    for(let i=0;i<=WU;i+=2) line(ctx,X(i),T,X(i),B,COL.grid,1);
+    for(let j=0;j<=HU;j+=2) line(ctx,L,Y(j),L+bw,Y(j),COL.grid,1);
+    line(ctx,L,B,L+bw,B,COL.red,3); line(ctx,L,B,L,T,COL.blue,3);
+    for(let i=0;i<=WU;i+=5) textAt(ctx,i,X(i),B+18,{align:'center',size:10.5,color:COL.mid,weight:600});
+    for(let j=0;j<=HU;j+=5) textAt(ctx,j,L-9,Y(j)+4,{align:'right',size:10.5,color:COL.mid,weight:600});
+    textAt(ctx,'x',L+bw-6,B-8,{align:'right',size:13,color:COL.red,weight:700}); textAt(ctx,'y',L+9,T+14,{size:13,color:COL.blue,weight:700});
+    // integrate
+    px+=vx*dt; py+=vy*dt; let wrapped=false;
+    if(px>WU){px-=WU;wrapped=true;} if(px<0){px+=WU;wrapped=true;} if(py>HU){py-=HU;wrapped=true;} if(py<0){py+=HU;wrapped=true;}
+    if(wrapped) hist=[];
+    hist.push([px,py]); if(hist.length>26) hist.shift();
+    spin+=dt*(2+v);
+    const bxp=X(px), byp=Y(py);
+    hist.forEach((q,i)=>circ(ctx,X(q[0]),Y(q[1]),2+i*0.12,null,'rgba(31,157,85,'+(i/hist.length*0.35).toFixed(2)+')',1));
+    // projection lines + shadows
+    line(ctx,bxp,byp,bxp,B,COL.red,1.4,[4,5]); line(ctx,bxp,byp,L,byp,COL.blue,1.4,[4,5]);
+    const shx=Math.sin(t*14)*0;
+    circ(ctx,bxp,B,8,COL.red,'rgba(217,67,43,0.25)',2.4); circ(ctx,L,byp,8,COL.blue,'rgba(47,143,224,0.25)',2.4);
+    // vectors at the ball
+    const kv=sc*0.55;
+    vec(ctx,bxp,byp,bxp+vx*kv,byp,COL.red,3.2);
+    vec(ctx,bxp,byp,bxp,byp-vy*kv,COL.blue,3.2);
+    line(ctx,bxp+vx*kv,byp,bxp+vx*kv,byp-vy*kv,COL.mid,1.2,[3,4]); line(ctx,bxp,byp-vy*kv,bxp+vx*kv,byp-vy*kv,COL.mid,1.2,[3,4]);
+    vec(ctx,bxp,byp,bxp+vx*kv,byp-vy*kv,COL.green,4.4);
+    if(v>0.5){
+      angArc(ctx,bxp,byp,30,0,-a,COL.yellow,2.6);
+      tl(ctx,Math.round(((sT.x%360)+360)%360)+'°',bxp+38,byp-6,{color:COL.yellow,size:12});
+      if(Math.abs(vx)>0.6) tl(ctx,'vₓ',bxp+vx*kv/2,byp+(vy>=0?18:-8),{color:COL.red,size:13,align:'center'});
+      if(Math.abs(vy)>0.6) tl(ctx,'v_y',bxp+(vx>=0?-22:22),byp-vy*kv/2,{color:COL.blue,size:13,align:'center'});
+      tl(ctx,'v',bxp+vx*kv/2+(vy>=0?-14:14),byp-vy*kv/2-8,{color:COL.green,size:14,align:'center'});
+    }
+    drawBall(ctx,bxp,byp,11,COL.green,spin);
+    $('#r1').textContent=fmt(vx,2); $('#r2').textContent=fmt(vy,2); $('#r3').textContent=fmt(Math.hypot(vx,vy),2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.4 VELOCITY AS Δt → 0   (§3.7.1, Fig 3.13)
+   v̄ = Δr/Δt  → v = dr/dt  (tangent to the path).
+   The particle runs the path r(τ) = (1.6τ , 2.4 sin 0.85τ + 0.2τ − 1).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('dt','Interval Δt',0.05,3,0.05,2.4,' s')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="shr" style="padding:10px">⇢ Shrink Δt → 0</button><button class="toggle-btn" id="pz" style="padding:10px">⏸ Pause</button></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Average velocity v̄','var(--f-green)')}${card('r2','Direction of v̄','var(--f-green)')}
+      ${card('r3','Velocity v','var(--f-blue)')}${card('r4','Direction of v','var(--f-blue)')}
+      ${card('r5','Gap between directions','var(--f-red)',true)}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const P=t=>[1.6*t, 2.4*Math.sin(0.85*t)+0.2*t-1], V=t=>[1.6, 2.04*Math.cos(0.85*t)+0.2];
+  const TM=10; let tau=0.4, paused=false, shrinking=false, dtv=2.4;
+  let bx0=1e9,bx1=-1e9,by0=1e9,by1=-1e9; for(let q=0;q<=TM+3.2;q+=0.1){ const p=P(q); bx0=Math.min(bx0,p[0]); bx1=Math.max(bx1,p[0]); by0=Math.min(by0,p[1]); by1=Math.max(by1,p[1]); }
+  $('#shr').onclick=()=>{ shrinking=true; };
+  $('#pz').onclick=()=>{ paused=!paused; $('#pz').textContent=paused?'▶ Resume':'⏸ Pause'; };
+  $('#dt').addEventListener('input',()=>{ shrinking=false; dtv=+$('#dt').value; });
+  animLoop(dt=>{
+    if(shrinking){ dtv=approach(dtv,0.05,1.1,dt); setS(wrap,'dt',dtv); if(dtv<0.07){ dtv=0.05; setS(wrap,'dt',0.05); shrinking=false; } }
+    const D=rd(wrap,'dt',2);
+    if(!paused){ tau+=dt*0.8; if(tau>TM) tau=0.4; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pad=44, sc=Math.min((w-2*pad)/(bx1-bx0),(h-2*pad)/(by1-by0)), cx=w/2-(bx0+bx1)/2*sc, cy=h/2+(by0+by1)/2*sc;
+    const X=u=>cx+u*sc, Y=u=>cy-u*sc;
+    for(let i=0;i<=Math.ceil(bx1);i+=2) line(ctx,X(i),12,X(i),h-12,COL.grid,1);
+    for(let j=Math.floor(by0);j<=Math.ceil(by1);j+=2) line(ctx,12,Y(j),w-12,Y(j),COL.grid,1);
+    // road (path)
+    ctx.save(); ctx.strokeStyle='rgba(129,149,171,0.55)'; ctx.lineWidth=14; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath();
+    for(let q=0;q<=TM+0.01;q+=0.1){ const p=P(q); q?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])); } ctx.stroke();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=11; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.setLineDash([8,8]); ctx.beginPath();
+    for(let q=0;q<=TM+0.01;q+=0.1){ const p=P(q); q?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])); } ctx.stroke(); ctx.restore();
+    const p0=P(tau), p1=P(tau+D), vv=V(tau), sx=X(p0[0]), sy=Y(p0[1]), ex=X(p1[0]), ey=Y(p1[1]);
+    // the stretch of path between P and P′
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=4; ctx.lineCap='round'; ctx.beginPath();
+    for(let q=tau;q<=tau+D+1e-6;q+=Math.max(0.02,D/60)){ const p=P(q); q===tau?ctx.moveTo(X(p[0]),Y(p[1])):ctx.lineTo(X(p[0]),Y(p[1])); } ctx.lineTo(ex,ey); ctx.stroke(); ctx.restore();
+    // chord (green) extended
+    const dx=ex-sx, dy=ey-sy, dl=Math.hypot(dx,dy)||1;
+    line(ctx,sx-dx/dl*40,sy-dy/dl*40,sx+dx/dl*Math.max(dl,60)+dx/dl*40,sy+dy/dl*Math.max(dl,60)+dy/dl*40,'rgba(31,157,85,0.4)',1.6,[6,5]);
+    // tangent (blue) extended
+    const vl=Math.hypot(vv[0],vv[1]), tx=vv[0]/vl, ty=-vv[1]/vl;
+    line(ctx,sx-tx*70,sy-ty*70,sx+tx*190,sy+ty*190,'rgba(47,143,224,0.4)',1.6,[2,5]);
+    // average velocity v̄ = Δr/Δt  and instantaneous v   (arrow length ∝ speed)
+    const kv=34, avx=(p1[0]-p0[0])/D, avy=(p1[1]-p0[1])/D, av=Math.hypot(avx,avy), ia=Math.atan2(vv[1],vv[0]), aa=Math.atan2(avy,avx);
+    vec(ctx,sx,sy,sx+avx*kv,sy-avy*kv,COL.green,4);
+    vec(ctx,sx,sy,sx+vv[0]*kv,sy-vv[1]*kv,COL.blue,3.2);
+    const gap=Math.abs(angDiff(aa,ia))*180/Math.PI;
+    if(gap>0.6) angArc(ctx,sx,sy,44,-ia,-aa,COL.red,3);
+    circ(ctx,ex,ey,7,COL.green,'#fff',2.6); tl(ctx,"P′",ex+10,ey-10,{color:COL.green,size:13});
+    // car at P
+    ctx.save(); ctx.translate(sx,sy); ctx.rotate(-ia);
+    rrect(ctx,-16,-8,32,16,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke();
+    rrect(ctx,-5,-5,10,10,2); ctx.stroke(); line(ctx,-12,-8,-12,-12,COL.ink,3); line(ctx,12,-8,12,-12,COL.ink,3); line(ctx,-12,8,-12,12,COL.ink,3); line(ctx,12,8,12,12,COL.ink,3);
+    ctx.restore();
+    tl(ctx,'P',sx-18,sy+24,{size:13});
+    $('#r1').textContent=fmt(av,2); $('#r2').textContent=fmt(aa*180/Math.PI,1)+'°';
+    $('#r3').textContent=fmt(vl,2); $('#r4').textContent=fmt(ia*180/Math.PI,1)+'°'; $('#r5').textContent=fmt(gap,2)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.5 CONSTANT ACCELERATION IN A PLANE   (§3.8 — Example 3.5)
+   x = v₀ₓt + ½aₓt² ,  y = v_{0y}t + ½a_y t²   (independent)
+   Check: v₀ = 5 î, a = 3 î + 2 ĵ  →  at t = 6 s: x = 84 m, y = 36 m, speed ≈ 26 m/s.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('vx','Start velocity v₀ₓ',-10,10,0.5,5,' m/s')}
+    ${slider('vy','Start velocity v₀y',-10,10,0.5,0,' m/s')}
+    ${slider('ax','Acceleration aₓ',-5,5,0.5,3,' m/s²')}
+    ${slider('ay','Acceleration a_y',-5,5,0.5,2,' m/s²')}
+    ${slider('T','Run time',1,8,0.5,6,' s')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go" style="padding:9px">↺ Replay</button><button class="toggle-btn" id="pz" style="padding:9px">⏸ Pause</button></div>
+    <div class="control-group"><label>Try</label><div class="chip-wrap" id="pr"></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Time t','')}${card('r2','Speed','var(--f-blue)')}${card('r3','x (m)','var(--f-red)')}${card('r4','y (m)','var(--f-blue)')}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  chipRow(wrap,'#pr',[{label:'Example 3.5',v:[5,0],a:[3,2],T:6},{label:'Curving up',v:[4,6],a:[0,-3],T:4},{label:'No acceleration',v:[4,3],a:[0,0],T:5},{label:'Veer',v:[6,0],a:[-1,4],T:6}],
+    it=>{ setS(wrap,'vx',it.v[0]); setS(wrap,'vy',it.v[1]); setS(wrap,'ax',it.a[0]); setS(wrap,'ay',it.a[1]); setS(wrap,'T',it.T); tm=0; hold=0; },0);
+  let tm=0, hold=0, paused=false;
+  const win={x0:-1,x1:90,y0:-1,y1:40};
+  $('#go').onclick=()=>{ tm=0; hold=0; };
+  $('#pz').onclick=()=>{ paused=!paused; $('#pz').textContent=paused?'▶ Resume':'⏸ Pause'; };
+  animLoop(dt=>{
+    const v0x=rd(wrap,'vx',1), v0y=rd(wrap,'vy',1), ax=rd(wrap,'ax',1), ay=rd(wrap,'ay',1), T=rd(wrap,'T',1);
+    if(!paused){ if(tm<T) tm=Math.min(T,tm+dt); else { hold+=dt; if(hold>1.1){ tm=0; hold=0; } } }
+    if(tm>T) tm=T;
+    const P=t=>[v0x*t+0.5*ax*t*t, v0y*t+0.5*ay*t*t], V=t=>[v0x+ax*t, v0y+ay*t];
+    let mnx=0,mxx=0,mny=0,mxy=0,vmax=0.5;
+    for(let i=0;i<=40;i++){ const p=P(T*i/40), q=V(T*i/40); mnx=Math.min(mnx,p[0]); mxx=Math.max(mxx,p[0]); mny=Math.min(mny,p[1]); mxy=Math.max(mxy,p[1]); vmax=Math.max(vmax,Math.hypot(q[0],q[1])); }
+    const spx=Math.max(mxx-mnx,2), spy=Math.max(mxy-mny,2);
+    const tx0=mnx-spx*0.1, tx1=mxx+spx*0.12, ty0=mny-spy*0.12, ty1=mxy+spy*0.14;
+    win.x0=approach(win.x0,tx0,3,dt); win.x1=approach(win.x1,tx1,3,dt); win.y0=approach(win.y0,ty0,3,dt); win.y1=approach(win.y1,ty1,3,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const L=58,B=h-44,Tp=16,Rr=18, bw=w-L-Rr, bh=B-Tp;
+    const sc=Math.min(bw/(win.x1-win.x0),bh/(win.y1-win.y0)), cxm=L+bw/2-(win.x0+win.x1)/2*sc, cym=Tp+bh/2+(win.y0+win.y1)/2*sc;
+    const X=u=>cxm+u*sc, Y=u=>cym-u*sc;
+    rect(ctx,L,Tp,bw,bh,COL.border,'#fbfdff',1.5);
+    ctx.save(); ctx.beginPath(); ctx.rect(L,Tp,bw,bh); ctx.clip();
+    const sx=niceStep(win.x1-win.x0,8), sy=niceStep((win.y1-win.y0),6), gs=Math.max(sx,sy);
+    for(let i=Math.floor(win.x0/gs)*gs;i<=win.x1;i+=gs) line(ctx,X(i),Tp,X(i),B,COL.grid,1);
+    for(let j=Math.floor(win.y0/gs)*gs;j<=win.y1;j+=gs) line(ctx,L,Y(j),L+bw,Y(j),COL.grid,1);
+    if(win.y0<0&&win.y1>0) line(ctx,L,Y(0),L+bw,Y(0),COL.mid,1.2,[4,4]); if(win.x0<0&&win.x1>0) line(ctx,X(0),Tp,X(0),B,COL.mid,1.2,[4,4]);
+    // full path (faint) and travelled path (solid)
+    ctx.strokeStyle='rgba(31,157,85,0.28)'; ctx.lineWidth=2.4; ctx.setLineDash([3,6]); ctx.beginPath();
+    for(let i=0;i<=80;i++){ const p=P(T*i/80); i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])); } ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=COL.green; ctx.lineWidth=3.6; ctx.lineJoin='round'; ctx.beginPath();
+    for(let i=0;i<=80;i++){ const tt=tm*i/80, p=P(tt); i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])); } ctx.stroke();
+    // strobe: every 0.5 s with thin velocity arrows
+    const kv=Math.min(bw,bh)*0.2/vmax;
+    for(let ts=0.5;ts<=tm+1e-6;ts+=0.5){ const p=P(ts), q=V(ts); circ(ctx,X(p[0]),Y(p[1]),4,COL.green,'#fff',1.8); vec(ctx,X(p[0]),Y(p[1]),X(p[0])+q[0]*kv*0.7,Y(p[1])-q[1]*kv*0.7,'rgba(47,143,224,0.6)',1.8); }
+    const p=P(tm), q=V(tm), bx=X(p[0]), by=Y(p[1]);
+    // shadows on the two axes
+    line(ctx,bx,by,bx,B,COL.red,1.3,[4,5]); line(ctx,bx,by,L,by,COL.blue,1.3,[4,5]);
+    ctx.restore();
+    // axes
+    line(ctx,L,B,L+bw,B,COL.red,3); line(ctx,L,Tp,L,B,COL.blue,3);
+    for(let i=Math.ceil(win.x0/sx)*sx;i<=win.x1;i+=sx){ const x=X(i); if(x>L+14&&x<L+bw-8) textAt(ctx,fmt(i,0),x,B+17,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    for(let j=Math.ceil(win.y0/sy)*sy;j<=win.y1;j+=sy){ const y=Y(j); if(y<B-6&&y>Tp+8) textAt(ctx,fmt(j,0),L-8,y+4,{align:'right',size:10.5,color:COL.mid,weight:600}); }
+    textAt(ctx,'x (m)',L+bw,B+34,{align:'right',size:11,color:COL.red,weight:700}); textAt(ctx,'y (m)',L+6,Tp+14,{size:11,color:COL.blue,weight:700});
+    circ(ctx,clamp(bx,L,L+bw),B,7,COL.red,'rgba(217,67,43,0.25)',2.4); circ(ctx,L,clamp(by,Tp,B),7,COL.blue,'rgba(47,143,224,0.25)',2.4);
+    // the air-table puck
+    const sa=Math.hypot(q[0],q[1]);
+    const kA=Math.min(bw,bh)*0.16/Math.max(Math.hypot(ax,ay),0.1);
+    if(Math.hypot(ax,ay)>0.01) vec(ctx,bx,by,bx+ax*kA,by-ay*kA,COL.red,3.4);
+    vec(ctx,bx,by,bx+q[0]*kv,by-q[1]*kv,COL.blue,3.8);
+    circ(ctx,bx,by,13,COL.ink,'#fff',2.8); circ(ctx,bx,by,6,COL.ink,null,1.8);
+    for(let k=0;k<6;k++){ const a=k*Math.PI/3+tm*3; line(ctx,bx+Math.cos(a)*15,by+Math.sin(a)*15,bx+Math.cos(a)*19,by+Math.sin(a)*19,'rgba(47,143,224,0.5)',1.6); }
+    // start velocity (yellow) at the origin
+    const ox=X(0), oy=Y(0); if(ox>L&&ox<L+bw&&oy>Tp&&oy<B){ vec(ctx,ox,oy,ox+v0x*kv,oy-v0y*kv,COL.yellow,2.6); circ(ctx,ox,oy,4,COL.yellow,COL.yellow,1); }
+    $('#r1').textContent=fmt(tm,1)+' s'; $('#r2').textContent=fmt(sa,1)+' m/s'; $('#r3').textContent=fmt(p[0],1); $('#r4').textContent=fmt(p[1],1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.6 PROJECTILE MOTION   (§3.9 — Example 3.8)
+   x = v₀cosθ·t ,  y = v₀sinθ·t − ½gt²
+   h = (v₀sinθ)²/2g ,  Tf = 2v₀sinθ/g ,  R = v₀² sin2θ / g
+   Check: v₀ = 28, θ = 30°  →  h = 10.0 m, Tf = 2.9 s, R = 69 m.
+   Flights longer than 4 s are time-compressed to 4 s of screen time.
+   ===================================================================== */
+function proj(v0,thDeg,g,t){
+  const a=thDeg*Math.PI/180, vx=v0*Math.cos(a), vy0=v0*Math.sin(a);
+  return {x:vx*t, y:vy0*t-0.5*g*t*t, vx:vx, vy:vy0-g*t};
+}
+function projFacts(v0,thDeg,g){
+  const a=thDeg*Math.PI/180; return {h:Math.pow(v0*Math.sin(a),2)/(2*g), T:2*v0*Math.sin(a)/g, R:v0*v0*Math.sin(2*a)/g};
+}
+function groundTicks(ctx,X,Y,x0,x1,groundY,sc,color){
+  const st=niceStep((x1-x0),8);
+  for(let i=0;i<=x1;i+=st){ const x=X(i); line(ctx,x,groundY,x,groundY+7,COL.mid,1.5); textAt(ctx,fmt(i,i<1?0:(st<1?1:0)),x,groundY+21,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+}
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('v','Launch speed v₀',5,40,0.5,28,' m/s')}
+    ${slider('th','Launch angle θ',5,90,1,30,'°')}
+    <div class="control-group"><label>Gravity</label><div class="chip-wrap" id="gr"></div></div>
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn danger" id="fire" style="padding:11px">🎯 Fire!</button></div>
+    <div class="control-group"><label>Try</label><div class="chip-wrap" id="pr"></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Max height','var(--f-blue)')}${card('r2','Time of flight','')}${card('r3','Range','var(--f-green)')}${card('r4','Now: vₓ | v_y','',false)}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let g=9.8;
+  chipRow(wrap,'#gr',[{label:'Earth 9.8',g:9.8},{label:'Moon 1.6',g:1.6},{label:'Jupiter 24.8',g:24.8}],it=>{ g=it.g; },0);
+  chipRow(wrap,'#pr',[{label:'Example 3.8',v:28,t:30},{label:'Max range 45°',v:28,t:45},{label:'Lob 80°',v:28,t:80}],it=>{ setS(wrap,'v',it.v); setS(wrap,'th',it.t); },0);
+  let fl=null, land=null, recoil=sp(0), flash=0, t=0, lsc=Math.log(8), barrel=sp(30), spin=0, strobe=[];
+  $('#fire').onclick=()=>{
+    const v0=+$('#v').value, th=+$('#th').value, f=projFacts(v0,th,g);
+    fl={v0:v0,th:th,g:g,f:f,t:0,rate:Math.max(1,f.T/4)}; land=null; strobe=[]; recoil.v=-520; flash=0.18;
+  };
+  animLoop(dt=>{
+    t+=dt; const v0=rd(wrap,'v',1), th=rd(wrap,'th',0), pf=projFacts(v0,th,g);
+    springTo(barrel,th,90,13,dt); springTo(recoil,0,260,15,dt); flash=Math.max(0,flash-dt);
+    if(fl && !land){ fl.t=Math.min(fl.f.T,fl.t+dt*fl.rate); if(fl.t>=fl.f.T){ const pp=proj(fl.v0,fl.th,fl.g,fl.f.T); land={x:pp.x,vx:pp.vx*0.35,y:0,vy:Math.abs(pp.vy)*0.32,hops:0}; } }
+    // after landing the ball bounces and rolls to rest (energy loss each hop)
+    if(land){ const sdt=dt*fl.rate; land.x+=land.vx*sdt; land.vx*=Math.exp(-1.6*sdt); land.y+=land.vy*sdt; land.vy-=fl.g*sdt;
+      if(land.y<0){ land.y=0; land.vy=-land.vy*0.42; land.hops++; if(land.vy<0.4) land.vy=0; } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gY=h*0.84, x0=Math.min(70,w*0.09), availW=w-x0-24;
+    const Rw=Math.max(pf.R,fl?fl.f.R:0,3)*1.1, Hw=Math.max(pf.h,fl?fl.f.h:0,1.5)*1.35;
+    const tgt=Math.log(Math.min(availW/Rw,(gY-26)/Hw)); lsc=approach(lsc,tgt,3,dt); const sc=Math.exp(lsc);
+    const X=u=>x0+u*sc, Y=u=>gY-u*sc;
+    // sky grid
+    const st=niceStep(availW/sc,8);
+    for(let i=0;i<=availW/sc;i+=st) line(ctx,X(i),20,X(i),gY,COL.grid,1);
+    for(let j=0;j<=(gY-20)/sc;j+=st) line(ctx,x0-6,Y(j),w-10,Y(j),COL.grid,1);
+    for(let j=st;j<=(gY-20)/sc;j+=st) textAt(ctx,fmt(j,j<1?1:0),x0-12,Y(j)+4,{align:'right',size:10.5,color:COL.mid,weight:600});
+    // ground
+    line(ctx,x0-30,gY,w-8,gY,COL.ink,3);
+    for(let i=0;i<=availW/sc;i+=st){ line(ctx,X(i),gY,X(i),gY+7,COL.mid,1.5); textAt(ctx,fmt(i,i<1?1:0),X(i),gY+22,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    textAt(ctx,'metres',w-12,gY+40,{align:'right',size:11,color:COL.muted,weight:700});
+    // predicted parabola (what the sliders say)
+    ctx.save(); ctx.strokeStyle='rgba(217,160,23,0.85)'; ctx.lineWidth=2.2; ctx.setLineDash([7,6]); ctx.beginPath();
+    for(let i=0;i<=60;i++){ const p=proj(v0,th,g,pf.T*i/60); i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); } ctx.stroke(); ctx.restore();
+    // apex + range dimensions of the preview
+    const ap=proj(v0,th,g,pf.T/2); circ(ctx,X(ap.x),Y(ap.y),4,COL.yellow,COL.yellow,1);
+    // cannon at the origin: barrel is spring-damped to θ, recoils on firing
+    const ba=barrel.x*Math.PI/180, bxp=X(0), byp=gY-16;
+    ctx.save(); ctx.translate(bxp,byp); ctx.rotate(-ba);
+    ctx.lineJoin='round'; rrect(ctx,-18+recoil.x,-7,56,14,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke();
+    line(ctx,34+recoil.x,-9,34+recoil.x,9,COL.ink,4);
+    if(flash>0){ for(let k=-2;k<=2;k++) line(ctx,42,0,42+22+Math.random()*10,k*7,COL.yellow,2.4); }
+    ctx.restore();
+    circ(ctx,bxp,byp+3,10,COL.ink,'#fff',3); line(ctx,bxp-22,gY,bxp+4,byp+8,COL.ink,3);
+    // flight
+    let live=null;
+    if(fl){
+      const f=fl.f; const dts=f.T>6?0.5:(f.T>2.5?0.25:0.1);
+      // trail drawn from the real formula, up to now
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=3.6; ctx.lineJoin='round'; ctx.beginPath();
+      for(let i=0;i<=80;i++){ const p=proj(fl.v0,fl.th,fl.g,Math.min(fl.t,f.T)*i/80); i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); } ctx.stroke(); ctx.restore();
+      // equal-time strobe: equal x-spacing, unequal y-spacing
+      for(let ts=dts;ts<=Math.min(fl.t,f.T)+1e-6;ts+=dts){ const p=proj(fl.v0,fl.th,fl.g,ts); circ(ctx,X(p.x),Y(p.y),4,COL.green,'#fff',1.8); }
+      const apx=fl.v0*Math.cos(fl.th*Math.PI/180)*f.T/2;
+      if(fl.t>=f.T/2){ dimArrow(ctx,X(apx)+22,gY,X(apx)+22,Y(f.h),COL.blue); tl(ctx,'h = '+fmt(f.h,1)+' m',X(apx)+30,(gY+Y(f.h))/2+4,{color:COL.blue,size:12}); line(ctx,X(apx),Y(f.h),X(apx)+26,Y(f.h),COL.blue,1.2,[3,3]); }
+      if(land){ dimArrow(ctx,X(0),gY+30,X(f.R),gY+30,COL.green); tl(ctx,'R = '+fmt(f.R,1)+' m',X(f.R/2),gY+27,{color:COL.green,size:12,align:'center'}); }
+      let bx,by,vx,vy;
+      if(!land){ const p=proj(fl.v0,fl.th,fl.g,fl.t); bx=X(p.x); by=Y(p.y); vx=p.vx; vy=p.vy; live=[vx,vy]; }
+      else { bx=X(land.x); by=Y(land.y); vx=0; vy=0; }
+      spin+=dt*(land?2:9);
+      if(!land){
+        const kv=Math.min(2.2,70/Math.max(fl.v0,1)*1.2);
+        vec(ctx,bx,by,bx+vx*kv,by,COL.red,3.2);
+        vec(ctx,bx,by,bx,by-vy*kv,COL.blue,3.2);
+        vec(ctx,bx,by,bx+vx*kv,by-vy*kv,COL.green,4);
+        tl(ctx,'vₓ',bx+vx*kv/2,by+(vy>=0?18:-8),{color:COL.red,size:12,align:'center'});
+        if(Math.abs(vy)>2) tl(ctx,'v_y',bx-20,by-vy*kv/2,{color:COL.blue,size:12,align:'center'});
+      } else {
+        for(let k=0;k<3;k++){ const ph=(t*1.2+k*.3)%1; ctx.save(); ctx.globalAlpha=(1-ph)*Math.max(0,1-land.hops*0.25); line(ctx,X(f.R)+8+ph*30,gY-3-k*3,X(f.R)+18+ph*40,gY-3-k*3,COL.mid,2); ctx.restore(); }
+      }
+      drawBall(ctx,bx,by-(land?9:0),9,COL.green,spin);
+    }
+    // landing flag at the predicted range
+    line(ctx,X(pf.R),gY,X(pf.R),gY-22,COL.yellow,2.4); ctx.save(); ctx.fillStyle=COL.yellow; ctx.beginPath(); ctx.moveTo(X(pf.R),gY-22); ctx.lineTo(X(pf.R)+13,gY-17); ctx.lineTo(X(pf.R),gY-12); ctx.fill(); ctx.restore();
+    $('#r1').textContent=fmt(pf.h,1)+' m'; $('#r2').textContent=fmt(pf.T,2)+' s'; $('#r3').textContent=fmt(pf.R,1)+' m';
+    $('#r4').textContent=live?fmt(live[0],1)+' | '+fmt(live[1],1):(fl?'landed':'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.7 EQUAL RANGES   (§3.9 — Example 3.6, Galileo)
+   R = v₀² sin2θ / g  ⇒  angles 45° ± δ give the same R.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('v','Launch speed v₀',10,40,0.5,25,' m/s')}
+    ${slider('dl','Offset δ from 45°',0,40,1,20,'°')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn danger" id="fire" style="padding:11px">🎯 Fire all three</button></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Blue  45° − δ','var(--f-blue)')}${card('r2','Red  45° + δ','var(--f-red)')}
+      ${card('r3','Range (blue = red)','var(--f-green)')}${card('r4','Range at 45°','var(--f-green)')}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const g=9.8; let fl=null, t=0, lsc=Math.log(8);
+  const sD=sp(20);
+  $('#fire').onclick=()=>{ const v0=+$('#v').value, d=+$('#dl').value; fl={v0:v0,angs:[45-d,45+d,45],t:0}; fl.T=Math.max(...fl.angs.map(a=>projFacts(v0,a,g).T)); fl.rate=Math.max(1,fl.T/4.5); };
+  animLoop(dt=>{
+    t+=dt; const v0=rd(wrap,'v',1), d=rd(wrap,'dl',0); springTo(sD,d,80,12,dt);
+    if(fl) fl.t=Math.min(fl.T,fl.t+dt*fl.rate);
+    const cols=[COL.blue,COL.red,COL.green];
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gY=h*0.86, x0=Math.min(60,w*0.08), availW=w-x0-26;
+    const angsPrev=[45-sD.x,45+sD.x,45];
+    const Rw=Math.max(projFacts(v0,45,g).R,1)*1.12, Hw=Math.max(projFacts(v0,Math.max(45-sD.x,45+sD.x),g).h,1)*1.3;
+    lsc=approach(lsc,Math.log(Math.min(availW/Rw,(gY-26)/Hw)),3,dt); const sc=Math.exp(lsc);
+    const X=u=>x0+u*sc, Y=u=>gY-u*sc;
+    const st=niceStep(availW/sc,8);
+    for(let i=0;i<=availW/sc;i+=st) line(ctx,X(i),20,X(i),gY,COL.grid,1);
+    for(let j=st;j<=(gY-20)/sc;j+=st) line(ctx,x0-6,Y(j),w-10,Y(j),COL.grid,1);
+    line(ctx,x0-24,gY,w-8,gY,COL.ink,3);
+    for(let i=0;i<=availW/sc;i+=st){ line(ctx,X(i),gY,X(i),gY+7,COL.mid,1.5); textAt(ctx,fmt(i,0),X(i),gY+22,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    textAt(ctx,'metres',w-12,gY+40,{align:'right',size:11,color:COL.muted,weight:700});
+    // previews (dashed) from the sliders
+    angsPrev.forEach((a,i)=>{ const f=projFacts(v0,a,g); ctx.save(); ctx.strokeStyle=cols[i]; ctx.globalAlpha=0.5; ctx.lineWidth=2; ctx.setLineDash([6,6]); ctx.beginPath();
+      for(let q=0;q<=50;q++){ const p=proj(v0,a,g,f.T*q/50); q?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); } ctx.stroke(); ctx.restore(); });
+    // shared landing mark
+    const Rb=projFacts(v0,45-sD.x,g).R;
+    line(ctx,X(Rb),gY,X(Rb),gY-26,COL.ink,2.4); ctx.save(); ctx.fillStyle=COL.yellow; ctx.beginPath(); ctx.moveTo(X(Rb),gY-26); ctx.lineTo(X(Rb)+15,gY-20); ctx.lineTo(X(Rb),gY-14); ctx.fill(); ctx.restore();
+    // three little launchers
+    angsPrev.forEach((a,i)=>{ const ba=a*Math.PI/180; ctx.save(); ctx.translate(X(0),gY-8-i*0); ctx.rotate(-ba); rrect(ctx,-6,-4-0,34+0,8,3); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=cols[i]; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore(); });
+    circ(ctx,X(0),gY-6,8,COL.ink,'#fff',2.6);
+    let rr=['—','—','—','—'];
+    if(fl){
+      fl.angs.forEach((a,i)=>{
+        const f=projFacts(fl.v0,a,g), tt=Math.min(fl.t,f.T);
+        ctx.save(); ctx.strokeStyle=cols[i]; ctx.lineWidth=3.6; ctx.beginPath();
+        for(let q=0;q<=70;q++){ const p=proj(fl.v0,a,g,tt*q/70); q?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)); } ctx.stroke(); ctx.restore();
+        const p=proj(fl.v0,a,g,tt);
+        if(fl.t>=f.T){ circ(ctx,X(f.R),gY,5,cols[i],cols[i],1); for(let k=0;k<4;k++){ const ph=(t*1.5+k*.25)%1; ctx.save(); ctx.globalAlpha=1-ph; line(ctx,X(f.R)-6-ph*16,gY-2,X(f.R)-12-ph*22,gY-3-k*3,cols[i],1.8); line(ctx,X(f.R)+6+ph*16,gY-2,X(f.R)+12+ph*22,gY-3-k*3,cols[i],1.8); ctx.restore(); } }
+        else drawBall(ctx,X(p.x),Y(p.y),8,cols[i],t*8+i);
+      });
+      const fb=projFacts(fl.v0,fl.angs[0],g), fr=projFacts(fl.v0,fl.angs[1],g), fm=projFacts(fl.v0,45,g);
+      rr=[fmt(fl.angs[0],0)+'° · '+fmt(fb.T,1)+' s · '+fmt(fb.h,1)+' m',fmt(fl.angs[1],0)+'° · '+fmt(fr.T,1)+' s · '+fmt(fr.h,1)+' m',fmt(fb.R,1)+' m = '+fmt(fr.R,1)+' m',fmt(fm.R,1)+' m'];
+    }
+    $('#r1').textContent=rr[0]; $('#r2').textContent=rr[1]; $('#r3').textContent=rr[2]; $('#r4').textContent=rr[3];
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.8 THROWN vs DROPPED   (§3.9 — Example 3.7, the hiker on a cliff)
+   y = ½gt² (both) ; x = vₓt (thrown only)  ⇒  they land together.
+   Check: h = 490 m, vₓ = 15 m/s → t = 10 s, v_y = 98 m/s, speed = 99 m/s.
+   Flights longer than 6 s are time-compressed to 6 s of screen time.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('vx','Throwing speed vₓ',0,60,1,15,' m/s')}
+    ${slider('hh','Cliff height h',20,490,10,490,' m')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn danger" id="fire" style="padding:11px">🪨 Throw + drop</button></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','Fall time (both)','')}${card('r2','Thrown lands at','var(--f-green)')}
+      ${card('r3','Vertical v_y at ground','var(--f-blue)')}${card('r4','Speed at ground','var(--f-green)')}
+    </div></div>
+    <div class="hint">Scales adjust to fit the screen.</div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const g=9.8; let fl=null, t=0, arm=sp(Math.PI*0.9), landT=null;
+  $('#fire').onclick=()=>{ const vx=+$('#vx').value, hh=+$('#hh').value, T=Math.sqrt(2*hh/g); fl={vx:vx,h:hh,T:T,t:0,rate:Math.max(1,T/6)}; arm.x=Math.PI*1.15; arm.v=-26; landT=null; };
+  animLoop(dt=>{
+    t+=dt; const vxS=rd(wrap,'vx',0), hS=rd(wrap,'hh',0);
+    const prevT=Math.sqrt(2*hS/g);
+    if(fl){ fl.t=Math.min(fl.T,fl.t+dt*fl.rate); if(fl.t>=fl.T&&landT===null) landT=0; if(landT!==null) landT+=dt; }
+    springTo(arm,Math.PI*0.9,60,8,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gY=h*0.9, topY=Math.max(96,h*0.14), cliffW=Math.min(150,w*0.2), cx1=cliffW;
+    const H=fl?fl.h:hS, VX=fl?fl.vx:vxS, rangeW=Math.max(VX*Math.sqrt(2*H/g),20);
+    const sx=(w-cliffW-48)/(rangeW*1.12), sy=(gY-topY)/H;
+    const X=u=>cx1+u*sx, Y=u=>topY+(H-u)*sy;       // u: height above ground (m) for Y; metres from the edge for X
+    const Yh=hh=>gY-hh*sy;
+    // sea + ground
+    line(ctx,cx1,gY,w-8,gY,COL.ink,3);
+    for(let k=0;k<30;k++){ const xx=cx1+14+k*((w-cx1)/30); line(ctx,xx,gY,xx-8,gY+9,COL.mid,1.4); }
+    // cliff
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0,topY); ctx.lineTo(cx1,topY); ctx.lineTo(cx1,gY); ctx.lineTo(0,gY); ctx.closePath(); ctx.fillStyle='#f3f7fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke(); ctx.clip();
+    for(let k=0;k<22;k++){ const yy=topY+14+k*(gY-topY)/22; line(ctx,0,yy+8,cx1,yy-6,'rgba(129,149,171,0.45)',1.2); }
+    ctx.restore();
+    // height ruler
+    dimArrow(ctx,cx1+16,topY,cx1+16,gY,COL.blue); tl(ctx,fmt(H,0)+' m',cx1+24,(topY+gY)/2,{color:COL.blue,size:12});
+    // x ruler on the ground
+    const stp=niceStep(rangeW*1.12,6);
+    for(let i=stp;i<=rangeW*1.12;i+=stp){ const x=X(i); line(ctx,x,gY,x,gY-6,COL.mid,1.4); textAt(ctx,fmt(i,0)+' m',x,gY+24,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    // hiker at the edge
+    stickman(ctx,cx1-26,topY,1.35,0,arm.x);
+    // stones
+    if(fl){
+      const tt=fl.t, ds=fl.T/10;
+      // strobe lines: the same instants for both stones → same height
+      for(let ts=ds;ts<=tt+1e-6;ts+=ds){ const yy=Yh(fl.h-0.5*g*ts*ts), xt=X(fl.vx*ts);
+        line(ctx,cx1+30,yy,xt,yy,'rgba(129,149,171,0.38)',1.2,[3,5]);
+        circ(ctx,cx1+30,yy,3.5,COL.blue,'#fff',1.6); circ(ctx,xt,yy,3.5,COL.green,'#fff',1.6); }
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=3.2; ctx.beginPath();
+      for(let q=0;q<=70;q++){ const ts=tt*q/70; const xx=X(fl.vx*ts), yy=Yh(fl.h-0.5*g*ts*ts); q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore();
+      line(ctx,cx1+30,Yh(fl.h),cx1+30,Yh(fl.h-0.5*g*tt*tt),COL.blue,3.2);
+      const vy=g*tt, hy=fl.h-0.5*g*tt*tt, xt=X(fl.vx*tt), xd=cx1+30, yy=Yh(hy);
+      // velocity arrows on the thrown stone (px per m/s)
+      const kv=Math.min(1.1,90/Math.max(Math.hypot(fl.vx,g*fl.T),1));
+      vec(ctx,xt,yy,xt+fl.vx*kv,yy,COL.red,3);
+      vec(ctx,xt,yy,xt,yy+vy*kv,COL.blue,3);
+      vec(ctx,xt,yy,xt+fl.vx*kv,yy+vy*kv,COL.green,3.6);
+      vec(ctx,xd,yy,xd,yy+vy*kv,COL.blue,3);
+      circ(ctx,xt,yy,9,COL.green,'#fff',2.8); circ(ctx,xd,yy,9,COL.blue,'#fff',2.8);
+      tl(ctx,'thrown',xt+14,yy-12,{color:COL.green,size:11.5}); tl(ctx,'dropped',xd-12,yy-12,{color:COL.blue,size:11.5,align:'right'});
+      if(landT!==null){ for(let k=0;k<5;k++){ const ph=Math.min(1,landT*1.2); ctx.save(); ctx.globalAlpha=1-ph; line(ctx,xt+(k-2)*6,gY-2,xt+(k-2)*14,gY-6-ph*22-k,COL.green,2); line(ctx,xd+(k-2)*6,gY-2,xd+(k-2)*14,gY-6-ph*22-k,COL.blue,2); ctx.restore(); }
+        tl(ctx,'Both land together!',(xt+xd)/2,gY-34,{align:'center',size:13,color:COL.ink}); }
+      tl(ctx,'t = '+fmt(tt,1)+' s',w-14,26,{align:'right',size:13});
+    } else {
+      circ(ctx,cx1+30,topY+6,9,COL.green,'#fff',2.8); circ(ctx,cx1+30,topY+6,9,COL.green,'#fff',2.8);
+    }
+    const Tn=fl?fl.T:prevT, vyn=g*Tn;
+    $('#r1').textContent=fmt(Tn,1)+' s'; $('#r2').textContent=fmt(VX*Tn,0)+' m out';
+    $('#r3').textContent=fmt(vyn,0)+' m/s'; $('#r4').textContent=fmt(Math.hypot(VX,vyn),0)+' m/s';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.9 UNIFORM CIRCULAR MOTION   (§3.10 — Example 3.9)
+   ω = 2π/T ,  v = ωR ,  a = ω²R = v²/R  (towards the centre)
+   Check: R = 12 cm, 7 rev in 100 s (T = 14.3 s) → ω = 0.44 rad/s, v = 5.3 cm/s, a = 2.3 cm/s².
+   Cut the string: the stone flies off along the tangent at constant speed.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    ${slider('R','Radius R',5,20,0.5,12,' cm')}
+    ${slider('T','Period T',2,15,0.1,6,' s')}
+    <div class="toggle-group" style="margin-top:0"><button class="toggle-btn danger" id="cut" style="padding:10px">✂ Cut the string</button><button class="toggle-btn" id="rs" style="padding:10px">↺ Re-tie</button></div>
+    <div class="control-group"><label>Try</label><div class="chip-wrap" id="pr"></div></div>
+    <div class="control-group"><div class="result-cards">
+      ${card('r1','ω = 2π/T','var(--f-green)')}${card('r2','v = ωR','var(--f-blue)')}
+      ${card('r3','a = ω²R','var(--f-red)')}${card('r4','Revolutions/s','')}
+    </div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  chipRow(wrap,'#pr',[{label:'Example 3.9',R:12,T:14.29},{label:'Fast & tight',R:6,T:2.5},{label:'Wide & slow',R:20,T:12}],it=>{ setS(wrap,'R',it.R); setS(wrap,'T',it.T); },null);
+  const sR=sp(12), sw=sp(2*Math.PI/6);
+  let th=0.6, t=0, free=null, endP={x:0,y:0,vx:0,vy:0}, away=0;
+  $('#cut').onclick=()=>{ if(free) return; free='pending'; };
+  $('#rs').onclick=()=>{ free=null; away=0; };
+  animLoop(dt=>{
+    t+=dt; const tR=rd(wrap,'R',1), tT=rd(wrap,'T',1);
+    springTo(sR,tR,60,12,dt); sw.x=approach(sw.x,2*Math.PI/tT,2.2,dt);     // the hand speeds up smoothly
+    const R=Math.max(1,sR.x), om=sw.x, v=om*R, ac=om*om*R;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.36, cy=h*0.52, k=Math.min(0.4*h/20,(w*0.3)/20), Rp=R*k;
+    th+=om*dt;
+    let sx=cx+Rp*Math.cos(th), sy=cy-Rp*Math.sin(th);
+    // cutting: the stone leaves with the tangent velocity (screen px/s)
+    if(free==='pending'){ free={x:sx,y:sy,vx:-v*k*Math.sin(th),vy:-v*k*Math.cos(th)}; endP={x:sx,y:sy,vx:0,vy:0}; }
+    if(free&&free!=='pending'){ free.x+=free.vx*dt; free.y+=free.vy*dt; sx=free.x; sy=free.y;
+      // slack string: its free end is a mass pulled back to the hand by a springy cord
+      endP.vx+=((cx-endP.x)*22-endP.vx*2.2)*dt; endP.vy+=((cy+16-endP.y)*22-endP.vy*2.2+260)*dt; endP.x+=endP.vx*dt; endP.y+=endP.vy*dt;
+      if(free.x<-60||free.x>w+60||free.y<-60||free.y>h+60){ away+=dt; if(away>1.2){ free=null; away=0; } } }
+    // orbit + angle swept
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.setLineDash([5,7]); ctx.beginPath(); ctx.arc(cx,cy,Rp,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    line(ctx,cx,cy,cx+Rp*1.5,cy,COL.mid,1.2,[4,4]);
+    const thv=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+    if(!free){ ctx.save(); ctx.fillStyle='rgba(31,157,85,0.12)'; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,Math.min(Rp*0.55,46),0,-thv,true); ctx.closePath(); ctx.fill(); ctx.restore();
+      angArc(ctx,cx,cy,Math.min(Rp*0.55,46),0,-thv,COL.green,3);
+      tl(ctx,'θ = ωt',cx+Math.cos(-thv/2)*(Math.min(Rp*0.55,46)+26),cy+Math.sin(-thv/2)*(Math.min(Rp*0.55,46)+26)+4,{color:COL.green,size:12,align:'center'}); }
+    // string
+    if(!free){ line(ctx,cx,cy,sx,sy,COL.ink,2.4); dimArrow(ctx,cx+(sy-cy)*0.0+ -Math.sin(th)*-14*0,cy,cx,cy,COL.yellow);
+      const mx=(cx+sx)/2, my=(cy+sy)/2; tl(ctx,'R = '+fmt(R,1)+' cm',mx+Math.sin(th)*22*1,my+Math.cos(th)*22*1,{color:COL.yellow,size:12,align:'center'}); }
+    else { ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.quadraticCurveTo((cx+endP.x)/2+Math.sin(t*9)*6,(cy+endP.y)/2+14,endP.x,endP.y); ctx.stroke(); ctx.restore(); }
+    // hand at the centre
+    circ(ctx,cx,cy,11,COL.ink,'#fff',3); circ(ctx,cx,cy,3,COL.ink,COL.ink,1);
+    // vectors on the stone
+    const lv=Math.min(0.32*h,v*4.4), la=Math.min(0.32*h,ac*2.8);
+    const tx=-Math.sin(th), ty=-Math.cos(th);
+    if(!free){
+      vec(ctx,sx,sy,sx+tx*lv,sy+ty*lv,COL.blue,4); tl(ctx,'v',sx+tx*lv+tx*12,sy+ty*lv+ty*12,{color:COL.blue,size:14,align:'center'});
+      vec(ctx,sx,sy,sx-Math.cos(th)*la,sy+Math.sin(th)*la,COL.red,4); tl(ctx,'a',sx-Math.cos(th)*(la+13),sy+Math.sin(th)*(la+13)+5,{color:COL.red,size:14,align:'center'});
+    } else {
+      line(ctx,sx,sy,sx+free.vx*8,sy+free.vy*8,'rgba(47,143,224,0.4)',1.6,[3,5]); vec(ctx,sx,sy,sx+tx*lv,sy+ty*lv,COL.blue,4);
+      tl(ctx,'No string → no centre-seeking acceleration',cx,h-18,{align:'center',size:12.5,color:COL.red});
+    }
+    // stone with a little wobble
+    circ(ctx,sx,sy,12,COL.ink,'#fff',3); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(sx,sy,6,t*3,t*3+2.2); ctx.stroke(); ctx.restore();
+    // inset: Δv = v(t+Δt) − v(t) always points to the centre
+    if(w>560){
+      const ix=w-120, iy=96, s=52, d=1.1, a1=th+Math.PI/2, a2=th+d+Math.PI/2;
+      ctx.save(); rrect(ctx,ix-100,iy-80,200,176,12); ctx.fillStyle='rgba(246,249,252,0.96)'; ctx.fill(); ctx.strokeStyle=COL.border; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+      textAt(ctx,'Change in velocity',ix,iy-62,{align:'center',size:11.5,weight:700,color:COL.muted});
+      const ox=ix, oy=iy+12;
+      const v1=[Math.cos(a1)*s,-Math.sin(a1)*s], v2=[Math.cos(a2)*s,-Math.sin(a2)*s];
+      vec(ctx,ox,oy,ox+v1[0],oy+v1[1],COL.blue,3); vec(ctx,ox,oy,ox+v2[0],oy+v2[1],COL.blue,3);
+      vec(ctx,ox+v1[0],oy+v1[1],ox+v2[0],oy+v2[1],COL.red,3.6);
+      tl(ctx,'v(t)',ox+v1[0]*0.5-6,oy+v1[1]*0.5+ (v1[1]>0?14:-6),{color:COL.blue,size:11});
+      tl(ctx,'Δv',(2*ox+v1[0]+v2[0])/2+ (v2[0]-v1[0]>0?8:-8),(2*oy+v1[1]+v2[1])/2-8,{color:COL.red,size:12,align:'center'});
+      textAt(ctx,'Δv points to the centre',ix,iy+88,{align:'center',size:10.5,weight:600,color:COL.red});
+    }
+    $('#r1').textContent=fmt(om,2)+' rad/s'; $('#r2').textContent=fmt(v,1)+' cm/s'; $('#r3').textContent=fmt(ac,1)+' cm/s²'; $('#r4').textContent=fmt(om/(2*Math.PI),2)+' Hz';
+    $('#cut').disabled=!!free; $('#cut').textContent=free?'✂ Cut!':'✂ Cut the string';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

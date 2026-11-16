@@ -3,7 +3,7 @@
   'use strict';
   var h = BL.h, NS = 'http://www.w3.org/2000/svg';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var N = { chapters: 61, activities: 421, classes: 5 };
+  var N = { chapters: 134, activities: 1158, classes: 7 };
   /** text with {chapters} / {activities} becomes pieces whose numbers are filled in from the server */
   function tokens(text) { return String(text).split(/(\{[a-z]+\})/).map(function (p) { var m = /^\{([a-z]+)\}$/.exec(p); return m ? h('span', { 'data-n': m[1], text: String(N[m[1]]) }) : p; }); }
   /** fade-and-rise when something scrolls into view */
@@ -96,9 +96,9 @@
   // ------------------------------------------------------------------ how it works (tabs)
   var HOW = [
     { tab: 'Pick', n: '01', title: 'Choose your class and chapter', text: 'Open the class you study in and pick a chapter from your NCERT book. Every chapter is a set of small labs, one for each idea.',
-      ticks: ['Classes 6, 7, 8, 9 and 10', 'Chapters named exactly like your book', 'Start where your class is today'],
+      ticks: ['Classes 6 to 12: science, then Physics, Chemistry and Maths', 'Chapters named exactly like your book', 'Start where your class is today'],
       mock: function () { return h('div', { class: 'glow-card' }, h('div', { class: 'tag', text: 'Your class', style: 'margin-bottom:10px' }),
-        h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px' }, [6, 7, 8, 9, 10].map(function (c) { return h('span', { class: 'tab' + (c === 8 ? ' on' : ''), text: 'Class ' + c }); })),
+        h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px' }, [6, 7, 8, 9, 10, 11, 12].map(function (c) { return h('span', { class: 'tab' + (c === 8 ? ' on' : ''), text: 'Class ' + c }); })),
         [['Exploring the Investigative World of Science', 4], ['The Invisible Living World', 9], ['Health: The Ultimate Treasure', 7]].map(function (tc, i) { var t = tc[0]; return h('div', { class: 'ch', style: 'margin-bottom:8px' }, h('span', { class: 'n', text: i + 1 }), h('div', null, h('div', { class: 't', text: t }), h('div', { class: 'meta', text: tc[1] + ' activities' })), h('span', { class: 'badge ' + (i === 0 ? 'green' : 'grey'), text: i === 0 ? 'Free' : 'Plan' })); })); } },
     { tab: 'Explore', n: '02', title: 'Change things and watch what happens', text: 'Each lab has sliders and buttons. Change a value and the picture responds at once, so the idea becomes something you can see.',
       ticks: ['Drag, tune and compare', 'Real formulas, worked live', 'No reading walls of text'],
@@ -128,7 +128,7 @@
     flask: 'M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3', book: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5zM4 19a2 2 0 0 1 2-2h13', sigma: 'M18 5H6l7 7-7 7h12',
     bolt: 'M13 2 4 14h7l-1 8 9-12h-7l1-8z', chart: 'M4 20V10M10 20V4M16 20v-7M22 20H2', device: 'M5 4h14v12H5zM2 20h20', shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4', gift: 'M3 9h18v4H3zM5 13v8h14v-8M12 9v12M12 9c-3 0-4-4-1-4 2 0 1 4 1 4zm0 0c3 0 4-4 1-4-2 0-1 4-1 4z',
   };
-  var FEATS = [['flask', 'Hands-on simulations', 'Every chapter is a set of labs you control, not a page to read.'], ['book', 'All {chapters} chapters', '{activities} hands-on activities across Classes 6 to 10, following the textbook.'], ['sigma', 'Real formulas', 'Each result is worked out with the actual science, checked against the book.'], ['bolt', 'Instant feedback', 'Quick questions tell you at once what is right and why.'],
+  var FEATS = [['flask', 'Hands-on simulations', 'Every chapter is a set of labs you control, not a page to read.'], ['book', 'All {chapters} chapters', '{activities} hands-on activities across Classes 6 to 12, following the textbook.'], ['sigma', 'Real formulas', 'Each result is worked out with the actual science, checked against the book.'], ['bolt', 'Instant feedback', 'Quick questions tell you at once what is right and why.'],
     ['chart', 'Progress you can see', 'Time spent, streaks and finished chapters, saved for you.'], ['device', 'Any device', 'Phone, tablet or computer. Nothing to install: just open the website.'], ['shield', 'Safe for children', 'No ads, no chat with strangers. Only the lessons.'], ['gift', 'Free to start', 'Chapter 1 of every class is free, with no card needed.']];
   var fg = document.getElementById('featGrid');
   if (fg) FEATS.forEach(function (f) {
@@ -143,7 +143,7 @@
     var span = function (d) { return d % 365 === 0 ? 'year' : d % 30 === 0 ? (d / 30) + ' months' : d + ' days'; };
     var cards = [h('div', { class: 'price' }, h('h3', { text: 'Free trial' }), h('div', { class: 'tg', text: 'Taste every class, no card needed' }),
       h('div', { class: 'amt' }, '₹0', h('small', { text: ' forever' })),
-      h('ul', null, ['Chapter 1 of every class (6 to 10)', 'Every simulation in those chapters', 'Progress tracking'].map(function (t) { return h('li', { text: t }); })),
+      h('ul', null, ['Chapter 1 of every class (6 to 12)', 'Every simulation in those chapters', 'Progress tracking'].map(function (t) { return h('li', { text: t }); })),
       h('a', { class: 'btn ghost', href: signedIn ? '/app' : '/register.html', text: signedIn ? 'Open the app' : 'Start free' }))];
     plans.forEach(function (p) {
       cards.push(h('div', { class: 'price' + (p.badge ? ' best' : '') }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
@@ -160,8 +160,8 @@
 
   // ------------------------------------------------------------------ faq
   var FAQ = [
-    ['What is Botclub Labs?', 'It is NCERT science for Classes 6 to 10, turned into interactive simulations. Instead of only reading, you change values, watch the result and check yourself with quick questions.'],
-    ['Which classes and chapters are covered?', 'Classes 6, 7, 8, 9 and 10: {chapters} chapters and {activities} activities in all, following the NCERT textbooks.'],
+    ['What is Botclub Labs?', 'It is NCERT learning for Classes 6 to 12 (science for 6 to 10; Physics, Chemistry and Mathematics for 11 and 12), turned into interactive simulations. Instead of only reading, you change values, watch the result and check yourself with quick questions.'],
+    ['Which classes and chapters are covered?', 'Classes 6 to 10 (science) and Classes 11 and 12 (Physics, Chemistry and Mathematics): {chapters} chapters and {activities} activities in all, following the NCERT textbooks.'],
     ['What is free?', 'Chapter 1 of every class is free once you make an account. No card is needed.'],
     ['How do the plans work?', 'You pay once for a full year: either one class of your choice, or all five classes. There is no auto-renewal. When the year ends, you can renew if you want to.'],
     ['How do I pay?', 'Securely online with UPI, cards or net banking. We never see or store your card details.'],
@@ -175,6 +175,31 @@
     var item = h('div', { class: 'qa' }, h('button', { type: 'button', text: q[0], onclick: function () { item.classList.toggle('open'); } }), h('div', { class: 'a' }, tokens(q[1])));
     fl.appendChild(item);
   });
+
+  // ------------------------------------------------------------------ Class 11 and 12: subjects and chapter lists
+  var senTabs = document.getElementById('seniorTabs'), senPanel = document.getElementById('seniorPanel');
+  if (senTabs && senPanel) BL.api('/syllabus').then(function (r) {
+    var cls = Object.keys(r.classes), data = r.classes, totalCh = 0, totalAct = 0;
+    cls.forEach(function (c) { totalCh += data[c].chapters; totalAct += data[c].activities; });
+    var lead = document.getElementById('seniorLead');
+    if (lead) lead.textContent = 'The same learn-by-doing way, for the two board years: ' + totalCh + ' chapters and ' + totalAct + ' activities from the NCERT textbooks.';
+    var COLORS = { Physics: 'var(--blue)', Chemistry: 'var(--green)', Mathematics: 'var(--yellow)' };
+    function showClass(c) {
+      [].forEach.call(senTabs.children, function (b) { b.classList.toggle('on', b.getAttribute('data-c') === c); });
+      var d = data[c];
+      senPanel.replaceChildren.apply(senPanel, d.subjects.map(function (s) {
+        return h('div', { class: 'sub-card reveal', style: '--c:' + (COLORS[s.name] || 'var(--blue)') },
+          h('h3', { text: s.name }), h('div', { class: 'sub-n' }, h('b', { text: s.chapters }), ' chapters · ', h('b', { text: s.activities }), ' activities'),
+          h('details', null, h('summary', { text: 'See the chapters' }), h('div', { class: 'sub-list' }, s.groups.map(function (g) {
+            return h('div', null, s.groups.length > 1 ? h('div', { class: 'grp', text: g.name.replace(s.name + ' · ', '') }) : null,
+              h('ol', null, g.chapters.map(function (x) { return h('li', null, x.title, h('span', { text: x.activities + ' activities' })); })));
+          }))));
+      }));
+      [].forEach.call(senPanel.querySelectorAll('.reveal'), function (e) { e.classList.add('in'); });
+    }
+    cls.forEach(function (c) { senTabs.appendChild(h('button', { class: 'tab', role: 'tab', type: 'button', 'data-c': c, text: 'Class ' + c, onclick: function () { showClass(c); } })); });
+    showClass(cls[0]);
+  }, function () { senPanel.replaceChildren(h('div', { class: 'empty', text: 'The Class 11 and 12 list could not be loaded. Please refresh the page.' })); });
 
   // ------------------------------------------------------------------ numbers from the server, hero counters, example school report
   function setNumbers() { [].forEach.call(document.querySelectorAll('[data-n]'), function (e) { var k = e.getAttribute('data-n'); if (N[k] != null && !e.hasAttribute('data-count')) e.textContent = N[k]; }); }

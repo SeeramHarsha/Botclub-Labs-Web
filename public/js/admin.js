@@ -53,7 +53,7 @@
   function student(id) {
     BL.api('/admin/students/' + encodeURIComponent(id)).then(function (r) {
       var s = r.student, err = h('p', { class: 'err' }), ok = h('p', { class: 'okmsg' });
-      var cls = [6, 7, 8, 9, 10].map(function (n) { return h('label', { style: 'margin-right:12px;font-size:14px' }, h('input', { type: 'checkbox', value: n, style: 'margin-right:5px' }), 'Class ' + n); });
+      var cls = [6, 7, 8, 9, 10, 11, 12].map(function (n) { return h('label', { style: 'margin-right:12px;font-size:14px' }, h('input', { type: 'checkbox', value: n, style: 'margin-right:5px' }), 'Class ' + n); });
       var days = h('input', { type: 'number', value: 365, min: 1, max: 1095, 'aria-label': 'Days', style: 'width:90px;padding:8px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--text)' });
       show('#/students', s.name, [
         h('div', { class: 'crumbs' }, h('a', { href: '#/students', text: '← Students' })),

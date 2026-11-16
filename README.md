@@ -24,6 +24,16 @@ Demo admin: `admin@demo.local` / `demo-admin-password`. Student accounts: use Si
 npm test            # 10 end-to-end tests against an in-memory MongoDB
 ```
 
+## Class 11 and 12
+
+The Physics, Chemistry and Mathematics activities for Class 11 and 12 live in `content/Class - 11` and `content/Class - 12` (chapter names in `content/titles-extra.json`, subject/part groups in `content/groups.json`). To import them again from the folder you were given:
+
+```bash
+node scripts/import-class-11-12.js --from "<folder that holds 11th Class and 12th Class>"
+```
+
+The script makes each page ready for the web (local fonts, Botclub Labs name, back button) and refreshes the activity counts. `npm run build-content` keeps Class 11 and 12 when it rebuilds the rest.
+
 ## Update the lessons
 
 When the lesson files in `activity-app/www` change, run `npm run build-content` to copy them into `content/`.

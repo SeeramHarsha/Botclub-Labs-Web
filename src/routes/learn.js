@@ -15,7 +15,7 @@ const catalog = require('../catalog');
 const router = express.Router();
 router.use(auth.loadUser);
 
-const CH_RE = /^\/Class - (6|7|8|9|10)\/Chapter - (\d{1,2})\/index\.html$/;
+const CH_RE = /^\/Class - (6|7|8|9|10|11|12)\/Chapter - (\d{1,2})\/index\.html$/;
 const pages = new Map();                                    // prepared chapter pages (a few MB at most)
 
 function prepare(file, c, n) {
@@ -36,7 +36,7 @@ router.get('*', async (req, res, next) => {
 
   if (p === '/' || p === '/index.html') {                   // the lesson pages' "back" button points here
     const c = Number(req.query.openClass);
-    return res.redirect('/app' + ([6, 7, 8, 9, 10].includes(c) ? `#/class/${c}` : ''));
+    return res.redirect('/app' + ([6, 7, 8, 9, 10, 11, 12].includes(c) ? `#/class/${c}` : ''));
   }
   const m = CH_RE.exec(p);
   if (!m) return next();

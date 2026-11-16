@@ -46,7 +46,7 @@ page('register.html', 'Create your account', `<main class="auth"><div class="box
     <label class="f"><span>Password (8+ characters)</span><input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
     <div id="pwMeter" class="micro" style="margin-top:6px"></div>
     <div class="two">
-      <label class="f"><span>Class</span><select name="cls" required><option value="">Choose…</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+      <label class="f"><span>Class</span><select name="cls" required><option value="">Choose…</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
       <label class="f"><span>Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="20"></label>
     </div>
     <label class="f"><span>School (optional)</span><input name="school" type="text" maxlength="100"></label>
@@ -93,7 +93,7 @@ page('privacy.html', 'Privacy Policy', `<main class="prose">${review}<h1>Privacy
 <h2>Contact</h2><p>Botclub Labs. Contact: [add your support email and address].</p></main>`, false);
 
 page('terms.html', 'Terms of Use', `<main class="prose">${review}<h1>Terms of Use</h1><p class="micro">Last updated: November 2026</p>
-<h2>The service</h2><p>Botclub Labs gives access to interactive science lessons for Classes 6 to 10. Some chapters are free; others need a paid plan.</p>
+<h2>The service</h2><p>Botclub Labs gives access to interactive science lessons for Classes 6 to 12. Some chapters are free; others need a paid plan.</p>
 <h2>Accounts</h2><p>An account is for one student. Please do not share your password. A parent or guardian must agree to these terms on behalf of a child.</p>
 <h2>Plans and payment</h2><p>A plan gives access, for the period shown when you buy it (for example one year), to the classes you chose. Plans do not renew by themselves. Prices are shown in Indian rupees. Payments are processed by our payment provider.</p>
 <h2>Using the lessons</h2><p>The lessons are for personal study. Please do not copy, resell, scrape or share them, or try to get around the plan limits.</p>

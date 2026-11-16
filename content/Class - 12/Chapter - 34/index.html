@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 4 — Vector Algebra | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">➚</div>
+    <div>
+      <div class="chip">Grade 12 · Maths Part 2 · Ch 4</div>
+      <h1>Vector Algebra</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-red)"></i>Vector a · x-axis</span>
+      <span><i style="background:var(--f-blue)"></i>Vector b · z-axis</span>
+      <span><i style="background:var(--f-green)"></i>Result · y-axis</span>
+      <span><i style="background:var(--f-yellow)"></i>Magnitude · angle</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">4.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — MATHS PART 2 — CHAPTER 4: VECTOR ALGEBRA
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or integrates toward it every
+   frame. Real equations drive the motion (friction roll, river drift,
+   torque spin-up) and are checked against the textbook's own examples.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+
+/* ---------------------------------------------------------------------
+   0c. CHAPTER-4 HELPERS — sliders, grid, 3D view, walker, bug
+   --------------------------------------------------------------------- */
+const D2R = Math.PI/180, R2D = 180/Math.PI;
+function sliderHTML(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipsHTML(id,label,items,activeIdx){
+  return `<div class="control-group">${label?`<label style="margin-bottom:6px;">${label}</label>`:''}<div class="toggle-group" id="${id}">`+
+    items.map((it,i)=>`<button class="toggle-btn small${i===activeIdx?' active':''}" data-k="${it[0]}">${it[1]}</button>`).join('')+`</div></div>`;
+}
+function cardsHTML(items,three){
+  return `<div class="control-group"><div class="result-cards${three?' three':''}">`+items.map(it=>
+    `<div class="rcard${it[3]?' wide':''}"><div class="rlabel">${it[1]}</div><div class="rval" id="${it[0]}" style="${it[2]?'color:'+it[2]:''}">—</div></div>`).join('')+`</div></div>`;
+}
+/* reader: reads slider `id`, writes its label with unit, returns number */
+function reader(wrap){
+  return (id,unit,d)=>{ const el=wrap.querySelector('#'+id); const v=+el.value; wrap.querySelector('#'+id+'V').textContent=fmt(v,d===undefined?1:d)+(unit||''); return v; };
+}
+function setSlider(wrap,id,v){ wrap.querySelector('#'+id).value=v; }
+function gridPlane(ctx,w,h,ox,oy,s,xr,yr,labels){
+  ctx.save();
+  for(let i=Math.ceil(xr[0]);i<=xr[1];i++){ line(ctx,ox+i*s,oy-yr[1]*s,ox+i*s,oy-yr[0]*s,i===0?COL.ink:'#e3eaf3',i===0?1.6:1); }
+  for(let j=Math.ceil(yr[0]);j<=yr[1];j++){ line(ctx,ox+xr[0]*s,oy-j*s,ox+xr[1]*s,oy-j*s,j===0?COL.ink:'#e3eaf3',j===0?1.6:1); }
+  if(labels){ for(let i=Math.ceil(xr[0]);i<=xr[1];i++) if(i!==0) textAt(ctx,i,ox+i*s,oy+14,{size:10,color:COL.mid,align:'center'});
+              for(let j=Math.ceil(yr[0]);j<=yr[1];j++) if(j!==0) textAt(ctx,j,ox-8,oy-j*s+3,{size:10,color:COL.mid,align:'right'}); }
+  ctx.restore();
+}
+function ptLabel(ctx,txt,x,y,col,dx,dy){
+  circ(ctx,x,y,4.5,col,'#fff',2.2);
+  textAt(ctx,txt,x+(dx===undefined?8:dx),y+(dy===undefined?-8:dy),{size:12.5,weight:700,color:col});
+}
+function badge(ctx,txt,x,y,col){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; rrect(ctx,x,y-14,tw+14,22,7);
+  ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,x+7,y+2,{size:12,weight:700,color:col});
+}
+function arcPath(ctx,cx,cy,r,a0,a1,col,lw){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.beginPath();
+  const d=angDiff2(a1,a0), n=Math.max(4,Math.ceil(Math.abs(d)*20));
+  for(let i=0;i<=n;i++){ const a=a0+d*i/n; const x=cx+r*Math.cos(a), y=cy-r*Math.sin(a); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+  ctx.stroke(); ctx.restore();
+}
+function angDiff2(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* ---- 3-D line view (right-handed, z up). x red, y green, z blue ---- */
+function view3(){ return {yaw:-2.12, pitch:0.62, cx:0, cy:0, s:40}; }
+function p3(v,x,y,z){
+  const c=Math.cos(v.yaw), s=Math.sin(v.yaw), x1=x*c-y*s, y1=x*s+y*c, cp=Math.cos(v.pitch), sp=Math.sin(v.pitch);
+  return [v.cx+v.s*x1, v.cy-v.s*(z*cp+y1*sp)];
+}
+function l3(ctx,v,a,b,col,lw,dash){ const A=p3(v,a[0],a[1],a[2]), B=p3(v,b[0],b[1],b[2]); line(ctx,A[0],A[1],B[0],B[1],col,lw,dash); }
+function v3(ctx,v,a,b,col,lw){ const A=p3(v,a[0],a[1],a[2]), B=p3(v,b[0],b[1],b[2]); if(Math.hypot(B[0]-A[0],B[1]-A[1])>3) vec(ctx,A[0],A[1],B[0],B[1],col,lw||3); }
+function axes3(ctx,v,L,floor){
+  if(floor){ for(let i=-L;i<=L;i++){ l3(ctx,v,[i,-L,0],[i,L,0],'#e7edf5',1); l3(ctx,v,[-L,i,0],[L,i,0],'#e7edf5',1); } }
+  const ax=[[[1,0,0],COL.red,'x'],[[0,1,0],COL.green,'y'],[[0,0,1],COL.blue,'z']];
+  ax.forEach(a=>{
+    l3(ctx,v,[-a[0][0]*L*0.5,-a[0][1]*L*0.5,-a[0][2]*L*0.5],[0,0,0],a[1],1.2,[4,4]);
+    v3(ctx,v,[0,0,0],[a[0][0]*L,a[0][1]*L,a[0][2]*L],a[1],2);
+    const P=p3(v,a[0][0]*(L+0.5),a[0][1]*(L+0.5),a[0][2]*(L+0.5)); textAt(ctx,a[2],P[0]-4,P[1]+4,{size:14,weight:700,color:a[1]});
+  });
+  const O=p3(v,0,0,0); textAt(ctx,'O',O[0]-14,O[1]+14,{size:12,weight:700,color:COL.ink});
+}
+function setupView3(v,w,h,L,orbit,dt){
+  if(orbit) v.yaw+=dt*0.35;
+  v.cx=w*0.5; v.cy=h*0.56; v.s=Math.min(w*0.47/(L*0.95), h*0.5/(L*1.0));
+}
+
+/* ---- little bug (line art) walking along heading `ang` (screen angle) ---- */
+function bug(ctx,x,y,sz,ang,t,col,moving){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.lineCap='round'; ctx.lineJoin='round';
+  const ph=t*(moving?14:0);
+  for(let i=0;i<3;i++) for(const s of [-1,1]){
+    const p=ph+((i%2===0)===(s>0)?0:Math.PI), sw=Math.sin(p)*sz*0.22, bx=(i-1)*sz*0.32;
+    line(ctx,bx,s*sz*0.1,bx+sw,s*sz*0.62,col,1.8);
+  }
+  ctx.fillStyle='#fff'; ctx.strokeStyle=col; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.ellipse(-sz*0.4,0,sz*0.5,sz*0.3,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(sz*0.2,0,sz*0.28,sz*0.22,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(sz*0.58,0,sz*0.2,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  line(ctx,sz*0.7,-sz*0.08,sz*1.0,-sz*0.3+Math.sin(t*9)*2,col,1.4); line(ctx,sz*0.7,sz*0.08,sz*1.0,sz*0.3+Math.cos(t*9)*2,col,1.4);
+  ctx.restore();
+}
+/* ---- top-view person: shoulders, head, stepping feet ---- */
+function walker(ctx,x,y,sz,ang,t,col,moving){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.lineCap="round"; ctx.lineJoin="round";
+  const ph=t*(moving?10:0), st=Math.sin(ph)*sz*0.28;
+  ctx.fillStyle="#fff"; ctx.strokeStyle=col; ctx.lineWidth=2.2;
+  for(const s of [-1,1]){ const k=s*st; ctx.beginPath(); ctx.ellipse(-sz*0.5+k,s*sz*0.2,sz*0.3,sz*0.1,0,0,Math.PI*2); ctx.fill(); ctx.stroke(); }
+  for(const s of [-1,1]){ line(ctx,0,s*sz*0.42,sz*0.12-s*st*0.8,s*sz*0.5,col,2); }
+  ctx.beginPath(); ctx.ellipse(-sz*0.08,0,sz*0.17,sz*0.46,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(sz*0.04,0,sz*0.22,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  line(ctx,sz*0.2,0,sz*0.4,0,col,2.4);
+  ctx.restore();
+}
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'4.1',  title:'Scalar vs Vector',       desc:'A football pass needs strength AND direction', build: buildA1 },
+  { num:'4.2',  title:'Components & Magnitude', desc:'i, j, k steps vs the straight line |r|',       build: buildA2 },
+  { num:'4.3',  title:'Direction Cosines',      desc:'The angles r makes with the axes',             build: buildA3 },
+  { num:'4.4',  title:'Triangle Law',           desc:'Two walks, one net displacement',              build: buildA4 },
+  { num:'4.5',  title:'Parallelogram Law',      desc:'A boat crossing a flowing river',              build: buildA5 },
+  { num:'4.6',  title:'Scalar Multiple',        desc:'λa — a drone at velocity λa',                  build: buildA6 },
+  { num:'4.7',  title:'Unit Vector in XY',      desc:'cos θ i + sin θ j on the unit circle',         build: buildA7 },
+  { num:'4.8',  title:'Section Formula',        desc:'The balance point R divides PQ in m : n',      build: buildA8 },
+  { num:'4.9',  title:'Dot Product · Work',     desc:'Pull a block — only F cos θ does work',        build: buildA9 },
+  { num:'4.10', title:'Dot Product · Angle',    desc:'a·b = |a||b| cos θ as b swings round',         build: buildA10 },
+  { num:'4.11', title:'Cross Product · Torque', desc:'A wrench turns a bolt: τ = r × F',             build: buildA11 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(side){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side">${side}</div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   4.1 SCALAR vs VECTOR — the football pass
+   Ball rolls with constant friction deceleration a = 3 m/s²:
+   stopping distance d = v²/(2a), time t = v/a  (real equations, real time).
+   A scalar ("how hard") alone cannot place the pass — direction matters.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(
+    chipsHTML('modeB','Information given to the kicker',[['scalar','Strength only (scalar)'],['vector','Strength + direction (vector)']],1)+
+    chipsHTML('tgtB','Pass to',[['0','A'],['1','B'],['2','C']],1)+
+    sliderHTML('pwR','Kick strength |v|',5,22,0.1,15)+
+    sliderHTML('anR','Direction θ',-70,70,0.5,0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="kickB">Kick ▶</button><button class="toggle-btn" id="resB">Reset</button></div></div>`+
+    cardsHTML([['mV','Magnitude |v|','var(--f-yellow)'],['aV','Direction','var(--f-red)'],['dV','Rolls (v²/2a)','var(--f-blue)'],['rV','Pass','var(--f-green)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const TM=[{n:'A',x:42,y:56},{n:'B',x:57,y:34},{n:'C',x:36,y:11}], K={x:12,y:34}, ACC=3;
+  let mode='vector', tgt=1, t=0, kickT=-9, trail=[], res='', rest=null, usedAng=0;
+  const ball={x:K.x+2,y:K.y,vx:0,vy:0,go:false}, wob=TM.map(()=>({x:0,v:0}));
+  toggleWire(wrap.querySelectorAll('#modeB button'),b=>{ mode=b.dataset.k; });
+  toggleWire(wrap.querySelectorAll('#tgtB button'),b=>{ tgt=+b.dataset.k; });
+  function reset(){ ball.x=K.x+2; ball.y=K.y; ball.vx=ball.vy=0; ball.go=false; trail=[]; res=''; rest=null; }
+  $('#resB').onclick=reset;
+  $('#kickB').onclick=()=>{
+    reset(); kickT=t;
+    const sp=+$('#pwR').value;
+    usedAng = mode==='vector' ? +$('#anR').value : (Math.random()*140-70);
+    ball.vx=sp*Math.cos(usedAng*D2R); ball.vy=sp*Math.sin(usedAng*D2R); ball.go=true;
+  };
+  animLoop(dt=>{
+    t+=dt;
+    const sp=g('pwR',' m/s'), an=g('anR','°'); $('#anR').disabled=(mode==='scalar'); $('#anR').parentElement.style.opacity=mode==='scalar'?0.4:1;
+    /* physics: constant friction */
+    let caught=-1;
+    if(ball.go){
+      const v=Math.hypot(ball.vx,ball.vy), dv=Math.min(v,ACC*dt);
+      if(v>0.02){ ball.vx-=ball.vx/v*dv; ball.vy-=ball.vy/v*dv; }
+      TM.forEach((p,i)=>{ if(Math.hypot(ball.x-p.x,ball.y-p.y)<2.2 && v<13) caught=i; });
+      if(caught>=0){ ball.vx*=Math.exp(-6*dt); ball.vy*=Math.exp(-6*dt); }
+      ball.x+=ball.vx*dt; ball.y+=ball.vy*dt;
+      if(ball.x<0||ball.x>105){ ball.vx*=-0.6; ball.x=clamp(ball.x,0,105); }
+      if(ball.y<0||ball.y>68){ ball.vy*=-0.6; ball.y=clamp(ball.y,0,68); }
+      trail.push([ball.x,ball.y]); if(trail.length>600) trail.shift();
+      if(Math.hypot(ball.vx,ball.vy)<0.08){
+        ball.go=false; rest={x:ball.x,y:ball.y};
+        const dd=Math.hypot(ball.x-TM[tgt].x,ball.y-TM[tgt].y);
+        const any=TM.findIndex(p=>Math.hypot(ball.x-p.x,ball.y-p.y)<2.6);
+        res = dd<2.6 ? '✔ Reached '+TM[tgt].n : (any>=0 ? 'Reached '+TM[any].n+' — wrong player' : '✘ Missed by '+fmt(dd,1)+' m');
+      }
+    }
+    TM.forEach((p,i)=>{ const hit=(caught===i); springTo(wob[i],hit?1:0,60,6,dt); });
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const s=Math.min((w-40)/105,(h-50)/68), ox=(w-105*s)/2, oy=h/2+34*s;
+    const X=x=>ox+x*s, Y=y=>oy-y*s;
+    /* pitch */
+    ctx.save(); ctx.fillStyle='#f4faf6'; ctx.fillRect(X(0),Y(68),105*s,68*s); ctx.restore();
+    rect(ctx,X(0),Y(68),105*s,68*s,COL.green,null,2.4);
+    line(ctx,X(52.5),Y(0),X(52.5),Y(68),COL.green,1.6); circ(ctx,X(52.5),Y(34),9.15*s,COL.green,null,1.6);
+    rect(ctx,X(0),Y(54),16.5*s,40*s,COL.green,null,1.6); rect(ctx,X(88.5),Y(54),16.5*s,40*s,COL.green,null,1.6);
+    rect(ctx,X(-2),Y(41),2*s,14*s,COL.ink,null,2); rect(ctx,X(105),Y(41),2*s,14*s,COL.ink,null,2);
+    /* prediction */
+    const ang=mode==='vector'?an:0, idl=sp*sp/(2*ACC);
+    if(mode==='vector'){
+      const px=K.x+2+idl*Math.cos(ang*D2R), py=K.y+idl*Math.sin(ang*D2R);
+      line(ctx,X(K.x+2),Y(K.y),X(px),Y(py),COL.yellow,2,[7,6]); circ(ctx,X(px),Y(py),5,COL.yellow,'#fff',2.2);
+    }
+    /* trail */
+    if(trail.length>1){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.beginPath(); trail.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.stroke(); ctx.restore(); }
+    /* players */
+    TM.forEach((p,i)=>{
+      const sel=i===tgt, col=sel?COL.green:COL.mid, sway=Math.sin(t*3+i*2)*0.35+wob[i].x*0.6;
+      if(sel) circ(ctx,X(p.x),Y(p.y),(2.6+0.3*Math.sin(t*4))*s,COL.green,null,1.5);
+      walker(ctx,X(p.x+sway),Y(p.y),Math.max(26,s*3.4),Math.PI,t,col,false);
+      textAt(ctx,p.n,X(p.x),Y(p.y)-s*2.6,{size:13,weight:700,color:col,align:'center'});
+    });
+    /* kicker with swinging leg */
+    const sw=clamp(1-(t-kickT)*3,0,1);
+    walker(ctx,X(K.x),Y(K.y),Math.max(28,s*3.6),0,t,COL.red,false);
+    line(ctx,X(K.x+0.4),Y(K.y),X(K.x+0.4+Math.cos(-sw*1.1+ (usedAng*D2R*-0))*1.6*sw+0.8),Y(K.y+sw*0.9),COL.red,3);
+    textAt(ctx,'Kicker',X(K.x),Y(K.y)+s*3.6,{size:12,weight:700,color:COL.red,align:'center'});
+    /* ball */
+    const bx=X(ball.x), by=Y(ball.y), br=Math.max(8,s*1.2);
+    circ(ctx,bx,by,br,COL.ink,'#fff',2.4);
+    ctx.save(); ctx.beginPath(); ctx.arc(bx,by,br,0,7); ctx.clip(); const rot=(ball.x+ball.y)*0.4;
+    for(let k=0;k<5;k++){ const a=rot+k*1.2566; line(ctx,bx,by,bx+Math.cos(a)*br,by+Math.sin(a)*br,COL.ink,1.4); } ctx.restore();
+    /* vector arrow at ball when about to kick / current velocity */
+    if(!ball.go && !rest){
+      if(mode==='vector'){ const L=sp*s*1.5; vec(ctx,X(K.x+2),Y(K.y),X(K.x+2)+L*Math.cos(ang*D2R),Y(K.y)-L*Math.sin(ang*D2R),COL.blue,3.2); arcPath(ctx,X(K.x+2),Y(K.y),34,0,ang*D2R,COL.yellow,2.2); }
+      else { const L=sp*s*1.5; line(ctx,X(K.x+2),Y(K.y),X(K.x+2)+L,Y(K.y),COL.yellow,3.2,[3,5]); textAt(ctx,'? direction unknown',X(K.x+2)+L+8,Y(K.y)+4,{size:12,weight:700,color:COL.yellow}); }
+    }
+    if(rest){ vec(ctx,X(K.x+2),Y(K.y),X(rest.x),Y(rest.y),COL.green,3); badge(ctx,'displacement',(X(K.x+2)+X(rest.x))/2,(Y(K.y)+Y(rest.y))/2-12,COL.green); }
+    /* result banner */
+    if(res) badge(ctx,res,w/2-60,34,res[0]==='✔'?COL.green:COL.red);
+    $('#mV').textContent=fmt(sp,1)+' m/s';
+    $('#aV').textContent=mode==='vector'?fmt(an,1)+'°':'unknown';
+    $('#dV').textContent=fmt(idl,1)+' m';
+    $('#rV').textContent=res||'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.2 COMPONENTS & MAGNITUDE
+   r = x i + y j + z k ; |r| = √(x² + y² + z²)  (Pythagoras twice).
+   Textbook Example 6: 2i + 3j + k → |r| = √14 ≈ 3.742
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell(
+    sliderHTML('xR','x  (along i)',-5,5,0.5,2)+sliderHTML('yR','y  (along j)',-5,5,0.5,3)+sliderHTML('zR','z  (along k)',-5,5,0.5,1)+
+    chipsHTML('preB','Textbook vectors',[['2,3,1','2i+3j+k'],['1,1,1','i+j+k'],['3,4,0','3i+4j'],['2,-2,1','2i−2j+k']],0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="walkB">Walk ▶</button><button class="toggle-btn" id="orbB">Orbit: on</button></div></div>`+
+    cardsHTML([['rV','|r| = √(x²+y²+z²)','var(--f-yellow)'],['pV','Edge route |x|+|y|+|z|','var(--f-red)'],['qV','Base diag √(x²+y²)','var(--f-green)'],['eV','Time saved','var(--f-blue)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const X={x:2,v:0},Y={x:3,v:0},Z={x:1,v:0}, V=view3(); let orbit=true, t=0, wt=-1;
+  wrap.querySelectorAll('#preB button').forEach(b=>b.onclick=()=>{ const q=b.dataset.k.split(',').map(Number); setSlider(wrap,'xR',q[0]); setSlider(wrap,'yR',q[1]); setSlider(wrap,'zR',q[2]); wrap.querySelectorAll('#preB button').forEach(x=>x.classList.toggle('active',x===b)); });
+  $('#walkB').onclick=()=>{ wt=0; };
+  $('#orbB').onclick=e=>{ orbit=!orbit; e.target.textContent='Orbit: '+(orbit?'on':'off'); };
+  animLoop(dt=>{
+    t+=dt;
+    const tx=g('xR','',1),ty=g('yR','',1),tz=g('zR','',1);
+    springTo(X,tx,70,9,dt);springTo(Y,ty,70,9,dt);springTo(Z,tz,70,9,dt);
+    const x=X.x,y=Y.x,z=Z.x;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h); setupView3(V,w,h,6,orbit,dt);
+    axes3(ctx,V,6,true);
+    const c=[[x,0,0],[x,y,0],[x,y,z]], P=[x,y,z];
+    /* faint box */
+    [[[0,y,0],[x,y,0]],[[0,0,z],[x,0,z]],[[0,y,z],[x,y,z]],[[0,0,z],[0,y,z]],[[x,0,0],[x,0,z]],[[0,y,0],[0,y,z]],[[x,0,z],[x,y,z]]].forEach(e=>l3(ctx,V,e[0],e[1],'#c9d6e6',1.2,[4,4]));
+    /* edge route */
+    l3(ctx,V,[0,0,0],c[0],COL.red,3.4); l3(ctx,V,c[0],c[1],COL.green,3.4); l3(ctx,V,c[1],c[2],COL.blue,3.4);
+    l3(ctx,V,[0,0,0],c[1],COL.yellow,2,[6,5]);
+    v3(ctx,V,[0,0,0],P,COL.yellow,4);
+    const Pp=p3(V,x,y,z); ptLabel(ctx,'P',Pp[0],Pp[1],COL.yellow);
+    const lm=(a,b,tx,col)=>{ const A=p3(V,...a),B=p3(V,...b); textAt(ctx,tx,(A[0]+B[0])/2+6,(A[1]+B[1])/2+14,{size:12,weight:700,color:col}); };
+    lm([0,0,0],c[0],'x i',COL.red); lm(c[0],c[1],'y j',COL.green); lm(c[1],c[2],'z k',COL.blue);
+    /* bugs */
+    const R=Math.sqrt(x*x+y*y+z*z), Lp=Math.abs(x)+Math.abs(y)+Math.abs(z), spd=1.6;
+    const segs=[[[0,0,0],c[0]],[c[0],c[1]],[c[1],c[2]]];
+    let sA=0, sB=0, doneA=false, doneB=false;
+    if(wt>=0){ wt+=dt; sA=Math.min(wt*spd,Lp); sB=Math.min(wt*spd,R); doneA=sA>=Lp-1e-6; doneB=sB>=R-1e-6; }
+    let posA=[0,0,0], rem=sA, dirA=[1,0,0];
+    for(const sg of segs){ const L=Math.hypot(sg[1][0]-sg[0][0],sg[1][1]-sg[0][1],sg[1][2]-sg[0][2]); if(L<1e-6) continue; const f=Math.min(rem,L)/L;
+      posA=[sg[0][0]+(sg[1][0]-sg[0][0])*f,sg[0][1]+(sg[1][1]-sg[0][1])*f,sg[0][2]+(sg[1][2]-sg[0][2])*f]; dirA=sg[1].map((q,i)=>q-sg[0][i]); if(rem<=L) break; rem-=L; }
+    const fB=R>1e-6?sB/R:0, posB=[x*fB,y*fB,z*fB];
+    const scr=(pp,d)=>{ const a=p3(V,...pp), b=p3(V,pp[0]+d[0]*0.1,pp[1]+d[1]*0.1,pp[2]+d[2]*0.1); return [a[0],a[1],Math.atan2(b[1]-a[1],b[0]-a[0])]; };
+    if(wt>=0){
+      const A=scr(posA,dirA), B=scr(posB,P);
+      bug(ctx,A[0],A[1],11,A[2],t,COL.red,!doneA); bug(ctx,B[0],B[1],11,B[2],t,COL.yellow,!doneB);
+      if(doneB) badge(ctx,'direct ant arrived · '+fmt(R,2),Pp[0]+14,Pp[1]-26,COL.yellow);
+      if(doneA) badge(ctx,'edge ant arrived · '+fmt(Lp,2),Pp[0]+14,Pp[1]+34,COL.red);
+    }
+    $('#rV').textContent=fmt(R,3); $('#pV').textContent=fmt(Lp,2); $('#qV').textContent=fmt(Math.hypot(x,y),3); $('#eV').textContent=fmt((Lp-R)/spd,2)+' s';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.3 DIRECTION COSINES
+   l = cos α = x/r , m = cos β = y/r , n = cos γ = z/r ;  l²+m²+n² = 1
+   Textbook Ex.9: (1,1,−2) → (1/√6, 1/√6, −2/√6) ; Ex.14: i+j+k equally inclined.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(
+    sliderHTML('xR','x',-5,5,0.5,1)+sliderHTML('yR','y',-5,5,0.5,1)+sliderHTML('zR','z',-5,5,0.5,-2)+
+    chipsHTML('preB','Textbook vectors',[['1,1,-2','i+j−2k'],['1,1,1','i+j+k'],['1,2,3','i+2j+3k'],['-2,-4,4','AB (Q13)']],0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="swpB">Sweep r round z ▶</button><button class="toggle-btn" id="orbB">Orbit: on</button></div></div>`+
+    cardsHTML([['lV','l = cos α','var(--f-red)'],['mV','m = cos β','var(--f-green)'],['nV','n = cos γ','var(--f-blue)'],['sV','l²+m²+n²','var(--f-yellow)'],['aV','α  β  γ',null,true]],true));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const X={x:1,v:0},Y={x:1,v:0},Z={x:-2,v:0}, V=view3(); let orbit=true, sweep=false, psi=0, t=0;
+  wrap.querySelectorAll('#preB button').forEach(b=>b.onclick=()=>{ const q=b.dataset.k.split(',').map(Number); setSlider(wrap,'xR',q[0]); setSlider(wrap,'yR',q[1]); setSlider(wrap,'zR',q[2]); sweep=false; $('#swpB').textContent='Sweep r round z ▶'; wrap.querySelectorAll('#preB button').forEach(x=>x.classList.toggle('active',x===b)); });
+  $('#swpB').onclick=e=>{ sweep=!sweep; e.target.textContent=sweep?'Stop sweep ■':'Sweep r round z ▶'; };
+  $('#orbB').onclick=e=>{ orbit=!orbit; e.target.textContent='Orbit: '+(orbit?'on':'off'); };
+  animLoop(dt=>{
+    t+=dt;
+    let tx=g('xR','',1),ty=g('yR','',1),tz=g('zR','',1);
+    if(sweep){ psi+=dt*1.1; const rho=Math.max(2,Math.hypot(tx,ty)); tx=rho*Math.cos(psi); ty=rho*Math.sin(psi); }
+    springTo(X,tx,70,9,dt);springTo(Y,ty,70,9,dt);springTo(Z,tz,70,9,dt);
+    const x=X.x,y=Y.x,z=Z.x, r=Math.max(1e-6,Math.sqrt(x*x+y*y+z*z));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h); setupView3(V,w,h,6,orbit,dt);
+    axes3(ctx,V,6,true);
+    const P=[x,y,z], ex=[[1,0,0,COL.red,'α',x],[0,1,0,COL.green,'β',y],[0,0,1,COL.blue,'γ',z]];
+    ex.forEach(e=>{ const f=[e[0]*e[5],e[1]*e[5],e[2]*e[5]]; l3(ctx,V,P,f,e[3],1.6,[5,5]); l3(ctx,V,[0,0,0],f,e[3],3); });
+    v3(ctx,V,[0,0,0],P,COL.yellow,4);
+    const Pp=p3(V,x,y,z); ptLabel(ctx,'P',Pp[0],Pp[1],COL.yellow);
+    /* angle arcs (slerp between axis and r-hat) */
+    const rh=[x/r,y/r,z/r], cosv=[rh[0],rh[1],rh[2]];
+    ex.forEach((e,i)=>{
+      const u=[e[0],e[1],e[2]], ang=Math.acos(clamp(cosv[i],-1,1)), rho=Math.min(2.2,r*0.6);
+      if(ang<0.03) return;
+      ctx.save(); ctx.strokeStyle=e[3]; ctx.lineWidth=2.6; ctx.beginPath();
+      for(let k=0;k<=24;k++){ const f=k/24, a=Math.sin((1-f)*ang)/Math.sin(ang), b=Math.sin(f*ang)/Math.sin(ang);
+        const q=p3(V,rho*(a*u[0]+b*rh[0]),rho*(a*u[1]+b*rh[1]),rho*(a*u[2]+b*rh[2])); k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }
+      ctx.stroke(); ctx.restore();
+      const m=Math.sin(0.5*ang)/Math.sin(ang), q=p3(V,rho*1.25*m*(u[0]+rh[0]),rho*1.25*m*(u[1]+rh[1]),rho*1.25*m*(u[2]+rh[2]));
+      textAt(ctx,e[4]+' '+fmt(ang*R2D,0)+'°',q[0],q[1],{size:12.5,weight:700,color:e[3],align:'center'});
+    });
+    const al=Math.acos(clamp(cosv[0],-1,1))*R2D,be=Math.acos(clamp(cosv[1],-1,1))*R2D,ga=Math.acos(clamp(cosv[2],-1,1))*R2D;
+    $('#lV').textContent=fmt(cosv[0],3); $('#mV').textContent=fmt(cosv[1],3); $('#nV').textContent=fmt(cosv[2],3);
+    $('#sV').textContent=fmt(cosv[0]**2+cosv[1]**2+cosv[2]**2,3); $('#aV').textContent=fmt(al,1)+'°   '+fmt(be,1)+'°   '+fmt(ga,1)+'°';
+    badge(ctx,'|r| = '+fmt(r,2),14,28,COL.yellow);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.4 TRIANGLE LAW
+   AB = a , BC = b  ⇒  AC = a + b.   Subtract: a − b = a + (−b).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(
+    chipsHTML('opB','Operation',[['add','a + b'],['sub','a − b']],0)+
+    sliderHTML('aM','|a|',1,8,0.1,5)+sliderHTML('aA','direction of a',0,360,1,20)+
+    sliderHTML('bM','|b|',1,8,0.1,4)+sliderHTML('bA','direction of b',0,360,1,100)+
+    chipsHTML('preB','Try',[['90','b ⟂ a'],['0','same way'],['180','opposite'],['60','60° apart']],null)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="walkB">Walk ▶</button><button class="toggle-btn" id="ordB">Other order: off</button></div></div>`+
+    cardsHTML([['rV','|a ± b|','var(--f-green)'],['sV','|a| + |b|','var(--f-yellow)'],['dV','Direction of result','var(--f-blue)'],['tV','Saved by shortcut','var(--f-red)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const AX={x:0,v:0},AY={x:0,v:0},BX={x:0,v:0},BY={x:0,v:0}, cam={x0:-1,x1:6,y0:-1,y1:6}; let op='add', wt=-1, other=false, t=0;
+  toggleWire(wrap.querySelectorAll('#opB button'),b=>{ op=b.dataset.k; });
+  wrap.querySelectorAll('#preB button').forEach(b=>b.onclick=()=>{ setSlider(wrap,'bA',(+$('#aA').value+ +b.dataset.k)%360); });
+  $('#walkB').onclick=()=>{ wt=0; };
+  $('#ordB').onclick=e=>{ other=!other; e.target.textContent='Other order: '+(other?'on':'off'); };
+  animLoop(dt=>{
+    t+=dt;
+    const am=g('aM'),aa=g('aA','°',0),bm=g('bM'),ba=g('bA','°',0);
+    springTo(AX,am*Math.cos(aa*D2R),80,10,dt);springTo(AY,am*Math.sin(aa*D2R),80,10,dt);
+    springTo(BX,bm*Math.cos(ba*D2R),80,10,dt);springTo(BY,bm*Math.sin(ba*D2R),80,10,dt);
+    const sg=op==='add'?1:-1, a=[AX.x,AY.x], b=[sg*BX.x,sg*BY.x], B=a, C=[a[0]+b[0],a[1]+b[1]], Dd=[b[0],b[1]];
+    /* fit view */
+    const pts=[[0,0],B,C].concat(other?[Dd]:[]); let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9; pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
+    x0-=1.5;x1+=1.5;y0-=1.5;y1+=1.5;
+    cam.x0=approach(cam.x0,x0,4,dt);cam.x1=approach(cam.x1,x1,4,dt);cam.y0=approach(cam.y0,y0,4,dt);cam.y1=approach(cam.y1,y1,4,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const s=Math.min((w-30)/(cam.x1-cam.x0),(h-30)/(cam.y1-cam.y0)), ox=w/2-s*(cam.x0+cam.x1)/2, oy=h/2+s*(cam.y0+cam.y1)/2;
+    const Px=p=>ox+p[0]*s, Py=p=>oy-p[1]*s;
+    gridPlane(ctx,w,h,ox,oy,s,[Math.floor((0-ox)/s),Math.ceil((w-ox)/s)],[Math.floor((oy-h)/s),Math.ceil(oy/s)],false);
+    /* parallelogram completion when other order */
+    if(other){ line(ctx,Px([0,0]),Py([0,0]),Px(Dd),Py(Dd),COL.blue,1.8,[6,5]); line(ctx,Px(Dd),Py(Dd),Px(C),Py(C),COL.red,1.8,[6,5]); }
+    vec(ctx,Px([0,0]),Py([0,0]),Px(B),Py(B),COL.red,3.4);
+    vec(ctx,Px(B),Py(B),Px(C),Py(C),COL.blue,3.4);
+    vec(ctx,Px([0,0]),Py([0,0]),Px(C),Py(C),COL.green,4);
+    const mid=(p,q,tx,col,off)=>{ const mx=(Px(p)+Px(q))/2,my=(Py(p)+Py(q))/2; const dx=Px(q)-Px(p),dy=Py(q)-Py(p),L=Math.hypot(dx,dy)||1; textAt(ctx,tx,mx-dy/L*off,my+dx/L*off+4,{size:14,weight:700,color:col,align:'center'}); };
+    mid([0,0],B,'a',COL.red,16); mid(B,C,sg>0?'b':'−b',COL.blue,16); mid([0,0],C,sg>0?'a + b':'a − b',COL.green,-18);
+    ptLabel(ctx,'A',Px([0,0]),Py([0,0]),COL.ink,-16,18); ptLabel(ctx,'B',Px(B),Py(B),COL.ink,8,-8); ptLabel(ctx,'C',Px(C),Py(C),COL.green,8,-8);
+    if(sg<0){ // show original b dashed from B for reference
+      const bb=[BX.x,BY.x]; line(ctx,Px(B),Py(B),Px([B[0]+bb[0],B[1]+bb[1]]),Py([B[0]+bb[0],B[1]+bb[1]]),COL.blue,1.6,[3,5]);
+      textAt(ctx,'b',Px([B[0]+bb[0],B[1]+bb[1]])+6,Py([B[0]+bb[0],B[1]+bb[1]]),{size:13,weight:700,color:COL.blue,alpha:0.6});
+    }
+    /* walkers */
+    const L1=Math.hypot(a[0],a[1]), L2=Math.hypot(b[0],b[1]), Lr=Math.hypot(C[0],C[1]), spd=2.6;
+    if(wt>=0){
+      wt+=dt; const sp=wt*spd;
+      const along=(p,q,d)=>{ const L=Math.hypot(q[0]-p[0],q[1]-p[1])||1, f=clamp(d/L,0,1); return [p[0]+(q[0]-p[0])*f,p[1]+(q[1]-p[1])*f]; };
+      const route=(pts)=>{ let rem=sp,cur=pts[0],ang=0,moving=true; for(let i=1;i<pts.length;i++){ const L=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); ang=Math.atan2(-(pts[i][1]-pts[i-1][1]),pts[i][0]-pts[i-1][0]); if(rem<=L){ cur=along(pts[i-1],pts[i],rem); return {p:cur,ang,moving:true}; } rem-=L; cur=pts[i]; } return {p:cur,ang,moving:false}; };
+      const w1=route([[0,0],B,C]); walker(ctx,Px(w1.p),Py(w1.p),Math.max(30,s*0.9),w1.ang,t,COL.red,w1.moving);
+      const w2=route([[0,0],C]); walker(ctx,Px(w2.p),Py(w2.p),Math.max(30,s*0.9),w2.ang,t,COL.green,w2.moving);
+      if(other){ const w3=route([[0,0],Dd,C]); walker(ctx,Px(w3.p),Py(w3.p),Math.max(30,s*0.9),w3.ang,t,COL.blue,w3.moving); }
+      /* walked trail */
+      const tr=route([[0,0],B,C]); ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=5; ctx.globalAlpha=0.45; ctx.beginPath(); ctx.moveTo(Px([0,0]),Py([0,0]));
+      if(sp<=L1) ctx.lineTo(Px(tr.p),Py(tr.p)); else { ctx.lineTo(Px(B),Py(B)); ctx.lineTo(Px(tr.p),Py(tr.p)); } ctx.stroke(); ctx.restore();
+    }
+    $('#rV').textContent=fmt(Lr,2); $('#sV').textContent=fmt(am+bm,2); $('#dV').textContent=fmt((Math.atan2(C[1],C[0])*R2D+360)%360,0)+'°'; $('#tV').textContent=fmt(am+bm-Lr,2)+' units';
+    badge(ctx,'|a+b| ≤ |a|+|b|',14,28,COL.yellow);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.5 PARALLELOGRAM LAW — boat crossing a river
+   Engine velocity u = (−vb sinθ , vb cosθ) relative to the water,
+   river velocity w = (vr , 0).  Resultant v = u + w  (parallelogram law).
+   Crossing time T = W / (vb cosθ) ; drift = (vr − vb sinθ)·T.
+   Sim runs ×2.5 faster than real time so the crossing is watchable.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(
+    sliderHTML('vbR','Engine speed |u|',3,10,0.1,6)+sliderHTML('vrR','River speed |w|',0,6,0.1,3)+sliderHTML('thR','Heading (+ = upstream)',-50,50,0.5,0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="goB">Launch ▶</button><button class="toggle-btn" id="rsB">Reset</button></div>
+      <div class="toggle-group"><button class="toggle-btn small" id="aimB">Aim to land straight across</button></div></div>`+
+    cardsHTML([['vV','|u + w|','var(--f-green)'],['tV','Crossing time T','var(--f-yellow)'],['dV','Drift downstream','var(--f-red)'],['aV','Resultant angle','var(--f-blue)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const W=60, K=2.5; let t=0, simT=0, bx=0, by=0, go=false, landed=false, ppm=6, camX=0, bob=0;
+  const streaks=[]; for(let i=0;i<46;i++) streaks.push({u:Math.random(),y:Math.random()*W,l:3+Math.random()*7});
+  function reset(){ bx=0; by=0; go=false; landed=false; }
+  $('#rsB').onclick=reset;
+  $('#goB').onclick=()=>{ if(landed||by>=W) reset(); go=true; };
+  $('#aimB').onclick=()=>{ const vb=+$('#vbR').value, vr=+$('#vrR').value; setSlider(wrap,'thR',clamp(Math.asin(clamp(vr/vb,0,1))*R2D,-50,50)); };
+  animLoop(dt=>{
+    t+=dt;
+    const vb=g('vbR',' m/s'),vr=g('vrR',' m/s'),th=g('thR','°');
+    const u=[-vb*Math.sin(th*D2R),vb*Math.cos(th*D2R)], rv=[vr,0], res=[u[0]+rv[0],u[1]+rv[1]];
+    const T=W/u[1], drift=res[0]*T;
+    simT+=dt*K;
+    if(go && !landed){ bx+=res[0]*dt*K; by+=res[1]*dt*K; if(by>=W){ by=W; landed=true; go=false; } }
+    const prog=clamp(by/W,0,1);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const reach=Math.max(Math.abs(drift),40)+30, tgtPpm=Math.min(h*0.56/W, w*0.84/reach);
+    ppm=approach(ppm,tgtPpm,4,dt);
+    const ctr=drift/2; camX=approach(camX,ctr,4,dt);
+    const sx=x=>w/2+(x-camX)*ppm, y0=h*0.8, sy=y=>y0-y*ppm;
+    /* banks */
+    ctx.save(); ctx.fillStyle='#eef4ea'; ctx.fillRect(0,sy(W)-h,w,h); ctx.fillRect(0,y0,w,h-y0); ctx.restore();
+    ctx.save(); ctx.fillStyle='#eef6fd'; ctx.fillRect(0,sy(W),w,W*ppm); ctx.restore();
+    line(ctx,0,sy(W),w,sy(W),COL.green,3); line(ctx,0,y0,w,y0,COL.green,3);
+    textAt(ctx,'North bank',12,sy(W)-8,{size:12,weight:700,color:COL.green}); textAt(ctx,'South bank',12,y0+18,{size:12,weight:700,color:COL.green});
+    /* flowing water */
+    const span=w/ppm+60, left=camX-w/2/ppm-30;
+    streaks.forEach(s=>{
+      const wx=left+(((s.u*span+vr*simT)%span)+span)%span, X=sx(wx), Y=sy(s.y);
+      line(ctx,X,Y,X+s.l*ppm*Math.min(1,0.4+vr*0.2),Y,'#9fc8ee',2);
+    });
+    if(vr>0.05) for(let i=0;i<3;i++){ const ax=60+i*0, ay=sy(W)+26+i*26; }
+    /* predicted path */
+    const stX=0, enX=drift;
+    line(ctx,sx(0),sy(0),sx(drift),sy(W),COL.yellow,2,[8,6]); circ(ctx,sx(drift),sy(W),6,COL.yellow,'#fff',2.4);
+    if(Math.abs(drift)>2){ vec(ctx,sx(0),sy(W)+16,sx(drift),sy(W)+16,COL.red,2.2); textAt(ctx,'drift '+fmt(drift,1)+' m',sx(drift/2),sy(W)+32,{size:12,weight:700,color:COL.red,align:'center'}); }
+    /* wake */
+    const heading=Math.atan2(-u[1],u[0]);   // screen angle of bow
+    bob=Math.sin(t*3)*1.2;
+    const bX=sx(bx), bY=sy(by)+bob, bl=Math.max(30,9*ppm);
+    ctx.save(); ctx.translate(bX,bY); ctx.rotate(heading); ctx.lineJoin='round'; ctx.lineCap='round';
+    const sp=Math.hypot(res[0],res[1]); const wk=clamp(sp*0.12,0,1.2);
+    ctx.strokeStyle='#9fc8ee'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-bl*0.45,-bl*0.18); ctx.lineTo(-bl*(0.9+wk),-bl*(0.3+0.2*wk)); ctx.moveTo(-bl*0.45,bl*0.18); ctx.lineTo(-bl*(0.9+wk),bl*(0.3+0.2*wk)); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(bl*0.55,0); ctx.quadraticCurveTo(bl*0.2,-bl*0.26,-bl*0.45,-bl*0.2); ctx.lineTo(-bl*0.45,bl*0.2); ctx.quadraticCurveTo(bl*0.2,bl*0.26,bl*0.55,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(-bl*0.18,-bl*0.1,bl*0.28,bl*0.2); ctx.stroke();
+    line(ctx,-bl*0.45,0,-bl*0.62,0+Math.sin(t*20)*2,COL.ink,2);
+    ctx.restore();
+    /* velocity vectors at the boat */
+    const k=14, o=[bX,bY];
+    const ue=[o[0]+u[0]*k,o[1]-u[1]*k], we=[o[0]+rv[0]*k,o[1]], re=[o[0]+res[0]*k,o[1]-res[1]*k];
+    line(ctx,we[0],we[1],re[0],re[1],COL.blue,1.6,[5,5]); line(ctx,ue[0],ue[1],re[0],re[1],COL.red,1.6,[5,5]);
+    vec(ctx,o[0],o[1],ue[0],ue[1],COL.blue,3.2); vec(ctx,o[0],o[1],we[0],we[1],COL.red,3.2); vec(ctx,o[0],o[1],re[0],re[1],COL.green,4);
+    textAt(ctx,'u',ue[0]+8,ue[1],{size:14,weight:700,color:COL.blue}); textAt(ctx,'w',we[0]+8,we[1]+14,{size:14,weight:700,color:COL.red}); textAt(ctx,'u + w',re[0]+8,re[1]-6,{size:14,weight:700,color:COL.green});
+    /* progress */
+    if(landed) badge(ctx,'Landed '+fmt(bx,1)+' m from the start point',w/2-110,sy(W)-22,COL.green);
+    $('#vV').textContent=fmt(sp,2)+' m/s'; $('#tV').textContent=fmt(T,1)+' s'; $('#dV').textContent=fmt(drift,1)+' m'; $('#aV').textContent=fmt(Math.atan2(res[1],res[0])*R2D,1)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.6 SCALAR MULTIPLE — a drone flying with velocity λa
+   |λa| = |λ||a| ; direction same if λ>0, opposite if λ<0 ; always collinear.
+   Unit vector â = a/|a|  (λ = 1/|a|).  Textbook Ex.7: 7·â for a = i − 2j.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(
+    sliderHTML('mR','|a|',1,5,0.1,3)+sliderHTML('aR','direction of a',0,360,1,35)+sliderHTML('lR','Scalar λ',-3,3,0.05,1.5)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn small" id="uB">λ = 1/|a| → unit vector â</button><button class="toggle-btn small" id="nB">λ = −1</button></div></div>`+
+    cardsHTML([['mV','|λa| = |λ||a|','var(--f-green)'],['sV','Direction vs a','var(--f-yellow)'],['cV','Collinear?','var(--f-blue)'],['vV','Drone speed','var(--f-red)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const AX={x:2.5,v:0},AY={x:1.7,v:0},LM={x:1.5,v:0}; let t=0, s=0, rot=0;
+  $('#uB').onclick=()=>setSlider(wrap,'lR',fmt(1/(+$('#mR').value),2));
+  $('#nB').onclick=()=>setSlider(wrap,'lR',-1);
+  animLoop(dt=>{
+    t+=dt;
+    const m=g('mR'),an=g('aR','°',0),lm=g('lR','',2);
+    springTo(AX,m*Math.cos(an*D2R),70,9,dt);springTo(AY,m*Math.sin(an*D2R),70,9,dt);springTo(LM,lm,60,8,dt);
+    const a=[AX.x,AY.x], am=Math.hypot(a[0],a[1]), lam=LM.x, vv=[lam*a[0],lam*a[1]], vm=Math.hypot(vv[0],vv[1]);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/17,h/11.5), ox=w/2, oy=h/2;
+    gridPlane(ctx,w,h,ox,oy,sc,[-8,8],[-5,5],false);
+    const X=p=>ox+p[0]*sc, Y=p=>oy-p[1]*sc;
+    /* line of action */
+    const ah=am>1e-6?[a[0]/am,a[1]/am]:[1,0];
+    line(ctx,X([-ah[0]*12,-ah[1]*12]),Y([-ah[0]*12,-ah[1]*12]),X([ah[0]*12,ah[1]*12]),Y([ah[0]*12,ah[1]*12]),'#cfd9e6',1.6,[3,6]);
+    /* unit circle when λ ≈ 1/|a| */
+    const isUnit=Math.abs(vm-1)<0.02;
+    circ(ctx,ox,oy,sc,isUnit?COL.yellow:'#d8e1ec',null,isUnit?2.8:1.2);
+    /* drone: position along the line, wraps — velocity is exactly λa */
+    s+=lam*am*dt*1.0;
+    const half=7.5; let ps=((s+half)%(2*half)+2*half)%(2*half)-half;
+    const dp=[ah[0]*ps,ah[1]*ps], DX=X(dp), DY=Y(dp);
+    const fade=1-smooth01(half-1.2,half,Math.abs(ps));
+    rot+=dt*(18+vm*10);
+    const tilt=clamp(vm*0.04,0,0.25)*Math.sign(lam||1);
+    ctx.save(); ctx.globalAlpha=0.25+0.75*fade; ctx.translate(DX,DY); ctx.rotate(Math.atan2(-vv[1],vv[0])*0+(Math.atan2(-ah[1],ah[0])));
+    const dl=sc*0.9; ctx.lineCap='round';
+    line(ctx,-dl,-dl*0.7,dl,dl*0.7,COL.ink,3); line(ctx,-dl,dl*0.7,dl,-dl*0.7,COL.ink,3);
+    circ(ctx,0,0,dl*0.32,COL.ink,'#fff',2.4);
+    [[-dl,-dl*0.7],[dl,dl*0.7],[-dl,dl*0.7],[dl,-dl*0.7]].forEach((q,i)=>{ circ(ctx,q[0],q[1],dl*0.12,COL.ink,COL.ink,1);
+      const ra=rot*(i%2?1:-1); line(ctx,q[0]+Math.cos(ra)*dl*0.5,q[1]+Math.sin(ra)*dl*0.5*0.55,q[0]-Math.cos(ra)*dl*0.5,q[1]-Math.sin(ra)*dl*0.5*0.55,COL.blue,2.4); });
+    ctx.restore();
+    /* velocity arrow on the drone (green) */
+    if(vm>0.02) vec(ctx,DX,DY,DX+vv[0]*sc,DY-vv[1]*sc,COL.green,3.6);
+    /* coinitial vectors at origin: a (red) and λa (green) */
+    const nx=ah[1]*7, ny=ah[0]*7;
+    vec(ctx,ox+nx,oy+ny,X(a)+nx,Y(a)+ny,COL.red,3.4);
+    if(vm>0.02 && !isUnit) vec(ctx,ox-nx,oy-ny,X(vv)-nx,Y(vv)-ny,COL.green,3.8);
+    if(isUnit) vec(ctx,ox-nx,oy-ny,X(vv)-nx,Y(vv)-ny,COL.yellow,4.2);
+    ptLabel(ctx,'O',ox,oy,COL.ink,-14,16);
+    textAt(ctx,'a',X(a)+8,Y(a)-8,{size:15,weight:700,color:COL.red});
+    textAt(ctx,isUnit?'â (unit)':'λa',X(vv)+8,Y(vv)+(Math.abs(lam)<1?16:-8),{size:15,weight:700,color:isUnit?COL.yellow:COL.green});
+    /* tick marks of λ along the line to show stretch */
+    for(let k=-3;k<=3;k++){ if(!k) continue; const q=[a[0]*k,a[1]*k]; if(Math.abs(q[0])<8&&Math.abs(q[1])<5) circ(ctx,X(q),Y(q),3,COL.mid,'#fff',1.4); }
+    $('#mV').textContent=fmt(vm,2)+(isUnit?' (unit!)':''); $('#sV').textContent=lam>0.01?'Same as a':(lam<-0.01?'Opposite to a':'Zero vector'); $('#cV').textContent='Always ✔'; $('#vV').textContent=fmt(vm,2)+' u/s';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.7 UNIT VECTOR IN THE XY-PLANE  (Miscellaneous Example 26)
+   r̂ = cos θ i + sin θ j ; as θ runs 0→2π the tip traces x² + y² = 1.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="spB">Spinning ■</button></div></div>`+
+    sliderHTML('thR','Angle θ (when paused)',0,360,1,40)+sliderHTML('wR','Spin rate ω',0.2,3,0.05,1)+sliderHTML('rR','Length r',0.5,2,0.05,1)+
+    cardsHTML([['cV','cos θ  (i part)','var(--f-red)'],['sV','sin θ  (j part)','var(--f-green)'],['mV','|r|','var(--f-yellow)'],['qV','cos²θ + sin²θ','var(--f-blue)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  let spin=true, th=40*D2R, t=0; const hist=[];
+  $('#spB').onclick=e=>{ spin=!spin; e.target.textContent=spin?'Spinning ■':'Paused ▶'; if(!spin) setSlider(wrap,'thR',((th*R2D)%360+360)%360); };
+  animLoop(dt=>{
+    t+=dt;
+    const thS=g('thR','°',0), om=g('wR',' rad/s',2), rr=g('rR','',1);
+    if(spin) th+=om*dt; else th=approach2(th,thS*D2R,dt);
+    function approach2(c,tg,d){ const df=angDiff2(tg,c); return c+df*(1-Math.exp(-9*d)); }
+    const c=Math.cos(th), sn=Math.sin(th);
+    hist.push([c*rr,sn*rr]); if(hist.length>420) hist.shift();
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const wl=w*0.56, sc=Math.min(wl/5.4,h/5.4), ox=wl/2, oy=h/2;
+    gridPlane(ctx,wl,h,ox,oy,sc,[-2.5,2.5],[-2.5,2.5],false);
+    circ(ctx,ox,oy,sc,COL.yellow,null,2.6);
+    /* trail of the tip */
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2; ctx.globalAlpha=0.5; ctx.beginPath(); hist.slice(-120).forEach((p,i)=>i?ctx.lineTo(ox+p[0]*sc,oy-p[1]*sc):ctx.moveTo(ox+p[0]*sc,oy-p[1]*sc)); ctx.stroke(); ctx.restore();
+    const tx=ox+c*rr*sc, ty=oy-sn*rr*sc;
+    /* components */
+    vec(ctx,ox,oy,ox+c*rr*sc,oy,COL.red,3.6); vec(ctx,ox+c*rr*sc,oy,ox+c*rr*sc,ty,COL.green,3.6);
+    line(ctx,tx,ty,tx,oy,COL.red,1.4,[4,4]); line(ctx,tx,ty,ox,ty,COL.green,1.4,[4,4]);
+    vec(ctx,ox,oy,tx,ty,COL.blue,4.4);
+    circ(ctx,tx,ty,6,COL.blue,'#fff',2.6); circ(ctx,tx,oy,4.5,COL.red,COL.red,1); circ(ctx,ox,ty,4.5,COL.green,COL.green,1);
+    arcPath(ctx,ox,oy,26,0,th,COL.yellow,2.4); textAt(ctx,'θ',ox+34*Math.cos(th/2),oy-34*Math.sin(th/2)+5,{size:14,weight:700,color:COL.yellow});
+    textAt(ctx,'cos θ · i',ox+c*rr*sc/2,oy+(sn>=0?18:-10),{size:12.5,weight:700,color:COL.red,align:'center'});
+    textAt(ctx,'sin θ · j',tx+(c>=0?10:-10),(ty+oy)/2,{size:12.5,weight:700,color:COL.green,align:c>=0?'left':'right'});
+    textAt(ctx,'x',ox+2.5*sc+8,oy+5,{size:14,weight:700,color:COL.ink}); textAt(ctx,'y',ox+8,oy-2.5*sc-4,{size:14,weight:700,color:COL.ink});
+    /* waveforms */
+    const gx=wl+28, gw=w-gx-16, gy=h/2, ga=h*0.2;
+    line(ctx,gx,gy,gx+gw,gy,COL.ink,1.4); line(ctx,gx,gy-ga*1.15,gx,gy+ga*1.15,COL.ink,1.2);
+    line(ctx,gx,gy-ga,gx+gw,gy-ga,'#e3eaf3',1); line(ctx,gx,gy+ga,gx+gw,gy+ga,'#e3eaf3',1);
+    textAt(ctx,'+1',gx-6,gy-ga+4,{size:10,color:COL.mid,align:'right'}); textAt(ctx,'−1',gx-6,gy+ga+4,{size:10,color:COL.mid,align:'right'});
+    [0,1].forEach(k=>{ ctx.save(); ctx.strokeStyle=k?COL.green:COL.red; ctx.lineWidth=2.6; ctx.beginPath();
+      hist.forEach((p,i)=>{ const X=gx+gw-(hist.length-1-i)*gw/420, Y=gy-p[k]/Math.max(1,rr)*ga; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }); ctx.stroke(); ctx.restore(); });
+    const hl=hist[hist.length-1]; circ(ctx,gx+gw,gy-hl[0]*ga/Math.max(1,rr),5,COL.red,'#fff',2.2); circ(ctx,gx+gw,gy-hl[1]*ga/Math.max(1,rr),5,COL.green,'#fff',2.2);
+    line(ctx,tx,oy,gx+gw,gy-hl[0]*ga/Math.max(1,rr),COL.red,1,[2,5]); line(ctx,ox,ty,gx+gw,gy-hl[1]*ga/Math.max(1,rr),COL.green,1,[2,5]);
+    textAt(ctx,'cos θ',gx+8,gy-ga-10,{size:12,weight:700,color:COL.red}); textAt(ctx,'sin θ',gx+60,gy-ga-10,{size:12,weight:700,color:COL.green});
+    $('#cV').textContent=fmt(c,3); $('#sV').textContent=fmt(sn,3); $('#mV').textContent=fmt(rr,2); $('#qV').textContent=fmt(c*c+sn*sn,3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.8 SECTION FORMULA — the seesaw balance point
+   Internal  PR : RQ = m : n  →  R = (nP + mQ)/(m + n)   (weights n at P, m at Q)
+   External  PR : QR = m : n  →  R = (mQ − nP)/(m − n)   (n pulls UP at P)
+   Textbook Ex.15: P(1,2), Q(−1,1), 2:1 → internal (−1/3, 4/3), external (−3, 0) [xy part]
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(
+    chipsHTML('kB','Division',[['int','Internal'],['ext','External']],0)+
+    sliderHTML('mR','m',1,6,1,2)+sliderHTML('nR','n',1,6,1,1)+
+    chipsHTML('pB','Points',[['1,2,-1,1','P(1,2) Q(−1,1)'],['2,3,4,1','P(2,3) Q(4,1)'],['-3,-1,3,2','P(−3,−1) Q(3,2)']],0)+
+    cardsHTML([['rV','R','var(--f-green)'],['fV','R in terms of P, Q','var(--f-yellow)',true],['pV','PR : RQ','var(--f-blue)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const PX={x:1,v:0},PY={x:2,v:0},QX={x:-1,v:0},QY={x:1,v:0},MM={x:2,v:0},NN={x:1,v:0},tilt={x:0,v:0}; let kind='int', P0=[1,2,-1,1], pt=[1,2,-1,1], t=0, lastKey='';
+  const kick=()=>{ tilt.v+=(Math.random()<0.5?-1:1)*2.2; };
+  toggleWire(wrap.querySelectorAll('#kB button'),b=>{ kind=b.dataset.k; kick(); });
+  toggleWire(wrap.querySelectorAll('#pB button'),b=>{ pt=b.dataset.k.split(',').map(Number); kick(); });
+  animLoop(dt=>{
+    t+=dt;
+    const m=g('mR','',0), n=g('nR','',0);
+    const key=m+'_'+n; if(key!==lastKey){ if(lastKey) kick(); lastKey=key; }
+    springTo(PX,pt[0],60,9,dt);springTo(PY,pt[1],60,9,dt);springTo(QX,pt[2],60,9,dt);springTo(QY,pt[3],60,9,dt);springTo(MM,m,60,9,dt);springTo(NN,n,60,9,dt);
+    springTo(tilt,0,45,2.4,dt);
+    const P=[PX.x,PY.x], Q=[QX.x,QY.x], mm=MM.x, nn=NN.x;
+    const ext=kind==='ext', den=ext?(mm-nn):(mm+nn), bad=Math.abs(den)<0.15;
+    const tpar=bad?0.5:(ext?mm/(mm-nn):mm/(mm+nn));
+    const R=[P[0]+tpar*(Q[0]-P[0]), P[1]+tpar*(Q[1]-P[1])];
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ph=h*0.62, sc=Math.min(ph/9, w/13.4), ox=w/2, oy=ph/2+8;
+    gridPlane(ctx,w,ph,ox,oy,sc,[-6,6],[-4,4],true);
+    const X=p=>ox+p[0]*sc, Y=p=>oy-p[1]*sc;
+    vec(ctx,ox,oy,X(P),Y(P),COL.red,2.8); vec(ctx,ox,oy,X(Q),Y(Q),COL.blue,2.8);
+    if(!bad){ vec(ctx,ox,oy,X(R),Y(R),COL.green,3.4); }
+    line(ctx,X(P)+0,Y(P),X(Q),Y(Q),COL.ink,3);
+    if(!bad && ext){ line(ctx,X(P),Y(P),X(R),Y(R),COL.ink,3); }
+    if(!bad){ const lo=[Math.min(P[0],Q[0],R[0]),0]; }
+    ptLabel(ctx,'P',X(P),Y(P),COL.red); ptLabel(ctx,'Q',X(Q),Y(Q),COL.blue);
+    if(!bad) ptLabel(ctx,'R',X(R),Y(R),COL.green,10,-10);
+    textAt(ctx,'p',X(P)/2+ox/2+4,Y(P)/2+oy/2+(P[1]>0?-4:14),{size:13,weight:700,color:COL.red}); textAt(ctx,'q',X(Q)/2+ox/2+4,Y(Q)/2+oy/2+(Q[1]>0?-4:14),{size:13,weight:700,color:COL.blue});
+    ptLabel(ctx,'O',ox,oy,COL.ink,-14,16);
+    /* --- seesaw inset --- */
+    const by=ph+(h-ph)*0.56, bw=w*0.7, bx0=(w-bw)/2;
+    const lo=Math.min(0,tpar)-0.12, hi=Math.max(1,tpar)+0.12, BX=f=>bx0+(f-lo)/(hi-lo)*bw;
+    const piv=[BX(tpar), by];
+    line(ctx,0,ph+4,w,ph+4,'#dbe4f0',1.2);
+    ctx.save(); ctx.translate(piv[0],piv[1]); ctx.rotate(tilt.x*0.06);
+    const e0=(BX(lo)-piv[0]), e1=(BX(hi)-piv[0]);
+    line(ctx,e0,0,e1,0,COL.ink,5);
+    const load=(f,mass,col,txt,up)=>{
+      const lx=BX(f)-piv[0], r=6+Math.sqrt(mass)*6;
+      if(!up){ line(ctx,lx,0,lx,24,col,2); circ(ctx,lx,24+r,r,col,'#fff',2.6); textAt(ctx,txt,lx,24+r+4,{size:12,weight:700,color:col,align:'center'}); }
+      else { vec(ctx,lx,0,lx,-18-mass*10,col,3.4); textAt(ctx,txt+' ↑',lx+8,-14-mass*10,{size:12,weight:700,color:col}); }
+    };
+    load(0,nn,COL.red,fmt(nn,0),ext); load(1,mm,COL.blue,fmt(mm,0),false);
+    textAt(ctx,'P',BX(0)-piv[0],-10,{size:13,weight:700,color:COL.red,align:'center'}); textAt(ctx,'Q',BX(1)-piv[0],-10,{size:13,weight:700,color:COL.blue,align:'center'});
+    ctx.restore();
+    ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.green; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(piv[0],piv[1]+2); ctx.lineTo(piv[0]-14,piv[1]+30); ctx.lineTo(piv[0]+14,piv[1]+30); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    textAt(ctx,'R',piv[0],piv[1]+46,{size:13,weight:700,color:COL.green,align:'center'});
+    if(bad) badge(ctx,'m = n externally: R is at infinity (PQ ∥ no point)',w/2-170,ph+22,COL.red);
+    $('#rV').textContent=bad?'∞':'('+fmt(R[0],2)+', '+fmt(R[1],2)+')';
+    $('#fV').textContent=bad?'—':(ext?'(m·Q − n·P)/(m − n)':'(n·P + m·Q)/(m + n)');
+    $('#pV').textContent=fmt(m,0)+' : '+fmt(n,0);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.9 DOT PRODUCT AS WORK — pulling a block
+   W = F·d = |F||d| cos θ.  Only the projection of F on d (F cos θ) does work;
+   F sin θ (perpendicular) does none.  θ > 90° → negative work.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell(
+    sliderHTML('fR','Force |F|',2,20,0.5,12)+sliderHTML('thR','Angle θ between F and d',0,180,1,35)+sliderHTML('dR','Displacement |d|',1,10,0.5,6)+
+    chipsHTML('preB','Try',[['0','θ = 0°'],['60','60°'],['90','90°'],['180','180°']],null)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="pullB">Pull ▶</button><button class="toggle-btn" id="rsB">Reset</button></div></div>`+
+    cardsHTML([['pV','Projection F cos θ','var(--f-blue)'],['nV','Perpendicular F sin θ','var(--f-red)'],['wV','Work so far','var(--f-yellow)'],['fV','F·d = |F||d|cos θ','var(--f-green)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const X0=1.8, B={x:X0,v:0}; let target=X0, t=0, dTarget=6;
+  wrap.querySelectorAll('#preB button').forEach(b=>b.onclick=()=>setSlider(wrap,'thR',b.dataset.k));
+  $('#pullB').onclick=()=>{ B.x=X0; B.v=0; target=X0+(+$('#dR').value); };
+  $('#rsB').onclick=()=>{ target=X0; B.x=X0; B.v=0; };
+  animLoop(dt=>{
+    t+=dt;
+    const F=g('fR',' N'),th=g('thR','°',0),d=g('dR',' m');
+    springTo(B,target,14,6.2,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ppm=w*0.86/14, ox=w*0.07, fy=h*0.7, kF=Math.min(13,h*0.46/20);
+    const X=x=>ox+x*ppm;
+    /* floor */
+    line(ctx,0,fy,w,fy,COL.ink,2.6); for(let i=0;i<=14;i++){ line(ctx,X(i),fy,X(i)-6,fy+8,'#c2d1e5',1.4); }
+    for(let i=0;i<=14;i+=2){ textAt(ctx,i+' m',X(i),fy+26,{size:10.5,color:COL.mid,align:'center'}); }
+    /* displacement bracket */
+    const x0=X(X0), x1=X(X0+d);
+    dimArrow2(ctx,x0,x1,fy+46,COL.green); textAt(ctx,'d = '+fmt(d,1)+' m',(x0+x1)/2,fy+64,{size:13,weight:700,color:COL.green,align:'center'});
+    line(ctx,x1,fy-2,x1,fy+50,COL.green,1.2,[3,4]); line(ctx,x0,fy-2,x0,fy+50,COL.green,1.2,[3,4]);
+    /* block */
+    const moving=Math.abs(B.v)>0.08, bw=1.7*ppm, bh=1.0*ppm, bxp=X(B.x)-bw/2, byp=fy-bh;
+    if(moving) for(let i=0;i<4;i++){ line(ctx,bxp-8-i*10,byp+bh*(0.2+i*0.2),bxp-30-i*14,byp+bh*(0.2+i*0.2),'#c2d1e5',2); }
+    ctx.save(); rrect(ctx,bxp,byp,bw,bh,4); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+    line(ctx,bxp+bw*0.15,byp+bh*0.35,bxp+bw*0.85,byp+bh*0.35,'#c2d1e5',1.4);
+    textAt(ctx,'m',bxp+bw/2,byp+bh*0.72,{size:13,weight:700,color:COL.mid,align:'center'});
+    /* force from the hook on the block's front face */
+    const hx=bxp+bw, hy=byp+bh*0.35, L=F*kF, ang=th*D2R;
+    const fx=hx+L*Math.cos(ang), fy2=hy-L*Math.sin(ang);
+    /* projection onto the line of d, perpendicular drop */
+    const pxl=L*Math.cos(ang);
+    line(ctx,fx,fy2,fx,hy,COL.red,1.6,[4,4]);
+    line(ctx,hx,hy,hx+pxl,hy,COL.blue,5.5);
+    line(ctx,hx,hy-4,hx+pxl,hy-4,COL.blue,0.1);
+    vec(ctx,hx,hy,fx,fy2,COL.red,3.6);
+    circ(ctx,hx,hy,4.5,COL.ink,'#fff',2);
+    /* hand pulling the rope tip */
+    circ(ctx,fx,fy2,9,COL.red,'#fff',2.6);
+    ctx.save(); ctx.font='700 12px Poppins'; ctx.restore();
+    textAt(ctx,'F',fx+(Math.cos(ang)>=0?12:-12),fy2-8,{size:15,weight:700,color:COL.red,align:Math.cos(ang)>=0?'left':'right'});
+    textAt(ctx,'F cos θ',hx+pxl/2,hy+(Math.abs(pxl)>10?18:-14),{size:12,weight:700,color:COL.blue,align:'center'});
+    textAt(ctx,'F sin θ',fx+(Math.cos(ang)>=0?-6:6),(fy2+hy)/2,{size:12,weight:700,color:COL.red,align:Math.cos(ang)>=0?'right':'left'});
+    arcPath(ctx,hx,hy,34,0,ang,COL.yellow,2.4); textAt(ctx,'θ',hx+46*Math.cos(ang/2),hy-46*Math.sin(ang/2)+5,{size:14,weight:700,color:COL.yellow});
+    /* work gauge */
+    const gw=w*0.42, gx=w/2-gw/2, gy=34, Wf=F*Math.cos(ang)*(B.x-X0), Wmax=20*10;
+    ctx.save(); rrect(ctx,gx,gy,gw,18,9); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.clip();
+    const half=gw/2, fill=clamp(Wf/Wmax,-1,1)*half; ctx.fillStyle=Wf>=0?COL.green:COL.red; ctx.fillRect(gx+half,gy,fill,18); ctx.restore();
+    line(ctx,gx+gw/2,gy-4,gx+gw/2,gy+22,COL.ink,2);
+    textAt(ctx,'Work done W = '+fmt(Wf,1)+' J',w/2,gy-10,{size:13,weight:700,color:Wf>=0?COL.green:COL.red,align:'center'});
+    $('#pV').textContent=fmt(F*Math.cos(ang),2)+' N'; $('#nV').textContent=fmt(F*Math.sin(ang),2)+' N'; $('#wV').textContent=fmt(Wf,1)+' J'; $('#fV').textContent=fmt(F*d*Math.cos(ang),1)+' J';
+  });
+  return wrap;
+}
+function dimArrow2(ctx,x1,x2,y,col){ line(ctx,x1,y,x2,y,col,2); arrowHead(ctx,x2,y,0,col,7); arrowHead(ctx,x1,y,Math.PI,col,7); }
+
+/* =====================================================================
+   4.10 DOT PRODUCT AGAINST ANGLE
+   a·b = |a||b| cos θ ;  = 0 when a ⟂ b ;  max at θ = 0 ; min at θ = π.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(
+    sliderHTML('aR','|a|',1,5,0.1,4)+sliderHTML('bR','|b|',1,5,0.1,3)+sliderHTML('thR','Angle θ between a and b',0,360,1,50)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="swB">Sweep b round ▶</button></div>
+      <div class="toggle-group"><button class="toggle-btn small" id="p90B">θ = 90° (⟂)</button><button class="toggle-btn small" id="p0B">θ = 0°</button><button class="toggle-btn small" id="p180B">θ = 180°</button></div></div>`+
+    cardsHTML([['dV','a · b','var(--f-green)'],['pV','Projection of b on a','var(--f-blue)'],['cV','cos θ = a·b / |a||b|','var(--f-yellow)'],['sV','Verdict','var(--f-red)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  const TH={x:50*D2R,v:0}; let sweep=false, th=50*D2R, t=0;
+  $('#swB').onclick=e=>{ sweep=!sweep; e.target.textContent=sweep?'Stop ■':'Sweep b round ▶'; };
+  $('#p90B').onclick=()=>{ sweep=false; $('#swB').textContent='Sweep b round ▶'; setSlider(wrap,'thR',90); };
+  $('#p0B').onclick=()=>{ sweep=false; $('#swB').textContent='Sweep b round ▶'; setSlider(wrap,'thR',0); };
+  $('#p180B').onclick=()=>{ sweep=false; $('#swB').textContent='Sweep b round ▶'; setSlider(wrap,'thR',180); };
+  animLoop(dt=>{
+    t+=dt;
+    const am=g('aR'),bm=g('bR'),ts=g('thR','°',0);
+    if(sweep){ th+=dt*0.9; } else { th+=angDiff2(ts*D2R,th)*(1-Math.exp(-10*dt)); }
+    th=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+    const dot=am*bm*Math.cos(th);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const wl=w*0.54, sc=Math.min(wl/11.8, h/12), ox=wl*0.5, oy=h/2;
+    gridPlane(ctx,wl,h,ox,oy,sc,[-5.8,5.8],[-5.8,5.8],false);
+    const aX=ox+am*sc, bXp=ox+bm*sc*Math.cos(th), bYp=oy-bm*sc*Math.sin(th);
+    /* projection (shadow) of b on a */
+    line(ctx,bXp,bYp,bXp,oy,COL.yellow,1.6,[4,4]);
+    line(ctx,ox,oy,bXp,oy,COL.green,6,[]);
+    vec(ctx,ox,oy,aX,oy,COL.red,3.8); vec(ctx,ox,oy,bXp,bYp,COL.blue,3.8);
+    const perp=Math.abs(Math.cos(th))<0.02;
+    if(perp){ ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2; const sq=14, sy=Math.sin(th)>0?-1:1; ctx.strokeRect(ox,sy>0?oy:oy-sq,sq,sq); ctx.restore(); }
+    arcPath(ctx,ox,oy,38,0,th,COL.yellow,2.4); textAt(ctx,'θ',ox+54*Math.cos(th/2),oy-54*Math.sin(th/2)+5,{size:14,weight:700,color:COL.yellow});
+    textAt(ctx,'a',aX+10,oy-8,{size:15,weight:700,color:COL.red}); textAt(ctx,'b',bXp+10,bYp-8,{size:15,weight:700,color:COL.blue});
+    circ(ctx,bXp,bYp,5,COL.blue,'#fff',2.4);
+    textAt(ctx,'b cos θ',ox+(bXp-ox)/2,oy+(Math.sin(th)>=0?18:-10),{size:12,weight:700,color:COL.green,align:'center'});
+    /* graph a·b vs θ */
+    const gx=wl+54, gw=w-gx-20, gy=h/2, ga=h*0.34, YM=25;
+    line(ctx,gx,gy,gx+gw,gy,COL.ink,1.4); line(ctx,gx,gy-ga-8,gx,gy+ga+8,COL.ink,1.4);
+    [90,180,270,360].forEach(a=>{ const X=gx+gw*a/360; line(ctx,X,gy-5,X,gy+5,COL.ink,1.4); textAt(ctx,a+'°',X,gy+(a===90||a===270?18:18),{size:10.5,color:COL.mid,align:'center'}); line(ctx,X,gy-ga,X,gy+ga,'#e9eff7',1); });
+    [-20,-10,10,20].forEach(v=>{ const Y=gy-v/YM*ga; line(ctx,gx-4,Y,gx+gw,Y,'#eef2f8',1); textAt(ctx,v,gx-8,Y+4,{size:10,color:COL.mid,align:'right'}); });
+    ctx.save(); ctx.beginPath(); for(let a=0;a<=360;a+=3){ const X=gx+gw*a/360, Y=gy-am*bm*Math.cos(a*D2R)/YM*ga; a?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.strokeStyle='#b9c9dc'; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.beginPath(); const curX=gx+gw*th/(2*Math.PI);
+    for(let a=0;a<=th*R2D;a+=2){ const X=gx+gw*a/360, Y=gy-am*bm*Math.cos(a*D2R)/YM*ga; a?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.strokeStyle=dot>=0?COL.green:COL.red; ctx.lineWidth=3.6; ctx.stroke(); ctx.restore();
+    const curY=gy-dot/YM*ga; line(ctx,curX,gy,curX,curY,dot>=0?COL.green:COL.red,2,[4,4]); circ(ctx,curX,curY,7,dot>=0?COL.green:COL.red,'#fff',3);
+    textAt(ctx,'a · b',gx+4,gy-ga-14,{size:13,weight:700,color:COL.green}); textAt(ctx,'θ',gx+gw-4,gy+34,{size:13,weight:700,color:COL.yellow,align:'right'});
+    const verdict=Math.abs(dot)<0.05?'Perpendicular → 0':(dot>0?'Positive (θ < 90° or > 270°)':'Negative (90° < θ < 270°)');
+    $('#dV').textContent=fmt(dot,2); $('#pV').textContent=fmt(bm*Math.cos(th),2); $('#cV').textContent=fmt(Math.cos(th),3); $('#sV').textContent=verdict;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   4.11 CROSS PRODUCT AS TORQUE — a wrench on a bolt
+   τ = r × F ; |τ| = r F sin θ = area of the parallelogram on r and F.
+   Direction by the right-hand rule: +k (anticlockwise, out of page) / −k.
+   Spin-up uses  I·dω/dt = τ − c·ω  (true rotational dynamics).
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell(
+    sliderHTML('rR','Handle length r',10,40,1,30)+sliderHTML('fR','Force |F|',10,100,1,60)+sliderHTML('thR','Angle θ from r to F',-180,180,1,90)+
+    chipsHTML('preB','Try',[['90','⟂ best'],['30','30°'],['0','along handle'],['-90','other side']],0)+
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="pushB">Push: off</button><button class="toggle-btn" id="stopB">Stop</button></div></div>`+
+    cardsHTML([['tV','τ = r F sin θ','var(--f-green)'],['aV','Area of parallelogram','var(--f-yellow)'],['dV','Direction of r × F','var(--f-blue)'],['wV','Spin ω','var(--f-red)']]));
+  const $=s=>wrap.querySelector(s), g=reader(wrap), canvas=$('canvas');
+  let phi=0.4, om=0, push=false, t=0;
+  const I=3, C=6;
+  wrap.querySelectorAll('#preB button').forEach(b=>b.onclick=()=>{ setSlider(wrap,'thR',b.dataset.k); wrap.querySelectorAll('#preB button').forEach(x=>x.classList.toggle('active',x===b)); });
+  $('#pushB').onclick=e=>{ push=!push; e.target.textContent='Push: '+(push?'on':'off'); };
+  $('#stopB').onclick=()=>{ om=0; push=false; $('#pushB').textContent='Push: off'; };
+  animLoop(dt=>{
+    t+=dt;
+    const rc=g('rR',' cm',0),F=g('fR',' N',0),th=g('thR','°',0);
+    const rm=rc/100, tau=rm*F*Math.sin(th*D2R);
+    om+=((push?tau:0)-C*om)/I*dt; phi+=om*dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.46, cy=h*0.52, ppc=Math.min(w,h)*0.0125, Lr=rc*ppc, kF=Math.min(w,h)*0.0042;
+    /* plate + fixed marks (so the spin is visible) */
+    circ(ctx,cx,cy,Math.min(w,h)*0.12,'#c2d1e5',null,1.4);
+    for(let k=0;k<12;k++){ const a=phi*0+k*Math.PI/6; line(ctx,cx+Math.cos(a)*(Math.min(w,h)*0.115),cy-Math.sin(a)*(Math.min(w,h)*0.115),cx+Math.cos(a)*(Math.min(w,h)*0.13),cy-Math.sin(a)*(Math.min(w,h)*0.13),'#c2d1e5',1.4); }
+    const E=[cx+Lr*Math.cos(phi), cy-Lr*Math.sin(phi)], psi=phi+th*D2R, fu=[Math.cos(psi),-Math.sin(psi)];
+    /* parallelogram r , F (translated to O) */
+    const Fp=[F*kF*fu[0],F*kF*fu[1]], rp=[E[0]-cx,E[1]-cy];
+    ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+rp[0],cy+rp[1]); ctx.lineTo(cx+rp[0]+Fp[0],cy+rp[1]+Fp[1]); ctx.lineTo(cx+Fp[0],cy+Fp[1]); ctx.closePath();
+    ctx.fillStyle='rgba(217,160,23,0.20)'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6; ctx.setLineDash([6,5]); ctx.stroke(); ctx.restore();
+    vec(ctx,cx,cy,cx+Fp[0],cy+Fp[1],COL.blue,2.2);
+    /* wrench: jaw around the bolt + handle */
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(-phi); ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.fillStyle='#fff'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(0,-9); ctx.lineTo(Lr,-7); ctx.arc(Lr,0,7,-Math.PI/2,Math.PI/2); ctx.lineTo(0,9); ctx.closePath();
+    ctx.fill(); ctx.stroke(); circ(ctx,0,0,26,COL.ink,'#fff',3); circ(ctx,Lr,0,3,COL.ink,COL.ink,1);
+    ctx.restore();
+    /* bolt: hex that turns with the wrench, thread marks */
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(-phi); ctx.beginPath(); for(let k=0;k<6;k++){ const a=k*Math.PI/3; k?ctx.lineTo(Math.cos(a)*19,Math.sin(a)*19):ctx.moveTo(19,0); } ctx.closePath();
+    ctx.fillStyle='#eef2f8'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); circ(ctx,0,0,7,COL.mid,null,1.8); ctx.restore();
+    /* r vector, force vector at the handle end */
+    vec(ctx,cx,cy,E[0],E[1],COL.red,3);
+    const Ft=[E[0]+Fp[0],E[1]+Fp[1]]; vec(ctx,E[0],E[1],Ft[0],Ft[1],COL.blue,4);
+    textAt(ctx,'r',(cx+E[0])/2-10*Math.sin(phi)*0-8,(cy+E[1])/2-10,{size:15,weight:700,color:COL.red});
+    textAt(ctx,'F',Ft[0]+10*fu[0]+4,Ft[1]+10*fu[1]+4,{size:15,weight:700,color:COL.blue});
+    if(Math.abs(th)>3){ const a0=Math.atan2(-(E[1]-cy),E[0]-cx), a1=a0+th*D2R; // angle between extension of r and F
+      arcPath(ctx,E[0],E[1],30,a0,a1,COL.yellow,2.4); const am=(a0+a1)/2; textAt(ctx,'θ',E[0]+44*Math.cos(am)-4,E[1]-44*Math.sin(am)+5,{size:14,weight:700,color:COL.yellow}); }
+    /* torque vector symbol at the bolt: ⊙ out of page (+k) , ⊗ into page (−k) */
+    const sx=w-70, sy=70, Rr=22; circ(ctx,sx,sy,Rr,COL.green,'#fff',3);
+    if(Math.abs(tau)<0.05){ textAt(ctx,'0',sx,sy+5,{size:14,weight:700,color:COL.green,align:'center'}); }
+    else if(tau>0){ circ(ctx,sx,sy,5,COL.green,COL.green,1); }
+    else { line(ctx,sx-11,sy-11,sx+11,sy+11,COL.green,3); line(ctx,sx-11,sy+11,sx+11,sy-11,COL.green,3); }
+    textAt(ctx,Math.abs(tau)<0.05?'τ = 0':(tau>0?'+k  (out of page)':'−k  (into page)'),sx,sy+Rr+22,{size:12.5,weight:700,color:COL.green,align:'center'});
+    textAt(ctx,tau>0.05?'anticlockwise · loosens':(tau<-0.05?'clockwise · tightens':''),sx,sy+Rr+40,{size:11.5,weight:600,color:COL.mid,align:'center'});
+    $('#tV').textContent=fmt(tau,2)+' N·m'; $('#aV').textContent=fmt(Math.abs(tau),2)+' (= |τ|)'; $('#dV').textContent=Math.abs(tau)<0.05?'zero vector':(tau>0?'+k̂':'−k̂'); $('#wV').textContent=fmt(om*60/(2*Math.PI),0)+' rpm';
+  });
+  return wrap;
+}
+
+/* ---- start ---- */
+window.addEventListener('resize',()=>{});
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

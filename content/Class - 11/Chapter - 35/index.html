@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 13 — Statistics | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.chip-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.mini-row{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:var(--fs-xs);font-weight:600;color:var(--text-2);}
+.mini-row .ml{flex:0 0 46px;} .mini-row input{flex:1;min-width:0;accent-color:var(--navy-2);} .mini-row .mv{flex:0 0 22px;text-align:right;color:var(--accent);font-weight:700;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📊</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 13</div>
+      <h1>Statistics — Measures of Dispersion</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Data · Mean</span>
+      <span><i style="background:var(--f-green)"></i>Median · Balance</span>
+      <span><i style="background:var(--f-red)"></i>Deviation · Spread</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">13.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   CHAPTER-13 HELPERS — statistics, number-line mapper, ball physics
+   --------------------------------------------------------------------- */
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function mapper(lo,hi,p0,p1){ const f=v=>p0+(v-lo)/(hi-lo)*(p1-p0); f.inv=p=>lo+(p-p0)/(p1-p0)*(hi-lo); return f; }
+function mean(a){ return a.reduce((s,v)=>s+v,0)/a.length; }
+function median(a){ const s=[...a].sort((x,y)=>x-y), n=s.length; return n%2? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2; }
+function sdOf(a){ const m=mean(a); return Math.sqrt(a.reduce((s,v)=>s+(v-m)*(v-m),0)/a.length); }
+function setHTML(el,html){ if(el._h!==html){ el._h=html; el.innerHTML=html; } }
+function card(label,val,color,wide){ return `<div class="rcard${wide?' wide':''}"><div class="rlabel">${label}</div><div class="rval"${color?` style="color:${color}"`:''}>${val}</div></div>`; }
+
+/* number line with ticks */
+function axisLine(ctx,X,lo,hi,y,step,labelEvery,above){
+  line(ctx,X(lo),y,X(hi),y,COL.ink,2);
+  const sg=above?-1:1;
+  for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step){
+    line(ctx,X(v),y,X(v),y+6*sg,COL.ink,1.6);
+    if(Math.round(v/step)%(labelEvery||1)===0) textAt(ctx,String(Math.round(v*100)/100),X(v),above?y-11:y+20,{align:'center',size:11,color:COL.muted,weight:600});
+  }
+}
+/* a data ball: hollow = outside the highlighted zone, tinted = inside */
+function ball(ctx,x,y,r,tint){ circ(ctx,x,y,r,COL.blue,tint?'#cfe4f8':'#ffffff',1.9); }
+/* gravity + bounce against a floor (restitution 0.42) */
+function stepBall(b,dt,floorY,g){
+  b.vy+=g*dt; b.y+=b.vy*dt;
+  if(b.y>=floorY){ b.y=floorY; b.vy = b.vy>70 ? -b.vy*0.42 : 0; }
+}
+/* stacking slot for balls sharing (almost) the same x: first come, lowest slot */
+function assignSlots(items,keyf,bin){
+  const cnt=new Map();
+  items.forEach(it=>{ const k=Math.round(keyf(it)/bin); const c=cnt.get(k)||0; it.slot=c; cnt.set(k,c+1); });
+}
+/* coil spring drawn between two x positions on a row */
+function springLine(ctx,x1,x2,y,col,lw,amp,ph){
+  const L=Math.abs(x2-x1); if(L<2) return;
+  const n=Math.max(2,Math.round(L/9));
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(x1,y);
+  for(let i=1;i<n;i++){ ctx.lineTo(lerp(x1,x2,i/n), y+(i%2?-1:1)*amp*(1+0.25*Math.sin(ph+i))); }
+  ctx.lineTo(x2,y); ctx.stroke(); ctx.restore();
+}
+function bracket(ctx,x1,x2,y,col,lw,tick){
+  tick=tick||6; line(ctx,x1,y,x2,y,col,lw); line(ctx,x1,y-tick,x1,y+tick,col,lw); line(ctx,x2,y-tick,x2,y+tick,col,lw);
+}
+function pill(ctx,txt,x,y,col,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const bx=align==='right'?x-tw-12:align==='left'?x:x-tw/2-6;
+  ctx.save(); rrect(ctx,bx,y-11,tw+12,22,7); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+6,y+4.5,{size:12,weight:700,color:col});
+}
+
+/* ---------------------------------------------------------------------
+   ROUTER
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+
+/* =====================================================================
+   13.1 TWO BATSMEN — same mean, same median, very different spread
+   Each score is a ball hit from the bat; it flies on a true parabola
+   (gravity g, apex chosen, landing time solved exactly) onto the run axis,
+   bounces (e = 0.42) and settles. Textbook: A = B = 53; range 117 and 14.
+   ===================================================================== */
+const BAT_A=[30,91,0,64,42,80,30,5,117,71], BAT_B=[53,46,48,50,53,53,58,60,57,52];
+function batTip(x,yg,S,a){ const hx=x+0.2*S, hy=yg-0.56*S, L=0.55*S; return {x:hx+L*Math.sin(a), y:hy+L*Math.cos(a), hx, hy}; }
+function drawBatsman(ctx,x,yg,S,a,col){
+  ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+  const tp=batTip(x,yg,S,a);
+  circ(ctx,x,yg-0.93*S,0.07*S,COL.ink,'#fff',2.2);
+  line(ctx,x,yg-0.85*S,x+0.02*S,yg-0.45*S,COL.ink,2.6);
+  line(ctx,x+0.02*S,yg-0.45*S,x-0.12*S,yg,COL.ink,2.6); line(ctx,x+0.02*S,yg-0.45*S,x+0.15*S,yg,COL.ink,2.6);
+  line(ctx,x,yg-0.77*S,tp.hx,tp.hy,COL.ink,2.4);
+  line(ctx,tp.hx,tp.hy,tp.x,tp.y,col,6); line(ctx,tp.hx,tp.hy,tp.x,tp.y,'#fff',2.6);
+  ctx.restore();
+}
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Batsman</label>
+      <div class="toggle-group" id="wB"><button class="toggle-btn" data-w="A">A</button><button class="toggle-btn" data-w="B">B</button><button class="toggle-btn active" data-w="AB">Both</button></div></div>
+    <div class="control-group"><label>Spread <span class="val" id="sV"></span></label><input type="range" id="sR" min="0" max="1" step="0.01" value="1">
+      <div class="hint">0 % = every score equals the mean</div></div>
+    <div class="control-group"><button class="toggle-btn play" id="go" style="width:100%;padding:9px;">▶ Play innings</button></div>
+    <div class="control-group"><div class="result-cards three" id="cards"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sR=$('#sR');
+  const DATA={A:BAT_A,B:BAT_B}; const M0=53;
+  let who=['A','B'], t=0, sched=[], balls={}; const SP={x:1,v:0};
+  function reset(){
+    const base=t+0.5; sched=BAT_A.map((_,i)=>base+i*0.7); balls={};
+    who.forEach(k=>balls[k]=DATA[k].map((v,i)=>({v,st:'wait',x:0,y:-50,vy:0,vx:0,fl:0,Tf:1,slot:0,tx:0,trail:[],t0:sched[i]+0.14})));
+  }
+  function batAngle(){
+    let i=-1; for(let j=0;j<sched.length;j++) if(t>=sched[j]) i=j;
+    if(i<0) return lerp(0.3,-1,smooth01(sched[0]-0.45,sched[0],t));
+    const tau=t-sched[i], last=i===sched.length-1;
+    if(tau<0.22) return lerp(-1,1.9,smooth01(0,0.22,tau));
+    return lerp(1.9,last?0.3:-1,smooth01(0.22,0.7,tau));
+  }
+  toggleWire(wrap.querySelectorAll('#wB button'),b=>{ who=b.dataset.w.split(''); reset(); });
+  $('#go').onclick=reset;
+  reset();
+  const g=1900;
+  animLoop(dt=>{
+    t+=dt; springTo(SP,parseFloat(sR.value),50,12,dt); const sp=SP.x;
+    $('#sV').textContent=Math.round(clamp(sp,0,1)*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const n=who.length, laneH=(h-12)/n, LO=-6, HI=126, px0=Math.max(120,w*0.15), px1=w-28, X=mapper(LO,HI,px0,px1);
+    const ang=batAngle(); let cards='';
+    who.forEach((k,li)=>{
+      const top=6+li*laneH, yAx=top+laneH-58, S=Math.min(laneH*0.62,135), r=clamp(laneH/24,5,9), bx=Math.max(42,px0*0.42);
+      const bl=balls[k];
+      textAt(ctx,'Batsman '+k,14,top+18,{size:13,weight:700,color:COL.ink});
+      line(ctx,10,yAx,w-10,yAx,COL.mid,1.4);
+      axisLine(ctx,X,0,120,yAx,10,2);
+      // per-ball target + stacking
+      bl.forEach(b=>{ b.tx=X(M0+sp*(b.v-M0)); });
+      assignSlots(bl.filter(b=>b.st!=='wait'||t>=b.t0),b=>b.tx,r*1.7);
+      drawBatsman(ctx,bx,yAx,S,ang,COL.yellow);
+      let landed=0;
+      bl.forEach(b=>{
+        if(b.st==='wait'){
+          if(t<b.t0) return;
+          const tp=batTip(bx,yAx,S,ang), floor=yAx-r-1-b.slot*2*r;
+          let ap=clamp(46+Math.abs(b.tx-tp.x)*0.2,50,laneH*0.6); ap=Math.max(24,Math.min(ap,tp.y-top-16));
+          const vy0=-Math.sqrt(2*g*ap), dy=floor-tp.y;
+          b.Tf=(-vy0+Math.sqrt(vy0*vy0+2*g*dy))/g; b.vx=(b.tx-tp.x)/b.Tf;
+          b.x=tp.x; b.y=tp.y; b.vy=vy0; b.fl=0; b.st='fly'; b.trail=[];
+        }
+        const floor=yAx-r-1-b.slot*2*r;
+        if(b.st==='fly'){
+          b.fl+=dt; b.x+=b.vx*dt; b.vy+=g*dt; b.y+=b.vy*dt;
+          b.trail.push([b.x,b.y]); if(b.trail.length>40) b.trail.shift();
+          if(b.fl>=b.Tf){ b.st='rest'; b.x=b.tx; b.rt=0; }
+        } else {
+          b.rt+=dt; b.x=approach(b.x,b.tx,10,dt); stepBall(b,dt,floor,g);
+          if(b.trail.length && b.rt>0.5) b.trail=[];
+          if(b.rt>0.2) landed++;
+        }
+      });
+      // trails + balls
+      bl.forEach(b=>{ if(b.st!=='wait' && b.trail.length>1){ ctx.save(); ctx.strokeStyle='rgba(129,149,171,0.55)'; ctx.lineWidth=1.4; ctx.setLineDash([3,4]); ctx.beginPath(); b.trail.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore(); } });
+      bl.forEach(b=>{ if(b.st!=='wait') ball(ctx,b.x,b.y,r,true); });
+      // statistics of the (scaled) scores
+      const vals=DATA[k].map(v=>M0+sp*(v-M0)), m=mean(vals), med=median(vals), mn=Math.min(...vals), mx=Math.max(...vals), rg=mx-mn;
+      const al=clamp(landed/bl.length,0,1);
+      if(al>0.02){
+        ctx.save(); ctx.globalAlpha=al;
+        const yTop=top+30;
+        line(ctx,X(m),yAx,X(m),yTop,COL.blue,2.6); line(ctx,X(med),yAx,X(med),yTop,COL.green,2.2,[7,5]);
+        if(Math.abs(X(m)-X(med))<46) textAt(ctx,'mean = median = '+fmt(m,1),X(m),yTop-6,{align:'center',size:12,weight:700,color:COL.blue});
+        else { textAt(ctx,'x̄ = '+fmt(m,1),X(Math.min(m,med))-6,yTop-6,{align:'right',size:12,weight:700,color:m<med?COL.blue:COL.green}); textAt(ctx,(m<med?'M = ':'x̄ = ')+fmt(m<med?med:m,1),X(Math.max(m,med))+6,yTop-6,{size:12,weight:700,color:m<med?COL.green:COL.blue}); }
+        const yb=yAx+38; bracket(ctx,X(mn),X(mx),yb,COL.red,2.4,6);
+        textAt(ctx,'Range = '+fmt(rg,1),(X(mn)+X(mx))/2,yb+(rg*(px1-px0)/(HI-LO)>110?-8:19),{align:'center',size:12,weight:700,color:COL.red});
+        ctx.restore();
+      }
+      cards+=card(k+' · mean',fmt(m,1),COL.blue)+card(k+' · median',fmt(med,1),COL.green)+card(k+' · range',fmt(rg,1),COL.red);
+    });
+    setHTML($('#cards'),cards);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.2 THE BALANCE POINT — the sum of deviations about the mean is zero
+   A beam on a movable fulcrum carries one weight per observation.
+   Torque ∝ Σ(xᵢ − a); the beam is a spring-damper, so it rocks and settles.
+   Textbook: Example 1 → x̄ = 9, Σ(xᵢ − x̄) = 0.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Data</label>
+      <div class="toggle-group" id="dB"><button class="toggle-btn active" data-d="e1">Example 1</button><button class="toggle-btn" data-d="e3">Example 3</button></div></div>
+    <div class="control-group"><label>Fulcrum  a <span class="val" id="aV"></span></label><input type="range" id="aR" min="0" max="24" step="0.05" value="3">
+      <div class="toggle-group"><button class="toggle-btn" id="bMean">→ Mean</button><button class="toggle-btn" id="bMed">→ Median</button></div></div>
+    <div class="control-group"><div class="result-cards" id="cards"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR');
+  const DS={e1:[6,7,10,12,13,4,8,12], e3:[3,9,5,3,12,10,18,4,7,19,21]};
+  let key='e1', t=0; const A={x:3,v:0}, TH={x:0,v:0};
+  toggleWire(wrap.querySelectorAll('#dB button'),b=>key=b.dataset.d);
+  $('#bMean').onclick=()=>aR.value=mean(DS[key]);
+  $('#bMed').onclick=()=>aR.value=median(DS[key]);
+  animLoop(dt=>{
+    t+=dt; const data=DS[key], n=data.length;
+    springTo(A,parseFloat(aR.value),38,11,dt); const a=A.x; $('#aV').textContent=fmt(+aR.value,2);
+    const dev=data.reduce((s,v)=>s+(v-a),0), m=mean(data);
+    springTo(TH,0.17*Math.tanh(dev*0.035),70,3.2,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const X=mapper(0,24,64,w-64), pc=(w-128)/24, yG=h*0.9, triH=h*0.14, pY=yG-triH, Px=X(a);
+    const r=clamp(pc*0.42,8,17), T=10;
+    // ground + fulcrum (yellow = what you change)
+    line(ctx,20,yG,w-20,yG,COL.ink,2.2);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(Px,pY); ctx.lineTo(Px-triH*0.55,yG); ctx.lineTo(Px+triH*0.55,yG); ctx.closePath(); ctx.fillStyle='#fff8e6'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    // beam + weights, rotated about the fulcrum
+    ctx.save(); ctx.translate(Px,pY); ctx.rotate(TH.x);
+    const bl=X(-0.9)-Px, br=X(24.9)-Px;
+    ctx.save(); rrect(ctx,bl,-T,br-bl,T,4); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    for(let v=0;v<=24;v+=2){ const lx=X(v)-Px; line(ctx,lx,0,lx,6,COL.ink,1.4); if(Math.abs(lx)>18) textAt(ctx,String(v),lx,19,{align:'center',size:10,color:COL.muted,weight:600}); }
+    const cnt=new Map();
+    data.forEach(v=>{ const s=cnt.get(v)||0; cnt.set(v,s+1); const lx=X(v)-Px, ly=-T-r-s*2*r-1; circ(ctx,lx,ly,r,COL.blue,'#e6f1fc',2.2); textAt(ctx,String(v),lx,ly+3.6,{align:'center',size:Math.max(9,r*0.8),weight:700,color:COL.ink}); });
+    ctx.restore();
+    // deviation ledger (red arrows from a to every observation)
+    const sorted=[...data].sort((p,q)=>p-q), y0=44, rowH=clamp((h*0.33-y0)/n,5,14);
+    line(ctx,Px,y0-10,Px,y0+n*rowH,COL.yellow,2,[5,4]);
+    textAt(ctx,'a = '+fmt(a,2),Px,y0-16,{align:'center',size:12,weight:700,color:COL.yellow});
+    sorted.forEach((v,i)=>{ const y=y0+i*rowH+rowH/2; circ(ctx,X(v),y,2.6,COL.blue,COL.blue,1); if(Math.abs(X(v)-Px)>9) vec(ctx,Px,y,X(v)+(X(v)<Px?5:-5),y,COL.red,Math.min(2.4,rowH*0.3)); });
+    // net sum
+    const bal=Math.abs(dev)<0.06;
+    textAt(ctx,'Σ(xᵢ − a) = '+fmt(dev,1),w-26,34,{align:'right',size:16,weight:700,color:bal?COL.green:COL.red});
+    if(bal) textAt(ctx,'✓ balanced',w-26,56,{align:'right',size:13,weight:700,color:COL.green});
+    setHTML($('#cards'),card('Fulcrum a',fmt(a,2),COL.yellow)+card('Mean x̄',fmt(m,2),COL.blue)+card('Σ(xᵢ − a)',fmt(dev,2),bal?COL.green:COL.red)+card('n',String(n)));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.3 MEAN DEVIATION — average of the absolute deviations about a
+   Each observation is tied to a (yellow) with a coiled red spring of length
+   |xᵢ − a|. Stack the springs → Σ|xᵢ − a|; divide by n → M.D.(a).
+   The curve M.D.(a) is lowest at the median. Textbook: Ex 1 M.D.(x̄)=2.75,
+   Ex 3 M.D.(M)=58/11=5.27.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Data</label>
+      <div class="toggle-group" id="dB"><button class="toggle-btn active" data-d="e1">Example 1</button><button class="toggle-btn" data-d="e3">Example 3</button></div></div>
+    <div class="control-group"><label>Reference  a <span class="val" id="aV"></span></label><input type="range" id="aR" min="0" max="24" step="0.05" value="3">
+      <div class="toggle-group"><button class="toggle-btn" id="bMean">→ Mean</button><button class="toggle-btn" id="bMed">→ Median</button></div></div>
+    <div class="control-group"><div class="result-cards" id="cards"></div>
+      <p class="hint">M.D.(a) = Σ|xᵢ − a| ÷ n</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR');
+  const DS={e1:[4,6,7,8,10,12,12,13], e3:[3,3,4,5,7,9,10,12,18,19,21]};
+  let key='e1', t=0; const A={x:3,v:0};
+  const MD=(d,a)=>d.reduce((s,v)=>s+Math.abs(v-a),0)/d.length;
+  toggleWire(wrap.querySelectorAll('#dB button'),b=>key=b.dataset.d);
+  $('#bMean').onclick=()=>aR.value=mean(DS[key]);
+  $('#bMed').onclick=()=>aR.value=median(DS[key]);
+  animLoop(dt=>{
+    t+=dt; const data=DS[key], n=data.length, m=mean(data), med=median(data);
+    springTo(A,parseFloat(aR.value),38,10,dt); const a=A.x; $('#aV').textContent=fmt(+aR.value,2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const X=mapper(0,24,70,w-44), pcx=(w-114)/24;
+    const rowTop=44, rowBot=h*0.5, rowH=clamp((rowBot-rowTop)/n,10,26);
+    line(ctx,X(a),rowTop-12,X(a),rowTop+n*rowH+4,COL.yellow,2.6);
+    pill(ctx,'a = '+fmt(a,2),X(a),rowTop-24,COL.yellow);
+    const jig=Math.min(5,Math.abs(A.v)*0.35);
+    data.forEach((v,i)=>{
+      const y=rowTop+i*rowH+rowH/2, d=Math.abs(v-a);
+      springLine(ctx,X(v),X(a),y,COL.red,1.9,2.2+3.5*Math.exp(-d*pcx/90)+jig*Math.sin(t*38+i*1.7),t*9);
+      circ(ctx,X(v),y,clamp(rowH*0.28,4,7),COL.blue,'#e6f1fc',2);
+      if(d>0.05) textAt(ctx,fmt(d,1),(X(v)>X(a)?X(v)+10:X(v)-10),y+3.6,{align:X(v)>X(a)?'left':'right',size:10.5,weight:700,color:COL.red});
+    });
+    axisLine(ctx,X,0,24,rowTop+n*rowH+10,2,1);
+    // stacked totals
+    const sum=data.reduce((s,v)=>s+Math.abs(v-a),0);
+    const maxSum=Math.max(data.reduce((s,v)=>s+v,0),data.reduce((s,v)=>s+Math.abs(v-24),0));
+    const u=(w-170)/maxSum, yb=h*0.62;
+    textAt(ctx,'Σ|xᵢ − a| = '+fmt(sum,2),70,yb-7,{size:12,weight:700,color:COL.red});
+    let cx=70; data.forEach((v,i)=>{ const L=Math.abs(v-a)*u; ctx.save(); ctx.fillStyle=i%2?'rgba(217,67,43,0.45)':'rgba(217,67,43,0.2)'; ctx.fillRect(cx,yb,L,16); ctx.strokeStyle=COL.red; ctx.lineWidth=1.2; ctx.strokeRect(cx,yb,L,16); ctx.restore(); cx+=L; });
+    const yb2=yb+40;
+    textAt(ctx,'÷ n  →  M.D.(a) = '+fmt(sum/n,2),70,yb2-7,{size:12,weight:700,color:COL.red});
+    ctx.save(); ctx.fillStyle='rgba(217,67,43,0.75)'; ctx.fillRect(70,yb2,sum/n*u,16); ctx.restore();
+    // M.D.(a) curve
+    const cT=h*0.79, cB=h*0.955, N=96, pts=[]; let mx=0;
+    for(let i=0;i<=N;i++){ const av=24*i/N, v=MD(data,av); pts.push([av,v]); mx=Math.max(mx,v); }
+    const Y=v=>cB-(v/mx)*(cB-cT);
+    line(ctx,X(0),cB,X(24),cB,COL.mid,1.4);
+    ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.4; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1]))); ctx.stroke(); ctx.restore();
+    const close=Math.abs(X(m)-X(med))<60;
+    [[med,COL.green,'median',close?-1:1],[m,COL.blue,'mean',1]].forEach(([v,c,lab,side])=>{
+      line(ctx,X(v),cB,X(v),Y(MD(data,v)),c,1.8,[4,4]); circ(ctx,X(v),Y(MD(data,v)),4.5,c,c,1);
+      textAt(ctx,lab,X(v)+(side<0?-8:8),cB-6,{align:side<0?'right':'left',size:11,weight:700,color:c});
+    });
+    circ(ctx,X(a),Y(MD(data,a)),7,COL.yellow,'#fff',3);
+    textAt(ctx,'M.D.(a)',14,cT+4,{size:11,weight:700,color:COL.red});
+    setHTML($('#cards'),card('M.D.(a)',fmt(sum/n,2),COL.red)+card('Σ|xᵢ − a|',fmt(sum,2),COL.red)+card('Mean x̄',fmt(m,2),COL.blue)+card('Median M',fmt(med,2),COL.green)+card('M.D.(x̄)',fmt(MD(data,m),2),COL.blue)+card('M.D.(M)',fmt(MD(data,med),2),COL.green));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.4 SQUARING THE DEVIATIONS — why we divide by n  (Fig 13.5 / 13.6)
+   Every observation grows a square of side |xᵢ − x̄|. The squares fly
+   together into one pooled square (area Σ(xᵢ−x̄)²), which is then shared
+   out over n (area σ²) — its side is σ.
+   Textbook: Set A  Σ=1750, σ²=291.67   ·   Set B  Σ=2480, σ²=80.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Data set</label>
+      <div class="toggle-group" id="wB"><button class="toggle-btn" data-w="A">Set A · 6 obs</button><button class="toggle-btn" data-w="B">Set B · 31 obs</button><button class="toggle-btn active" data-w="AB">Compare</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Step</label>
+      <div class="step-row" id="steps"><button class="step-pill active" data-s="0">1 Square</button><button class="step-pill" data-s="1">2 Add up</button><button class="step-pill" data-s="2">3 ÷ n</button><button class="step-pill" data-s="3">4 Root</button></div>
+      <button class="toggle-btn play" id="go" style="width:100%;margin-top:9px;padding:9px;">▶ Play all steps</button></div>
+    <div class="control-group"><div class="result-cards three" id="cards"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const SETS={A:[5,15,25,35,45,55], B:Array.from({length:31},(_,i)=>15+i)};
+  let which=['A','B'], t=0, tg=0, step=0, auto=false, autoT=0; const P={x:0,v:0};
+  let sq={};
+  function regrow(){ tg=0; sq={}; which.forEach(k=>sq[k]=SETS[k].map(()=>({x:0,v:0}))); }
+  const pills=[...wrap.querySelectorAll('#steps .step-pill')];
+  function setStep(i){ step=i; pills.forEach((p,j)=>p.classList.toggle('active',j===i)); if(i===0) tg=0; if(i===0) sq={}, which.forEach(k=>sq[k]=SETS[k].map(()=>({x:0,v:0}))); }
+  pills.forEach((p,i)=>p.onclick=()=>{ auto=false; setStep(i); });
+  toggleWire(wrap.querySelectorAll('#wB button'),b=>{ which=b.dataset.w.split(''); regrow(); setStep(0); P.x=0; P.v=0; });
+  $('#go').onclick=()=>{ auto=true; autoT=0; regrow(); setStep(0); P.x=0; P.v=0; };
+  regrow();
+  animLoop(dt=>{
+    t+=dt; tg+=dt;
+    if(auto){ autoT+=dt; const want=Math.min(3,Math.floor(autoT/2.6)); if(want!==step) setStep(want); if(autoT>10.4) auto=false; }
+    springTo(P,step,26,9.5,dt); const q=clamp(P.x,0,3.2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const n=which.length, laneH=(h-10)/n, gap=3, X=mapper(0,60,36,w-36);
+    const info={}; which.forEach(k=>{ const d=SETS[k], m=mean(d), dv=d.map(v=>Math.abs(v-m)), S2=d.reduce((s,v)=>s+(v-m)*(v-m),0); info[k]={d,m,dv,S2,var:S2/d.length,sd:Math.sqrt(S2/d.length),sumd:dv.reduce((s,v)=>s+v,0)}; });
+    // common unit when comparing, own unit when alone
+    let u=1e9;
+    which.forEach(k=>{ const I=info[k]; u=Math.min(u,(0.6*w-gap*(I.d.length-1))/I.sumd, laneH*0.46/Math.sqrt(I.S2)); });
+    const xc=w*0.81; let cards='';
+    which.forEach((k,li)=>{
+      const I=info[k], top=5+li*laneH, yAx=top+50, yS=top+laneH-40;
+      textAt(ctx,k==='A'?'Set A':'Set B',12,top+17,{size:13,weight:700,color:COL.ink});
+      // number line, dots, mean
+      axisLine(ctx,X,0,60,yAx,10,1,true);
+      const e=smooth01(0.15,0.85,q);
+      // squares row (positions)
+      const widths=I.dv.map(v=>v*u); let cx=30; const cxs=widths.map(wd=>{ const c=cx+wd/2; cx+=wd+gap; return c; });
+      const grow=sq[k];
+      I.d.forEach((v,i)=>{
+        const st=grow[i]; springTo(st,tg>i*0.06?1:0,150,10,dt);
+        const side=widths[i]*Math.max(0,st.x);
+        const fadeC=(1-e)*0.7*(q<1.2?1:0);
+        line(ctx,X(v),yAx+2,cxs[i],yS-side,'rgba(129,149,171,'+fadeC.toFixed(3)+')',1);
+        circ(ctx,X(v),yAx,4.4,COL.blue,'#cfe4f8',1.8);
+        const al=1-smooth01(0.5,0.95,q);
+        if(al>0.01){
+          const sc=1-0.55*e, px=lerp(cxs[i],xc,e), sd2=side*sc;
+          ctx.save(); ctx.globalAlpha=al;
+          if(I.dv[i]<0.01){ line(ctx,px,yS,px,yS-6,COL.red,2); }
+          else { ctx.fillStyle='rgba(217,67,43,0.15)'; ctx.fillRect(px-sd2/2,yS-sd2,sd2,sd2); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.strokeRect(px-sd2/2,yS-sd2,sd2,sd2);
+            if(sd2>40) textAt(ctx,fmt(I.dv[i]*I.dv[i],0),px,yS-sd2/2+4,{align:'center',size:11,weight:700,color:COL.red}); }
+          ctx.restore();
+        }
+      });
+      // mean marker
+      line(ctx,X(I.m),yAx-14,X(I.m),yAx+10,COL.blue,2.8); textAt(ctx,'x̄ = '+fmt(I.m,0),X(I.m)+8,yAx+26,{size:12,weight:700,color:COL.blue});
+      // pooled square
+      const pa=smooth01(0.4,0.95,q), f=lerp(1,I.d.length,smooth01(1,2,q)), side0=u*Math.sqrt(I.S2), sideP=side0*Math.sqrt(smooth01(0.3,0.9,q))/Math.sqrt(f);
+      if(pa>0.01){
+        ctx.save(); ctx.globalAlpha=pa;
+        if(q>1.05){ ctx.setLineDash([6,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.strokeRect(xc-side0/2,yS-side0,side0,side0); ctx.setLineDash([]); }
+        ctx.fillStyle='rgba(217,67,43,'+(q>2?0.3:0.18)+')'; ctx.fillRect(xc-sideP/2,yS-sideP,sideP,sideP);
+        ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.strokeRect(xc-sideP/2,yS-sideP,sideP,sideP);
+        ctx.restore();
+      }
+      const idx=clamp(Math.round(q),0,3);
+      const lab=['one square per point','Σ(x−x̄)² = '+fmt(I.S2,0),'σ² = Σ ÷ '+I.d.length+' = '+fmt(I.var,2),'σ = '+fmt(I.sd,2)][idx];
+      textAt(ctx,lab,idx===0?30:xc,yS+24,{align:idx===0?'left':'center',size:13,weight:700,color:COL.red});
+      // σ marker on the number line + as the side of the square
+      const sa=smooth01(2.2,2.9,q);
+      if(sa>0.01){
+        ctx.save(); ctx.globalAlpha=sa;
+        bracket(ctx,X(I.m-I.sd),X(I.m+I.sd),yAx+40,COL.red,2.6,6);
+        pill(ctx,'σ = '+fmt(I.sd,2),X(I.m)+(I.sd*(w-72)/60)+30,yAx+40,COL.red,'left');
+        const sd=I.sd*u; vec(ctx,xc-sd/2,yS+8,xc+sd/2,yS+8,COL.red,2.2); arrowHead(ctx,xc-sd/2,yS+8,Math.PI,COL.red,7);
+        ctx.restore();
+      }
+      cards+=card(k+' · Σ(x−x̄)²',fmt(I.S2,0),COL.red)+card(k+' · σ²',fmt(I.var,2),COL.red)+card(k+' · σ',fmt(I.sd,2),COL.red);
+    });
+    setHTML($('#cards'),cards);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.5 STANDARD DEVIATION — a swarm of balls and the band that holds them
+   Balls drop under gravity and bounce into a dot-plot; sliding Spread
+   stretches every deviation about the mean, and the balls roll apart.
+   Textbook Example 8: 6, 8, …, 24 → x̄ = 15, σ² = 33, σ = 5.74.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Data</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="ex8">Example 8</button><button class="toggle-btn" data-m="rand">Random sample</button></div>
+      <button class="toggle-btn play" id="drop" style="width:100%;margin-top:8px;padding:8px;">▼ Drop again</button></div>
+    <div class="control-group"><label>Spread  × <span class="val" id="sV"></span></label><input type="range" id="sR" min="0.2" max="2" step="0.01" value="1"></div>
+    <div class="control-group" id="nG"><label>How many  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="6" max="40" step="1" value="20"></div>
+    <div class="control-group"><div class="result-cards" id="cards"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sR=$('#sR'), nR=$('#nR');
+  const EX8=[6,8,10,12,14,16,18,20,22,24];
+  let mode='ex8', t=0, dev=[], balls=[]; const S={x:1,v:0};
+  function gaussBM(){ return Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(2*Math.PI*Math.random()); }
+  function regen(){
+    if(mode==='ex8') dev=EX8.map(v=>v-15);
+    else { const n=+nR.value; dev=Array.from({length:n},()=>gaussBM()*6); const mu=mean(dev); dev=dev.map(d=>d-mu); }
+    balls=dev.map((d,i)=>({d,x:0,y:-30-Math.random()*120,vy:0,t0:t+0.15+Math.random()*1.1,slot:0,tx:0,init:false}));
+    $('#nG').style.display=mode==='ex8'?'none':'';
+  }
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ mode=b.dataset.m; regen(); });
+  $('#drop').onclick=regen; nR.addEventListener('change',()=>{ if(mode==='rand') regen(); });
+  regen();
+  const g=1900;
+  animLoop(dt=>{
+    t+=dt; springTo(S,parseFloat(sR.value),55,12,dt); const sc=S.x;
+    $('#sV').textContent='×'+fmt(+sR.value,2); $('#nV').textContent=nR.value;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const LO=-15, HI=45, X=mapper(LO,HI,40,w-40), yAx=h*0.8, r=clamp(w/95,6,11);
+    const xs=dev.map(d=>clamp(15+sc*d,LO+1,HI-1)), m=mean(xs), sd=sdOf(xs);
+    // bands
+    const bt=h*0.1;
+    ctx.save(); ctx.fillStyle='rgba(217,67,43,0.07)'; ctx.fillRect(X(m-2*sd),bt,X(m+2*sd)-X(m-2*sd),yAx-bt); ctx.fillStyle='rgba(217,67,43,0.13)'; ctx.fillRect(X(m-sd),bt,X(m+sd)-X(m-sd),yAx-bt); ctx.restore();
+    [m-sd,m+sd].forEach(v=>line(ctx,X(v),bt,X(v),yAx,COL.red,2,[7,5]));
+    [m-2*sd,m+2*sd].forEach(v=>line(ctx,X(v),bt+24,X(v),yAx,'rgba(217,67,43,0.5)',1.4,[3,5]));
+    textAt(ctx,'±2σ',X(m+2*sd)-4,bt+16,{align:'right',size:11,weight:700,color:'rgba(217,67,43,0.75)'});
+    line(ctx,X(m),bt-4,X(m),yAx,COL.blue,2.8);
+    pill(ctx,'x̄ = '+fmt(m,2),X(m),bt-14,COL.blue);
+    bracket(ctx,X(m-sd),X(m+sd),bt+34,COL.red,2.6,6); pill(ctx,'σ = '+fmt(sd,2),X(m),bt+34,COL.red);
+    line(ctx,12,yAx,w-12,yAx,COL.ink,2); axisLine(ctx,X,-10,40,yAx,5,1);
+    // balls
+    balls.forEach((b,i)=>{ b.tx=X(xs[i]); });
+    const act=balls.filter(b=>t>=b.t0);
+    assignSlots(act,b=>b.tx,r*1.8);
+    let inside=0;
+    act.forEach(b=>{
+      if(!b.init){ b.x=b.tx; b.init=true; }
+      b.x=approach(b.x,b.tx,12,dt); stepBall(b,dt,yAx-r-1-b.slot*2*r,g);
+    });
+    act.forEach(b=>{ const inn=Math.abs(b.tx-X(m))<=X(m+sd)-X(m); if(inn) inside++; ball(ctx,b.x,b.y,r,inn); });
+    textAt(ctx,'σ = √( Σ(xᵢ − x̄)² ÷ n )',w-26,h-18,{align:'right',size:13,weight:700,color:COL.muted});
+    setHTML($('#cards'),card('n',String(xs.length))+card('Mean x̄',fmt(m,2),COL.blue)+card('Variance σ²',fmt(sd*sd,2),COL.red)+card('Std dev σ',fmt(sd,2),COL.red)+card('Within ±σ',inside+' of '+xs.length+' ('+Math.round(100*inside/xs.length)+'%)',COL.green,true));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.6 SHIFT AND STRETCH — what happens to x̄ and σ when every
+   observation is transformed  y = c·x + a   (Examples 13 and 15)
+   Elastic connectors tie each original dot to its new position; the new
+   dots are spring-driven, so they overshoot and settle when you slide.
+   Adding a: x̄ moves, σ unchanged.  Multiplying by c: x̄ → c·x̄, σ → |c|σ,
+   σ² → c²σ².  Data: Example 8 (x̄ = 15, σ = 5.74).
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Multiply by  c <span class="val" id="cV"></span></label><input type="range" id="cR" min="0.5" max="3" step="0.1" value="1">
+      <div class="toggle-group"><button class="toggle-btn" data-c="1">×1</button><button class="toggle-btn" data-c="2">×2</button><button class="toggle-btn" data-c="3">×3</button></div></div>
+    <div class="control-group"><label>Add  a <span class="val" id="aV"></span></label><input type="range" id="aR" min="-10" max="30" step="1" value="0">
+      <div class="toggle-group"><button class="toggle-btn" data-a="0">+0</button><button class="toggle-btn" data-a="10">+10</button><button class="toggle-btn" data-a="25">+25</button></div></div>
+    <div class="control-group"><div class="result-cards" id="cards"></div>
+      <p class="hint">y = c·x + a</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), cR=$('#cR'), aR=$('#aR');
+  wrap.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>cR.value=b.dataset.c);
+  wrap.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>aR.value=b.dataset.a);
+  const D=[6,8,10,12,14,16,18,20,22,24], m0=mean(D), s0=sdOf(D);
+  let t=0; const C={x:1,v:0}, A={x:0,v:0}, Sg={x:s0,v:0};
+  animLoop(dt=>{
+    t+=dt; springTo(C,parseFloat(cR.value),40,6.5,dt); springTo(A,parseFloat(aR.value),40,6.5,dt);
+    const c=parseFloat(cR.value), a=parseFloat(aR.value);
+    $('#cV').textContent='×'+fmt(c,1); $('#aV').textContent=(a>=0?'+':'')+a;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const X=mapper(-10,110,40,w-40), y1=h*0.24, y2=h*0.58;
+    const nd=D.map(v=>C.x*v+A.x), m1=mean(nd), s1=sdOf(nd);
+    // elastic connectors (yellow = the transformation you apply)
+    D.forEach((v,i)=>{ const dx=X(nd[i])-X(v); ctx.save(); ctx.strokeStyle='rgba(217,160,23,0.55)'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(X(v),y1+4);
+      const k=14; for(let j=1;j<=k;j++){ const f=j/k, wob=(j%2?1:-1)*Math.min(3.5,Math.abs(dx)*0.02+0.8)*Math.sin(Math.PI*f); ctx.lineTo(lerp(X(v),X(nd[i]),f)+wob,lerp(y1+4,y2-4,f)); } ctx.stroke(); ctx.restore(); });
+    function lane(y,vals,mu,sd,tag,col){
+      const x0=X(mu-sd), x1=X(mu+sd);
+      ctx.save(); ctx.fillStyle='rgba(217,67,43,0.12)'; ctx.fillRect(x0,y-48,x1-x0,48); ctx.restore();
+      line(ctx,x0,y-48,x0,y,COL.red,1.8,[6,4]); line(ctx,x1,y-48,x1,y,COL.red,1.8,[6,4]);
+      line(ctx,X(mu),y-58,X(mu),y+8,COL.blue,2.8);
+      bracket(ctx,x0,x1,y-64,COL.red,2.4,5);
+      textAt(ctx,tag,12,y-52,{size:13,weight:700,color:COL.ink});
+      pill(ctx,'σ = '+fmt(sd,2),(x0+x1)/2,y-78,COL.red); textAt(ctx,'x̄ = '+fmt(mu,2),X(mu)+8,y+36,{size:12,weight:700,color:COL.blue});
+      axisLine(ctx,X,-10,110,y,10,1);
+      vals.forEach(v=>circ(ctx,X(v),y,5,COL.blue,'#cfe4f8',2));
+    }
+    lane(y1,D,m0,s0,'Original  x',COL.blue);
+    lane(y2,nd,m1,s1,'New  y = c·x + a',COL.blue);
+    // variance squares: side = σ, area = σ²
+    const kS=(h*0.2)/(3*s0), yS=h*0.95, xa=w*0.3, xb=w*0.58;
+    const sa=s0*kS, sb=s1*kS;
+    ctx.save(); ctx.fillStyle='rgba(217,67,43,0.16)'; ctx.fillRect(xa-sa/2,yS-sa,sa,sa); ctx.fillRect(xb-sb/2,yS-sb,sb,sb); ctx.strokeStyle=COL.red; ctx.lineWidth=2.4; ctx.strokeRect(xa-sa/2,yS-sa,sa,sa); ctx.strokeRect(xb-sb/2,yS-sb,sb,sb); ctx.restore();
+    textAt(ctx,'σ² = '+fmt(s0*s0,1),xa+sa/2+10,yS-sa/2+4,{size:13,weight:700,color:COL.red});
+    textAt(ctx,'σ′² = '+fmt(s1*s1,1)+'   ('+fmt(c*c,2)+' × σ²)',xb+sb/2+10,yS-sb/2+4,{size:13,weight:700,color:COL.red});
+    setHTML($('#cards'),card('New mean',fmt(c*m0+a,2),COL.blue)+card('c·x̄ + a','= '+fmt(c,1)+'·15 '+(a<0?'− '+(-a):'+ '+a))+card('New σ',fmt(Math.abs(c)*s0,2),COL.red)+card('New σ²',fmt(c*c*s0*s0,2),COL.red));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   13.7 FREQUENCY DISTRIBUTIONS — discrete and grouped data
+   One ball per observation. Raise a class frequency and a new ball drops in
+   and bounces; lower it and the top ball lifts away. Mean, median, σ and
+   M.D. glide to their new places.
+   Textbook: Ex 9 → x̄ = 14, σ² = 45.8, σ = 6.77 · Ex 10 → x̄ = 62, σ = 14.18
+             Ex 7 → median = 28, M.D.(M) = 10.16
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Data</label>
+      <div class="toggle-group" id="dB"><button class="toggle-btn active" data-d="ex9">Ex 9</button><button class="toggle-btn" data-d="ex10">Ex 10</button><button class="toggle-btn" data-d="ex7">Ex 7</button></div></div>
+    <div class="control-group"><label>Frequencies  f</label><div id="sl"></div>
+      <button class="toggle-btn" id="rs" style="width:100%;margin-top:8px;">↺ Textbook values</button></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Show spread as</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="sd">σ about x̄</button><button class="toggle-btn" data-m="md">M.D. about M</button></div></div>
+    <div class="control-group"><div class="result-cards three" id="cards"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const edges=(a,b,s)=>{ const r=[]; for(let v=a;v<=b;v+=s) r.push(v); return r; };
+  const DS={
+    ex9:{kind:'disc', xs:[4,8,11,17,20,24,32], f:[3,5,9,5,4,3,1], lo:0, hi:36, colW:3},
+    ex10:{kind:'cont', edges:edges(30,100,10), f:[3,7,12,15,8,3,2], lo:30, hi:100},
+    ex7:{kind:'cont', edges:edges(0,60,10), f:[6,7,15,16,4,2], lo:0, hi:60}
+  };
+  Object.values(DS).forEach(d=>{ if(d.kind==='cont'){ d.xs=d.edges.slice(0,-1).map((e,i)=>(e+d.edges[i+1])/2); d.colW=10; d.labels=d.edges.slice(0,-1).map((e,i)=>e+'–'+d.edges[i+1]); } else d.labels=d.xs.map(x=>'x = '+x); });
+  function stats(d,f){
+    const N=f.reduce((s,v)=>s+v,0); if(N===0) return null;
+    const m=d.xs.reduce((s,x,i)=>s+f[i]*x,0)/N, vr=d.xs.reduce((s,x,i)=>s+f[i]*(x-m)*(x-m),0)/N;
+    let M;
+    if(d.kind==='disc'){ const L=[]; d.xs.forEach((x,i)=>{ for(let k=0;k<f[i];k++) L.push(x); }); M=median(L); }
+    else { let C=0; M=d.xs[0]; for(let i=0;i<f.length;i++){ if(C+f[i]>=N/2 && f[i]>0){ M=d.edges[i]+((N/2-C)/f[i])*10; break; } C+=f[i]; } }
+    const md=d.xs.reduce((s,x,i)=>s+f[i]*Math.abs(x-M),0)/N;
+    return {N,m,vr,sd:Math.sqrt(vr),M,md};
+  }
+  let key='ex9', f=[...DS.ex9.f], cols=[], leaving=[], mode='sd', t=0;
+  const G={m:{x:14},M:{x:11},w:{x:6}};
+  function buildSliders(){
+    const d=DS[key], box=$('#sl'); box.innerHTML='';
+    d.xs.forEach((x,i)=>{ const row=document.createElement('div'); row.className='mini-row';
+      row.innerHTML=`<span class="ml">${d.labels[i]}</span><input type="range" min="0" max="20" step="1" value="${f[i]}"><span class="mv">${f[i]}</span>`;
+      row.querySelector('input').oninput=e=>{ f[i]=+e.target.value; row.querySelector('.mv').textContent=f[i]; };
+      box.appendChild(row); });
+  }
+  function rebuild(){ cols=DS[key].xs.map(()=>[]); leaving=[]; buildSliders(); const s=stats(DS[key],f); if(s){ G.m.x=s.m; G.M.x=s.M; G.w.x=mode==='sd'?s.sd:s.md; } }
+  toggleWire(wrap.querySelectorAll('#dB button'),b=>{ key=b.dataset.d; f=[...DS[key].f]; rebuild(); });
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>mode=b.dataset.m);
+  $('#rs').onclick=()=>{ f=[...DS[key].f]; buildSliders(); };
+  rebuild();
+  const g=1900;
+  animLoop(dt=>{
+    t+=dt; const d=DS[key];
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const px0=56, px1=w-40, X=mapper(d.lo,d.hi,px0,px1), pc=(px1-px0)/(d.hi-d.lo), yB=h*0.84, bt=h*0.14;
+    const colPx=pc*d.colW*0.94, maxStack=Math.max(12,...f);
+    let r=Math.min(16,colPx/2.2), perRow=1;
+    for(; r>4; r-=0.5){ perRow=Math.max(1,Math.floor(colPx/(2*r))); if(Math.ceil(maxStack/perRow)*2*r<=yB-bt-40) break; }
+    perRow=Math.max(1,Math.floor(colPx/(2*r)));
+    const s=stats(d,f);
+    if(s){ G.m.x=approach(G.m.x,s.m,9,dt); G.M.x=approach(G.M.x,s.M,9,dt); G.w.x=approach(G.w.x,mode==='sd'?s.sd:s.md,9,dt); }
+    // class columns
+    if(d.kind==='cont'){ d.edges.forEach(e=>line(ctx,X(e),yB,X(e),yB+8,COL.ink,1.8)); d.xs.forEach((x,i)=>{ ctx.save(); ctx.strokeStyle='#dbe4f0'; ctx.lineWidth=1.2; ctx.strokeRect(X(x-5)+1,bt,pc*10-2,yB-bt); ctx.restore();
+        textAt(ctx,d.edges[i]+'–'+d.edges[i+1],X(x),yB+24,{align:'center',size:11,weight:600,color:COL.muted}); textAt(ctx,'xᵢ = '+x,X(x),yB+40,{align:'center',size:10.5,weight:700,color:COL.blue}); }); }
+    else { d.xs.forEach(x=>{ line(ctx,X(x),yB,X(x),yB+8,COL.ink,1.8); textAt(ctx,String(x),X(x),yB+24,{align:'center',size:12,weight:700,color:COL.blue}); }); }
+    line(ctx,px0-14,yB,px1+14,yB,COL.ink,2.2);
+    // spread band + centre lines
+    if(s){
+      const cen=mode==='sd'?G.m.x:G.M.x, wd=G.w.x, cc=mode==='sd'?COL.blue:COL.green;
+      ctx.save(); ctx.fillStyle='rgba(217,67,43,0.12)'; ctx.fillRect(X(cen-wd),bt,X(cen+wd)-X(cen-wd),yB-bt); ctx.restore();
+      line(ctx,X(cen-wd),bt,X(cen-wd),yB,COL.red,2,[7,5]); line(ctx,X(cen+wd),bt,X(cen+wd),yB,COL.red,2,[7,5]);
+      bracket(ctx,X(cen-wd),X(cen+wd),bt-8,COL.red,2.4,5);
+      pill(ctx,(mode==='sd'?'σ = ':'M.D. = ')+fmt(wd,2),X(cen),bt-24,COL.red);
+      line(ctx,X(G.m.x),bt,X(G.m.x),yB,COL.blue,2.8); line(ctx,X(G.M.x),bt,X(G.M.x),yB,COL.green,2.4,[8,5]);
+      const mLeft=G.m.x<=G.M.x;
+      pill(ctx,'x̄ = '+fmt(G.m.x,2),X(G.m.x)+(mLeft?-4:4),bt+18,COL.blue,mLeft?'right':'left');
+      pill(ctx,'M = '+fmt(G.M.x,2),X(G.M.x)+(mLeft?4:-4),bt+18,COL.green,mLeft?'left':'right');
+    }
+    // balls: reconcile counts, then physics
+    d.xs.forEach((x,ci)=>{
+      const col=cols[ci], cx=X(x);
+      while(col.length<f[ci]) col.push({x:cx,y:-30-col.length*8,vy:0});
+      while(col.length>f[ci]){ const b=col.pop(); leaving.push({x:b.x,y:b.y,vy:-260,a:1}); }
+      col.forEach((b,k)=>{
+        const row=Math.floor(k/perRow), inRow=Math.min(perRow,col.length-row*perRow), tx=cx+((k%perRow)-(inRow-1)/2)*2*r;
+        b.x=approach(b.x,tx,14,dt); stepBall(b,dt,yB-r-1-row*2*r,g);
+        ball(ctx,b.x,b.y,r,true);
+      });
+    });
+    leaving=leaving.filter(b=>b.a>0);
+    leaving.forEach(b=>{ b.y+=b.vy*dt; b.a-=dt*2.2; ctx.save(); ctx.globalAlpha=Math.max(0,b.a); ball(ctx,b.x,b.y,r,true); ctx.restore(); });
+    setHTML($('#cards'), s? card('N',String(s.N))+card('Mean x̄',fmt(s.m,2),COL.blue)+card('Median M',fmt(s.M,2),COL.green)+card('Variance σ²',fmt(s.vr,2),COL.red)+card('σ',fmt(s.sd,2),COL.red)+card('M.D.(M)',fmt(s.md,2),COL.red) : card('N','0',null,true));
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES REGISTRY + INIT
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'13.1', title:'Two Batsmen', desc:'Same mean · very different spread', build: buildA1 },
+  { num:'13.2', title:'The Balance Point', desc:'Slide the fulcrum · Σ(x − a) = 0 at the mean', build: buildA2 },
+  { num:'13.3', title:'Mean Deviation', desc:'Springs of length |x − a| · lowest at the median', build: buildA3 },
+  { num:'13.4', title:'Squaring Deviations', desc:'Squares → add up → ÷ n → root', build: buildA4 },
+  { num:'13.5', title:'Standard Deviation', desc:'Drop the balls · stretch the spread', build: buildA5 },
+  { num:'13.6', title:'Shift and Stretch', desc:'y = c·x + a  →  what happens to x̄ and σ', build: buildA6 },
+  { num:'13.7', title:'Frequency Tables', desc:'Add balls to classes · watch x̄, M, σ move', build: buildA7 },
+];
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

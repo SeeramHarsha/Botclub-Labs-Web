@@ -18,7 +18,7 @@ const router = express.Router();
 
 const PLATFORMS = ['windows', 'linux', 'android', 'other'];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const PAGE_RE = /^(dash|(6|7|8|9|10)\/([1-9]|1\d|2\d))$/;
+const PAGE_RE = /^(dash|(6|7|8|9|10|11|12)\/([1-9]|[1-3]\d|40))$/;
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 
 const str = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);

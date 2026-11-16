@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 2 · Chapter 7 — Waves | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:28px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:8px 6px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn:disabled{opacity:.45; cursor:not-allowed;}
+.btn-row{display:flex; gap:6px; flex-wrap:wrap;}
+.btn-row .toggle-btn{margin:0;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:160px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🌊</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 2 · Ch 7</div>
+      <h1>Waves</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change · Source</span>
+      <span><i style="background:var(--f-blue)"></i>Wave · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Sum · Node · λ</span>
+      <span><i style="background:var(--f-red)"></i>Crest · Compression · Boundary</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">7.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 PHYSICS · PART 2 · CHAPTER 7 — WAVES
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Waves are solved with the real equations (coupled
+   springs, the 1-D wave equation, y = a sin(kx − ωt + φ), superposition)
+   and run in slow-motion where the real thing is too fast to watch.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const TAU = Math.PI*2;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.8); arrowHead(ctx,x,y1,y1<y2?-Math.PI/2:Math.PI/2,color,6); arrowHead(ctx,x,y2,y1<y2?Math.PI/2:-Math.PI/2,color,6); }
+function hdim(ctx,x1,x2,y,color){ line(ctx,x1,y,x2,y,color,1.8); arrowHead(ctx,x1,y,Math.PI,color,6); arrowHead(ctx,x2,y,0,color,6); line(ctx,x1,y-6,x1,y+6,color,1.4); line(ctx,x2,y-6,x2,y+6,color,1.4); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function ord(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function fmtT(s){ return s<1? fmt(s*1000,s*1000<10?2:1)+' ms' : fmt(s,2)+' s'; }
+/* rounded label pill */
+function pill(ctx,txt,x,y,color,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const bx=align==='right'?x-tw-14:align==='center'?x-tw/2-7:x;
+  ctx.save(); rrect(ctx,bx,y-11,tw+14,22,7); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+7,y+4,{size:12,weight:700,color});
+}
+/* zig-zag coil spring between x1 and x2 at height y */
+function zig(ctx,x1,x2,y,n,amp,col,lw){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.lineJoin='round'; ctx.beginPath();
+  const seg=(x2-x1)/(n*2+2); ctx.moveTo(x1,y); ctx.lineTo(x1+seg,y);
+  for(let i=0;i<n*2;i++) ctx.lineTo(x1+seg*(i+1.5), y+(i%2?amp:-amp));
+  ctx.lineTo(x2-seg,y); ctx.lineTo(x2,y); ctx.stroke(); ctx.restore();
+}
+function hatch(ctx,x,y1,y2,dir,len,col){
+  ctx.save(); ctx.strokeStyle=col||COL.ink; ctx.lineWidth=1.4; ctx.beginPath();
+  for(let y=y1;y<=y2;y+=9){ ctx.moveTo(x,y); ctx.lineTo(x+dir*len,y+len); }
+  ctx.stroke(); ctx.restore();
+}
+/* tuning fork, prongs pointing "up" in local frame; vib in px */
+function fork(ctx,x,y,len,vib,col,rot){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle=col||COL.ink; ctx.lineWidth=4;
+  const g=7+vib;
+  ctx.beginPath(); ctx.moveTo(-g,-len); ctx.lineTo(-g,0); ctx.quadraticCurveTo(-g,10,0,10); ctx.quadraticCurveTo(g,10,g,0); ctx.lineTo(g,-len); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,10); ctx.lineTo(0,10+len*0.55); ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. CONTROL FACTORIES (everything lives in the 30% column)
+   --------------------------------------------------------------------- */
+function sliderHTML(s,extra){ return `<div class="control-group" ${extra||''} id="g_${s.id}"><label>${s.label} <span class="val" id="${s.id}V"></span></label><input type="range" id="${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.val}">${s.hint?`<div class="hint">${s.hint}</div>`:''}</div>`; }
+function btnRow(list,id){ return `<div class="btn-row" ${id?`id="${id}"`:''}>${list.map(b=>`<button class="toggle-btn ${b.cls||''}" id="${b.id||''}" ${b.data?`data-v="${b.data}"`:''}>${b.txt}</button>`).join('')}</div>`; }
+function cardsHTML(list){ return `<div class="control-group"><div class="result-cards">`+list.map(c=>`<div class="rcard${c.wide?' wide':''}"><div class="rlabel">${c.label}</div><div class="rval" id="${c.id}" style="color:${c.color||'inherit'}">—</div></div>`).join('')+`</div></div>`; }
+/** read all sliders; refresh their value labels */
+function readS(wrap,specs){
+  const P={};
+  specs.forEach(s=>{ const e=wrap.querySelector('#'+s.id); P[s.id]=+e.value; const lab=wrap.querySelector('#'+s.id+'V'); if(lab) lab.textContent=fmt(P[s.id],s.dig)+(s.unit?' '+s.unit:''); });
+  return P;
+}
+function setS(wrap,id,v){ wrap.querySelector('#'+id).value=v; }
+function setC(wrap,id,txt){ const e=wrap.querySelector('#'+id); if(e) e.textContent=txt; }
+
+/* ---------------------------------------------------------------------
+   0d. REAL 1-D WAVE SOLVER  y_tt = c² y_xx  on x ∈ [0,1]
+   bc: 'fix' (rigid, y=0) · 'free' (open end, y_x=0) · 'abs' (no reflection)
+   Fixed sub-step so Courant number r = c·dt/dx = 0.96 → almost no dispersion.
+   --------------------------------------------------------------------- */
+function Str1D(N,bcL,bcR){
+  const s={N,y:new Float64Array(N+1),p:new Float64Array(N+1),n:new Float64Array(N+1),bcL,bcR,acc:0};
+  const r=0.96, r2=r*r, mur=(r-1)/(r+1);
+  s.step=function(){
+    const N=this.N,y=this.y,p=this.p,n=this.n;
+    for(let i=1;i<N;i++) n[i]=2*y[i]-p[i]+r2*(y[i+1]-2*y[i]+y[i-1]);
+    const edge=(e,nb,bc)=>{
+      if(bc==='fix') n[e]=0;
+      else if(bc==='free') n[e]=2*y[e]-p[e]+r2*2*(y[nb]-y[e]);
+      else n[e]=y[nb]+mur*(n[nb]-y[e]);
+    };
+    edge(0,1,this.bcL); edge(N,N-1,this.bcR);
+    p.set(y); y.set(n);
+  };
+  s.advance=function(dt,c){
+    const h=r/(Math.max(1e-4,c)*this.N); this.acc+=dt; let k=0;
+    while(this.acc>=h && k<400){ this.step(); this.acc-=h; k++; }
+    if(k>=400) this.acc=0;
+  };
+  s.clear=function(){ this.y.fill(0); this.p.fill(0); this.n.fill(0); this.acc=0; };
+  /* Gaussian pulse launched with a definite direction (dir=+1 right, −1 left) */
+  s.pulse=function(x0,sig,amp,dir){
+    const g=x=>amp*Math.exp(-0.5*Math.pow((x-x0)/sig,2));
+    for(let i=0;i<=this.N;i++){ const x=i/this.N; this.y[i]+=g(x); this.p[i]+=amp*Math.exp(-0.5*Math.pow((x-(x0-dir*r/this.N))/sig,2)); }
+  };
+  /* stationary bump (zero velocity): splits into two travelling halves */
+  s.bump=function(x0,sig,amp){
+    for(let i=0;i<=this.N;i++){ const x=i/this.N, g=amp*Math.exp(-0.5*Math.pow((x-x0)/sig,2)); this.y[i]+=g; this.p[i]+=g; }
+  };
+  s.sample=function(x){ const f=clamp(x,0,1)*this.N, i=Math.min(this.N-1,Math.floor(f)), u=f-i; return lerp(this.y[i],this.y[i+1],u); };
+  s.energy=function(){ let e=0; for(let i=0;i<=this.N;i++) e+=this.y[i]*this.y[i]; return e/this.N; };
+  return s;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'7.1',  title:'Waves Move, Matter Doesn’t', desc:'Spring chain · water · cork', build: buildA1 },
+  { num:'7.2',  title:'Transverse & Longitudinal',  desc:'String vs sound in a pipe', build: buildA2 },
+  { num:'7.3',  title:'The Travelling Wave',        desc:'y = a sin(kx − ωt + φ)', build: buildA3 },
+  { num:'7.4',  title:'Speed on a String',          desc:'v = √(T/μ)', build: buildA4 },
+  { num:'7.5',  title:'Speed of Sound',             desc:'Media race · Newton vs Laplace', build: buildA5 },
+  { num:'7.6',  title:'Superposition',              desc:'Pulses add · waves interfere', build: buildA6 },
+  { num:'7.7',  title:'Reflection',                 desc:'Rigid wall vs free end', build: buildA7 },
+  { num:'7.8',  title:'Standing Waves',             desc:'Nodes · antinodes · harmonics', build: buildA8 },
+  { num:'7.9',  title:'Air Column Resonance',       desc:'Open vs closed pipe', build: buildA9 },
+  { num:'7.10', title:'Beats',                      desc:'Two close notes · loud–soft–loud', build: buildA10 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   7.1 WAVES MOVE, MATTER DOESN'T   (Fig 14.1 + the pond with cork pieces)
+   Chain of masses m=1 joined by springs k:   ü_i = k(u_{i+1} − 2u_i + u_{i−1})
+   → pulse speed  = √k  masses per second, but every mass only oscillates
+   about its own rest position (net drift = 0).
+   Pond: the same wave equation; corks bob up and down at a fixed x.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  const SP=[
+    {id:'k',label:'Spring stiffness',min:20,max:200,step:1,val:80,dig:0,unit:''},
+    {id:'d',label:'Push distance',min:0.15,max:0.8,step:0.01,val:0.45,dig:2,unit:''},
+    {id:'cw',label:'Water wave speed',min:0.1,max:0.5,step:0.01,val:0.25,dig:2,unit:''},
+    {id:'hd',label:'Pebble drop height',min:0.2,max:2,step:0.05,val:1,dig:2,unit:'m'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    btnRow([{id:'push',txt:'⇥ Push & pull end A',cls:'navy'},{id:'keep',txt:'Keep pushing'}])+
+    sliderHTML(SP[0])+sliderHTML(SP[1])+
+    btnRow([{id:'peb',txt:'● Drop a pebble',cls:'navy'}])+
+    sliderHTML(SP[2])+sliderHTML(SP[3])+
+    cardsHTML([{id:'r1',label:'Pulse speed',color:COL.blue},{id:'r2',label:'Mass 9 swing',color:COL.red},{id:'r3',label:'Mass 9 now',color:COL.red},{id:'r4',label:'Cork drift (x)',color:COL.green}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const N=20, u=new Float64Array(N), vel=new Float64Array(N), acc=new Float64Array(N);
+  const drv={mode:'idle',ph:0};
+  let keep=false, peak=0, quiet=0, wquiet=0, t=0;
+  const water=Str1D(320,'abs','abs');
+  const corks=[0.18,0.34,0.5,0.66,0.82].map(f=>({f,y:{x:0,v:0}}));
+  let peb=null, drops=[];
+  const startPush=()=>{ if(drv.mode==='idle'){ drv.mode='once'; drv.ph=0; peak=0; } };
+  $('#push').onclick=startPush;
+  $('#keep').onclick=()=>{ keep=!keep; $('#keep').classList.toggle('active',keep); if(keep&&drv.mode==='idle'){ drv.mode='cont'; drv.ph=0; peak=0; } };
+  const dropPebble=()=>{ if(peb) return; const H=canvas._h||500; peb={f:0.25+Math.random()*0.5, y:0, vy:0, fall:(+$('#hd').value)*0.14*H+14, init:false}; };
+  $('#peb').onclick=dropPebble;
+
+  animLoop((dt)=>{
+    t+=dt; const P=readS(wrap,SP);
+    /* ---- spring chain: symplectic integration, 8 sub-steps / frame ---- */
+    const sub=8, h2=dt/sub, k=P.k;
+    for(let s=0;s<sub;s++){
+      let u0=0;
+      if(drv.mode==='once'){ drv.ph+=h2/0.55*TAU; if(drv.ph>=TAU){ drv.mode=keep?'cont':'idle'; drv.ph=0; } else u0=P.d*Math.sin(drv.ph); }
+      else if(drv.mode==='cont'){ drv.ph+=h2*TAU/0.9; u0=P.d*Math.sin(drv.ph); if(drv.ph>=TAU){ if(keep) drv.ph-=TAU; else { drv.mode='idle'; drv.ph=0; u0=0; } } }
+      u[0]=u0;
+      for(let i=1;i<N;i++){
+        const ur=i<N-1?u[i+1]:u[i];
+        const g=i>N-8?14*Math.pow((i-(N-8))/7,2):0.05;
+        acc[i]=k*(ur-2*u[i]+u[i-1])-g*vel[i];
+      }
+      for(let i=1;i<N;i++){ vel[i]+=acc[i]*h2; u[i]+=vel[i]*h2; }
+      peak=Math.max(peak,Math.abs(u[8]));
+    }
+    let E=0; for(let i=0;i<N-1;i++) E+=Math.pow(u[i+1]-u[i],2)+vel[i]*vel[i]/k;
+    quiet=(E<2e-3&&drv.mode==='idle'&&!keep)?quiet+dt:0;
+    if(quiet>2.6){ startPush(); quiet=0; }
+    /* ---- pond ---- */
+    water.advance(dt,P.cw);
+    wquiet=(water.energy()<2e-4&&!peb)?wquiet+dt:0;
+    if(wquiet>3.2){ dropPebble(); wquiet=0; }
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* ---- draw chain ---- */
+    const cy=h*0.2, x0=w*0.13, x1=w*0.93, dsp=(x1-x0)/(N-1), r=Math.min(dsp*0.3,13);
+    const X=i=>x0+(i+u[i])*dsp;
+    pill(ctx,'Spring chain — each mass only shakes about its own spot',w*0.04,h*0.055,COL.blue);
+    for(let i=0;i<N;i++) line(ctx,x0+i*dsp,cy+r+9,x0+i*dsp,cy+r+22,'#c2d1e5',1.8);
+    line(ctx,x0+8*dsp,cy+r+16,X(8),cy+r+16,COL.red,3.4);
+    textAt(ctx,'rest position',x0+8*dsp,cy+r+38,{align:'center',size:11,color:COL.mid,weight:600});
+    for(let i=0;i<N-1;i++){
+      const st=u[i+1]-u[i];
+      const col=st<0?mixCol(COL.mid,COL.red,-st/0.45):mixCol(COL.mid,COL.blue,st/0.45);
+      zig(ctx,X(i)+r,X(i+1)-r,cy,5,6,col,2);
+    }
+    for(let i=0;i<N;i++) circ(ctx,X(i),cy,r,i===8?COL.red:COL.ink,i===8?'#fde4df':'#fff',i===8?3:2.2);
+    textAt(ctx,'9',X(8),cy+4,{align:'center',size:11,weight:700,color:COL.red});
+    /* driver A */
+    rrect(ctx,X(0)-r-30,cy-20,22,40,6); ctx.save(); ctx.fillStyle='#fff6da'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    line(ctx,X(0)-r-8,cy,X(0)-r,cy,COL.yellow,3);
+    textAt(ctx,'A',X(0)-r-19,cy+5,{align:'center',size:13,weight:700,color:COL.yellow});
+    /* pulse marker (energy centroid) */
+    if(drv.mode!=='cont' && E>8e-3){ let s0=0,s1=0; for(let i=0;i<N-1;i++){ const e=Math.pow(u[i+1]-u[i],2)+vel[i]*vel[i]/k; s0+=e; s1+=e*(i+0.5); }
+      const cx=x0+(s1/s0)*dsp; vec(ctx,cx-26,cy-34,cx+22,cy-34,COL.red,3); textAt(ctx,'disturbance',cx,cy-44,{align:'center',size:11,weight:700,color:COL.red}); }
+    /* ---- draw pond ---- */
+    const wy=h*0.8, wx0=w*0.05, wx1=w*0.95, up=h*0.14;
+    pill(ctx,'Pond — a cork bobs up and down, it does not travel',w*0.04,h*0.5,COL.blue);
+    ctx.save(); ctx.beginPath();
+    for(let i=0;i<=water.N;i++){ const xx=lerp(wx0,wx1,i/water.N), yy=wy-water.y[i]*up; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); }
+    ctx.lineTo(wx1,h*0.97); ctx.lineTo(wx0,h*0.97); ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.08)'; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.8; ctx.lineJoin='round';
+    for(let i=0;i<=water.N;i++){ const xx=lerp(wx0,wx1,i/water.N), yy=wy-water.y[i]*up; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); }
+    ctx.stroke(); ctx.restore();
+    line(ctx,wx0,wy,wx1,wy,COL.mid,1.2,[6,6]);
+    corks.forEach(c=>{
+      const s=water.sample(c.f); springTo(c.y,s,260,17,dt);
+      const px=lerp(wx0,wx1,c.f), py=wy-c.y.x*up;
+      const sl=(water.sample(c.f+0.012)-water.sample(c.f-0.012))*up, ang=Math.atan2(-sl,0.024*(wx1-wx0));
+      line(ctx,px,wy-up*1.3,px,wy+up*0.5,COL.mid,1.2,[3,5]);
+      ctx.save(); ctx.translate(px,py-4); ctx.rotate(ang); rrect(ctx,-12,-6,24,12,4); ctx.fillStyle='#fde4df'; ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    });
+    /* pebble + splash on real ballistic arcs */
+    if(peb){
+      const surf=wy-water.sample(peb.f)*up;
+      if(!peb.init){ peb.y=wy-peb.fall; peb.init=true; }
+      peb.vy+=1200*dt; peb.y+=peb.vy*dt;
+      circ(ctx,lerp(wx0,wx1,peb.f),peb.y,6,COL.ink,'#c2d1e5',2.4);
+      if(peb.y>=surf){
+        const amp=-clamp(peb.vy/600,0.2,1.0); water.bump(peb.f,0.018,amp);
+        for(let q=0;q<10;q++) drops.push({x:lerp(wx0,wx1,peb.f),y:surf,vx:(Math.random()-0.5)*190,vy:-peb.vy*(0.25+Math.random()*0.45)});
+        peb=null;
+      }
+    }
+    drops=drops.filter(d=>{ d.vy+=1500*dt; d.x+=d.vx*dt; d.y+=d.vy*dt; if(d.vy>0&&d.y>wy) return false; circ(ctx,d.x,d.y,2.3,COL.blue,'#fff',1.4); return true; });
+    setC(wrap,'r1',fmt(Math.sqrt(P.k),1)+' masses/s');
+    setC(wrap,'r2',fmt(peak,2)+' spacing');
+    setC(wrap,'r3',fmt(u[8],2));
+    setC(wrap,'r4','0 (fixed x)');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.2 TRANSVERSE & LONGITUDINAL   (Figs 14.2 – 14.4)
+   The driver (hand / piston) emits  d(t) = a sin(2πft); the disturbance
+   reaches distance x after x/v seconds:  s(x,t) = d(t − x/v).
+   A "travel coordinate" θ = ∫v dt keeps the wave pattern continuous when
+   the speed slider moves.
+   ===================================================================== */
+function WaveSrc(Wmax){
+  return {h:[{th:0,d:0}], th:0, ph:0, done:false, d:0,
+    reset(){ this.h=[{th:0,d:0}]; this.th=0; this.ph=0; this.done=false; this.d=0; },
+    update(dt,v,f,a,pulse){
+      this.th+=v*dt;
+      if(!this.done){ this.ph+=TAU*f*dt; if(pulse && this.ph>=TAU) this.done=true; }
+      this.d=this.done?0:a*Math.sin(this.ph);
+      this.h.push({th:this.th,d:this.d});
+      const lim=this.th-Wmax-2; while(this.h.length>2 && this.h[1].th<lim) this.h.shift();
+    },
+    at(x){
+      const te=this.th-x, H=this.h; if(te<H[0].th) return 0;
+      let lo=0,hi=H.length-1; if(te>=H[hi].th) return H[hi].d;
+      while(hi-lo>1){ const m=(lo+hi)>>1; if(H[m].th<=te) lo=m; else hi=m; }
+      const a=H[lo], b=H[hi]; return a.d+(b.d-a.d)*((te-a.th)/((b.th-a.th)||1));
+    }};
+}
+function buildA2(){
+  const wrap=labShell();
+  const SP=[
+    {id:'v',label:'Wave speed v',min:0.5,max:3,step:0.05,val:1.5,dig:2,unit:'m/s'},
+    {id:'f',label:'Source frequency f',min:0.2,max:1.5,step:0.05,val:0.6,dig:2,unit:'Hz'},
+    {id:'a',label:'Amplitude a',min:1,max:8,step:0.1,val:5,dig:1,unit:'cm'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Source</label><div class="toggle-group" id="mdB"><button class="toggle-btn active" data-m="cont">Continuous</button><button class="toggle-btn" data-m="pulse">Single pulse</button></div></div>`+
+    btnRow([{id:'rs',txt:'↻ Restart',cls:'navy'}])+
+    sliderHTML(SP[0])+sliderHTML(SP[1])+sliderHTML(SP[2])+
+    cardsHTML([{id:'r1',label:'Wavelength λ = v/f',color:COL.green},{id:'r2',label:'Period T',color:COL.blue},{id:'r3',label:'Particles move',color:COL.red,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const WD=10, src=WaveSrc(WD); let pulse=false, t=0, since=0;
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ pulse=b.dataset.m==='pulse'; src.reset(); since=0; });
+  $('#rs').onclick=()=>{ src.reset(); since=0; };
+  animLoop((dt)=>{
+    t+=dt; since+=dt; const P=readS(wrap,SP);
+    src.update(dt,P.v,P.f,P.a,pulse);
+    if(pulse && since>WD/P.v+1/P.f+1.2){ src.reset(); since=0; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xa=w*0.1, xb=w*0.95, sx=(xb-xa)/WD, ky=h*0.0125;
+    /* ---------- transverse: string ---------- */
+    const ys=h*0.2;
+    pill(ctx,'TRANSVERSE — string: particles move ⟂ to the wave',w*0.04,h*0.05,COL.blue);
+    line(ctx,xa,ys,xb,ys,COL.grid,1.4);
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.lineJoin='round';
+    for(let i=0;i<=240;i++){ const x=i/240*WD, yy=ys-src.at(x)*ky; i?ctx.lineTo(xa+x*sx,yy):ctx.moveTo(xa+x*sx,yy); }
+    ctx.stroke(); ctx.restore();
+    for(let j=0;j<26;j++){ const x=(j+0.5)/26*WD, tag=j===9; circ(ctx,xa+x*sx,ys-src.at(x)*ky,tag?6:3.2,tag?COL.red:COL.blue,tag?'#fde4df':'#fff',tag?2.8:1.8); }
+    const tx=xa+(9.5/26*WD)*sx; line(ctx,tx,ys-ky*8.5,tx,ys+ky*8.5,COL.red,1.4,[4,5]);
+    textAt(ctx,'↕',tx+9,ys-ky*8.5,{size:15,weight:700,color:COL.red});
+    const dy=ys-src.d*ky; circ(ctx,xa-14,dy,10,COL.yellow,'#fff6da',3); line(ctx,xa-4,dy,xa,ys-src.at(0)*ky,COL.yellow,3);
+    vec(ctx,w*0.72,h*0.1,w*0.9,h*0.1,COL.blue,3); textAt(ctx,'wave →',w*0.9,h*0.1-8,{align:'right',size:11,weight:700,color:COL.blue});
+    /* ---------- longitudinal: air in a pipe ---------- */
+    const p0=h*0.46, p1=h*0.7;
+    pill(ctx,'LONGITUDINAL — sound in a pipe: particles move ∥ to the wave',w*0.04,h*0.4,COL.blue);
+    line(ctx,xa,p0,xb,p0,COL.ink,3); line(ctx,xa,p1,xb,p1,COL.ink,3);
+    const lamPx=P.v/P.f*sx, ampPx=P.a*ky*0.9, g=Math.min(1,0.7*lamPx/(TAU*ampPx));
+    const NC=72, rows=6, xs=[];
+    for(let c=0;c<NC;c++){ const x=(c+0.5)/NC*WD; xs.push(src.at(x)*ky*0.9*g); }
+    for(let r=0;r<rows;r++){ const yy=lerp(p0+10,p1-10,r/(rows-1));
+      for(let c=0;c<NC;c++){ const px=xa+(c+0.5)/NC*WD*sx+xs[c], tag=(r===2&&c===31); circ(ctx,px,yy,tag?5.2:2.5,tag?COL.red:COL.ink,tag?'#fde4df':COL.ink,tag?2.6:1); } }
+    const gx=xa+(31.5/NC*WD)*sx; line(ctx,gx-34,p0+10+(p1-p0-20)*0.4,gx+34,p0+10+(p1-p0-20)*0.4,COL.red,1.4,[4,5]);
+    textAt(ctx,'↔',gx+38,p0+10+(p1-p0-20)*0.4+5,{size:15,weight:700,color:COL.red});
+    const pp=xa+src.at(0)*ky*0.9*g; rect(ctx,pp-12,p0,12,p1-p0,COL.yellow,'#fff6da',3); line(ctx,pp-12,(p0+p1)/2,xa-44,(p0+p1)/2,COL.yellow,4);
+    /* density curve (red up = compression) with C / R tags */
+    const yd=h*0.88, dh=h*0.075, dv=[], de=1.2;
+    for(let i=0;i<=240;i++){ const x=i/240*WD; dv.push(-(src.at(x+de*0.02)-src.at(x-de*0.02))*ky*0.9*g/(2*de*0.02*sx)); }
+    line(ctx,xa,yd,xb,yd,COL.grid,1.4);
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.6; ctx.lineJoin='round';
+    dv.forEach((q,i)=>{ const x=xa+i/240*WD*sx, y=yd-clamp(q/0.7,-1.3,1.3)*dh; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); ctx.restore();
+    for(let i=3;i<237;i++){ const q=dv[i]; if(q>0.18&&q>=dv[i-1]&&q>dv[i+1]) textAt(ctx,'C',xa+i/240*WD*sx,yd-clamp(q/0.7,0,1.3)*dh-6,{align:'center',size:11,weight:700,color:COL.red});
+      if(q<-0.18&&q<=dv[i-1]&&q<dv[i+1]) textAt(ctx,'R',xa+i/240*WD*sx,yd-clamp(q/0.7,-1.3,0)*dh+15,{align:'center',size:11,weight:700,color:COL.blue}); }
+    textAt(ctx,'density change (C compression · R rarefaction)',xb,h*0.8,{align:'right',size:11,weight:600,color:COL.muted});
+    setC(wrap,'r1',fmt(P.v/P.f,2)+' m'); setC(wrap,'r2',fmt(1/P.f,2)+' s');
+    setC(wrap,'r3','string ↕ ⟂ · air ↔ ∥');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.3 THE TRAVELLING WAVE   y(x,t) = a sin(kx − ωt + φ)    (Eq. 14.2)
+   k = 2π/λ, ω = 2π/T, v = ω/k = λ/T.  Phase θ = ∫ω dt is accumulated so
+   changing a slider never makes the wave jump.
+   Check — Example 14.2: a=5 mm, k=80 m⁻¹ (λ=7.85 cm), ω=3 s⁻¹ (T=2.09 s)
+   at x = 30 cm, t = 20 s gives y ≈ 5 mm.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  const SP=[
+    {id:'a',label:'Amplitude a',min:1,max:10,step:0.1,val:5,dig:1,unit:'mm'},
+    {id:'lam',label:'Wavelength λ',min:4,max:20,step:0.01,val:10,dig:2,unit:'cm'},
+    {id:'T',label:'Period T',min:0.5,max:5,step:0.01,val:2,dig:2,unit:'s'},
+    {id:'phi',label:'Initial phase φ',min:0,max:360,step:1,val:0,dig:0,unit:'°'},
+    {id:'x0',label:'Watch point x₀',min:0,max:40,step:0.1,val:12,dig:1,unit:'cm'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Direction</label><div class="toggle-group" id="drB"><button class="toggle-btn active" data-d="1">→ +x  (kx − ωt)</button><button class="toggle-btn" data-d="-1">← −x  (kx + ωt)</button></div></div>`+
+    btnRow([{id:'pl',txt:'❚❚ Pause',cls:'play'},{id:'one',txt:'▶ One period'},{id:'ex',txt:'Example 14.2'}])+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'k = 2π/λ',color:COL.green},{id:'r2',label:'ω = 2π/T',color:COL.green},{id:'r3',label:'f = 1/T',color:COL.blue},{id:'r4',label:'v = ω/k',color:COL.blue},{id:'r5',label:'y(x₀, t)',color:COL.yellow},{id:'r6',label:'clock t',color:COL.ink}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let dir=1, playing=true, until=null, t=0, th=0, hold=null;
+  const S={a:5,lam:10,T:2,phi:0,x0:12};
+  toggleWire(wrap.querySelectorAll('#drB button'),b=>dir=+b.dataset.d);
+  const setPlay=p=>{ playing=p; $('#pl').textContent=p?'❚❚ Pause':'▶ Play'; };
+  $('#pl').onclick=()=>{ until=null; setPlay(!playing); };
+  $('#one').onclick=()=>{ until=t+S.T; setPlay(true); };
+  $('#ex').onclick=()=>{ setS(wrap,'a',5); setS(wrap,'lam',7.85); setS(wrap,'T',2.09); setS(wrap,'phi',0); setS(wrap,'x0',30);
+    document.querySelector('#drB button[data-d="1"]').click(); hold={t:20}; };
+  animLoop((dt)=>{
+    const P=readS(wrap,SP);
+    ['a','lam','T','phi','x0'].forEach(k=>S[k]=hold?P[k]:approach(S[k],P[k],9,dt));
+    const k=TAU/S.lam, om=TAU/S.T;
+    if(hold && Math.abs(S.lam-P.lam)<1e-9){ t=hold.t; th=om*t*1; hold=null; setPlay(false); until=null; }
+    if(playing){ t+=dt; th+=om*dt; if(until!==null && t>=until){ th-=om*(t-until); t=until; setPlay(false); until=null; } }
+    const phi=S.phi*Math.PI/180;
+    const Y=x=>S.a*Math.sin(k*x-dir*th+phi);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* ---------- upper plot: y against x ---------- */
+    const px0=w*0.07, px1=w*0.95, mid=h*0.3, ky=Math.min(h*0.026,(mid-h*0.08)/10.5), XP=x=>px0+x/40*(px1-px0);
+    line(ctx,px0,mid,px1,mid,COL.ink,1.6); line(ctx,px0,h*0.06,px0,h*0.54,COL.ink,1.6);
+    for(let x=0;x<=40;x+=5){ line(ctx,XP(x),mid-4,XP(x),mid+4,COL.ink,1.4); textAt(ctx,x+'',XP(x),mid+18,{align:'center',size:10.5,color:COL.mid,weight:600}); }
+    textAt(ctx,'x (cm)',px1,mid-8,{align:'right',size:11,weight:600,color:COL.muted}); textAt(ctx,'y (mm)',px0+8,h*0.065,{size:11,weight:600,color:COL.muted});
+    textAt(ctx,'(vertical scale exaggerated)',px1,h*0.065,{align:'right',size:10,color:COL.mid});
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.4; ctx.lineJoin='round';
+    for(let i=0;i<=480;i++){ const x=i/480*40; i?ctx.lineTo(XP(x),mid-Y(x)*ky):ctx.moveTo(XP(x),mid-Y(x)*ky); }
+    ctx.stroke(); ctx.restore();
+    /* crests (red ×) */
+    let xc=((Math.PI/2+dir*th-phi)/k)%S.lam; if(xc<0) xc+=S.lam;
+    const crests=[]; for(let x=xc;x<=40.001;x+=S.lam) crests.push(x);
+    crests.forEach(x=>{ const cx=XP(x), cy=mid-S.a*ky; line(ctx,cx-6,cy-6,cx+6,cy+6,COL.red,2.8); line(ctx,cx-6,cy+6,cx+6,cy-6,COL.red,2.8); });
+    if(crests.length>=2){ const c1=XP(crests[0]), c2=XP(crests[1]), yy=mid-S.a*ky-26; hdim(ctx,c1,c2,yy,COL.green); textAt(ctx,'λ',(c1+c2)/2,yy-7,{align:'center',size:13,weight:700,color:COL.green}); }
+    dimArrow(ctx,px0+16,mid,mid-S.a*ky,COL.green); textAt(ctx,'a',px0+24,mid-S.a*ky*0.5+4,{size:13,weight:700,color:COL.green});
+    /* watch dot */
+    const wx=XP(S.x0), wy=mid-Y(S.x0)*ky;
+    line(ctx,wx,mid-S.a*ky,wx,mid+S.a*ky,COL.yellow,1.6,[4,4]); circ(ctx,wx,wy,8,COL.ink,COL.yellow,2.4);
+    textAt(ctx,'x₀',wx,mid+S.a*ky+18,{align:'center',size:11,weight:700,color:COL.yellow});
+    /* ---------- lower plot: y(x₀) against time ---------- */
+    const lx0=w*0.07, lx1=w*0.95, lm=h*0.79, Tw=3*S.T, ly=Math.min(h*0.026,h*0.13/10.5);
+    pill(ctx,'What the particle at x₀ does',lx0,h*0.6,COL.yellow);
+    line(ctx,lx0,lm,lx1,lm,COL.ink,1.6); line(ctx,lx0,h*0.66,lx0,h*0.94,COL.ink,1.6);
+    textAt(ctx,'t →',lx1,lm-8,{align:'right',size:11,weight:600,color:COL.muted});
+    const Yt=tt=>S.a*Math.sin(k*S.x0-dir*om*tt+phi);
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.2; ctx.lineJoin='round';
+    for(let i=0;i<=420;i++){ const tt=t-Tw+i/420*Tw; const X=lx0+i/420*(lx1-lx0); i?ctx.lineTo(X,lm-Yt(tt)*ly):ctx.moveTo(X,lm-Yt(tt)*ly); }
+    ctx.stroke(); ctx.restore();
+    const tref=dir>0?(k*S.x0+phi-Math.PI/2)/om:(Math.PI/2-k*S.x0-phi)/om;
+    const tLast=tref+Math.floor((t-tref)/S.T)*S.T, tPrev=tLast-S.T;
+    const TX=tt=>lx0+(tt-(t-Tw))/Tw*(lx1-lx0);
+    if(tPrev>t-Tw){ const yy=lm-S.a*ly-18; hdim(ctx,TX(tPrev),TX(tLast),yy,COL.green); textAt(ctx,'T',(TX(tPrev)+TX(tLast))/2,yy-7,{align:'center',size:13,weight:700,color:COL.green}); }
+    circ(ctx,lx1,lm-Yt(t)*ly,7,COL.ink,COL.yellow,2.4);
+    /* ---------- cards ---------- */
+    setC(wrap,'r1',fmt(TAU/(S.lam/100),1)+' rad/m'); setC(wrap,'r2',fmt(om,2)+' rad/s'); setC(wrap,'r3',fmt(1/S.T,2)+' Hz');
+    setC(wrap,'r4',fmt(S.lam/S.T,2)+' cm/s'); setC(wrap,'r5',fmt(Y(S.x0),2)+' mm'); setC(wrap,'r6',fmt(t,2)+' s');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.4 SPEED ON A STRETCHED STRING      v = √(T/μ)      (Eq. 14.14)
+   A real pulse is simulated with the wave equation. Real crossing time of
+   0.72 m at 93 m/s is only 7.7 ms, so everything is shown ×250 slower.
+   Check — Example 14.3: 5.0 g on 0.72 m, T = 60 N → μ = 6.9×10⁻³ kg/m,
+   v = 93 m/s.  The "measured" speed is timed off the moving pulse itself.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  const SP=[
+    {id:'T',label:'Tension T (hanging weight)',min:10,max:200,step:1,val:60,dig:0,unit:'N'},
+    {id:'m',label:'Mass of wire (0.72 m long)',min:1,max:15,step:0.1,val:5,dig:1,unit:'g'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    btnRow([{id:'fl',txt:'☝ Flick the wire',cls:'navy'},{id:'ex',txt:'Example 14.3'}])+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'μ = m / L',color:COL.green},{id:'r2',label:'√(T/μ)',color:COL.blue},{id:'r3',label:'Measured on pulse',color:COL.red},{id:'r4',label:'Real crossing time',color:COL.yellow},{id:'r5',label:'Slow-motion',color:COL.ink,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const L=0.72, SLOW=250, N=400, str=Str1D(N,'fix','fix');
+  let fl=null, meas={on:false,tv:0,t1:null,t2:null}, quiet=0, Ts=60, wz={x:0,v:0}, t=0;
+  const flick=()=>{ if(!fl) fl={t:0,sp:false}; };
+  $('#fl').onclick=flick;
+  $('#ex').onclick=()=>{ setS(wrap,'m',5); setS(wrap,'T',60); flick(); };
+  animLoop((dt)=>{
+    t+=dt; const P=readS(wrap,SP);
+    const mu=(P.m/1000)/L, vF=Math.sqrt(P.T/mu), c=vF/L/SLOW;
+    str.advance(dt,c);
+    quiet=(str.energy()<1e-5&&!fl)?quiet+dt:0; if(quiet>1.8){ flick(); quiet=0; }
+    if(fl){ fl.t+=dt; if(!fl.sp&&fl.t>0.14){ str.clear(); str.pulse(0.14,0.035,0.55,1); fl.sp=true; meas={on:true,tv:0,t1:null,t2:null}; } if(fl.t>0.6) fl=null; }
+    if(meas.on&&meas.t2===null){ meas.tv+=dt; let pk=0,mx=0; for(let i=0;i<=N;i++) if(str.y[i]>mx){ mx=str.y[i]; pk=i; }
+      if(mx>0.1){ const x=pk/N; if(meas.t1===null&&x>=0.25) meas.t1=meas.tv; else if(meas.t1!==null&&x>=0.85) meas.t2=meas.tv; } }
+    Ts=approach(Ts,P.T,5,dt); springTo(wz,(Ts/200)*0.1,60,5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xs0=w*0.1, xs1=w*0.7, ys=h*0.34, up=h*0.2, lw=1.6+Math.sqrt(P.m)*0.75;
+    pill(ctx,'Stretched wire — tension from a hanging weight',w*0.04,h*0.06,COL.blue);
+    /* post */
+    line(ctx,xs0,ys-44,xs0,ys+44,COL.ink,5); hatch(ctx,xs0-1,ys-44,ys+36,-1,9,COL.ink);
+    /* wire */
+    line(ctx,xs0,ys,xs1,ys,COL.grid,1.2,[5,5]);
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=lw; ctx.lineJoin='round';
+    for(let i=0;i<=N;i++){ const x=lerp(xs0,xs1,i/N), y=ys-str.y[i]*up; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke(); ctx.restore();
+    /* pulley, rope, weights */
+    const pr=26; circ(ctx,xs1,ys+pr,pr,COL.ink,'#fff',3); circ(ctx,xs1,ys+pr,4,COL.ink,COL.ink,1);
+    const ropeX=xs1+pr, wTop=h*0.52+wz.x*h;
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=lw; ctx.beginPath(); ctx.moveTo(xs1,ys); ctx.arc(xs1,ys+pr,pr,-Math.PI/2,0); ctx.lineTo(ropeX,wTop); ctx.stroke(); ctx.restore();
+    const bw=30+Ts*0.2, bh=26+Ts*0.22;
+    rect(ctx,ropeX-bw/2,wTop,bw,bh,COL.ink,'#eef2f8',3); line(ctx,ropeX-bw/2+6,wTop+8,ropeX+bw/2-6,wTop+8,COL.mid,1.6); line(ctx,ropeX-bw/2+6,wTop+bh-8,ropeX+bw/2-6,wTop+bh-8,COL.mid,1.6);
+    vec(ctx,ropeX+bw/2+22,wTop+bh*0.2,ropeX+bw/2+22,wTop+bh*0.2+18+Ts*0.28,COL.red,3.4);
+    textAt(ctx,'T = '+fmt(P.T,0)+' N',ropeX+bw/2+32,wTop+bh*0.2+20,{size:13,weight:700,color:COL.red});
+    /* finger that flicks */
+    const fu=fl?Math.sin(clamp(fl.t/0.3,0,1)*Math.PI):0, fx=lerp(xs0,xs1,0.14);
+    circ(ctx,fx,ys-12-fu*up*0.55,9,COL.ink,'#fff6da',3); if(fl) textAt(ctx,'flick',fx,ys+34,{align:'center',size:11,weight:700,color:COL.yellow});
+    textAt(ctx,'L = 0.72 m',(xs0+xs1)/2,ys+h*0.12,{align:'center',size:12,weight:600,color:COL.muted}); hdim(ctx,xs0,xs1,ys+h*0.1,COL.mid);
+    /* result cards */
+    const vM=(meas.t1!==null&&meas.t2!==null)?0.6*L/((meas.t2-meas.t1)/SLOW):null;
+    setC(wrap,'r1',fmt(mu*1000,2)+' g/m'); setC(wrap,'r2',fmt(vF,1)+' m/s'); setC(wrap,'r3',vM?fmt(vM,1)+' m/s':'timing…');
+    setC(wrap,'r4',fmtT(L/vF)); setC(wrap,'r5','×'+SLOW+' (pulse really takes '+fmtT(L/vF)+')');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.5 SPEED OF SOUND     v = √(B/ρ)  (Eq. 14.19)    Table 14.1
+   Newton (isothermal):  v = √(P/ρ) = √(RT/M)  = 280 m/s at STP
+   Laplace (adiabatic):  v = √(γP/ρ) = √γ·√(RT/M) = 331 m/s at STP  ← measured
+   Check — Example 14.4: ρ = 29.0×10⁻³ / 22.4×10⁻³ = 1.29 kg/m³.
+   Pulses travel at their true speeds, the whole race slowed so that the
+   slowest takes 4.5 s on screen.
+   ===================================================================== */
+const MEDIA=[{n:'Air (0 °C)',v:331,c:COL.blue},{n:'Water (20 °C)',v:1482,c:COL.green},{n:'Copper',v:3560,c:COL.yellow},{n:'Iron',v:5950,c:COL.red}];
+function buildA5(){
+  const wrap=labShell();
+  const SP=[
+    {id:'D',label:'Distance travelled',min:100,max:1000,step:10,val:500,dig:0,unit:'m'},
+    {id:'Tk',label:'Air temperature',min:250,max:320,step:1,val:273,dig:0,unit:'K'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Experiment</label><div class="toggle-group" id="mdB"><button class="toggle-btn active" data-m="race">Media race</button><button class="toggle-btn" data-m="nl">Newton vs Laplace</button></div></div>`+
+    btnRow([{id:'go',txt:'🔔 Strike!',cls:'navy'}])+
+    sliderHTML(SP[0])+sliderHTML(SP[1])+
+    `<div id="cardsRace">`+cardsHTML(MEDIA.map((m,i)=>({id:'m'+i,label:m.n+' — '+m.v+' m/s',color:m.c})))+`</div>`+
+    `<div id="cardsNL" class="hidden">`+cardsHTML([{id:'n1',label:'Newton √(P/ρ)',color:COL.red},{id:'n2',label:'Laplace √(γP/ρ)',color:COL.blue},{id:'n3',label:'Measured in air',color:COL.green},{id:'n4',label:'Newton is low by',color:COL.red}])+`</div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='race', tv=0;
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.m; tv=0;
+    $('#g_Tk').classList.toggle('hidden',mode!=='nl'); $('#cardsRace').classList.toggle('hidden',mode!=='race'); $('#cardsNL').classList.toggle('hidden',mode!=='nl'); });
+  $('#g_Tk').classList.add('hidden');
+  $('#go').onclick=()=>{ tv=0; };
+  animLoop((dt)=>{
+    tv+=dt; const P=readS(wrap,SP);
+    const R=8.314, Mm=0.029, vN=Math.sqrt(R*P.Tk/Mm), vL=vN*Math.sqrt(1.4), vE=331.3*Math.sqrt(P.Tk/273.15);
+    const tubes=mode==='race'?MEDIA.map(m=>({n:m.n,v:m.v,c:m.c,tint:null})):
+      [{n:'Newton — isothermal (T stays constant)',v:vN,c:COL.red,tint:'rgba(47,143,224,0.16)'},{n:'Laplace — adiabatic (compression heats up)',v:vL,c:COL.blue,tint:'rgba(217,67,43,0.2)'},{n:'Experiment in air',v:vE,c:COL.green,tint:null}];
+    const slowest=Math.min(...tubes.map(q=>q.v)), S=4.5*slowest/P.D;
+    if(tv>6.3) tv=0;
+    const tr=tv/S, wd=0.06*P.D;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const x0=w*0.09, x1=w*0.78, n=tubes.length, top=h*0.14, gap=(h*0.84)/n, th=Math.min(gap*0.48,h*0.11);
+    pill(ctx,'Same pulse, same distance D = '+fmt(P.D,0)+' m — slow-motion ×'+fmt(S,1),w*0.04,h*0.055,COL.ink);
+    tubes.forEach((q,ti)=>{
+      const yc=top+gap*(ti+0.5), xm=-2.5*wd+q.v*tr, A=0.4*(P.D/60);
+      line(ctx,x0,yc-th/2,x1,yc-th/2,COL.ink,2.6); line(ctx,x0,yc+th/2,x1,yc+th/2,COL.ink,2.6);
+      textAt(ctx,q.n+' · '+fmt(q.v,0)+' m/s',x0,yc-th/2-8,{size:12,weight:700,color:q.c});
+      if(q.tint&&xm>-wd&&xm<P.D+wd){ const a=clamp(x0+(xm+wd*0.2)/P.D*(x1-x0),x0,x1), b=clamp(x0+(xm+wd*2)/P.D*(x1-x0),x0,x1); if(b>a){ ctx.fillStyle=q.tint; ctx.fillRect(a,yc-th/2,b-a,th); } }
+      const NC=96, rows=3;
+      for(let r=0;r<rows;r++){ const yy=lerp(yc-th/2+th*0.2,yc+th/2-th*0.2,r/(rows-1));
+        for(let c=0;c<NC;c++){ const xw=(c+0.5)/NC*P.D, s=A*Math.exp(-0.5*Math.pow((xw-xm)/wd,2)), px=x0+(xw+s)/P.D*(x1-x0);
+          circ(ctx,px,yy,2.1,null,mixCol(COL.ink,q.c,s/A*1.4),1); } }
+      const sd=A*Math.exp(-0.5*Math.pow((0-xm)/wd,2));
+      rect(ctx,x0-16+sd/P.D*(x1-x0),yc-th/2,12,th,COL.yellow,'#fff6da',2.6);
+      const arrived=xm>=P.D, tt=P.D/q.v;
+      circ(ctx,x1+18,yc,9,arrived?COL.green:COL.mid,arrived?'#dff3e6':'#fff',2.6);
+      textAt(ctx,'t = '+fmtT(tt),x1+34,yc+4,{size:11.5,weight:700,color:arrived?COL.green:COL.muted});
+    });
+    if(mode==='race'){ MEDIA.forEach((m,i)=>setC(wrap,'m'+i,fmtT(P.D/m.v)+(i?'  ('+fmt(m.v/331,1)+'× air)':''))); }
+    else{ setC(wrap,'n1',fmt(vN,0)+' m/s'); setC(wrap,'n2',fmt(vL,0)+' m/s'); setC(wrap,'n3',fmt(vE,0)+' m/s'); setC(wrap,'n4',fmt((1-vN/vE)*100,1)+' %'); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.6 SUPERPOSITION     y = y₁ + y₂     (Eq. 14.25, Figs 14.9 – 14.10)
+   Pulses: Gaussians travelling in opposite directions.
+   Waves : y₁ = a sin(kx − ωt),  y₂ = a sin(kx − ωt + φ)
+           sum = 2a cos(φ/2) · sin(kx − ωt + φ/2)      amplitude A(φ) = 2a cos(φ/2)
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  const SP=[
+    {id:'a1',label:'Pulse 1 height (from left)',min:-1,max:1,step:0.05,val:1,dig:2,unit:''},
+    {id:'a2',label:'Pulse 2 height (from right)',min:-1,max:1,step:0.05,val:-1,dig:2,unit:''},
+    {id:'a',label:'Amplitude a (each wave)',min:0.2,max:1,step:0.05,val:0.6,dig:2,unit:''},
+    {id:'lam',label:'Wavelength λ',min:1,max:4,step:0.1,val:2.5,dig:1,unit:'m'},
+    {id:'phi',label:'Phase difference φ',min:0,max:360,step:1,val:0,dig:0,unit:'°'},
+    {id:'v',label:'Wave speed',min:1,max:4,step:0.1,val:2,dig:1,unit:'m/s'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Show</label><div class="toggle-group" id="mdB"><button class="toggle-btn active" data-m="pulse">Two pulses</button><button class="toggle-btn" data-m="wave">Two waves</button></div></div>`+
+    `<div id="gP">`+btnRow([{id:'p1',txt:'Equal & opposite'},{id:'p2',txt:'Same side'},{id:'p3',txt:'Big + small'}])+sliderHTML(SP[0])+sliderHTML(SP[1])+`</div>`+
+    `<div id="gW" class="hidden">`+btnRow([{id:'w1',txt:'φ = 0'},{id:'w2',txt:'φ = 90°'},{id:'w3',txt:'φ = π'}])+sliderHTML(SP[2])+sliderHTML(SP[3])+sliderHTML(SP[4])+`</div>`+
+    sliderHTML(SP[5])+
+    cardsHTML([{id:'r1',label:'Sum at x = 5 m',color:COL.green},{id:'r2',label:'Biggest |sum|',color:COL.green},{id:'r3',label:'Amplitude 2a cos(φ/2)',color:COL.green,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='pulse', t=0, th=0; const S={a1:1,a2:-1,a:0.6,lam:2.5,phi:0};
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.m; t=0; $('#gP').classList.toggle('hidden',mode!=='pulse'); $('#gW').classList.toggle('hidden',mode!=='wave'); });
+  const pre=(a1,a2)=>()=>{ setS(wrap,'a1',a1); setS(wrap,'a2',a2); t=0; };
+  $('#p1').onclick=pre(1,-1); $('#p2').onclick=pre(1,1); $('#p3').onclick=pre(1,0.45);
+  const ph=d=>()=>setS(wrap,'phi',d); $('#w1').onclick=ph(0); $('#w2').onclick=ph(90); $('#w3').onclick=ph(180);
+  const WD=10, SIG=0.55;
+  animLoop((dt)=>{
+    const P=readS(wrap,SP);
+    ['a1','a2','a','lam','phi'].forEach(k=>S[k]=approach(S[k],P[k],8,dt));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xa=w*0.06, xb=w*0.95, sx=(xb-xa)/WD, mid=h*0.5, uy=h*0.2;
+    line(ctx,xa,mid,xb,mid,COL.ink,1.6);
+    for(let x=0;x<=WD;x+=1) line(ctx,xa+x*sx,mid-4,xa+x*sx,mid+4,COL.ink,1.3);
+    textAt(ctx,'x (m)',xb,mid-8,{align:'right',size:11,weight:600,color:COL.muted});
+    const G=(x,c)=>Math.exp(-0.5*Math.pow((x-c)/SIG,2));
+    let f1,f2,env=null;
+    if(mode==='pulse'){
+      t+=dt; const per=(WD+3.4)/P.v; if(t>per) t=0;
+      const c1=-1.7+P.v*t, c2=WD+1.7-P.v*t;
+      f1=x=>S.a1*G(x,c1); f2=x=>S.a2*G(x,c2);
+    }else{
+      th+=TAU*P.v/S.lam*dt; const k=TAU/S.lam, p=S.phi*Math.PI/180;
+      f1=x=>S.a*Math.sin(k*x-th); f2=x=>S.a*Math.sin(k*x-th+p);
+      env=2*S.a*Math.abs(Math.cos(p/2));
+    }
+    const curve=(f,col,lw,dash)=>{ ctx.save(); ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.lineJoin='round'; if(dash) ctx.setLineDash(dash);
+      for(let i=0;i<=400;i++){ const x=i/400*WD; i?ctx.lineTo(xa+x*sx,mid-f(x)*uy):ctx.moveTo(xa+x*sx,mid-f(x)*uy); } ctx.stroke(); ctx.restore(); };
+    if(env!==null){ line(ctx,xa,mid-env*uy,xb,mid-env*uy,COL.green,1.4,[7,6]); line(ctx,xa,mid+env*uy,xb,mid+env*uy,COL.green,1.4,[7,6]); }
+    curve(f1,COL.blue,2.2); curve(f2,COL.red,2.2); curve(x=>f1(x)+f2(x),COL.green,4.4);
+    pill(ctx,'y₁',w*0.06,h*0.06,COL.blue); pill(ctx,'y₂',w*0.06+46,h*0.06,COL.red); pill(ctx,'y₁ + y₂  (what the medium really does)',w*0.06+92,h*0.06,COL.green);
+    let mx=0; for(let i=0;i<=200;i++){ const x=i/200*WD; mx=Math.max(mx,Math.abs(f1(x)+f2(x))); }
+    if(mode==='pulse'){
+      const c1=-1.7+P.v*t, c2=WD+1.7-P.v*t;
+      if(Math.abs(c1-c2)<2*SIG*1.6) pill(ctx,mx<0.04?'complete cancellation — flat for an instant!':'overlap: displacements add algebraically',w/2,h*0.92,COL.green,'center');
+    }
+    setC(wrap,'r1',fmt(f1(5)+f2(5),2)); setC(wrap,'r2',fmt(mx,2));
+    setC(wrap,'r3',mode==='wave'?fmt(env,2)+'  ('+fmt(env/(2*Math.max(S.a,1e-6)),2)+' × 2a)':'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.7 REFLECTION OF A PULSE   (Fig 14.11, Eqs 14.35 – 14.36)
+   Real wave-equation simulation.
+   Rigid end (y = 0): reflected pulse is inverted — phase change π.
+   Free end  (y_x = 0): same side, no phase change; the end swings 2a.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  const SP=[
+    {id:'a',label:'Pulse height a',min:-1,max:1,step:0.05,val:0.7,dig:2,unit:''},
+    {id:'sg',label:'Pulse width',min:0.03,max:0.1,step:0.005,val:0.05,dig:3,unit:''},
+    {id:'c',label:'Wave speed',min:0.15,max:0.6,step:0.01,val:0.32,dig:2,unit:''}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Far end of the string</label><div class="toggle-group" id="bcB"><button class="toggle-btn active" data-b="fix">Rigid wall</button><button class="toggle-btn" data-b="free">Free ring on rod</button></div></div>`+
+    btnRow([{id:'send',txt:'☝ Send a pulse',cls:'navy'}])+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'Phase change',color:COL.red},{id:'r2',label:'Reflected pulse',color:COL.blue},{id:'r3',label:'Boundary max / a',color:COL.green},{id:'r4',label:'Wall force on string',color:COL.red}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const N=400, str=Str1D(N,'abs','fix'); let bc='fix', fl=null, since=99, amp0=0.7, edge=0, refl=null, quiet=0, wallF=0;
+  toggleWire(wrap.querySelectorAll('#bcB button'),b=>{ bc=b.dataset.b; str.bcR=bc; str.clear(); quiet=99; });
+  const send=()=>{ if(!fl){ fl={t:0,sp:false}; } };
+  $('#send').onclick=send;
+  animLoop((dt)=>{
+    const P=readS(wrap,SP);
+    str.advance(dt,P.c); since+=dt;
+    quiet=(str.energy()<1e-5&&!fl)?quiet+dt:0; if(quiet>1.4){ send(); quiet=0; }
+    if(fl){ fl.t+=dt; if(!fl.sp&&fl.t>0.14){ str.clear(); str.pulse(0.2,P.sg,P.a,1); fl.sp=true; since=0; amp0=P.a; edge=0; refl=null; } if(fl.t>0.55) fl=null; }
+    edge=Math.max(edge,Math.abs(str.y[N]));
+    if(since>0&&!refl&&amp0!==0&&since>(0.8+0.3)/P.c){ let pk=0,mx=0; for(let i=Math.floor(N*0.4);i<Math.floor(N*0.85);i++) if(Math.abs(str.y[i])>mx){ mx=Math.abs(str.y[i]); pk=i; }
+      if(mx>0.1*Math.abs(amp0)) refl={sign:Math.sign(str.y[pk])*Math.sign(amp0)}; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xs0=w*0.05, xs1=w*0.78, ys=h*0.5, up=h*0.24;
+    pill(ctx,bc==='fix'?'Rigid wall — the string cannot move at the wall':'Free ring — the end slides on a smooth rod',w*0.04,h*0.07,bc==='fix'?COL.red:COL.green);
+    line(ctx,xs0,ys,xs1,ys,COL.grid,1.2,[6,6]);
+    /* boundary hardware */
+    if(bc==='fix'){ line(ctx,xs1,h*0.2,xs1,h*0.8,COL.ink,6); hatch(ctx,xs1+3,h*0.2,h*0.78,1,12,COL.ink); }
+    else{ line(ctx,xs1,h*0.14,xs1,h*0.86,COL.ink,4); }
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.4; ctx.lineJoin='round';
+    for(let i=0;i<=N;i++){ const x=lerp(xs0,xs1,i/N), y=ys-str.y[i]*up; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke(); ctx.restore();
+    if(bc==='free'){ circ(ctx,xs1,ys-str.y[N]*up,9,COL.green,'#dff3e6',3.2); }
+    /* force the wall exerts on the string = −T·(slope of string at the wall) */
+    wallF=approach(wallF,bc==='fix'?-(str.y[N-1]-str.y[N])*N*0.05:0,18,dt);
+    if(bc==='fix'&&Math.abs(wallF)>0.04){ const len=clamp(wallF*up*0.9,-h*0.22,h*0.22); vec(ctx,xs1+24,ys,xs1+24,ys-len,COL.red,4); textAt(ctx,'wall pushes back',xs1+30,ys-len/2,{size:11,weight:700,color:COL.red}); }
+    /* finger */
+    const fu=fl?Math.sin(clamp(fl.t/0.3,0,1)*Math.PI):0, fx=lerp(xs0,xs1,0.2);
+    circ(ctx,fx,ys-14-fu*Math.sign(P.a||1)*up*0.5,9,COL.ink,'#fff6da',3);
+    setC(wrap,'r1',refl?(refl.sign<0?'π  (inverted)':'0  (same side)'):'—');
+    setC(wrap,'r2',refl?(refl.sign<0?'upside-down':'right-way-up'):'…');
+    setC(wrap,'r3',fmt(edge/Math.max(0.01,Math.abs(amp0)),2)+' × a');
+    setC(wrap,'r4',bc==='fix'?(Math.abs(wallF)>0.04?(wallF>0?'↑ on string':'↓ on string'):'0'):'none (free)');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8 STANDING WAVES ON A STRING     (Eqs 14.37 – 14.42, Fig 14.13)
+   y = 2a sin(kx) cos(ωt)  with  kL = nπ  →  λ = 2L/n,  f_n = n·v/2L
+   Shown in slow-motion: real f₁ ≈ 65 Hz for the 0.72 m wire.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  const SP=[
+    {id:'L',label:'String length L',min:0.4,max:1.2,step:0.01,val:0.72,dig:2,unit:'m'},
+    {id:'v',label:'Wave speed v',min:40,max:300,step:1,val:93,dig:0,unit:'m/s'},
+    {id:'a',label:'Amplitude',min:0.3,max:1,step:0.05,val:0.7,dig:2,unit:''}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Harmonic n</label><div class="toggle-group" id="hB">${[1,2,3,4,5,6].map(n=>`<button class="toggle-btn${n===1?' active':''}" data-n="${n}">${n}</button>`).join('')}</div></div>`+
+    `<div class="control-group"><label>Show the two travelling waves</label><div class="toggle-group" id="twB"><button class="toggle-btn active" data-t="0">Off</button><button class="toggle-btn" data-t="1">On</button></div></div>`+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'λₙ = 2L/n',color:COL.green},{id:'r2',label:'fₙ = n·v/2L',color:COL.blue},{id:'r3',label:'Nodes (incl. ends)',color:COL.green},{id:'r4',label:'Antinodes',color:COL.red},{id:'r5',label:'Slow-motion',color:COL.ink,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let n=1, tw=false, th=0; const A={x:0,v:0};
+  toggleWire(wrap.querySelectorAll('#hB button'),b=>{ n=+b.dataset.n; A.x*=0.1; A.v=0; });
+  toggleWire(wrap.querySelectorAll('#twB button'),b=>tw=b.dataset.t==='1');
+  animLoop((dt)=>{
+    const P=readS(wrap,SP);
+    const fn=n*P.v/(2*P.L), S=Math.max(100,fn/4), fv=fn/S; th+=TAU*fv*dt; springTo(A,P.a,60,6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Lpx=P.L/1.2*w*0.78, xl=(w-Lpx)/2, xr=xl+Lpx, ys=h*0.5, up=h*0.21, k=n*Math.PI/P.L;
+    const Yst=x=>A.x*Math.sin(k*x)*Math.cos(th);
+    pill(ctx,'String fixed at both ends — harmonic n = '+n,w*0.04,h*0.07,COL.blue);
+    /* posts */
+    [xl,xr].forEach((x,i)=>{ line(ctx,x,ys-60,x,ys+60,COL.ink,5); hatch(ctx,x+(i?3:-3),ys-60,ys+50,i?1:-1,10,COL.ink); });
+    line(ctx,xl,ys,xr,ys,COL.grid,1.2,[6,6]);
+    /* envelope */
+    ['up','dn'].forEach(sd=>{ ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.green; ctx.globalAlpha=0.55; ctx.lineWidth=1.4; ctx.setLineDash([7,6]);
+      for(let i=0;i<=300;i++){ const x=i/300*P.L, e=A.x*Math.abs(Math.sin(k*x))*(sd==='up'?1:-1); i?ctx.lineTo(xl+x/P.L*Lpx,ys-e*up):ctx.moveTo(xl+x/P.L*Lpx,ys-e*up); } ctx.stroke(); ctx.restore(); });
+    if(tw){ const comp=(sgn,col)=>{ ctx.save(); ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.globalAlpha=0.85;
+        for(let i=0;i<=300;i++){ const x=i/300*P.L, y=0.5*A.x*Math.sin(k*x+sgn*th); i?ctx.lineTo(xl+x/P.L*Lpx,ys-y*up):ctx.moveTo(xl+x/P.L*Lpx,ys-y*up); } ctx.stroke(); ctx.restore(); };
+      comp(-1,COL.blue); comp(1,COL.red); }
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=tw?COL.green:COL.blue; ctx.lineWidth=3.8; ctx.lineJoin='round';
+    for(let i=0;i<=300;i++){ const x=i/300*P.L; i?ctx.lineTo(xl+x/P.L*Lpx,ys-Yst(x)*up):ctx.moveTo(xl+x/P.L*Lpx,ys-Yst(x)*up); } ctx.stroke(); ctx.restore();
+    for(let j=0;j<=40;j++){ const x=j/40*P.L; circ(ctx,xl+x/P.L*Lpx,ys-Yst(x)*up,3,COL.blue,'#fff',1.6); }
+    /* nodes & antinodes */
+    for(let m=0;m<=n;m++){ const px=xl+m/n*Lpx; circ(ctx,px,ys,6.5,COL.green,'#dff3e6',2.8); if(m>0&&m<n) textAt(ctx,'N',px,ys+26,{align:'center',size:12,weight:700,color:COL.green}); }
+    for(let m=0;m<n;m++){ const px=xl+(m+0.5)/n*Lpx; circ(ctx,px,ys-Yst((m+0.5)/n*P.L)*up,6.5,COL.red,'#fde4df',2.8); textAt(ctx,'A',px,ys+up*A.x+34,{align:'center',size:12,weight:700,color:COL.red,alpha:0.9}); }
+    hdim(ctx,xl,xr,h*0.88,COL.mid); textAt(ctx,'L = '+fmt(P.L,2)+' m = '+n+' × λ/2',(xl+xr)/2,h*0.88-9,{align:'center',size:12,weight:600,color:COL.muted});
+    if(n>1){ hdim(ctx,xl,xl+Lpx/n,h*0.94,COL.green); textAt(ctx,'λ/2',xl+Lpx/n/2,h*0.94-9,{align:'center',size:11,weight:700,color:COL.green}); }
+    setC(wrap,'r1',fmt(2*P.L/n,3)+' m'); setC(wrap,'r2',fmt(fn,1)+' Hz'); setC(wrap,'r3',String(n+1)); setC(wrap,'r4',String(n)); setC(wrap,'r5','×'+fmt(S,0)+'  (f₁ = '+fmt(P.v/(2*P.L),1)+' Hz)');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.9 AIR COLUMN RESONANCE    (Eqs 14.43 – 14.44, Figs 14.14 – 14.15)
+   Open at both ends : fₙ = n·v/2L,  n = 1,2,3,…   (all harmonics)
+   Closed at one end : fₙ = (2m+1)·v/4L              (odd harmonics only)
+   Driven response of the nearest mode: A = 1/√(1+((f−fₙ)/Δ)²), Δ = 5% fₙ.
+   Check — Example 14.5: L = 30 cm, v = 330 m/s → open: 550n Hz so 1.1 kHz
+   is the 2nd harmonic ✓ resonates;  closed: 275, 825, 1375 Hz → no resonance.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  const SP=[
+    {id:'L',label:'Pipe length L',min:0.15,max:0.45,step:0.01,val:0.3,dig:2,unit:'m'},
+    {id:'f',label:'Tuning-fork frequency',min:100,max:2500,step:1,val:1100,dig:0,unit:'Hz'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Pipe</label><div class="toggle-group" id="tpB"><button class="toggle-btn active" data-p="open">Open both ends</button><button class="toggle-btn" data-p="closed">Closed at one end</button></div></div>`+
+    btnRow([{id:'ex',txt:'Example 14.5',cls:'navy'},{id:'snap',txt:'Tune to nearest'}])+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'Nearest natural freq',color:COL.blue},{id:'r2',label:'Which harmonic',color:COL.green},{id:'r3',label:'Resonance?',color:COL.red},{id:'r4',label:'Response',color:COL.yellow},{id:'r5',label:'This pipe can ring at (Hz)',color:COL.ink,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const VS=330; let type='open', th=0, ft=0, Amp=0, nearest=null;
+  toggleWire(wrap.querySelectorAll('#tpB button'),b=>{ type=b.dataset.p; });
+  const modes=(L)=>{ const out=[]; for(let m=1;m<=40;m++){ if(type==='open') out.push({h:m,f:m*VS/(2*L),kk:m*Math.PI/L}); else if(m%2) out.push({h:m,f:m*VS/(4*L),kk:m*Math.PI/(2*L)}); } return out; };
+  $('#ex').onclick=()=>{ setS(wrap,'L',0.3); setS(wrap,'f',1100); };
+  $('#snap').onclick=()=>{ if(nearest) setS(wrap,'f',Math.round(clamp(nearest.f,100,2500))); };
+  animLoop((dt)=>{
+    const P=readS(wrap,SP), ms=modes(P.L);
+    nearest=ms.reduce((b,m)=>Math.abs(m.f-P.f)<Math.abs(b.f-P.f)?m:b,ms[0]);
+    const r=(P.f-nearest.f)/(0.05*nearest.f), tgt=1/Math.sqrt(1+r*r), res=Math.abs(r)<1.5;
+    Amp=approach(Amp,tgt,4,dt);
+    const fv=clamp(P.f/600,0.5,5); th+=TAU*fv*dt; ft+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const px0=w*0.2, Lpx=P.L/0.45*w*0.7, px1=px0+Lpx, cy=h*0.4, ph=h*0.26, p0=cy-ph/2, p1=cy+ph/2;
+    const kpx=nearest.kk*Lpx/P.L, ampMax=Math.min(30,0.7/kpx);
+    pill(ctx,(type==='open'?'Open pipe':'Pipe closed at the right end')+' · L = '+fmt(P.L*100,0)+' cm · v = 330 m/s',w*0.04,h*0.07,COL.blue);
+    /* tuning fork + sound arcs */
+    const vib=Math.sin(th)*3.5*(0.5+0.5*Amp);
+    fork(ctx,px0-62,cy,46,vib,COL.yellow,Math.PI/2);
+    for(let q=0;q<3;q++){ const u=((ft*0.7+q/3)%1); ctx.save(); ctx.globalAlpha=(1-u)*0.9; ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.beginPath(); ctx.arc(px0-62+10,cy,12+u*50,-0.9,0.9); ctx.stroke(); ctx.restore(); }
+    textAt(ctx,fmt(P.f,0)+' Hz',px0-70,cy+62,{align:'center',size:12,weight:700,color:COL.yellow});
+    /* pipe walls */
+    line(ctx,px0,p0,px1,p0,COL.ink,3.4); line(ctx,px0,p1,px1,p1,COL.ink,3.4);
+    if(type==='closed'){ line(ctx,px1,p0-2,px1,p1+2,COL.ink,6); hatch(ctx,px1+3,p0,p1,1,10,COL.ink); }
+    else{ line(ctx,px1,p0,px1+14,p0-9,COL.ink,2.2); line(ctx,px1,p1,px1+14,p1+9,COL.ink,2.2); }
+    /* air particles */
+    const NC=64, rows=7;
+    for(let rw=0;rw<rows;rw++){ const yy=lerp(p0+9,p1-9,rw/(rows-1));
+      for(let c=0;c<NC;c++){ const x=(c+0.5)/NC*P.L, s=Amp*ampMax*Math.cos(nearest.kk*x)*Math.sin(th);
+        circ(ctx,px0+(c+0.5)/NC*Lpx+s,yy,2.4,null,COL.ink,1); } }
+    /* nodes (displacement) & antinodes */
+    for(let m=0;m<=2*nearest.h+2;m++){ const x=m*Math.PI/(2*nearest.kk); if(x>P.L+1e-6) break; const px=px0+x/P.L*Lpx, isA=(m%2===0);
+      circ(ctx,px,p0-14,5.5,isA?COL.red:COL.green,isA?'#fde4df':'#dff3e6',2.4); textAt(ctx,isA?'A':'N',px,p0-26,{align:'center',size:11,weight:700,color:isA?COL.red:COL.green}); }
+    /* pressure curve */
+    const yd=h*0.82, dh=h*0.1;
+    textAt(ctx,'pressure change Δp  (red up = compression)',px0,h*0.665,{size:11,weight:600,color:COL.muted});
+    line(ctx,px0,yd,px1,yd,COL.grid,1.4);
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.red; ctx.lineWidth=3.2; ctx.lineJoin='round';
+    for(let i=0;i<=300;i++){ const x=i/300*P.L, p=Amp*Math.sin(nearest.kk*x)*Math.sin(th); i?ctx.lineTo(px0+i/300*Lpx,yd-p*dh):ctx.moveTo(px0+i/300*Lpx,yd-p*dh); } ctx.stroke(); ctx.restore();
+    if(res) pill(ctx,'RESONANCE ✓  — the air column rings loudly',w*0.96,h*0.07,COL.green,'right');
+    else pill(ctx,'not a natural frequency — barely responds',w*0.96,h*0.07,COL.mid,'right');
+    setC(wrap,'r1',fmt(nearest.f,0)+' Hz'); setC(wrap,'r2',nearest.h===1?'1st (fundamental)':ord(nearest.h)+(type==='closed'?' (odd only)':''));
+    setC(wrap,'r3',res?'YES ✓':'No'); setC(wrap,'r4',fmt(tgt*100,0)+' %');
+    setC(wrap,'r5',ms.slice(0,6).map(m=>fmt(m.f,0)).join(', ')+' …');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.10 BEATS     s = s₁ + s₂ = [2a cos(ω_b t)] cos(ω_a t)    (Eq. 14.47)
+   ω_b = (ω₁−ω₂)/2, ω_a = (ω₁+ω₂)/2  →  beat frequency ν_beat = |ν₁ − ν₂|
+   Check — Fig 14.16: 11 Hz and 9 Hz → 2 Hz.
+   Check — Example 14.6: A = 427 Hz, beats 5 Hz, B's tension raised → beats 3 Hz
+           so B was below A: ν_B = 427 − 5 = 422 Hz.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  const RG={text:{min:4,max:20,step:0.5,f1:11,f2:9,slow:0.25,dig:1},aud:{min:420,max:434,step:1,f1:427,f2:422,slow:1/15,dig:0}};
+  const SP=[{id:'f1',label:'Fork A frequency',min:4,max:20,step:0.5,val:11,dig:1,unit:'Hz'},{id:'f2',label:'Fork B frequency',min:4,max:20,step:0.5,val:9,dig:1,unit:'Hz'}];
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label>Range</label><div class="toggle-group" id="rgB"><button class="toggle-btn active" data-r="text">Fig 14.16 (≈10 Hz)</button><button class="toggle-btn" data-r="aud">Audible (≈427 Hz)</button></div></div>`+
+    btnRow([{id:'lis',txt:'🔊 Listen',cls:'navy'}])+
+    SP.map(s=>sliderHTML(s)).join('')+
+    cardsHTML([{id:'r1',label:'Beat frequency |νA − νB|',color:COL.green},{id:'r2',label:'Beat period',color:COL.blue},{id:'r3',label:'Average frequency',color:COL.yellow},{id:'r4',label:'Beats counted',color:COL.red},{id:'r5',label:'Slow-motion',color:COL.ink,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let rg='text', tau=0, ac=null, osc=null, listening=false;
+  const applyRange=()=>{ const R=RG[rg]; ['f1','f2'].forEach((id,i)=>{ const e=$('#'+id); e.min=R.min; e.max=R.max; e.step=R.step; e.value=i?R.f2:R.f1; SP[i].dig=R.dig; }); $('#lis').disabled=(rg!=='aud'); if(rg!=='aud') stopSound(); };
+  function stopSound(){ listening=false; $('#lis').textContent='🔊 Listen'; if(osc){ try{ osc.forEach(o=>o.stop()); }catch(e){} osc=null; } }
+  toggleWire(wrap.querySelectorAll('#rgB button'),b=>{ rg=b.dataset.r; tau=0; applyRange(); });
+  $('#lis').onclick=()=>{
+    if(listening){ stopSound(); return; }
+    try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); ac.resume&&ac.resume();
+      osc=[0,1].map(()=>{ const o=ac.createOscillator(), g=ac.createGain(); g.gain.value=0.07; o.connect(g); g.connect(ac.destination); o.start(); return o; });
+      listening=true; $('#lis').textContent='🔇 Stop sound'; }catch(e){ listening=false; }
+  };
+  activeStops.push(()=>{ stopSound(); try{ ac&&ac.close(); }catch(e){} });
+  applyRange();
+  animLoop((dt)=>{
+    const P=readS(wrap,SP), R=RG[rg], d=Math.abs(P.f1-P.f2), fa=(P.f1+P.f2)/2;
+    tau+=dt*R.slow;
+    if(listening&&osc&&ac){ osc[0].frequency.setTargetAtTime(P.f1,ac.currentTime,0.02); osc[1].frequency.setTargetAtTime(P.f2,ac.currentTime,0.02); }
+    const W=d<0.01?1.5:Math.min(2.2/d,rg==='aud'?160/fa:6);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xa=w*0.05, xb=w*0.96, uy=h*0.058;
+    const rows=[{y:h*0.15,c:COL.blue,t:'Fork A · '+fmt(P.f1,rg==='aud'?0:1)+' Hz'},{y:h*0.32,c:COL.red,t:'Fork B · '+fmt(P.f2,rg==='aud'?0:1)+' Hz'},{y:h*0.58,c:COL.green,t:'A + B  — what your ear receives'}];
+    rows.forEach((rw,i)=>{ line(ctx,xa,rw.y,xb,rw.y,COL.grid,1.2); pill(ctx,rw.t,xa,rw.y-uy*(i===2?2:1)-16,rw.c); });
+    const trace=(fn,y,col,lw)=>{ ctx.save(); ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.lineJoin='round'; const NS=Math.round((xb-xa)*1.5);
+      for(let i=0;i<=NS;i++){ const s=tau-W+i/NS*W, X=xa+i/NS*(xb-xa); i?ctx.lineTo(X,y-fn(s)*uy):ctx.moveTo(X,y-fn(s)*uy); } ctx.stroke(); ctx.restore(); };
+    trace(s=>Math.cos(TAU*P.f1*s),rows[0].y,COL.blue,1.7); trace(s=>Math.cos(TAU*P.f2*s),rows[1].y,COL.red,1.7);
+    [1,-1].forEach(sg=>{ ctx.save(); ctx.beginPath(); ctx.strokeStyle=COL.green; ctx.globalAlpha=0.7; ctx.lineWidth=1.8; ctx.setLineDash([7,6]); const NS=300;
+      for(let i=0;i<=NS;i++){ const s=tau-W+i/NS*W, X=xa+i/NS*(xb-xa), e=sg*2*Math.abs(Math.cos(Math.PI*(P.f1-P.f2)*s)); i?ctx.lineTo(X,rows[2].y-e*uy):ctx.moveTo(X,rows[2].y-e*uy); } ctx.stroke(); ctx.restore(); });
+    trace(s=>Math.cos(TAU*P.f1*s)+Math.cos(TAU*P.f2*s),rows[2].y,COL.green,2.2);
+    line(ctx,xb,h*0.06,xb,h*0.72,COL.yellow,2,[4,4]); textAt(ctx,'now',xb-6,h*0.07,{align:'right',size:11,weight:700,color:COL.yellow});
+    /* forks + loudness */
+    const env=Math.abs(Math.cos(Math.PI*(P.f1-P.f2)*tau)), by=h*0.86;
+    const vA=Math.sin(ft_()*TAU*3)*3.2, vB=Math.sin(ft_()*TAU*3+1.3)*3.2;
+    fork(ctx,w*0.14,by+16,50,vA,COL.blue); textAt(ctx,'A',w*0.14,h*0.985,{align:'center',size:12,weight:700,color:COL.blue});
+    fork(ctx,w*0.28,by+16,50,vB,COL.red); textAt(ctx,'B',w*0.28,h*0.985,{align:'center',size:12,weight:700,color:COL.red});
+    const cx=w*0.62, rr=14+env*h*0.075;
+    for(let q=3;q>=1;q--) circ(ctx,cx,by,rr*q/3,COL.green,q===1?'rgba(31,157,85,'+(0.12+0.5*env).toFixed(2)+')':null,2.2);
+    textAt(ctx,env>0.7?'LOUD':env<0.3?'soft':'…',cx,by+5,{align:'center',size:13,weight:700,color:COL.ink});
+    textAt(ctx,'loudness',cx,by-rr-10,{align:'center',size:11,weight:600,color:COL.muted});
+    setC(wrap,'r1',fmt(d,1)+' Hz'); setC(wrap,'r2',d>0?fmt(1/d,2)+' s':'∞'); setC(wrap,'r3',fmt(fa,1)+' Hz'); setC(wrap,'r4',String(Math.floor(d*tau+0.5))); setC(wrap,'r5','×'+fmt(1/R.slow,0));
+  });
+  function ft_(){ return performance.now()/1000; }
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

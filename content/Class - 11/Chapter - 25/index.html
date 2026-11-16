@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 3 — Trigonometric Functions | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.play.on{background:var(--f-red); border-color:var(--f-red);}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn:hover{border-color:var(--navy-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.fb{font-size:var(--fs-xs); font-weight:600; padding:5px 8px; border-radius:7px; background:#fdf4dc; color:#8a6410;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📐</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 3</div>
+      <h1>Trigonometric Functions</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change · angle</span>
+      <span><i style="background:var(--f-red)"></i>sin · y</span>
+      <span><i style="background:var(--f-green)"></i>cos · x</span>
+      <span><i style="background:var(--f-blue)"></i>tan · sec · cot · cosec</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">3.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 3: TRIGONOMETRIC FUNCTIONS
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; the drawn object springs toward it every frame (spring-damper,
+   ζ ≈ 0.7: it arrives with a small, visible settle — it never jumps).
+   Spinning things (play buttons) advance the angle with a real angular
+   velocity ω (rad/s). Colour code: yellow = angle you set · red = sin / y ·
+   green = cos / x · blue = tan, sec, cot, cosec and other derived lengths.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<1.5) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.8);
+  if(L>(head||9)*1.2) arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||9);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  if(o.halo){ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.92)'; ctx.strokeText(txt,x,y); }
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function lab(ctx,txt,x,y,color,o){ o=o||{}; o.halo=true; o.color=color; o.weight=o.weight||700; o.size=o.size||13; textAt(ctx,txt,x,y,o); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,'#fff',col,1.8); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,stroke,fill,lw,dash){ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.setLineDash(dash||[]); ctx.lineJoin='round'; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sg(v,d){ if(!isFinite(v)) return 'not defined'; d=d===undefined?2:d; const s=Number(v.toFixed(d)); return (Object.is(s,-0)||s===0?'0':String(s)).replace('-','−'); }
+function fmt(x,d){ return sg(x,d); }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+function normAng(a){ return ((a%TAU)+TAU)%TAU; }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+
+/* angle (radians) as a multiple of π, e.g. 7π/3 */
+function piStr(x){
+  if(Math.abs(x)<1e-9) return '0';
+  const r=x/PI;
+  for(const d of [1,2,3,4,6,8,12]){
+    const n=Math.round(r*d);
+    if(n!==0 && Math.abs(r*d-n)<0.004){
+      const num=Math.abs(n)===1?'π':Math.abs(n)+'π';
+      return (n<0?'−':'')+num+(d>1?'/'+d:'');
+    }
+  }
+  return sg(x,2);
+}
+/* exact fraction if one exists with a small denominator, else a decimal */
+function frac(v){
+  if(!isFinite(v)) return 'not defined';
+  if(Math.abs(v)<1e-9) return '0';
+  for(let q=1;q<=100;q++){ const p=Math.round(v*q);
+    if(Math.abs(v-p/q)<1e-6) return (p<0?'−':'')+Math.abs(p)+(q>1?'/'+q:''); }
+  return sg(v,3);
+}
+/* point on a circle: maths angle a (anticlockwise), canvas y runs down */
+function pt(cx,cy,R,a){ return [cx+R*Math.cos(a), cy-R*Math.sin(a)]; }
+/* arc between two maths angles */
+function arcA(ctx,cx,cy,r,a0,a1,col,lw,dash){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2.4; ctx.lineCap='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.stroke(); ctx.restore();
+}
+function sector(ctx,cx,cy,r,a0,a1,fill){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.restore();
+}
+/* the unit circle with axes and radian ticks */
+function unitFrame(ctx,cx,cy,R,o){
+  o=o||{};
+  const E=R*(o.ext||1.3);
+  line(ctx,cx-E,cy,cx+E,cy,COL.mid,1.4); line(ctx,cx,cy-E,cx,cy+E,COL.mid,1.4);
+  arrowHead(ctx,cx+E,cy,0,COL.mid,6); arrowHead(ctx,cx,cy-E,-PI/2,COL.mid,6);
+  if(o.fill) circ(ctx,cx,cy,R,null,o.fill,1);
+  circ(ctx,cx,cy,R,COL.ink,null,2.4);
+  if(o.ticks!==false){
+    [[0,'0'],[PI/2,'π/2'],[PI,'π'],[1.5*PI,'3π/2']].forEach(([a,s])=>{
+      const [x,y]=pt(cx,cy,R,a), [lx,ly]=pt(cx,cy,R+17,a);
+      circ(ctx,x,y,3,COL.ink,'#fff',1.4);
+      textAt(ctx,s,lx,ly+4,{align:'center',size:10.5,weight:600,color:COL.muted});
+    });
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(); let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(st,target,k,damping,dt){
+  const acc = (target-st.x)*k - st.v*damping;
+  st.v += acc*dt; st.x += st.v*dt; return st.x;
+}
+const SK=70, SD=12;                         // the house spring: ω≈8.4 rad/s, ζ≈0.72
+function follow(st,target,dt){ return springTo(st,target,SK,SD,dt); }
+function S(v){ return {x:v,v:0}; }
+
+/* ---------------------------------------------------------------------
+   0c. UI BUILDERS
+   --------------------------------------------------------------------- */
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipRow(id,label,items){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">${items.map((it,i)=>`<button class="chip-btn" data-i="${i}">${it}</button>`).join('')}</div></div>`;
+}
+function cards(list,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">${list.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}"${c?` style="color:var(${c})"`:''}>—</div></div>`).join('')}</div></div>`;
+}
+function wireChips(wrap,id,fn){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach(b=>b.onclick=()=>fn(+b.dataset.i,b)); }
+function setActive(wrap,id,i){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach((b,k)=>b.classList.toggle('active',k===i)); }
+function playBtn(id,txt){ return `<button class="toggle-btn play" id="${id}" style="padding:10px;">${txt||'▶ Spin'}</button>`; }
+function setPlay(btn,on,txtOn,txtOff){ btn.textContent=on?(txtOn||'❚❚ Pause'):(txtOff||'▶ Spin'); btn.classList.toggle('on',on); }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'3.1',  title:'Angle as Rotation',      desc:'Turn the ray · degrees and radians', build: buildA1 },
+  { num:'3.2',  title:'The Radian',             desc:'Lay the radius round the arc · l = rθ', build: buildA2 },
+  { num:'3.3',  title:'Real Line Wraps Circle', desc:'Every real number is an angle', build: buildA3 },
+  { num:'3.4',  title:'Sine and Cosine',        desc:'Coordinates of a point on the unit circle', build: buildA4 },
+  { num:'3.5',  title:'The Other Four',         desc:'tan, cot, sec, cosec as lengths', build: buildA5 },
+  { num:'3.6',  title:'Signs by Quadrant',      desc:'Sweep, or find the angle from a value', build: buildA6 },
+  { num:'3.7',  title:'Graphs',                 desc:'Unwind the circle into a curve', build: buildA7 },
+  { num:'3.8',  title:'Proof of cos(x + y)',    desc:'Two equal chords · rotate the triangle', build: buildA8 },
+  { num:'3.9',  title:'Building x + y',         desc:'sin and cos of a sum from two right triangles', build: buildA9 },
+  { num:'3.10', title:'Faster Spinners',        desc:'x, 2x, 3x on one circle', build: buildA10 },
+  { num:'3.11', title:'Sum to Product',         desc:'Add two unit vectors', build: buildA11 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+
+/* =====================================================================
+   3.1 ANGLE AS ROTATION
+   Angle = amount of rotation of a ray about its vertex (anticlockwise +,
+   clockwise −).  1 revolution = 360° = 2π rad.  θ(rad) = θ(deg)·π/180.
+   The terminal side is a real spoke on a real wheel: it turns by exactly
+   the angle set, springs in, and keeps counting revolutions.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  const quick=[360,180,270,420,-30,-420,-1710];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('an','Angle',-1800,1800,1,45) +
+    chipRow('qa','Fig 3.3 angles',quick.map(a=>a+'°')) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group"><button class="toggle-btn play" id="ccw">↺ Anticlockwise</button><button class="toggle-btn play" id="cw">↻ Clockwise</button><button class="toggle-btn" id="stp">■ Stop</button></div></div>` +
+    slider('sp','Speed',20,360,5,90) +
+    cards([['r1','Degrees'],['r2','Radians','--f-yellow'],['r3','Turns'],['r4','Same ray as']]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), sp=$('#sp');
+  let tgt=45, A=S(0), spin=0;
+  an.oninput=()=>{ tgt=+an.value; spin=0; };
+  wireChips(wrap,'qa',i=>{ tgt=quick[i]; an.value=tgt; spin=0; setActive(wrap,'qa',i); });
+  $('#ccw').onclick=()=>{ spin=1; }; $('#cw').onclick=()=>{ spin=-1; }; $('#stp').onclick=()=>{ spin=0; };
+
+  animLoop(dt=>{
+    if(spin){ tgt=clamp(tgt+spin*(+sp.value)*dt,-1800,1800); an.value=tgt; if(Math.abs(tgt)>=1800) spin=0; }
+    follow(A,tgt,dt);
+    const a=A.x;
+    $('#anV').textContent=Math.round(tgt)+'°'; $('#spV').textContent=sp.value+'°/s';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.3, cy=h*0.5, L=Math.min(w*0.25,h*0.4);
+    // reference axes
+    line(ctx,cx-L*1.12,cy,cx+L*1.12,cy,COL.grid,1.6); line(ctx,cx,cy-L*1.12,cx,cy+L*1.12,COL.grid,1.6);
+    // swept spiral: one loop per revolution
+    const col=a>=0?COL.green:COL.red, n=Math.max(2,Math.ceil(Math.abs(a)/4));
+    ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.beginPath();
+    let lx=0,ly=0,px=0,py=0;
+    for(let i=0;i<=n;i++){ const u=a*i/n, r=L*(0.3+0.06*Math.abs(u)/360), x=cx+r*Math.cos(u*D2R), y=cy-r*Math.sin(u*D2R);
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y); px=lx; py=ly; lx=x; ly=y; }
+    ctx.stroke(); ctx.restore();
+    if(Math.abs(a)>3) arrowHead(ctx,lx,ly,Math.atan2(ly-py,lx-px),col,11);
+    // initial side (blue) and terminal side (yellow)
+    vec(ctx,cx,cy,cx+L,cy,COL.blue,3.6,11);
+    textAt(ctx,'initial side',cx+L*0.5,cy+20,{align:'center',size:12,weight:700,color:COL.blue});
+    const ex=cx+L*Math.cos(a*D2R), ey=cy-L*Math.sin(a*D2R);
+    vec(ctx,cx,cy,ex,ey,COL.yellow,4.6,13);
+    const c1=Math.cos(a*D2R);
+    lab(ctx,'terminal side',ex+(c1>=0?10:-10),ey+(Math.sin(a*D2R)>=0?-8:16),COL.yellow,{align:c1>=0?'left':'right',size:12});
+    dot(ctx,cx,cy,5,COL.ink);
+    textAt(ctx,'vertex',cx-10,cy+22,{align:'right',size:11.5,weight:600,color:COL.muted});
+    lab(ctx,sg(a,0)+'°  =  '+piStr(a*D2R)+' rad',cx,cy+L*1.2,col,{align:'center',size:17});
+    // wheel: the terminal side is a spoke
+    const wx=w*0.76, wy=cy, WR=Math.min(w*0.15,h*0.27);
+    circ(ctx,wx,wy,WR,COL.ink,null,4.5); circ(ctx,wx,wy,WR*0.9,COL.mid,null,1.2);
+    for(let i=0;i<8;i++){ const aa=a*D2R+i*PI/4; line(ctx,wx,wy,wx+WR*0.9*Math.cos(aa),wy-WR*0.9*Math.sin(aa),i===0?COL.yellow:COL.mid,i===0?4.5:1.6); }
+    const va=a*D2R; circ(ctx,wx+WR*0.9*Math.cos(va),wy-WR*0.9*Math.sin(va),6,COL.red,'#fff',2.4);
+    dot(ctx,wx,wy,6,COL.ink);
+    line(ctx,wx+WR*1.04,wy,wx+WR*1.26,wy,COL.blue,4); textAt(ctx,'start',wx+WR*1.3,wy+4,{size:11.5,weight:700,color:COL.blue});
+    const part=(a%360)*D2R; arcA(ctx,wx,wy,WR*1.12,0,part,col,5);
+    lab(ctx,fmt(a/360,2)+' turns',wx,wy+WR*1.42,col,{align:'center',size:15});
+    const dd=((a%360)+360)%360;
+    $('#r1').textContent=sg(a,0)+'°'; $('#r2').textContent=piStr(a*D2R); $('#r3').textContent=fmt(a/360,2);
+    $('#r4').textContent=sg(dd,0)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.2 THE RADIAN
+   An arc of length r subtends 1 radian.  θ = l / r,  l = r·θ.
+   Rope pieces of length r are laid round the arc: 2π of them (6.28) fit
+   the whole circle.  Textbook check (Ex 4): r = 1.5 cm, θ = 4π/3 →
+   l = 1.5 × 4.18879 = 6.283 cm  (6.28 cm with π = 3.14).
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  const pre=[['1 rad',5,1],['π/2',5,PI/2],['π',5,PI],['2π',5,TAU],['Ex 4 · minute hand',1.5,4*PI/3]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('rr','Radius r',1,10,0.5,5) + slider('th','Angle θ',0,6.2832,0.01,1) +
+    chipRow('pr','Try',pre.map(p=>p[0])) +
+    `<div class="toggle-group" style="margin-top:0">${playBtn('lay','▶ Lay the rope')}</div>` +
+    cards([['r1','Arc length l = rθ','--f-red'],['r2','θ in degrees','--f-yellow'],['r3','Radii on the arc','--f-blue'],['r4','Share of circle']]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), rr=$('#rr'), th=$('#th');
+  let rT=5, tT=1, RR=S(5), TH=S(0), lay=0;
+  rr.oninput=()=>{ rT=+rr.value; lay=0; };
+  th.oninput=()=>{ tT=+th.value; lay=0; };
+  wireChips(wrap,'pr',i=>{ rT=pre[i][1]; tT=pre[i][2]; rr.value=rT; th.value=tT; lay=0; setActive(wrap,'pr',i); });
+  $('#lay').onclick=()=>{ lay=lay?0:1; };
+
+  animLoop(dt=>{
+    if(lay===1){ tT=0; th.value=0; if(TH.x<0.08) lay=2; }
+    else if(lay===2){ tT=Math.min(TAU,tT+1.1*dt); th.value=tT; if(tT>=TAU) lay=0; }
+    setPlay($('#lay'),lay>0,'❚❚ Stop','▶ Lay the rope');
+    follow(RR,rT,dt); follow(TH,tT,dt);
+    const r=RR.x, a=Math.max(0,TH.x);
+    $('#rrV').textContent=sg(rT,1)+' cm'; $('#thV').textContent=sg(tT,2)+' rad';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Rmax=Math.min(h*0.33,w*0.22), R=Rmax*(0.28+0.72*r/10), cx=w*0.3, cy=h*0.42;
+    sector(ctx,cx,cy,R,0,a,rgba(COL.yellow,0.14));
+    circ(ctx,cx,cy,R,COL.mid,null,1.6);
+    // the rope: pieces of length r, laid one after another round the arc
+    const nP=Math.ceil(a-1e-6);
+    for(let k=0;k<nP;k++){
+      const a0=k, a1=Math.min(k+1,a), c=k%2?COL.green:COL.blue;
+      arcA(ctx,cx,cy,R,a0,a1,c,9);
+      if(a1-a0>0.85){ const [lx,ly]=pt(cx,cy,R+24,(a0+a1)/2); lab(ctx,'r',lx,ly+5,c,{align:'center',size:14}); }
+    }
+    line(ctx,cx,cy,cx+R,cy,COL.ink,2.6);
+    textAt(ctx,'r = '+sg(r,1)+' cm',cx+R*0.5,cy+20,{align:'center',size:12.5,weight:700,color:COL.ink});
+    const [bx,by]=pt(cx,cy,R,a); line(ctx,cx,cy,bx,by,COL.yellow,4);
+    arcA(ctx,cx,cy,R*0.24,0,a,COL.yellow,3);
+    if(a>0.3){ const [tx,ty]=pt(cx,cy,R*0.24+16,a/2); lab(ctx,'θ',tx,ty+5,COL.yellow,{align:'center',size:15}); }
+    dot(ctx,cx,cy,4.5,COL.ink); dot(ctx,cx+R,cy,5,COL.blue); dot(ctx,bx,by,5,COL.yellow);
+    lab(ctx,'A',cx+R+14,cy+18,COL.blue,{size:12});
+    const l=r*a;
+    lab(ctx,'l = r·θ = '+sg(r,1)+' × '+sg(a,2)+' = '+sg(l,2)+' cm',cx,cy+R+44,COL.red,{align:'center',size:15});
+    // the same rope pulled straight
+    const x0=w*0.06, pxcm=w*0.88/63, bh=Math.min(28,h*0.05), yb=h*0.88;
+    textAt(ctx,'the same rope, laid straight',x0,yb-bh-10,{size:12,weight:600,color:COL.muted});
+    let xx=x0;
+    for(let k=0;k<nP;k++){
+      const f=Math.min(1,a-k), wd=f*r*pxcm, c=k%2?COL.green:COL.blue;
+      ctx.save(); ctx.fillStyle=rgba(c,0.16); ctx.fillRect(xx,yb-bh,wd,bh); ctx.strokeStyle=c; ctx.lineWidth=2; ctx.strokeRect(xx,yb-bh,wd,bh); ctx.restore();
+      if(f>0.95 && wd>22) lab(ctx,'r',xx+wd/2,yb-bh/2+5,c,{align:'center',size:13});
+      xx+=wd;
+    }
+    if(a>0.02){ line(ctx,x0,yb+9,xx,yb+9,COL.red,3); line(ctx,x0,yb+3,x0,yb+15,COL.red,2); line(ctx,xx,yb+3,xx,yb+15,COL.red,2);
+      lab(ctx,'l = '+sg(l,2)+' cm',(x0+xx)/2,yb+30,COL.red,{align:'center',size:13}); }
+    $('#r1').textContent=sg(rT*tT,2)+' cm'; $('#r2').textContent=sg(tT*180/PI,1)+'°';
+    $('#r3').textContent=sg(tT,2); $('#r4').textContent=sg(tT/TAU*100,0)+'%';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.3 THE REAL LINE WRAPS THE CIRCLE
+   Tangent line at A: 0 at A, positive up, negative down.  Wrap it round
+   the unit circle (anticlockwise for +, clockwise for −): the number x
+   lands at the point whose angle is x radians.
+   Textbook checks:  31π/3 = 10π + π/3 → sin = √3/2 (Ex 8)
+                     −1710° = −10π + π/2 → cos = 0   (Ex 9)
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  const pre=[['1',1],['π/2',PI/2],['π',PI],['2π',TAU],['31π/3 · Ex 8',31*PI/3],['−1710° · Ex 9',-1710*D2R]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('xx','Real number x',-31,35,0.05,2) +
+    chipRow('pr','Try',pre.map(p=>p[0])) +
+    `<div class="control-group"><label>Wrap it</label><div class="toggle-group"><button class="toggle-btn play" id="wp">▶ Wrap +</button><button class="toggle-btn play" id="uw">◀ Wrap −</button><button class="toggle-btn" id="stp">■ Stop</button></div></div>` +
+    cards([['r1','x = 2nπ + θ','--f-yellow',true],['r2','cos x','--f-green'],['r3','sin x','--f-red'],['r4','Angle in degrees',null,true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), xs=$('#xx');
+  let tg=2, XD=S(0), spin=0;
+  xs.oninput=()=>{ tg=+xs.value; spin=0; };
+  wireChips(wrap,'pr',i=>{ tg=clamp(pre[i][1],-31,35); xs.value=tg; spin=0; setActive(wrap,'pr',i); });
+  $('#wp').onclick=()=>{ spin=1; }; $('#uw').onclick=()=>{ spin=-1; }; $('#stp').onclick=()=>{ spin=0; };
+
+  animLoop(dt=>{
+    if(spin){ tg=clamp(tg+spin*1.6*dt,-31,35); xs.value=tg; if(tg<=-31||tg>=35) spin=0; }
+    follow(XD,tg,dt);
+    const x=XD.x, sgn=x>=0?1:-1;
+    $('#xxV').textContent=sg(tg,2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.36, cy=h*0.5, R=Math.min(h*0.25,w*0.16);
+    line(ctx,cx-R*1.6,cy,cx+R*1.6,cy,COL.grid,1.5); line(ctx,cx,cy-R*1.6,cx,cy+R*1.6,COL.grid,1.5);
+    circ(ctx,cx,cy,R,COL.ink,null,2.6);
+    // the half of the line that stays put, tangent at A
+    const ax=cx+R, tail=3.2*R;
+    const dirY=sgn>=0?1:-1;   // x>=0: the negative half hangs down; x<0: the positive half points up
+    line(ctx,ax,cy,ax,cy+dirY*tail,COL.mid,4);
+    for(let k=1;k<=3;k++){ const yy=cy+dirY*k*R; line(ctx,ax-5,yy,ax+5,yy,COL.mid,2); textAt(ctx,sg(-sgn*k,0),ax+12,yy+4,{size:11.5,weight:600,color:COL.mid}); }
+    // wrapped part: a coil whose radius creeps outward by 1 % per radian
+    const rad=u=>R*(1+0.01*u);
+    const n=Math.max(2,Math.ceil(Math.abs(x)*12));
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=4.4; ctx.lineJoin='round'; ctx.beginPath();
+    for(let i=0;i<=n;i++){ const u=Math.abs(x)*i/n, an=sgn*u, r=rad(u); const X=cx+r*Math.cos(an), Y=cy-r*Math.sin(an); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+    ctx.stroke(); ctx.restore();
+    const ax2=Math.abs(x);
+    if(ax2<=14) for(let k=1;k<=Math.floor(ax2);k++){ const an=sgn*k, r=rad(k), [X,Y]=pt(cx,cy,r,an), [X2,Y2]=pt(cx,cy,r+7,an), [LX,LY]=pt(cx,cy,r+20,an);
+      line(ctx,X,Y,X2,Y2,COL.ink,2); textAt(ctx,sg(sgn*k,0),LX,LY+4,{align:'center',size:11.5,weight:600,color:COL.ink}); }
+    // free end: leaves the circle along the tangent at the contact point
+    const rc=rad(ax2), P=pt(cx,cy,rc,x);
+    const dx=sgn*(-Math.sin(x)), dy=sgn*(-Math.cos(x)), nx=-dy, ny=dx;     // tangent & normal, canvas coords
+    line(ctx,P[0],P[1],P[0]+dx*tail,P[1]+dy*tail,COL.yellow,4.4);
+    for(let k=Math.ceil(ax2+1e-6);k-ax2<3.2;k++){ const d=(k-ax2)*R, X=P[0]+dx*d, Y=P[1]+dy*d;
+      line(ctx,X-nx*5,Y-ny*5,X+nx*5,Y+ny*5,COL.ink,2); textAt(ctx,sg(sgn*k,0),X+nx*15,Y+ny*15+4,{align:'center',size:11.5,weight:600,color:COL.ink}); }
+    // contact point
+    line(ctx,cx,cy,P[0],P[1],COL.yellow,1.8,[5,5]);
+    dot(ctx,P[0],P[1],6,COL.yellow); dot(ctx,ax,cy,5,COL.blue);
+    lab(ctx,'0 = A',ax+10,cy-9,COL.blue,{size:12});
+    lab(ctx,'x = '+sg(x,2)+' rad  →  '+sg(x*180/PI,0)+'°',w*0.04,h*0.09,COL.yellow,{size:16});
+    // cards use the target so the exact values show once settled
+    const nn=Math.floor(tg/TAU), th=tg-nn*TAU;
+    const nPart=nn===0?'':piStr(nn*TAU), tPart=th<1e-3||TAU-th<1e-3?'':piStr(th);
+    $('#r1').textContent=(nPart&&tPart)?nPart+' + '+tPart:(nPart||tPart||'0');
+    $('#r2').textContent=sg(Math.cos(tg),3); $('#r3').textContent=sg(Math.sin(tg),3); $('#r4').textContent=sg(tg*180/PI,0)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.4 SINE AND COSINE
+   P(a, b) on the unit circle with ∠AOP = x:  cos x = a,  sin x = b,
+   so a² + b² = 1.  P's shadows on the two walls are cos x and sin x.
+   Mirror: cos(−x) = cos x,  sin(−x) = −sin x.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  const spec=[0,PI/6,PI/4,PI/3,PI/2,PI,1.5*PI,TAU], specL=['0','π/6','π/4','π/3','π/2','π','3π/2','2π'];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('an','Angle x',-360,360,1,40) +
+    chipRow('qa','Special angles',specL) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group">${playBtn('go')}<button class="toggle-btn" id="mir">Mirror −x</button></div></div>` +
+    slider('om','Angular speed ω',0.3,3,0.1,1) +
+    cards([['r1','cos x','--f-green'],['r2','sin x','--f-red'],['r3','cos²x + sin²x'],['r4','Quadrant']]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), om=$('#om');
+  let tgt=40, A=S(0), playing=false, mirror=false, M=0;
+  an.oninput=()=>{ tgt=+an.value; };
+  wireChips(wrap,'qa',i=>{ tgt=spec[i]*180/PI; an.value=tgt; setActive(wrap,'qa',i); });
+  $('#go').onclick=()=>{ playing=!playing; };
+  $('#mir').onclick=()=>{ mirror=!mirror; $('#mir').classList.toggle('active',mirror); };
+
+  animLoop(dt=>{
+    if(playing){ tgt+= (+om.value)*180/PI*dt; if(tgt>360){ tgt-=360; A.x-=360; } an.value=tgt; }
+    setPlay($('#go'),playing);
+    follow(A,tgt,dt); M=approach(M,mirror?1:0,6,dt);
+    $('#anV').textContent=sg(tgt,0)+'°'; $('#omV').textContent=om.value+' rad/s';
+    const a=A.x*D2R, c=Math.cos(a), s=Math.sin(a);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min((h-64)/2.55,w*0.175), cx=w*0.33, cy=R*1.1+16;
+    unitFrame(ctx,cx,cy,R);
+    ['I','II','III','IV'].forEach((q,i)=>{ const [X,Y]=pt(cx,cy,R*0.45,(i+0.5)*PI/2); textAt(ctx,q,X,Y+5,{align:'center',size:13,weight:700,color:'#c2d1e5'}); });
+    const [px,py]=pt(cx,cy,R,a);
+    // the two walls, and P's shadow on each
+    const wallX=cx+R*1.55, wallY=cy+R*1.45;
+    line(ctx,wallX,cy-R,wallX,cy+R,COL.mid,3); line(ctx,cx-R,wallY,cx+R,wallY,COL.mid,3);
+    line(ctx,px,py,wallX,py,COL.red,1.4,[5,5]); line(ctx,px,py,px,wallY,COL.green,1.4,[5,5]);
+    dot(ctx,wallX,py,7,COL.red); dot(ctx,px,wallY,7,COL.green);
+    lab(ctx,'sin x',wallX+12,cy-R+4,COL.red,{size:12}); lab(ctx,'cos x',cx-R,wallY+20,COL.green,{size:12});
+    // triangle OMP
+    poly(ctx,[[cx,cy],[px,cy],[px,py]],null,'rgba(47,143,224,0.07)');
+    sector(ctx,cx,cy,R*0.28,0,a,rgba(COL.yellow,0.2)); arcA(ctx,cx,cy,R*0.28,0,a,COL.yellow,3);
+    if(Math.abs(a)>0.25){ const [tx,ty]=pt(cx,cy,R*0.28+15,a/2); lab(ctx,'x',tx,ty+5,COL.yellow,{align:'center',size:14}); }
+    line(ctx,cx,cy,px,cy,COL.green,5.5); line(ctx,px,cy,px,py,COL.red,5.5); line(ctx,cx,cy,px,py,COL.yellow,3.6);
+    // mirror point Q = (cos x, −sin x)
+    if(M>0.02){ ctx.save(); ctx.globalAlpha=M; const qy=cy+R*s;
+      line(ctx,px,py,px,qy,COL.mid,1.6,[5,5]); arcA(ctx,cx,cy,R*0.4,0,-a,COL.yellow,2.4,[5,4]);
+      line(ctx,cx,cy,px,qy,COL.yellow,2.4,[6,4]); dot(ctx,px,qy,6,COL.yellow);
+      lab(ctx,'Q  (cos x, −sin x)',px+(c>=0?12:-12),qy+(s>=0?18:-8),COL.muted,{align:c>=0?'left':'right',size:12}); ctx.restore(); }
+    dot(ctx,px,py,7,COL.yellow);
+    lab(ctx,'P',px+(c>=0?12:-12),py+(s>=0?-10:18),COL.ink,{align:c>=0?'left':'right',size:14});
+    // right panel: cos² + sin² = 1 as areas
+    const bx=w*0.66, bw=w*0.29, by=h*0.2, bh=Math.min(44,h*0.08);
+    textAt(ctx,'cos²x + sin²x = 1',bx,by-16,{size:15,weight:700,color:COL.ink});
+    ctx.save(); ctx.fillStyle=rgba(COL.green,0.85); ctx.fillRect(bx,by,bw*c*c,bh); ctx.fillStyle=rgba(COL.red,0.85); ctx.fillRect(bx+bw*c*c,by,bw*s*s,bh);
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.strokeRect(bx,by,bw,bh); ctx.restore();
+    textAt(ctx,sg(c*c,2),bx+bw*c*c/2,by+bh+18,{align:'center',size:13,weight:700,color:COL.green});
+    textAt(ctx,sg(s*s,2),bx+bw*c*c+bw*s*s/2,by+bh+18,{align:'center',size:13,weight:700,color:COL.red});
+    textAt(ctx,'a² + b² = OP² = 1',bx,by+bh+44,{size:12.5,weight:600,color:COL.muted});
+    textAt(ctx,'P (cos x , sin x)',bx,h*0.52,{size:13,weight:600,color:COL.muted});
+    lab(ctx,'( '+sg(c,2)+' , '+sg(s,2)+' )',bx,h*0.52+26,COL.ink,{size:19});
+    const q=Math.floor(normAng(a)/(PI/2)+1e-9)%4+1;
+    $('#r1').textContent=sg(Math.cos(tgt*D2R),3); $('#r2').textContent=sg(Math.sin(tgt*D2R),3);
+    $('#r3').textContent=sg(c*c+s*s,2); $('#r4').textContent=['I','II','III','IV'][q-1];
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.5 THE OTHER FOUR  (tan, cot, sec, cosec as lengths)
+   Extend OP to meet x = 1 at T and y = 1 at S.
+   tan x = AT,  sec x = OT,  cot x = BS,  cosec x = OS.
+   1 + tan²x = sec²x (triangle OAT),  1 + cot²x = cosec²x (triangle OBS).
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  const fn=['tan x','sec x','cot x','cosec x'], spec=[0,30,45,60,90,135,180];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('an','Angle x',-360,360,1,35) +
+    chipRow('fn','Show',fn) + chipRow('qa','Jump to',spec.map(a=>a+'°')) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group">${playBtn('go')}</div></div>` +
+    slider('om','Angular speed ω',0.2,2,0.1,0.6) +
+    cards([['r1','sin x','--f-red'],['r2','cos x','--f-green'],['r3','tan x','--f-blue'],['r4','cot x','--f-blue'],['r5','sec x','--f-blue'],['r6','cosec x','--f-blue']],'three');
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), om=$('#om');
+  let tgt=35, A=S(0), playing=false, fi=0;
+  setActive(wrap,'fn',0);
+  an.oninput=()=>{ tgt=+an.value; };
+  wireChips(wrap,'fn',i=>{ fi=i; setActive(wrap,'fn',i); });
+  wireChips(wrap,'qa',i=>{ tgt=spec[i]; an.value=tgt; setActive(wrap,'qa',i); });
+  $('#go').onclick=()=>{ playing=!playing; };
+  const T0=1e-3;
+
+  animLoop(dt=>{
+    if(playing){ tgt+=(+om.value)*180/PI*dt; if(tgt>360){ tgt-=360; A.x-=360; } an.value=tgt; }
+    setPlay($('#go'),playing);
+    follow(A,tgt,dt);
+    $('#anV').textContent=sg(tgt,0)+'°'; $('#omV').textContent=om.value+' rad/s';
+    const a=A.x*D2R, c=Math.cos(a), s=Math.sin(a);
+    const okT=Math.abs(c)>T0, okS=Math.abs(s)>T0;
+    const tanV=okT?s/c:NaN, secV=okT?1/c:NaN, cotV=okS?c/s:NaN, cscV=okS?1/s:NaN;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.27,w*0.16), cx=w*0.3, cy=h*0.5;
+    const BIG=6000;
+    // helper lines: x = 1 and y = 1, and the extended ray OP
+    line(ctx,cx+R,0,cx+R,h,COL.grid,2); line(ctx,0,cy-R,w,cy-R,COL.grid,2);
+    unitFrame(ctx,cx,cy,R,{ext:1.45});
+    const [px,py]=pt(cx,cy,R,a);
+    line(ctx,cx-c*BIG,cy+s*BIG,cx+c*BIG,cy-s*BIG,COL.mid,1.4,[7,6]);
+    const A_=[cx+R,cy], B_=[cx,cy-R];
+    const T=okT?[cx+R,cy-R*clamp(tanV,-900,900)]:null, Sp=okS?[cx+R*clamp(cotV,-900,900),cy-R]:null;
+    const useT=fi<2, tri=useT?T:Sp;
+    if(tri) poly(ctx,[[cx,cy],useT?A_:B_,tri],null,'rgba(47,143,224,0.08)');
+    // the unit-length legs of the identity triangle
+    line(ctx,cx,cy,useT?A_[0]:B_[0],useT?A_[1]:B_[1],COL.ink,2.4);
+    // the chosen length, in blue
+    const seg=[[A_,T],[O0(cx,cy),T],[B_,Sp],[O0(cx,cy),Sp]][fi];
+    const other=useT?[A_,T]:[B_,Sp];
+    if(other[1]) line(ctx,other[0][0],other[0][1],other[1][0],other[1][1],COL.mid,2.4);
+    if(seg[1]) line(ctx,seg[0][0],seg[0][1],seg[1][0],seg[1][1],COL.blue,6);
+    if(tri) dot(ctx,tri[0],tri[1],6,COL.blue);
+    // P and OP
+    sector(ctx,cx,cy,R*0.26,0,a,rgba(COL.yellow,0.2)); arcA(ctx,cx,cy,R*0.26,0,a,COL.yellow,3);
+    line(ctx,cx,cy,px,py,COL.yellow,4); dot(ctx,px,py,7,COL.yellow);
+    line(ctx,px,py,px,cy,COL.red,2.4); line(ctx,cx,cy,px,cy,COL.green,2.4);
+    lab(ctx,'A',cx+R+10,cy+18,COL.ink,{size:12}); lab(ctx,'B',cx-14,cy-R-8,COL.ink,{size:12});
+    // read-out on the canvas
+    const val=[tanV,secV,cotV,cscV][fi], idn=useT?['1 + tan²x = sec²x',1,tanV,secV]:['1 + cot²x = cosec²x',1,cotV,cscV];
+    const rx=w*0.66;
+    lab(ctx,fn[fi]+' = '+(isFinite(val)?sg(val,2):'not defined'),rx,h*0.13,isFinite(val)?COL.blue:COL.red,{size:19});
+    lab(ctx,idn[0],rx,h*0.22,COL.muted,{size:14});
+    if(isFinite(idn[2])) lab(ctx,'1 + '+sg(idn[2]*idn[2],2)+' = '+sg(idn[3]*idn[3],2),rx,h*0.29,COL.ink,{size:15});
+    $('#r1').textContent=sg(Math.sin(tgt*D2R),2); $('#r2').textContent=sg(Math.cos(tgt*D2R),2);
+    const cc=Math.cos(tgt*D2R), ss=Math.sin(tgt*D2R), nz=v=>Math.abs(v)>T0;
+    $('#r3').textContent=nz(cc)?sg(ss/cc,2):'not defined'; $('#r4').textContent=nz(ss)?sg(cc/ss,2):'not defined';
+    $('#r5').textContent=nz(cc)?sg(1/cc,2):'not defined'; $('#r6').textContent=nz(ss)?sg(1/ss,2):'not defined';
+  });
+  function O0(x,y){ return [x,y]; }
+  return wrap;
+}
+
+/* =====================================================================
+   3.6 SIGNS BY QUADRANT  — and recovering the angle from a value
+   I: all +   II: sin, cosec +   III: tan, cot +   IV: cos, sec +
+   Find mode: give one value and the quadrant; the point swings to the
+   angle and the other five follow.
+   Textbook checks: Ex 6  cos x = −3/5, III → sin −4/5, tan 4/3
+                    Ex 7  cot x = −5/12, II → sin 12/13, cos −5/13
+   ===================================================================== */
+function solveAngles(fi,v){            // fi: 0 sin 1 cos 2 tan 3 cosec 4 sec 5 cot
+  const out=[], add=a=>out.push(normAng(a));
+  if(fi===0){ if(Math.abs(v)>1+1e-9) return []; const a=Math.asin(clamp(v,-1,1)); add(a); add(PI-a); }
+  else if(fi===1){ if(Math.abs(v)>1+1e-9) return []; const a=Math.acos(clamp(v,-1,1)); add(a); add(-a); }
+  else if(fi===2){ const a=Math.atan(v); add(a); add(a+PI); }
+  else if(fi===3){ if(Math.abs(v)<1-1e-9) return []; const a=Math.asin(1/v); add(a); add(PI-a); }
+  else if(fi===4){ if(Math.abs(v)<1-1e-9) return []; const a=Math.acos(1/v); add(a); add(-a); }
+  else { const a=Math.atan2(1,v); add(a); add(a+PI); }
+  return out;
+}
+function buildA6(){
+  const wrap=labShell();
+  const NAMES=['sin x','cos x','tan x','cosec x','sec x','cot x'];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('md','Mode',['Sweep','Find the angle']) +
+    `<div id="sw">`+ slider('an','Angle x',-360,360,1,40) + `<div class="control-group"><label>Spin it</label><div class="toggle-group">${playBtn('go')}</div></div>` + slider('om','Angular speed ω',0.3,3,0.1,0.8) + `</div>` +
+    `<div id="fd" class="hidden">` + chipRow('fn','Given',['sin','cos','tan','cosec','sec','cot']) + slider('vl','Value',-1,1,0.001,-0.6) +
+      chipRow('qd','Lies in quadrant',['I','II','III','IV']) + chipRow('ex','Textbook',['Ex 6','Ex 7']) + `<div class="fb hidden" id="warn"></div></div>` +
+    cards([['r1','sin x','--f-red'],['r2','cos x','--f-green'],['r3','tan x','--f-blue'],['r4','cosec x'],['r5','sec x'],['r6','cot x']],'three');
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), om=$('#om'), vl=$('#vl');
+  let mode=0, tgt=40*D2R, A=S(tgt*0), playing=false, fi=1, val=-0.6, qd=3;
+  A.x=0;
+  const flip=Array.from({length:6},()=>S(1)), qA=[0.05,0.05,0.05,0.05];
+  const range=()=>{ const m=fi<2?1:6; vl.min=-m; vl.max=m; };
+  function applyFind(){
+    $('#vlV').textContent=sg(val,3);
+    const sols=solveAngles(fi,val), lo=(qd-1)*PI/2-1e-6, hi=qd*PI/2+1e-6;
+    const hit=sols.find(a=>a>=lo&&a<=hi);
+    const warn=$('#warn');
+    if(hit===undefined){ warn.classList.remove('hidden'); warn.textContent=(fi===3||fi===4)&&Math.abs(val)<1?'|'+NAMES[fi===3?3:4].split(' ')[0]+' x| is never below 1':'No such angle in quadrant '+['I','II','III','IV'][qd-1]; return; }
+    warn.classList.add('hidden');
+    tgt=hit+TAU*Math.round((A.x-hit)/TAU);
+  }
+  function setMode(m){ mode=m; setActive(wrap,'md',m); $('#sw').classList.toggle('hidden',m!==0); $('#fd').classList.toggle('hidden',m!==1); if(m===1){ playing=false; applyFind(); } else { tgt=A.x; an.value=clamp(Math.round(tgt*180/PI),-360,360); } }
+  wireChips(wrap,'md',i=>setMode(i));
+  wireChips(wrap,'fn',i=>{ fi=i; setActive(wrap,'fn',i); range(); val=clamp(val,-(fi<2?1:6),fi<2?1:6); vl.value=val; applyFind(); });
+  wireChips(wrap,'qd',i=>{ qd=i+1; setActive(wrap,'qd',i); applyFind(); });
+  wireChips(wrap,'ex',i=>{ if(i===0){ fi=1; val=-0.6; qd=3; } else { fi=5; val=-5/12; qd=2; }
+    range(); vl.value=val; setActive(wrap,'fn',fi); setActive(wrap,'qd',qd-1); setActive(wrap,'ex',i); applyFind(); });
+  vl.oninput=()=>{ val=+vl.value; setActive(wrap,'ex',-1); applyFind(); };
+  an.oninput=()=>{ tgt=+an.value*D2R; };
+  $('#go').onclick=()=>{ playing=!playing; };
+  setActive(wrap,'md',0); setActive(wrap,'fn',fi); setActive(wrap,'qd',qd-1); tgt=40*D2R; an.value=40;
+
+  animLoop(dt=>{
+    if(mode===0 && playing){ tgt+=(+om.value)*dt; if(tgt>TAU){ tgt-=TAU; A.x-=TAU; } an.value=tgt*180/PI; }
+    setPlay($('#go'),playing);
+    follow(A,tgt,dt);
+    $('#anV').textContent=sg(tgt*180/PI,0)+'°'; $('#omV').textContent=om.value+' rad/s';
+    const a=A.x, c=Math.cos(a), s=Math.sin(a);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.34,w*0.19), cx=w*0.3, cy=h*0.5;
+    const q=Math.floor(normAng(a)/(PI/2))%4;
+    for(let i=0;i<4;i++){ qA[i]=approach(qA[i],i===q?0.28:0.05,8,dt); sector(ctx,cx,cy,R,i*PI/2,(i+1)*PI/2,'rgba(26,58,92,'+qA[i].toFixed(3)+')'); }
+    unitFrame(ctx,cx,cy,R);
+    ['I','II','III','IV'].forEach((n,i)=>{ const [X,Y]=pt(cx,cy,R*0.62,(i+0.5)*PI/2); textAt(ctx,n,X,Y+7,{align:'center',size:20,weight:700,color:i===q?COL.ink:'#b5c4d8'}); });
+    const [px,py]=pt(cx,cy,R,a);
+    vec(ctx,cx,cy,px,cy,COL.green,5,11); vec(ctx,px,cy,px,py,COL.red,5,11);
+    line(ctx,cx,cy,px,py,COL.yellow,3.6); dot(ctx,px,py,7,COL.yellow);
+    sector(ctx,cx,cy,R*0.25,0,a,rgba(COL.yellow,0.2)); arcA(ctx,cx,cy,R*0.25,0,a,COL.yellow,3);
+    // sign badges: reciprocal pairs, flipped like coins
+    const order=[[0,3],[1,4],[2,5]];
+    const vals=[s,c,s/c,1/s,1/c,c/s], bx0=w*0.64, gw=(w*0.33-10)/2, gh=Math.min(h*0.17,100), gy0=h*0.12;
+    const read=mode===1?[Math.sin(tgt),Math.cos(tgt),Math.tan(tgt),1/Math.sin(tgt),1/Math.cos(tgt),1/Math.tan(tgt)]:vals;
+    order.forEach((row,ri)=>row.forEach((k,ci)=>{
+      const und=!isFinite(vals[k])||Math.abs(vals[k])>1e4, sign=und?0:(vals[k]>=0?1:-1);
+      follow(flip[k],sign===0?1:sign,dt);
+      const bx=bx0+ci*(gw+10), by=gy0+ri*(gh+14), f=flip[k].x, sc=Math.min(1.06,Math.abs(f)), bw=gw*sc, off=(gw-bw)/2;
+      const col=und?COL.mid:(f>=0?COL.green:COL.red);
+      ctx.save(); rrect(ctx,bx+off,by,bw,gh,12); ctx.fillStyle=rgba(col,0.12); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+      if(sc>0.5){ textAt(ctx,NAMES[k],bx+gw/2,by+gh*0.3,{align:'center',size:13,weight:700,color:COL.ink,alpha:clamp((sc-0.5)*3,0,1)});
+        textAt(ctx,und?'—':(f>=0?'+':'−'),bx+gw/2,by+gh*0.68,{align:'center',size:26,weight:700,color:col,alpha:clamp((sc-0.5)*3,0,1)});
+        textAt(ctx,und?'not defined':frac(read[k]),bx+gw/2,by+gh*0.9,{align:'center',size:11.5,weight:600,color:COL.muted,alpha:clamp((sc-0.5)*3,0,1)}); }
+    }));
+    if(mode===1) lab(ctx,['sin','cos','tan','cosec','sec','cot'][fi]+' x = '+frac(val)+',  quadrant '+['I','II','III','IV'][qd-1],cx,h*0.95,COL.ink,{align:'center',size:15});
+    const ids=['r1','r2','r3','r4','r5','r6'];
+    ids.forEach((id,k)=>{ const v=read[k]; $('#'+id).textContent=(!isFinite(v)||Math.abs(v)>1e4)?'not defined':frac(v); });
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.7 GRAPHS OF THE SIX FUNCTIONS
+   The point P goes round the unit circle; the curve is traced at x = θ
+   with height f(θ).  Periods: sin, cos, sec, cosec → 2π;  tan, cot → π.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  const F=[
+    {n:'sin x',  f:Math.sin, col:COL.red,   per:TAU, dom:'all real x',      rng:'[−1, 1]', amp:1},
+    {n:'cos x',  f:Math.cos, col:COL.green, per:TAU, dom:'all real x',      rng:'[−1, 1]', amp:1},
+    {n:'tan x',  f:Math.tan, col:COL.blue,  per:PI,  dom:'x ≠ (2n+1)π/2',   rng:'all real numbers', as:[PI/2,PI]},
+    {n:'cot x',  f:x=>Math.cos(x)/Math.sin(x), col:COL.blue, per:PI,  dom:'x ≠ nπ', rng:'all real numbers', as:[0,PI]},
+    {n:'sec x',  f:x=>1/Math.cos(x), col:COL.blue, per:TAU, dom:'x ≠ (2n+1)π/2', rng:'y ≤ −1 or y ≥ 1', as:[PI/2,PI]},
+    {n:'cosec x',f:x=>1/Math.sin(x), col:COL.blue, per:TAU, dom:'x ≠ nπ',  rng:'y ≤ −1 or y ≥ 1', as:[0,PI]},
+  ];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('an','Angle x',-360,360,1,60) + chipRow('fn','Function',F.map(o=>o.n)) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group">${playBtn('go')}<button class="toggle-btn" id="pd">Show period</button></div></div>` +
+    slider('om','Angular speed ω',0.3,3,0.1,1) +
+    cards([['r1','Value at x','--f-yellow'],['r2','Trend'],['r3','Period'],['r4','Domain'],['r5','Range',null,true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), om=$('#om');
+  let tgt=60, A=S(0), playing=false, fi=0, showP=false, YS=S(1), PD=0;
+  setActive(wrap,'fn',0);
+  an.oninput=()=>{ tgt=+an.value; };
+  wireChips(wrap,'fn',i=>{ fi=i; setActive(wrap,'fn',i); });
+  $('#go').onclick=()=>{ playing=!playing; };
+  $('#pd').onclick=()=>{ showP=!showP; $('#pd').classList.toggle('active',showP); };
+
+  animLoop(dt=>{
+    if(playing){ tgt+=(+om.value)*180/PI*dt; if(tgt>360){ tgt=-360; A.x=-360; A.v=0; } an.value=tgt; }
+    setPlay($('#go'),playing);
+    follow(A,tgt,dt); PD=approach(PD,showP?1:0,7,dt);
+    $('#anV').textContent=sg(tgt,0)+'°'; $('#omV').textContent=om.value+' rad/s';
+    const o=F[fi], th=A.x*D2R;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.25,w*0.1), cx=R+w*0.045, cy=h*0.5;
+    const ysc=approach(YS.x,o.amp?R:R*0.75,10,dt); YS.x=ysc;
+    const gx0=w*0.31, gx1=w*0.97, xs=t=>gx0+(t+TAU)/(2*TAU)*(gx1-gx0), ylim=h*0.43;
+    // circle with P
+    unitFrame(ctx,cx,cy,R,{ext:1.2});
+    const [px,py]=pt(cx,cy,R,th);
+    line(ctx,cx,cy,px,py,COL.yellow,3.4); line(ctx,px,py,px,cy,COL.red,2); line(ctx,cx,cy,px,cy,COL.green,2); dot(ctx,px,py,6,COL.yellow);
+    arcA(ctx,cx,cy,R*0.25,0,th,COL.yellow,2.6);
+    // graph axes
+    line(ctx,gx0-6,cy,gx1+8,cy,COL.mid,1.6); arrowHead(ctx,gx1+8,cy,0,COL.mid,6);
+    line(ctx,xs(0),cy-ylim,xs(0),cy+ylim,COL.mid,1.6);
+    for(let k=-4;k<=4;k++){ if(!k) continue; const X=xs(k*PI/2); line(ctx,X,cy-4,X,cy+4,COL.mid,1.4); textAt(ctx,piStr(k*PI/2),X,cy+(k>0?18:-9),{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    [-1,1].forEach(v=>{ const Y=cy-v*ysc; line(ctx,xs(0)-4,Y,xs(0)+4,Y,COL.mid,1.4); textAt(ctx,sg(v,0),xs(0)-8,Y+4,{align:'right',size:10.5,weight:600,color:COL.muted}); });
+    ctx.save(); ctx.beginPath(); ctx.rect(gx0-8,cy-ylim,gx1-gx0+16,2*ylim); ctx.clip();
+    // asymptotes
+    if(o.as){ for(let k=-8;k<=8;k++){ const t=o.as[0]+k*o.as[1]; if(t<-TAU-1e-6||t>TAU+1e-6) continue; line(ctx,xs(t),cy-ylim,xs(t),cy+ylim,COL.mid,1.3,[6,6]); } }
+    // curve: faint everywhere, bold up to x
+    const curve=(t0,t1,col,lw,al)=>{
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.lineJoin='round'; ctx.beginPath();
+      const n=Math.max(2,Math.ceil(Math.abs(t1-t0)/0.025)); let pen=false, prev=0;
+      for(let i=0;i<=n;i++){ const t=t0+(t1-t0)*i/n, v=o.f(t);
+        if(!isFinite(v)||Math.abs(v)>9||(pen&&Math.abs(v-prev)>5)){ pen=false; prev=v; continue; }
+        const X=xs(t), Y=cy-v*ysc; if(pen) ctx.lineTo(X,Y); else { ctx.moveTo(X,Y); pen=true; } prev=v; }
+      ctx.stroke(); ctx.restore();
+    };
+    curve(-TAU,TAU,o.col,2,0.22); curve(0,clamp(th,-TAU,TAU),o.col,4.4,1);
+    // the period: same height, one period apart
+    const v=o.f(th), ok=isFinite(v)&&Math.abs(v)<9;
+    if(ok && PD>0.02){
+      ctx.save(); ctx.globalAlpha=PD;
+      line(ctx,gx0,cy-v*ysc,gx1,cy-v*ysc,o.col,1.2,[3,5]);
+      for(let k=-4;k<=4;k++){ const t=th+k*o.per; if(!k||t<-TAU||t>TAU) continue; circ(ctx,xs(t),cy-v*ysc,6,o.col,'#fff',2.4); }
+      const t2=th+o.per<=TAU?th+o.per:th-o.per, yb=cy+ylim*0.88; line(ctx,xs(th),yb,xs(t2),yb,COL.yellow,2.4); vec(ctx,xs(th),yb,xs(t2),yb,COL.yellow,2.4,8); line(ctx,xs(th),yb-6,xs(th),yb+6,COL.yellow,2.4);
+      lab(ctx,'period = '+piStr(o.per),(xs(th)+xs(t2))/2,yb-9,COL.yellow,{align:'center',size:12.5}); ctx.restore();
+    }
+    ctx.restore();
+    if(ok && Math.abs(v*ysc)<ylim){
+      const X=xs(clamp(th,-TAU,TAU)), Y=cy-v*ysc;
+      line(ctx,px,py,X,Y,COL.yellow,1.4,[5,5]); line(ctx,X,cy,X,Y,o.col,2); dot(ctx,X,Y,7,o.col);
+    }
+    lab(ctx,'y = '+o.n,gx1-6,cy-ylim+18,o.col,{align:'right',size:17});
+    // read-outs
+    const d=(o.f(th+0.01)-o.f(th-0.01)), und=!isFinite(v)||Math.abs(v)>1e4;
+    $('#r1').textContent=und?'not defined':sg(o.f(tgt*D2R),3);
+    $('#r2').textContent=(!isFinite(d)||Math.abs(d)>5)?'—':Math.abs(d)<1e-4?'turning point':d>0?'↗ increasing':'↘ decreasing';
+    $('#r3').textContent=piStr(o.per); $('#r4').textContent=o.dom; $('#r5').textContent=o.rng;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.8 PROOF OF cos(x + y)   (Fig 3.14)
+   P₁(cos x, sin x)  P₂(cos(x+y), sin(x+y))  P₃(cos y, −sin y)  P₄(1, 0)
+   Triangles P₁OP₃ and P₂OP₄ are congruent (one turns into the other by
+   a rotation of −y), so P₁P₃ = P₂P₄:
+     P₁P₃² = 2 − 2(cos x cos y − sin x sin y),  P₂P₄² = 2 − 2cos(x+y).
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('xs','Angle x',0,180,1,50) + slider('ys','Angle y',0,180,1,35) +
+    `<div class="toggle-group" style="margin-top:0">${playBtn('rot','↻ Rotate the triangle')}</div>` +
+    cards([['r1','P₁P₃²','--f-red'],['r2','P₂P₄²','--f-blue'],['r3','cos x cos y − sin x sin y','--f-green',true],['r4','cos (x + y)','--f-green',true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), xsl=$('#xs'), ysl=$('#ys');
+  let xT=50, yT=35, X=S(0), Y=S(0), RO=S(0), rotOn=false;
+  xsl.oninput=()=>{ xT=+xsl.value; }; ysl.oninput=()=>{ yT=+ysl.value; };
+  $('#rot').onclick=()=>{ rotOn=!rotOn; };
+
+  animLoop(dt=>{
+    setPlay($('#rot'),rotOn,'↺ Rotate back','↻ Rotate the triangle');
+    follow(X,xT,dt); follow(Y,yT,dt); springTo(RO,rotOn?1:0,26,7,dt);
+    $('#xsV').textContent=sg(xT,0)+'°'; $('#ysV').textContent=sg(yT,0)+'°';
+    const x=X.x*D2R, y=Y.x*D2R;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.37,w*0.23), cx=w*0.36, cy=h*0.5;
+    unitFrame(ctx,cx,cy,R,{ticks:false});
+    const P4=pt(cx,cy,R,0), P1=pt(cx,cy,R,x), P2=pt(cx,cy,R,x+y), P3=pt(cx,cy,R,-y), O=[cx,cy];
+    poly(ctx,[O,P4,P2],null,rgba(COL.blue,0.1)); poly(ctx,[O,P3,P1],null,rgba(COL.red,0.1));
+    // the rotating copy of O-P4-P2: turns by −y and lands on O-P3-P1
+    if(RO.x>0.01){
+      const ro=-y*RO.x, g4=pt(cx,cy,R,ro), g2=pt(cx,cy,R,x+y+ro);
+      poly(ctx,[O,g4,g2],COL.yellow,rgba(COL.yellow,0.22),3.6,[8,5]);
+      arcA(ctx,cx,cy,R*0.45,0,ro,COL.yellow,2.4);
+    }
+    line(ctx,O[0],O[1],P1[0],P1[1],COL.mid,1.6); line(ctx,O[0],O[1],P3[0],P3[1],COL.mid,1.6);
+    line(ctx,P1[0],P1[1],P3[0],P3[1],COL.red,4.6); line(ctx,P2[0],P2[1],P4[0],P4[1],COL.blue,4.6);
+    line(ctx,O[0],O[1],P2[0],P2[1],COL.mid,1.6); line(ctx,O[0],O[1],P4[0],P4[1],COL.mid,1.6);
+    arcA(ctx,cx,cy,R*0.2,0,x,COL.green,3); arcA(ctx,cx,cy,R*0.3,x,x+y,COL.yellow,3); arcA(ctx,cx,cy,R*0.2,0,-y,COL.yellow,3,[5,4]);
+    const mk=(p,a,t,c)=>{ dot(ctx,p[0],p[1],6,c); const q=pt(cx,cy,R+20,a); lab(ctx,t,q[0],q[1]+5,c,{align:'center',size:14}); };
+    mk(P4,0,'P₄',COL.blue); mk(P1,x,'P₁',COL.red); mk(P2,x+y,'P₂',COL.blue); mk(P3,-y,'P₃',COL.red);
+    if(x>0.2){ const q=pt(cx,cy,R*0.2+13,x/2); lab(ctx,'x',q[0],q[1]+5,COL.green,{align:'center',size:13}); }
+    if(y>0.2){ const q=pt(cx,cy,R*0.3+14,x+y/2); lab(ctx,'y',q[0],q[1]+5,COL.yellow,{align:'center',size:13});
+      const q2=pt(cx,cy,R*0.2+14,-y/2); lab(ctx,'−y',q2[0],q2[1]+5,COL.yellow,{align:'center',size:13}); }
+    // equal chords, as equal bars
+    const a13=Math.pow(Math.cos(x)-Math.cos(y),2)+Math.pow(Math.sin(x)+Math.sin(y),2), a24=Math.pow(1-Math.cos(x+y),2)+Math.pow(Math.sin(x+y),2);
+    const bx=w*0.66, bw=w*0.29, bh=Math.min(34,h*0.06);
+    textAt(ctx,'chord² = squared length',bx,h*0.16,{size:13,weight:600,color:COL.muted});
+    [[a13,COL.red,'P₁P₃²',h*0.2],[a24,COL.blue,'P₂P₄²',h*0.2+bh+34]].forEach(([v,c,t,yy])=>{
+      ctx.save(); ctx.fillStyle=rgba(c,0.85); ctx.fillRect(bx,yy,bw*v/4,bh); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.strokeRect(bx,yy,bw,bh); ctx.restore();
+      textAt(ctx,t+' = '+sg(v,3),bx,yy-6,{size:13,weight:700,color:c}); });
+    lab(ctx,Math.abs(a13-a24)<1e-6?'equal  ✓':'',bx,h*0.2+2*bh+80,COL.green,{size:18});
+    textAt(ctx,'P₁P₃² = 2 − 2(cos x cos y − sin x sin y)',bx,h*0.62,{size:12.5,weight:600,color:COL.red});
+    textAt(ctx,'P₂P₄² = 2 − 2 cos(x + y)',bx,h*0.62+22,{size:12.5,weight:600,color:COL.blue});
+    lab(ctx,'⇒ cos(x+y) = cos x cos y − sin x sin y',bx,h*0.62+52,COL.green,{size:13});
+    const rhs=Math.cos(x)*Math.cos(y)-Math.sin(x)*Math.sin(y);
+    $('#r1').textContent=sg(a13,3); $('#r2').textContent=sg(a24,3); $('#r3').textContent=sg(rhs,3); $('#r4').textContent=sg(Math.cos(x+y),3);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.9 BUILDING x + y FROM TWO RIGHT TRIANGLES
+   Walk cos y along the direction x (O→B), then sin y at right angles
+   (B→P). P lands on the unit circle at angle x + y, so
+     sin(x+y) = sin x cos y + cos x sin y
+     cos(x+y) = cos x cos y − sin x sin y
+   Textbook checks: Ex 11 sin 15° = 0.2588;  Ex 18 sin(x+y) = −56/65.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  const pre=[['Ex 11 · 45° − 30°',45,-30],['75° = 45° + 30°',45,30],['Ex 18',180-Math.asin(0.6)/D2R,Math.acos(-12/13)/D2R]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('xs','Angle x',0,360,0.01,50) + slider('ys','Angle y',-180,180,0.01,30) +
+    chipRow('pr','Try',pre.map(p=>p[0])) +
+    `<div class="toggle-group" style="margin-top:0">${playBtn('bd','▶ Build it again')}</div>` +
+    cards([['r1','sin x cos y','--f-blue'],['r2','cos x sin y','--f-green'],['r3','sin (x + y)',null,true],['r4','cos (x + y)',null,true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), xsl=$('#xs'), ysl=$('#ys');
+  let xT=50, yT=30, X=S(0), Y=S(0), bt=0;
+  xsl.oninput=()=>{ xT=+xsl.value; setActive(wrap,'pr',-1); }; ysl.oninput=()=>{ yT=+ysl.value; setActive(wrap,'pr',-1); };
+  wireChips(wrap,'pr',i=>{ xT=pre[i][1]; yT=pre[i][2]; xsl.value=xT; ysl.value=yT; setActive(wrap,'pr',i); });
+  $('#bd').onclick=()=>{ bt=0; };
+
+  animLoop(dt=>{
+    bt=Math.min(2,bt+0.55*dt);
+    $('#bd').textContent=bt<2?'⏳ Building…':'▶ Build it again';
+    follow(X,xT,dt); follow(Y,yT,dt);
+    $('#xsV').textContent=sg(xT,1)+'°'; $('#ysV').textContent=sg(yT,1)+'°';
+    const x=X.x*D2R, y=Y.x*D2R, xc=Math.cos(x), xs=Math.sin(x), yc=Math.cos(y), ys=Math.sin(y);
+    const f1=clamp(bt,0,1), f2=clamp(bt-1,0,1), sw=f2*f2*(3-2*f2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.4,w*0.24), cx=w*0.37, cy=h*0.52;
+    unitFrame(ctx,cx,cy,R,{ext:1.28});
+    const mp=(u,v)=>[cx+R*u,cy-R*v];                       // maths → canvas
+    const Bm=[f1*yc*xc,f1*yc*xs];
+    const dA=x+PI/2*sw, Pm=[Bm[0]+f2*ys*Math.cos(dA),Bm[1]+f2*ys*Math.sin(dA)];
+    const O=[cx,cy], B=mp(Bm[0],Bm[1]), P=mp(Pm[0],Pm[1]);
+    // guides to the axes
+    line(ctx,B[0],B[1],cx,B[1],COL.blue,1.4,[4,4]); line(ctx,B[0],B[1],B[0],cy,COL.blue,1.4,[4,4]);
+    if(f2>0){ line(ctx,P[0],P[1],cx,P[1],COL.green,1.4,[4,4]); line(ctx,P[0],P[1],P[0],cy,COL.green,1.4,[4,4]); }
+    // components on the axes: blue = the O→B leg, green = the B→P leg
+    line(ctx,cx,cy,cx,B[1],rgba(COL.blue,0.9),8); line(ctx,cx,B[1],cx,P[1],rgba(COL.green,0.9),8);
+    line(ctx,cx,cy,B[0],cy,rgba(COL.blue,0.9),8); line(ctx,B[0],cy,P[0],cy,rgba(COL.green,0.9),8);
+    // the two legs
+    vec(ctx,O[0],O[1],B[0],B[1],COL.blue,4.2,12);
+    if(f2>0.02) vec(ctx,B[0],B[1],P[0],P[1],COL.green,4.2,12);
+    if(f1>0.5){ const m=[(O[0]+B[0])/2,(O[1]+B[1])/2]; lab(ctx,'cos y',m[0]+Math.sin(x)*28,m[1]+Math.cos(x)*28,COL.blue,{align:'center',size:13}); }
+    if(f2>0.5){ const m=[(B[0]+P[0])/2,(B[1]+P[1])/2]; lab(ctx,'sin y',m[0]-Math.sin(x)*30,m[1]-Math.cos(x)*30,COL.green,{align:'center',size:13}); }
+    if(f2>0.9){ line(ctx,O[0],O[1],P[0],P[1],COL.yellow,3.4,[8,5]); }
+    arcA(ctx,cx,cy,R*0.2,0,x,COL.yellow,3);
+    if(f2>0.9) arcA(ctx,cx,cy,R*0.3,x,x+y,COL.yellow,3,[5,4]);
+    if(Math.abs(x)>0.25){ const q=pt(cx,cy,R*0.2+13,x/2); lab(ctx,'x',q[0],q[1]+5,COL.yellow,{align:'center',size:13}); }
+    if(f2>0.9&&Math.abs(y)>0.25){ const q=pt(cx,cy,R*0.3+14,x+y/2); lab(ctx,'y',q[0],q[1]+5,COL.yellow,{align:'center',size:13}); }
+    dot(ctx,B[0],B[1],5,COL.blue); if(f2>0.02) dot(ctx,P[0],P[1],7,COL.yellow);
+    // axis-component labels
+    const yA=xs*yc, yB=ys*xc, xA=xc*yc, xB=-xs*ys;
+    if(f1>0.9 && Math.abs(yA)>0.1) lab(ctx,'sin x cos y',cx-10,cy-R*yA/2+4,COL.blue,{align:'right',size:12});
+    if(f2>0.9 && Math.abs(yB)>0.1) lab(ctx,'cos x sin y',cx-10,cy-R*(yA+yB/2)+4,COL.green,{align:'right',size:12});
+    if(f1>0.9 && Math.abs(xA)>0.12) lab(ctx,'cos x cos y',cx+R*xA/2,cy+(xB*0+1)*22,COL.blue,{align:'center',size:12});
+    if(f2>0.9 && Math.abs(xB)>0.12) lab(ctx,'− sin x sin y',cx+R*(xA+xB/2),cy-14,COL.green,{align:'center',size:12});
+    lab(ctx,'P ( cos(x+y) , sin(x+y) )',w*0.66,h*0.14,COL.ink,{size:14});
+    const sA=xs*yc, sB=xc*ys, cA=xc*yc, cB=xs*ys;
+    $('#r1').textContent=sg(sA,3); $('#r2').textContent=sg(sB,3);
+    $('#r3').textContent=sg(sA,2)+' + '+sg(sB,2)+' = '+frac(sA+sB);
+    $('#r4').textContent=sg(cA,2)+' − '+sg(cB,2)+' = '+frac(cA-cB);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.10 FASTER SPINNERS  (double and triple angle)
+   Three points leave A together: P at x, Q at 2x, T at 3x — Q spins twice
+   as fast, T three times as fast.  Their heights are sin x, sin 2x, sin 3x.
+     sin 2x = 2 sin x cos x     cos 2x = 1 − 2 sin²x
+     sin 3x = 3 sin x − 4 sin³x cos 3x = 4 cos³x − 3 cos x
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  const spec=[30,45,60,90];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('an','Angle x',0,360,1,25) + chipRow('qa','Try',spec.map(a=>a+'°')) + chipRow('fn','Trace',['sin','cos']) +
+    `<div class="control-group"><label>Spin it</label><div class="toggle-group">${playBtn('go')}</div></div>` +
+    slider('om','Angular speed ω',0.2,2,0.1,0.6) +
+    cards([['r1','sin 2x  =  2 sin x cos x',null,true],['r2','cos 2x  =  1 − 2 sin²x',null,true],['r3','sin 3x  =  3 sin x − 4 sin³x',null,true],['r4','cos 3x  =  4 cos³x − 3 cos x',null,true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), an=$('#an'), om=$('#om');
+  let tgt=25, A=S(0), playing=false, fi=0;
+  setActive(wrap,'fn',0);
+  an.oninput=()=>{ tgt=+an.value; };
+  wireChips(wrap,'qa',i=>{ tgt=spec[i]; an.value=tgt; setActive(wrap,'qa',i); });
+  wireChips(wrap,'fn',i=>{ fi=i; setActive(wrap,'fn',i); });
+  $('#go').onclick=()=>{ playing=!playing; };
+  const CL=[COL.yellow,COL.red,COL.blue], KL=['x','2x','3x'];
+
+  animLoop(dt=>{
+    if(playing){ tgt+=(+om.value)*180/PI*dt; if(tgt>360){ tgt-=360; A.x-=360; } an.value=tgt; }
+    setPlay($('#go'),playing);
+    follow(A,tgt,dt);
+    $('#anV').textContent=sg(tgt,0)+'°'; $('#omV').textContent=om.value+' rad/s';
+    const x=A.x*D2R, F=fi?Math.cos:Math.sin, nm=fi?'cos':'sin';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.3,w*0.12), cx=w*0.17, cy=h*0.5;
+    unitFrame(ctx,cx,cy,R,{ext:1.25,ticks:false});
+    for(let k=1;k<=3;k++){
+      const [px,py]=pt(cx,cy,R,k*x);
+      arcA(ctx,cx,cy,R*(0.2+0.09*k),0,k*x,CL[k-1],2.6);
+      line(ctx,cx,cy,px,py,CL[k-1],k===1?3.6:2.6); dot(ctx,px,py,6,CL[k-1]);
+      const q=pt(cx,cy,R+18,k*x); lab(ctx,KL[k-1],q[0],q[1]+5,CL[k-1],{align:'center',size:13});
+      line(ctx,px,py,fi?px:cx,fi?cy:py,CL[k-1],1.2,[4,4]);
+    }
+    // the three curves, with the cursor at x
+    const gx0=w*0.38, gx1=w*0.97, gy=h*0.5, amp=h*0.33, xs=t=>gx0+t/TAU*(gx1-gx0);
+    line(ctx,gx0-6,gy,gx1+8,gy,COL.mid,1.5); arrowHead(ctx,gx1+8,gy,0,COL.mid,6); line(ctx,gx0,gy-amp*1.15,gx0,gy+amp*1.15,COL.mid,1.5);
+    for(let k=0;k<=4;k++){ const X=xs(k*PI/2); line(ctx,X,gy-4,X,gy+4,COL.mid,1.4); textAt(ctx,piStr(k*PI/2),X,gy+amp*1.15+14,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    [-1,1].forEach(v=>{ line(ctx,gx0-4,gy-v*amp,gx0+4,gy-v*amp,COL.mid,1.4); textAt(ctx,sg(v,0),gx0-8,gy-v*amp+4,{align:'right',size:10.5,weight:600,color:COL.muted}); });
+    for(let k=1;k<=3;k++){
+      ctx.save(); ctx.strokeStyle=CL[k-1]; ctx.lineWidth=k===1?3:2.4; ctx.beginPath();
+      for(let i=0;i<=240;i++){ const t=TAU*i/240, X=xs(t), Y=gy-amp*F(k*t); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+      ctx.stroke(); ctx.restore();
+    }
+    const cxn=xs(normAng(x)); line(ctx,cxn,gy-amp*1.2,cxn,gy+amp*1.2,COL.ink,1.4,[5,5]);
+    for(let k=1;k<=3;k++) dot(ctx,cxn,gy-amp*F(k*x),6.5,CL[k-1]);
+    [['x',0],['2x',1],['3x',2]].forEach(([t,i])=>lab(ctx,nm+' '+t,gx0+14+i*88,gy-amp*1.22,CL[i],{size:13}));
+    const tx=tgt*D2R, ts=Math.sin(tx), tc=Math.cos(tx);
+    const row=(l,r)=>sg(l,3)+'  =  '+sg(r,3)+'  ✓';
+    $('#r1').textContent=row(Math.sin(2*tx),2*ts*tc); $('#r2').textContent=row(Math.cos(2*tx),1-2*ts*ts);
+    $('#r3').textContent=row(Math.sin(3*tx),3*ts-4*ts*ts*ts); $('#r4').textContent=row(Math.cos(3*tx),4*tc*tc*tc-3*tc);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   3.11 SUM TO PRODUCT
+   Add the unit vectors at angles x and y: they span a rhombus.
+   The long diagonal has length 2cos((x−y)/2) and points along (x+y)/2:
+     cos x + cos y = 2 cos((x+y)/2) cos((x−y)/2)
+     sin x + sin y = 2 sin((x+y)/2) cos((x−y)/2)
+   The short diagonal (the chord) gives the differences:
+     cos x − cos y = −2 sin((x+y)/2) sin((x−y)/2)
+     sin x − sin y =  2 cos((x+y)/2) sin((x−y)/2)
+   Textbook check (Ex 15):  cos(π/4+x) + cos(π/4−x) = 2cos(π/4)cos x.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell();
+  const pre=[['75° , 15°',75,15],['Ex 15 · 65° , 25°',65,25]];
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('xs','Angle x',0,360,0.5,70) + slider('ys','Angle y',0,360,0.5,20) +
+    chipRow('md','Use',['Sum  +','Difference  −']) + chipRow('pr','Try',pre.map(p=>p[0])) +
+    cards([['r1','cos',null,true],['r2','sin',null,true]]);
+  const $=s=>wrap.querySelector(s); const canvas=$('canvas'), xsl=$('#xs'), ysl=$('#ys'), L=wrap.querySelectorAll('.rlabel');
+  let xT=70, yT=20, X=S(0), Y=S(0), mode=0, E=0;
+  setActive(wrap,'md',0);
+  xsl.oninput=()=>{ xT=+xsl.value; setActive(wrap,'pr',-1); }; ysl.oninput=()=>{ yT=+ysl.value; setActive(wrap,'pr',-1); };
+  wireChips(wrap,'md',i=>{ mode=i; setActive(wrap,'md',i); });
+  wireChips(wrap,'pr',i=>{ xT=pre[i][1]; yT=pre[i][2]; xsl.value=xT; ysl.value=yT; setActive(wrap,'pr',i); });
+
+  animLoop(dt=>{
+    follow(X,xT,dt); follow(Y,yT,dt); E=approach(E,mode,8,dt);
+    $('#xsV').textContent=sg(xT,1)+'°'; $('#ysV').textContent=sg(yT,1)+'°';
+    const x=X.x*D2R, y=Y.x*D2R, m=(x+y)/2, d=(x-y)/2;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(h*0.215,w*0.14), cx=w*0.36, cy=h*0.5;
+    unitFrame(ctx,cx,cy,R,{ext:1.15,ticks:false});
+    const O=[cx,cy], Tx=pt(cx,cy,R,x), Ty=pt(cx,cy,R,y), Sm=[Tx[0]+Ty[0]-cx,Tx[1]+Ty[1]-cy];
+    const Vx=Tx[0]-Ty[0], Vy=Tx[1]-Ty[1];                       // difference vector (canvas)
+    // rhombus
+    poly(ctx,[O,Tx,Sm,Ty],null,rgba(COL.blue,0.06));
+    line(ctx,Tx[0],Tx[1],Sm[0],Sm[1],COL.mid,1.5,[5,5]); line(ctx,Ty[0],Ty[1],Sm[0],Sm[1],COL.mid,1.5,[5,5]);
+    // bisector
+    const bl=R*2.35; line(ctx,cx,cy,cx+bl*Math.cos(m),cy-bl*Math.sin(m),COL.yellow,1.6,[8,6]);
+    arcA(ctx,cx,cy,R*0.5,0,m,COL.yellow,2.4); arcA(ctx,cx,cy,R*0.38,y,m,COL.yellow,3.2);
+    // sum diagonal (red) and chord (red); the chosen one is bold
+    const wS=lerp(5.5,1.8,E), wD=lerp(1.8,5.5,E);
+    line(ctx,Ty[0],Ty[1],Tx[0],Tx[1],COL.red,wD,E<0.5?[5,5]:undefined);
+    if(E>0.3){ ctx.save(); ctx.globalAlpha=E; vec(ctx,cx,cy,cx+Vx,cy+Vy,COL.red,3,11); ctx.restore(); }
+    if(E<0.7){ ctx.save(); ctx.globalAlpha=1-E*0.8; vec(ctx,cx,cy,Sm[0],Sm[1],COL.red,wS,12); ctx.restore(); }
+    vec(ctx,cx,cy,Tx[0],Tx[1],COL.blue,3.6,11); vec(ctx,cx,cy,Ty[0],Ty[1],COL.green,3.6,11);
+    // components of the chosen vector on the axes
+    const Px=lerp(Sm[0]-cx,Vx,E), Py=lerp(Sm[1]-cy,Vy,E);
+    line(ctx,cx,cy,cx+Px,cy,COL.green,7); line(ctx,cx,cy,cx,cy+Py,COL.red,7);
+    line(ctx,cx+Px,cy+Py,cx+Px,cy,COL.green,1.3,[4,4]); line(ctx,cx+Px,cy+Py,cx,cy+Py,COL.red,1.3,[4,4]);
+    dot(ctx,Tx[0],Tx[1],6,COL.blue); dot(ctx,Ty[0],Ty[1],6,COL.green);
+    if(E<0.5) dot(ctx,Sm[0],Sm[1],7,COL.red);
+    lab(ctx,'x',Tx[0]+(Tx[0]>=cx?12:-12),Tx[1]+(Tx[1]<=cy?-8:16),COL.blue,{align:Tx[0]>=cx?'left':'right',size:14});
+    lab(ctx,'y',Ty[0]+(Ty[0]>=cx?12:-12),Ty[1]+(Ty[1]<=cy?-8:16),COL.green,{align:Ty[0]>=cx?'left':'right',size:14});
+    // numbers
+    const rx=w*0.03;
+    textAt(ctx,mode?'short diagonal = chord':'long diagonal = sum',rx,h*0.08,{size:12.5,weight:600,color:COL.muted});
+    lab(ctx,mode?'|chord| = 2 sin((x−y)/2) = '+sg(Math.abs(2*Math.sin(d)),2):'|sum| = 2 cos((x−y)/2) = '+sg(Math.abs(2*Math.cos(d)),2),rx,h*0.14,COL.red,{size:13.5});
+    textAt(ctx,'direction (x+y)/2 = '+sg(m/D2R,1)+'°',rx,h*0.2,{size:12.5,weight:600,color:COL.yellow});
+    const cx_=Math.cos(x), cy_=Math.cos(y), sx=Math.sin(x), sy=Math.sin(y);
+    let a,b,c2,d2;
+    if(!mode){ a=cx_+cy_; b=2*Math.cos(m)*Math.cos(d); c2=sx+sy; d2=2*Math.sin(m)*Math.cos(d); L[0].textContent='cos x + cos y  =  2 cos((x+y)/2) cos((x−y)/2)'; L[1].textContent='sin x + sin y  =  2 sin((x+y)/2) cos((x−y)/2)'; }
+    else { a=cx_-cy_; b=-2*Math.sin(m)*Math.sin(d); c2=sx-sy; d2=2*Math.cos(m)*Math.sin(d); L[0].textContent='cos x − cos y  =  −2 sin((x+y)/2) sin((x−y)/2)'; L[1].textContent='sin x − sin y  =  2 cos((x+y)/2) sin((x−y)/2)'; }
+    const ok=(p,q)=>sg(p,3)+'  =  '+sg(q,3)+(Math.abs(p-q)<1e-9?'  ✓':'  ✗');
+    $('#r1').textContent=ok(a,b); $('#r2').textContent=ok(c2,d2);
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 2 · Chapter 8 — Mechanical Properties of Solids | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:30px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.stop{background:var(--f-red); border-color:var(--f-red); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.btn-row{display:flex; gap:6px;}
+.btn-row .toggle-btn{margin:0;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🔩</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 2 · Ch 8</div>
+      <h1>Mechanical Properties of Solids</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Measured · Strain</span>
+      <span><i style="background:var(--f-green)"></i>Restoring · Safe</span>
+      <span><i style="background:var(--f-red)"></i>Applied force · Limit</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">8.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — PHYSICS PART 2 — CHAPTER 8: MECHANICAL PROPERTIES OF SOLIDS
+   Sliders and buttons only ever set a TARGET. Every drawn object is moved
+   toward it each frame by a spring-damper or by the real equation:
+     stress = F/A · strain = ΔL/L · Y = (F/A)/(ΔL/L) · G = (F/A)/(x/L)
+     B = −p/(ΔV/V) · U = ½·F·l · δ = W l³/(4 b d³ Y) · A ≥ Mg/σy · h = σ/(ρg)
+   Real deformations are tiny (micrometres); where a drawing must exaggerate,
+   the exaggeration factor is printed on the canvas and a true ruler is shown.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', faint:'#dbe4f0'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  if(Math.hypot(x2-x1,y2-y1)<4) return;
+  line(ctx,x1,y1,x2,y2,color,width||3); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8);
+}
+function dimV(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function dimH(ctx,y,x1,x2,color){ line(ctx,x1,y,x2,y,color,1.6); arrowHead(ctx,x1,y,Math.PI,color,5); arrowHead(ctx,x2,y,0,color,5); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.4:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,stroke,fill,lw){ ctx.save(); ctx.lineJoin='round'; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2.4; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function sci(x,d){ if(!isFinite(x)||x===0) return '0'; const e=Math.floor(Math.log10(Math.abs(x))); const m=x/Math.pow(10,e); return fmt(m,d===undefined?2:d)+'×10'+String(e).split('').map(c=>c==='-'?'⁻':'⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join(''); }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function hatch(ctx,x,y,w,h,side,color){ // diagonal hatch for a fixed support
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip(); ctx.strokeStyle=color||COL.mid; ctx.lineWidth=1.4; ctx.beginPath();
+  for(let i=-h;i<w+h;i+=9){ ctx.moveTo(x+i,y+(side>0?0:h)); ctx.lineTo(x+i+h*(side>0?1:1),y+(side>0?h:0)); }
+  ctx.stroke(); ctx.restore();
+}
+function ruler(ctx,x,y0,len,full,unit,ptr,color){ // vertical true ruler, 0 at top, `full` units at the bottom
+  line(ctx,x,y0,x,y0+len,COL.ink,2);
+  for(let i=0;i<=10;i++){ const yy=y0+len*i/10; line(ctx,x,yy,x+(i%5===0?11:6),yy,COL.ink,i%5===0?2:1.2); }
+  textAt(ctx,'0',x+15,y0+4,{size:10,weight:600,color:COL.muted});
+  textAt(ctx,fmt(full,full<1?2:full<10?1:0)+' '+unit,x+15,y0+len+4,{size:10,weight:600,color:COL.muted});
+  const py=y0+len*clamp(ptr,0,1.05);
+  poly(ctx,[[x,py],[x-11,py-6],[x-11,py+6]],color,color,1);
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.033, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper (semi-implicit Euler, sub-stepped) — natural overshoot and settle. */
+function springTo(s,target,k,damping,dt){
+  const n=Math.max(1,Math.ceil(dt/0.004)), h=dt/n;
+  for(let i=0;i<n;i++){ s.v += ((target-s.x)*k - s.v*damping)*h; s.x += s.v*h; }
+  return s.x;
+}
+const sp0=(x)=>({x:x||0,v:0});
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); }); }
+
+/* ---------------------------------------------------------------------
+   0c. CONTROL BUILDERS + LAB WRAPPER
+   --------------------------------------------------------------------- */
+const SL=(id,label,min,max,step,val)=>`<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+const TG=(id,label,opts,act)=>`<div class="control-group"><label>${label}</label><div class="toggle-group" id="${id}">${opts.map((o,i)=>`<button class="toggle-btn${i===(act||0)?' active':''}" data-v="${i}">${o}</button>`).join('')}</div></div>`;
+const BT=(items)=>`<div class="control-group"><div class="btn-row">${items.map(([id,txt,cls])=>`<button class="toggle-btn ${cls||'navy'}" id="${id}">${txt}</button>`).join('')}</div></div>`;
+const CARDS=(list)=>`<div class="control-group"><div class="result-cards">${list.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}"${c?` style="color:${c}"`:''}>—</div></div>`).join('')}</div></div>`;
+
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function lab(sideHTML){
+  const wrap=labShell(); wrap.querySelector('.lab-side').innerHTML=sideHTML;
+  const $=s=>wrap.querySelector(s);
+  wrap.querySelectorAll('input[type=range]').forEach(r=>r.addEventListener('input',()=>{ r._tg=undefined; r._lin=undefined; r._f=undefined; }));
+  const A={wrap,$,canvas:$('canvas'),t:0,
+    v:id=>parseFloat($('#'+id).value),
+    set:(id,txt)=>{ const e=$('#'+id); if(e && e.textContent!==txt) e.textContent=txt; },
+    tog:(id,cb)=>{ const bs=[...wrap.querySelectorAll('#'+id+' button')]; toggleWire(bs,b=>cb(+b.dataset.v)); return ()=>bs.findIndex(b=>b.classList.contains('active')); },
+    setTog:(id,i)=>{ const bs=[...wrap.querySelectorAll('#'+id+' button')]; bs.forEach((b,j)=>b.classList.toggle('active',j===i)); },
+    slideTo:(id,v)=>{ const r=$('#'+id); r._lin=undefined; r._f=+r.value; r._tg=v; },
+    ramp:(id,v,rate)=>{ const r=$('#'+id); r._tg=undefined; r._f=+r.value; r._lin={v,rate}; },
+    stopRamp:(id)=>{ const r=$('#'+id); r._lin=undefined; r._tg=undefined; },
+    setMax:(id,m)=>{ const r=$('#'+id); r.max=m; if(+r.value>m) r.value=m; },
+    drive:(dt)=>{ wrap.querySelectorAll('input[type=range]').forEach(r=>{
+      if(r._tg!==undefined){ r._f=approach(r._f===undefined?+r.value:r._f,r._tg,3.2,dt); if(Math.abs(r._f-r._tg)<(+r.max-+r.min)*0.002){ r._f=r._tg; r.value=r._tg; r._tg=undefined; } else r.value=r._f; }
+      else if(r._lin){ let f=r._f===undefined?+r.value:r._f; const d=r._lin.v-f; const st=r._lin.rate*dt; f=Math.abs(d)<=st?r._lin.v:f+Math.sign(d)*st; r._f=f; r.value=f; if(f===r._lin.v) r._lin=undefined; } }); },
+    frame:()=>{ const {ctx,w,h}=fitCanvas(A.canvas); ctx.clearRect(0,0,w,h); return {ctx,w,h}; },
+  };
+  return A;
+}
+
+/* ---------------------------------------------------------------------
+   0d. MATERIALS — values from the chapter's Tables 8.1–8.3
+        Y, G, B in GPa · yield strength σy in MPa · ν = Poisson's ratio
+   --------------------------------------------------------------------- */
+const MAT={
+  steel :{n:'Steel',     Y:200, G:84, B:160, sy:300, nu:0.29, rho:7800},
+  copper:{n:'Copper',    Y:110, G:42, B:140, sy:200, nu:0.34, rho:8900},
+  brass :{n:'Brass',     Y:90,  G:36, B:61,  sy:250, nu:0.35, rho:8500},
+  alu   :{n:'Aluminium', Y:70,  G:25, B:72,  sy:180, nu:0.33, rho:2700},
+  lead  :{n:'Lead',      G:5.6},
+  wood  :{n:'Wood',      Y:13,  sy:50,  rho:600},
+  conc  :{n:'Concrete',  Y:30,  sy:40,  rho:2400},
+};
+const pad=(w,h)=>({x:w*0.04,y:h*0.04});
+
+/* ---------------------------------------------------------------------
+   shared drawing: helical spring (zig-zag line diagram), hanging weight
+   --------------------------------------------------------------------- */
+function coilSpring(ctx,x,y0,y1,rad,turns,color,lw){
+  const end=Math.min(14,(y1-y0)*0.2), N=turns*18;
+  ctx.save(); ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y0+end);
+  for(let i=0;i<=N;i++){ const u=i/N; ctx.lineTo(x+rad*Math.sin(u*turns*Math.PI*2)*(i===0||i===N?0:1), y0+end+(y1-y0-2*end)*u); }
+  ctx.lineTo(x,y1); ctx.stroke(); ctx.restore();
+}
+function weightBlock(ctx,x,y,sz,label){
+  rect(ctx,x-sz/2,y,sz,sz*0.8,COL.ink,'#eef2f8',2.4);
+  line(ctx,x,y-10,x,y,COL.ink,2.4);
+  if(label) textAt(ctx,label,x,y+sz*0.8/2+4,{align:'center',size:12,weight:700,color:COL.ink});
+}
+function ceilingBar(ctx,x0,x1,y){ line(ctx,x0,y,x1,y,COL.ink,4); hatch(ctx,x0,y-14,x1-x0,14,1,COL.mid); }
+
+/* =====================================================================
+   8.1  ELASTIC OR PLASTIC?
+   Spring:  x = F/k  (springs back, damped bounce).  Beyond its elastic
+   limit (7 N) it keeps a permanent set.  Putty:  flows while F acts,
+   dL/dt ∝ F, and never returns.
+   ===================================================================== */
+function buildA1(){
+  const A=lab(
+    SL('f','Pull force F',0,10,0.1,0)+
+    BT([['rel','Release','play'],['rst','New spring + putty','navy']])+
+    CARDS([['c1','Spring length','var(--f-blue)'],['c2','Putty length','var(--f-yellow)'],['c3','Spring set (permanent)','var(--f-green)'],['c4','Putty set (permanent)','var(--f-red)']]));
+  const LIM=7;                                   // spring elastic limit (N)
+  const S={spr:sp0(0), perm:0, putty:1};        // spring extension (fraction of L0) · putty length / L0
+  A.$('#rel').onclick=()=>A.slideTo('f',0);
+  A.$('#rst').onclick=()=>{ S.perm=0; S.putty=1; S.spr.x=0; S.spr.v=0; A.slideTo('f',0); };
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), F=A.v('f');
+    A.set('fV',fmt(F,1)+' N');
+    // physics ------------------------------------------------------
+    if(F>LIM) S.perm=Math.min(1.1,S.perm+(F-LIM)*0.045*dt);           // overstretched spring keeps a set
+    springTo(S.spr,F/10*0.95+S.perm,60,2.3,dt);                       // ζ ≈ 0.15 → visible bounce
+    S.putty=Math.min(3.4,S.putty+F*0.05*dt*(S.putty>1.05?0.9:1)+0*dt); // putty flows while pulled
+    // layout -------------------------------------------------------
+    const top=h*0.2, L0s=h*0.18, ext=h*0.22, xS=w*0.27, xP=w*0.68;
+    ceilingBar(ctx,w*0.08,w*0.9,top);
+    // --- spring
+    const yEndS=top+L0s+S.spr.x*ext;
+    line(ctx,xS-40,top+L0s,xS+40,top+L0s,COL.mid,1.4,[6,5]); textAt(ctx,'original length',xS+46,top+L0s+4,{size:10.5,color:COL.mid});
+    coilSpring(ctx,xS,top,yEndS,16,9,COL.blue,2.8);
+    const bsz=30+F*3.2; weightBlock(ctx,xS,yEndS,bsz);
+    vec(ctx,xS,yEndS+bsz*0.8+4,xS,yEndS+bsz*0.8+8+F*7,COL.red,3.4);
+    dimV(ctx,xS-52,top+L0s,yEndS,COL.blue);
+    textAt(ctx,'Spring',xS,top-24,{align:'center',size:15,weight:700,color:COL.blue});
+    textAt(ctx,'elastic',xS,top-8,{align:'center',size:11,color:COL.muted});
+    // --- putty
+    const Lp=L0s*S.putty, wP=44/Math.sqrt(S.putty), yEndP=top+Lp;
+    const pts=[]; for(let i=0;i<=24;i++){ const u=i/24; pts.push([xP-wP/2*(1-0.12*Math.sin(Math.PI*u)*(S.putty-1>0.05?1:0.2)),top+Lp*u]); }
+    for(let i=24;i>=0;i--){ const u=i/24; pts.push([xP+wP/2*(1-0.12*Math.sin(Math.PI*u)*(S.putty-1>0.05?1:0.2)),top+Lp*u]); }
+    poly(ctx,pts,'#a67c00','#fbf1d3',2.8);
+    for(let i=1;i<6;i++){ const yy=top+Lp*i/6, ww=wP/2*(1-0.12*Math.sin(Math.PI*i/6)); line(ctx,xP-ww+4,yy,xP+ww-4,yy,'#e5d49a',1.3); }
+    line(ctx,xP-40,top+L0s,xP+40,top+L0s,COL.mid,1.4,[6,5]);
+    weightBlock(ctx,xP,yEndP,bsz);
+    vec(ctx,xP,yEndP+bsz*0.8+4,xP,yEndP+bsz*0.8+8+F*7,COL.red,3.4);
+    dimV(ctx,xP-52,top+L0s,yEndP,COL.blue);
+    textAt(ctx,'Putty',xP,top-24,{align:'center',size:15,weight:700,color:COL.yellow});
+    textAt(ctx,'plastic',xP,top-8,{align:'center',size:11,color:COL.muted});
+    if(F>LIM) textAt(ctx,'beyond spring\'s elastic limit',xS,h-18,{align:'center',size:12,weight:700,color:COL.red});
+    // cards ---------------------------------------------------------
+    A.set('c1',fmt(100+S.spr.x*100,0)+'%'); A.set('c2',fmt(S.putty*100,0)+'%');
+    A.set('c3',S.perm>0.01?'+'+fmt(S.perm*100,0)+'%':'none'); A.set('c4',S.putty>1.01?'+'+fmt((S.putty-1)*100,0)+'%':'none');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.2  STRESS AND STRAIN — four ways to deform a solid (Fig. 8.1)
+   Stress = F/A  (Eq. 8.1)   Tensile: Y = σ/(ΔL/L)   Shear: G = σ/tanθ
+   Hydraulic: B = p/(ΔV/V).   Deformations are tiny, so they are drawn
+   ×150 (stretch), ×60 (shear), ×250 (volume) — printed on the canvas.
+   ===================================================================== */
+function buildA2(){
+  const KIND=['Stretch','Squeeze','Shear','Hydraulic'], MN=['steel','alu','copper'];
+  const A=lab(
+    TG('ty','Kind of stress',KIND,0)+TG('mt','Material',MN.map(k=>MAT[k].n),0)+SL('f','Force F',0,150,1,60)+
+    CARDS([['c1','Stress','var(--f-red)'],['c2','Strain','var(--f-blue)'],['c3','Modulus','var(--f-green)'],['c4','What changes','',1]]));
+  let ty=0, mt=0; A.tog('ty',v=>ty=v); A.tog('mt',v=>mt=v);
+  const AREA=Math.PI*0.02*0.02, K=[150,150,60,250], S={e:sp0(0)};
+  const LINECOL=[COL.blue,COL.green,COL.yellow];
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), F=A.v('f'), t=A.t;
+    A.set('fV',fmt(F,0)+' kN');
+    const m=MAT[MN[mt]], mod=[m.Y,m.Y,m.G,m.B][ty];                 // GPa
+    const sigma=F*1e3/AREA/1e6, strain=sigma/(mod*1e3);              // MPa · (dimensionless)
+    springTo(S.e,clamp(strain*K[ty],0,0.46),70,4.4,dt);
+    const cx=w*0.27, cy=h*0.5, H0=Math.min(h*0.5,w*0.34), W0=H0*0.5, flen=14+F/150*Math.min(70,h*0.1);
+    textAt(ctx,['Tensile stress','Compressive stress','Shearing stress','Hydraulic stress'][ty],cx,h*0.09,{align:'center',size:15,weight:700,color:COL.ink});
+    const e=S.e.x;
+    if(ty<2){
+      const sg=ty===0?1:-1, eS=sg*e, top=cy-H0/2, H=H0*(1+eS), Wd=W0*(1-m.nu*eS), bot=top+H;
+      rect(ctx,cx-W0/2,top,W0,H0,COL.mid,null,1.3); ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=COL.mid; ctx.strokeRect(cx-W0/2,top,W0,H0); ctx.restore();
+      ceilingBar(ctx,cx-W0,cx+W0,top-8);
+      rect(ctx,cx-Wd/2,top,Wd,H,COL.ink,'#f4f9fe',2.6);
+      for(let i=1;i<8;i++){ const yy=top+H*i/8; line(ctx,cx-Wd/2,yy,cx+Wd/2,yy,'#bcd3ea',1.3); }
+      for(let i=1;i<3;i++){ const xx=cx-Wd/2+Wd*i/3; line(ctx,xx,top,xx,bot,'#d5e4f3',1.1); }
+      rect(ctx,cx-Wd/2-8,bot,Wd+16,10,COL.ink,'#fff',2.4);
+      if(ty===0){ vec(ctx,cx,bot+12,cx,bot+12+flen,COL.red,4); vec(ctx,cx,top-26,cx,top-26-flen,COL.red,4); }
+      else{ vec(ctx,cx,bot+12+flen,cx,bot+12,COL.red,4); vec(ctx,cx,top-26-flen,cx,top-26,COL.red,4); }
+      textAt(ctx,'F',cx+10,bot+22+flen*0.6,{size:13,weight:700,color:COL.red});
+      dimV(ctx,cx+W0*0.8,top+H0,bot,COL.blue); textAt(ctx,'ΔL',cx+W0*0.8+8,(top+H0+bot)/2+4,{size:12,weight:700,color:COL.blue});
+      dimH(ctx,top+H*0.5,cx-Wd/2,cx-W0/2-0.01,COL.green);
+      textAt(ctx,ty===0?'thinner':'fatter',cx-W0/2-6,top+H*0.5-8,{align:'right',size:11,weight:600,color:COL.green});
+    } else if(ty===2){
+      const sd=H0*0.82, x0=cx-sd/2, yb=cy+sd/2, yt=yb-sd, dx=e*sd, th=Math.atan2(dx,sd);
+      hatch(ctx,x0-20,yb,sd+40,16,1,COL.mid); line(ctx,x0-20,yb,x0+sd+20,yb,COL.ink,3.4);
+      ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.3; ctx.strokeRect(x0,yt,sd,sd); ctx.restore();
+      poly(ctx,[[x0,yb],[x0+sd,yb],[x0+sd+dx,yt],[x0+dx,yt]],COL.ink,'#f4f9fe',2.6);
+      for(let i=1;i<6;i++){ const u=i/6; line(ctx,x0+dx*u,yb-sd*u,x0+sd+dx*u,yb-sd*u,'#bcd3ea',1.3); }
+      for(let i=1;i<4;i++){ line(ctx,x0+sd*i/4,yb,x0+sd*i/4+dx,yt,'#d5e4f3',1.1); }
+      rect(ctx,x0+dx-6,yt-11,sd+12,11,COL.ink,'#fff',2.4);
+      vec(ctx,x0+dx-12-flen,yt-5,x0+dx-12,yt-5,COL.red,4); textAt(ctx,'F',x0+dx-flen/2-12,yt-14,{align:'center',size:13,weight:700,color:COL.red});
+      vec(ctx,x0+sd+14+flen,yb+10,x0+sd+14,yb+10,COL.red,3);
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(x0,yb,sd*0.3,-Math.PI/2,-Math.PI/2+th); ctx.stroke(); ctx.restore();
+      textAt(ctx,'θ',x0+sd*0.3*Math.sin(th/2)+6,yb-sd*0.3*Math.cos(th/2)-4,{size:14,weight:700,color:COL.blue});
+      dimH(ctx,yt-28,x0+sd,x0+sd+dx,COL.blue); textAt(ctx,'x',x0+sd+dx/2,yt-34,{align:'center',size:12,weight:700,color:COL.blue});
+    } else {
+      const tw=H0*1.15, th2=H0*1.05, R0=H0*0.2, R=R0*(1-e/3), ty0=cy-th2/2;
+      rect(ctx,cx-tw/2,ty0,tw,th2,COL.ink,'#f1f8fe',3);
+      for(let k=0;k<5;k++){ ctx.save(); ctx.strokeStyle='rgba(47,143,224,0.28)'; ctx.lineWidth=1.4; ctx.beginPath(); for(let i=0;i<=40;i++){ const xx=cx-tw/2+tw*i/40, yy=ty0+th2*(0.12+k*0.19)+Math.sin(i*0.5+t*2+k)*2.5; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); ctx.restore(); }
+      ctx.save(); ctx.setLineDash([5,5]); circ(ctx,cx,cy,R0,COL.mid,null,1.3); ctx.restore();
+      circ(ctx,cx,cy,R,COL.ink,'#fff',2.8);
+      for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4; line(ctx,cx+Math.cos(a)*R*0.2,cy+Math.sin(a)*R*0.2,cx+Math.cos(a)*R*0.85,cy+Math.sin(a)*R*0.85,'#bcd3ea',1.3); }
+      const pl=10+F/150*Math.min(60,h*0.09)*(1+0.1*Math.sin(t*7));
+      for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; vec(ctx,cx+Math.cos(a)*(R+10+pl),cy+Math.sin(a)*(R+10+pl),cx+Math.cos(a)*(R+10),cy+Math.sin(a)*(R+10),COL.red,3); }
+      textAt(ctx,'same push on every point of the surface',cx,ty0+th2+22,{align:'center',size:11,color:COL.muted});
+    }
+    textAt(ctx,'deformation drawn ×'+K[ty],cx,h-14,{align:'center',size:11,weight:600,color:COL.mid});
+    // stress–strain graph --------------------------------------------
+    const gx0=w*0.6, gx1=w*0.9, gy0=h*0.2, gy1=h*0.74, smax=150e3/AREA/1e6*1.04;
+    const mods=MN.map(k=>[MAT[k].Y,MAT[k].Y,MAT[k].G,MAT[k].B][ty]);
+    const xmax=smax/(Math.min(...mods)*1e3)*1.05, X=s=>gx0+(gx1-gx0)*s/xmax, Y=s=>gy1-(gy1-gy0)*s/smax;
+    vec(ctx,gx0,gy1,gx1+10,gy1,COL.ink,2); vec(ctx,gx0,gy1,gx0,gy0-12,COL.ink,2);
+    textAt(ctx,'strain',gx1,gy1+20,{align:'right',size:12,weight:700,color:COL.blue}); textAt(ctx,'stress',gx0-8,gy0-18,{align:'left',size:12,weight:700,color:COL.red});
+    MN.forEach((k,i)=>{ const md=mods[i]*1e3, on=i===mt, sEnd=Math.min(smax,md*xmax);
+      line(ctx,X(0),Y(0),X(sEnd/md),Y(sEnd),LINECOL[i],on?4:1.8,on?null:[6,5]);
+      textAt(ctx,MAT[k].n,X(sEnd/md),Y(sEnd)-8,{align:'center',size:10.5,weight:on?700:500,color:LINECOL[i]}); });
+    const dxp=X(e/K[ty]), dyp=Y(Math.min(smax,e/K[ty]*mod*1e3));
+    line(ctx,dxp,dyp,dxp,gy1,COL.blue,1.3,[4,4]); line(ctx,dxp,dyp,gx0,dyp,COL.red,1.3,[4,4]);
+    circ(ctx,dxp,dyp,7,COL.ink,COL.yellow,2.2);
+    textAt(ctx,'slope = '+['Y','Y','G','B'][ty]+' = '+mod+' GPa',(gx0+gx1)/2,gy1+44,{align:'center',size:13,weight:700,color:COL.green});
+    // cards ----------------------------------------------------------
+    A.set('c1',(ty===3?'p = ':'')+fmt(sigma,0)+' MPa');
+    A.set('c2',sci(strain,2)); A.set('c3',['Y = ','Y = ','G = ','B = '][ty]+mod+' GPa');
+    A.set('c4',['Longer, thinner (ν = '+m.nu+')','Shorter, fatter','Shape tilts by θ','Volume falls, shape same'][ty]);
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.4  STRESS–STRAIN CURVE (Fig. 8.2, 8.3)
+   A test machine pulls a wire; the slider is the machine's stretch.
+   Loading follows the material's curve.  Unloading from beyond the yield
+   point B follows a line parallel to OA, leaving a permanent set.
+   ===================================================================== */
+const CURVES={
+  duct :{n:'Ductile metal', sA:.15,gA:1800,sigA:270, sB:.25,sigB:300, sD:.70,sigD:400, sE:.86,sigE:330, top:460, smax:.95,
+         pct:[[0,0],[.15,.12],[.25,.15],[.70,15],[.86,20]]},
+  brit :{n:'Brittle (glass)', sA:.30,gA:160,sigA:48, sB:.34,sigB:49.5, sD:.36,sigD:50, sE:.375,sigE:49, top:60, smax:.5,
+         pct:[[0,0],[.375,.1]]},
+  elas :{n:'Elastomer (rubber, aorta)', top:12, smax:1, sE:.97, elastomer:true, pct:[[0,0],[1,500]]},
+};
+function curveSigma(m,s){
+  if(m.elastomer){ const k=3.4; return m.top*(Math.exp(k*s)-1)/(Math.exp(k)-1); }
+  if(s<=m.sA) return m.gA*s;
+  if(s<=m.sB){ const u=(s-m.sA)/(m.sB-m.sA); return lerp(m.sigA,m.sigB,1-(1-u)*(1-u)); }
+  if(s<=m.sD){ const u=(s-m.sB)/(m.sD-m.sB); return lerp(m.sigB,m.sigD,Math.sin(u*Math.PI/2)); }
+  const u=clamp((s-m.sD)/(m.sE-m.sD),0,1); return lerp(m.sigD,m.sigE,u*u);
+}
+function pctOf(m,s){ const P=m.pct; for(let i=1;i<P.length;i++){ if(s<=P[i][0]) return lerp(P[i-1][1],P[i][1],(s-P[i-1][0])/(P[i][0]-P[i-1][0])); } return P[P.length-1][1]; }
+
+function buildA4(){
+  const KEYS=['duct','brit','elas'];
+  const A=lab(
+    TG('mt','Material',['Ductile','Brittle','Elastomer'],0)+
+    SL('s','Stretch',0,0.95,0.001,0)+
+    BT([['pull','Pull to breaking ▶','play'],['hold','Hold','navy']])+
+    BT([['rel','Release (unload)','navy'],['rst','New wire','navy']])+
+    CARDS([['c1','Stress','var(--f-red)'],['c2','Strain','var(--f-blue)'],['c3','Region','var(--f-green)'],['c4','Permanent set','var(--f-yellow)']]));
+  let mi=0, m=CURVES.duct;
+  const S={sp:sp0(0), sMax:0, sPerm:0, broken:false, sBr:0, hist:[], top:sp0(0), bot:sp0(0), snap:0};
+  function reset(){ S.sp.x=0; S.sp.v=0; S.sMax=0; S.sPerm=0; S.broken=false; S.hist=[]; S.snap=0; S.top.x=0; S.top.v=0; A.$('#s').value=0; A.stopRamp('s'); }
+  A.tog('mt',v=>{ mi=v; m=CURVES[KEYS[v]]; A.setMax('s',m.smax); reset(); });
+  A.$('#pull').onclick=()=>A.ramp('s',m.smax,0.085);
+  A.$('#hold').onclick=()=>A.stopRamp('s');
+  A.$('#rel').onclick=()=>A.ramp('s',0,0.16);
+  A.$('#rst').onclick=reset;
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), t=A.t;
+    A.set('sV',fmt(pctOf(m,A.v('s')),m===CURVES.duct&&A.v('s')<.3?2:1)+' %');
+    // ---- physics: state machine on the machine stretch s ------------------
+    springTo(S.sp,A.v('s'),90,19.5,dt);
+    let s=Math.max(0,S.sp.x), sigma=0, region='Elastic (O–A)', pin=false;
+    if(!S.broken){
+      if(s>S.sMax){ S.sMax=s; if(!m.elastomer && S.sMax>m.sB) S.sPerm=S.sMax-curveSigma(m,S.sMax)/m.gA; else S.sPerm=0; }
+      const loading = s>=S.sMax-1e-4;
+      if(m.elastomer){ sigma=curveSigma(m,s)*(loading?1:0.75+0.25*Math.pow(s/Math.max(S.sMax,1e-6),3)); region='Elastic (not Hookean)'; }
+      else if(S.sMax>m.sB && !loading){ sigma=Math.max(0,m.gA*(s-S.sPerm)); region=s<S.sPerm?'Slack':'Unloading ∥ OA'; }
+      else { sigma=curveSigma(m,s); region=s<=m.sA?'Elastic (O–A)':s<=m.sB?'Elastic (A–B)':s<=m.sD?'Plastic (B–D)':'Necking (D–E)'; }
+      if(s>=m.sE){ S.broken=true; S.sBr=s; S.snap=0; S.top.x=s; S.top.v=0; sigma=0; region='Fractured'; }
+    } else { sigma=0; region='Fractured'; S.snap+=dt; }
+    const sWire=S.broken?S.sBr:Math.max(s,S.sPerm);
+    S.hist.length<2400 && (S.hist.length===0||Math.hypot((s-S.hist[S.hist.length-1][0])*300,(sigma-S.hist[S.hist.length-1][1])/m.top*300)>2.5) && S.hist.push([s,sigma,S.sMax>m.sB||false]);
+    // ---- machine ---------------------------------------------------------
+    const mx=w*0.2, topY=h*0.11, L0=h*0.3, Kp=h*0.36, gripY=topY+L0+s*Kp, ww=Math.max(5,h*0.014);
+    rect(ctx,mx-46,topY-14,92,14,COL.ink,'#fff',2.6); hatch(ctx,mx-46,topY-30,92,16,1,COL.mid);
+    rect(ctx,mx-16,topY,32,22,COL.ink,'#eef2f8',2.4);
+    const wireCol=S.broken?COL.red:(m.elastomer?COL.green:(S.sMax>m.sD?COL.red:S.sMax>m.sB?COL.yellow:COL.green));
+    const wy0=topY+22;
+    if(!S.broken){
+      const wy1=gripY, slack=s<S.sPerm-0.002 && !m.elastomer, neck=(!m.elastomer&&s>m.sD)?smooth01(m.sD,m.sE,s):0;
+      const Lw=wy1-wy0+0, drawLen=slack?(topY+L0+S.sPerm*Kp)-wy0:Lw;
+      ctx.save(); ctx.lineCap='round';
+      const poly1=[],poly2=[]; const N=40;
+      for(let i=0;i<=N;i++){ const u=i/N, y=wy0+Lw*u, g=Math.exp(-Math.pow((u-0.5)/0.09,2)), wh=ww/2*(1-0.62*neck*g), wob=slack?Math.sin(u*9+t*3)*12*Math.sin(u*Math.PI):0;
+        poly1.push([mx-wh+wob,y]); poly2.push([mx+wh+wob,y]); }
+      ctx.beginPath(); poly1.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); poly2.reverse().forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=wireCol; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+      for(let i=1;i<6;i++){ const y=wy0+Lw*i/6; line(ctx,mx-ww/2,y,mx+ww/2,y,'#bcd3ea',1.2); }
+    } else {
+      const k=S.snap, recoil=springTo(S.top,S.sPerm*0.9,160,9,dt), topEnd=topY+L0+recoil*Kp, fall=Math.min(h*0.1,k*k*220);
+      const drawHalf=(ya,yb,upper)=>{ ctx.save(); ctx.lineCap='round'; ctx.beginPath();
+        const n=14; const fr=[]; for(let i=0;i<=n;i++){ const u=i/n; fr.push(Math.sin(i*2.1)*3.4*(i%2?1:0.5)); }
+        ctx.moveTo(mx-ww/2,ya); ctx.lineTo(mx-ww/2,yb); if(upper) for(let i=0;i<=6;i++) ctx.lineTo(mx-ww/2+ww*i/6,yb+((i%2)?5:-1)); else for(let i=0;i<=6;i++) ctx.lineTo(mx-ww/2+ww*i/6,yb);
+        ctx.lineTo(mx+ww/2,yb); ctx.lineTo(mx+ww/2,ya); ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.stroke(); ctx.restore(); };
+      drawHalf(wy0,topEnd,true);
+      const bEnd=gripY; drawHalf(Math.max(topEnd+30,bEnd-(L0*0.45)-(0)),bEnd,false);
+      if(k<0.6) for(let i=0;i<7;i++){ const a=i*0.9+k*3; const rr=10+k*60; line(ctx,mx+Math.cos(a)*rr*0.4,topEnd+Math.sin(a)*rr*0.4,mx+Math.cos(a)*rr,topEnd+Math.sin(a)*rr,COL.yellow,2); }
+    }
+    rect(ctx,mx-16,gripY,32,22,COL.ink,'#eef2f8',2.4); line(ctx,mx,gripY+22,mx,gripY+44,COL.ink,2.6);
+    vec(ctx,mx,gripY+48,mx,gripY+48+Math.min(60,10+sigma/m.top*70),COL.red,4);
+    textAt(ctx,'F',mx+12,gripY+66,{size:13,weight:700,color:COL.red});
+    textAt(ctx,m.n,mx,h-14,{align:'center',size:12,weight:700,color:COL.muted});
+    // ---- the graph -------------------------------------------------------
+    const gx0=w*0.46, gx1=w*0.95, gy0=h*0.12, gy1=h*0.82, xmax=(m.elastomer?1.02:m.sE+0.06), ymax=m.top*1.08;
+    const X=s=>gx0+(gx1-gx0)*s/xmax, Y=v=>gy1-(gy1-gy0)*v/ymax;
+    vec(ctx,gx0,gy1,gx1+10,gy1,COL.ink,2.2); vec(ctx,gx0,gy1,gx0,gy0-12,COL.ink,2.2);
+    textAt(ctx,'strain →',gx1,gy1+20,{align:'right',size:12,weight:700,color:COL.blue}); textAt(ctx,'stress ↑',gx0+6,gy0-14,{size:12,weight:700,color:COL.red});
+    textAt(ctx,'(strain axis not to scale)',gx0,gy1+20,{size:10,color:COL.mid});
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle='#b9cbe0'; ctx.lineWidth=2; ctx.beginPath(); for(let i=0;i<=200;i++){ const ss=Math.min(i/200*xmax,m.sE||m.smax); const xx=X(ss),yy=Y(curveSigma(m,ss)); i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); ctx.restore();
+    if(!m.elastomer){ [['A',m.sA,m.sigA],['B',m.sB,m.sigB],['D',m.sD,m.sigD],['E',m.sE,m.sigE]].forEach(([l,ss,sg],i)=>{ if(m===CURVES.brit&&(l==='A'||l==='D')) return; circ(ctx,X(ss),Y(sg),4,COL.ink,'#fff',1.8); textAt(ctx,l,X(ss)+(l==='E'?8:l==='D'?-4:-12),Y(sg)+(l==='D'?-10:l==='E'?-4:-8),{size:13,weight:700,color:COL.ink}); });
+      textAt(ctx,'O',X(0)-14,Y(0)+14,{size:13,weight:700}); textAt(ctx,'yield strength σy',X(m.sB)+14,Y(0)-6,{size:10.5,color:COL.mid,alpha:0});
+      line(ctx,gx0,Y(m.sigB),X(m.sB),Y(m.sigB),COL.red,1.3,[4,4]); textAt(ctx,'σy',gx0-6,Y(m.sigB)+4,{align:'right',size:11,weight:700,color:COL.red});
+      line(ctx,gx0,Y(m.sigD),X(m.sD),Y(m.sigD),COL.red,1.3,[4,4]); textAt(ctx,'σu',gx0-6,Y(m.sigD)+4,{align:'right',size:11,weight:700,color:COL.red}); }
+    if(S.hist.length>1){ ctx.save(); ctx.lineWidth=3.6; ctx.lineJoin='round'; for(let i=1;i<S.hist.length;i++){ const a=S.hist[i-1],b=S.hist[i]; const unl=b[2]&&b[1]<a[1]-1e-6&&b[0]<a[0]; ctx.strokeStyle=unl?COL.green:COL.red; ctx.beginPath(); ctx.moveTo(X(a[0]),Y(a[1])); ctx.lineTo(X(b[0]),Y(b[1])); ctx.stroke(); } ctx.restore(); }
+    const px=X(S.broken?S.sBr:s), py=Y(sigma);
+    if(S.broken){ line(ctx,px,Y(m.sigE||0),px,gy1,COL.red,1.6,[3,3]); }
+    line(ctx,px,py,px,gy1,COL.blue,1.3,[4,4]); line(ctx,px,py,gx0,py,COL.red,1.3,[4,4]);
+    circ(ctx,px,py,8,COL.ink,COL.yellow,2.4);
+    if(S.sMax>0 && !m.elastomer && S.sPerm>0.003){ const xp=X(S.sPerm); circ(ctx,xp,gy1,5,COL.green,COL.green,1); textAt(ctx,'permanent set',xp,gy1-10,{align:'center',size:11,weight:700,color:COL.green}); }
+    // ---- cards -----------------------------------------------------------
+    A.set('c1',fmt(sigma,m===CURVES.elas?1:0)+' MPa'); A.set('c2',fmt(pctOf(m,S.broken?S.sBr:s),m===CURVES.duct&&s<.3?2:1)+' %');
+    A.set('c3',region); A.set('c4',S.sPerm>0.003&&!m.elastomer?fmt(pctOf(m,S.sPerm),2)+' %':'none');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.5.1  YOUNG'S MODULUS — two wires, one load
+   ΔL = F·L / (A·Y)   (Eq. 8.8)
+   Check (Example 8.1): steel rod r = 10 mm, L = 1 m, F = 100 kN
+     σ = 3.18×10⁸ Pa · ΔL = 1.59 mm · strain = 0.16 %.
+   Check (text, p.171): steel wire, A = 0.1 cm², strain 0.1 % → F = 2000 N.
+   The hanging block is moved by ΔL/(ruler full-scale) — read the TRUE
+   ΔL off the ruler beside each wire.
+   ===================================================================== */
+const NICE_MM=[0.1,0.2,0.5,1,2,5,10,20,50,100];
+function buildA5(){
+  const MN=['steel','copper','brass','alu'];
+  const A=lab(
+    SL('f','Load F',0,3000,10,2000)+SL('a','Wire area A',0.02,0.3,0.01,0.1)+SL('l','Wire length L',1,4,0.1,2)+
+    TG('ma','Wire 1',MN.map(k=>MAT[k].n),0)+TG('mb','Wire 2',MN.map(k=>MAT[k].n),1)+
+    CARDS([['c1','Wire 1 stretches','var(--f-blue)'],['c2','Wire 2 stretches','var(--f-green)'],['c3','Stress (both)','var(--f-red)'],['c4','Strain 1 · 2','']]));
+  let ia=0, ib=1; A.tog('ma',v=>ia=v); A.tog('mb',v=>ib=v);
+  const S=[sp0(0),sp0(0)], Z={lg:Math.log(1)};
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), F=A.v('f'), Acm=A.v('a'), L=A.v('l'), Am=Acm*1e-4;
+    A.set('fV',fmt(F,0)+' N'); A.set('aV',fmt(Acm,2)+' cm²'); A.set('lV',fmt(L,1)+' m');
+    const M=[MAT[MN[ia]],MAT[MN[ib]]];
+    const sigma=F/Am/1e6;                                          // MPa
+    const dL=M.map(m=>F*L/(Am*m.Y*1e9)*1e3);                       // mm
+    const strain=M.map(m=>sigma/(m.Y*1e3));
+    // ruler full-scale chosen from nice steps, eased on a log axis
+    const need=Math.max(...dL)*1.25, pick=NICE_MM.find(v=>v>=need)||100;
+    Z.lg=approach(Z.lg,Math.log(pick),4,dt); const FS=Math.exp(Z.lg);
+    const cols=[COL.blue,COL.green], xs=[w*0.14,w*0.52], top=h*0.16, L0=h*0.3, rl=h*0.26, th=1.8+5*Math.sqrt(Acm/0.3);
+    ceilingBar(ctx,w*0.04,w*0.9,top);
+    for(let i=0;i<2;i++){
+      springTo(S[i],dL[i],55,2.6,dt);                              // ζ ≈ 0.18 → bounce
+      const x=xs[i], pos=S[i].x/FS, yb=top+L0+pos*rl*1.0, over=sigma>M[i].sy;
+      line(ctx,x,top,x,yb,over?COL.red:cols[i],th,over?[8,4]:null);
+      rect(ctx,x-9,top,18,8,COL.ink,'#fff',2);
+      line(ctx,x-40,top+L0,x+40,top+L0,COL.mid,1.3,[6,5]);
+      const bs=30+30*Math.sqrt(F/3000); weightBlock(ctx,x,yb,bs);
+      textAt(ctx,fmt(F,0)+' N',x,yb+bs*0.4+4,{align:'center',size:11.5,weight:700,color:COL.ink});
+      vec(ctx,x,yb+bs*0.8+4,x,yb+bs*0.8+12+F/3000*30,COL.red,3.6);
+      textAt(ctx,M[i].n,x,top-24,{align:'center',size:15,weight:700,color:cols[i]});
+      textAt(ctx,'Y = '+M[i].Y+' GPa',x,top-8,{align:'center',size:11,color:COL.muted});
+      // true ruler beside the wire
+      const rx=x+84; ruler(ctx,rx,top+L0,rl,FS,'mm',pos,cols[i]);
+      line(ctx,x+40,top+L0,rx,top+L0,COL.mid,1.2,[4,4]);
+      line(ctx,rx,top+L0+rl*pos,x+bs/2+2,yb,cols[i],1.2,[3,3]);
+      textAt(ctx,'ΔL = '+fmt(dL[i],dL[i]<1?3:2)+' mm',rx+52,top+L0+rl*pos+4,{size:12.5,weight:700,color:cols[i]});
+      if(over) textAt(ctx,'beyond yield!',x,top+L0-18,{align:'center',size:12,weight:700,color:COL.red});
+    }
+    textAt(ctx,'same load · same size · the stiffer wire stretches less',w*0.42,h-30,{align:'center',size:11.5,weight:600,color:COL.muted});
+    textAt(ctx,'ruler full-scale '+fmt(FS,FS<1?2:1)+' mm  (true reading)',w*0.42,h-12,{align:'center',size:11,weight:600,color:COL.mid});
+    A.set('c1',fmt(dL[0],dL[0]<1?3:2)+' mm'); A.set('c2',fmt(dL[1],dL[1]<1?3:2)+' mm');
+    A.set('c3',fmt(sigma,0)+' MPa'); A.set('c4',fmt(strain[0]*100,3)+'% · '+fmt(strain[1]*100,3)+'%');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.5.2  SHEAR MODULUS
+   x = F·L / (A·G)   (Eq. 8.10)      tanθ ≈ θ = x/L = σs / G
+   Check (Example 8.4): lead slab, face 50 cm × 10 cm, L = 0.5 m,
+     F = 9.0×10⁴ N, G = 5.6×10⁹ Pa → x = 0.16 mm.
+   ===================================================================== */
+function buildA6(){
+  const MK=['lead','alu','copper','steel'];
+  const A=lab(
+    TG('mt','Slab material',MK.map(k=>MAT[k].n),0)+
+    SL('f','Sideways force F',0,150,1,90)+SL('l','Slab height L',20,100,1,50)+
+    TG('ex','Drawing exaggeration',['×100','×1000','×10000'],1)+
+    CARDS([['c1','Shear stress','var(--f-red)'],['c2','Shear strain θ','var(--f-blue)'],['c3','Top edge moves x','var(--f-blue)'],['c4','Modulus G','var(--f-green)']]));
+  let mi=0, ex=1; A.tog('mt',v=>mi=v); A.tog('ex',v=>ex=v);
+  const S={x:sp0(0)}, EXS=[100,1000,10000];
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), F=A.v('f'), L=A.v('l')/100, t=A.t, m=MAT[MK[mi]];
+    A.set('fV',fmt(F,0)+' kN'); A.set('lV',fmt(L*100,0)+' cm');
+    const Aface=0.5*0.1;                                           // 50 cm × 10 cm narrow face
+    const sigma=F*1e3/Aface, th=sigma/(m.G*1e9), x=th*L;           // Pa · rad · m
+    springTo(S.x,x,90,5,dt);                                       // wobbling settle
+    const K=EXS[ex], pxm=Math.min(h*0.5,w*0.34)/0.62, Wb=0.5*pxm, Hb=L*pxm;
+    const cx=w*0.3, yb=h*0.78, yt=yb-Hb, x0=cx-Wb/2, dx=clamp(S.x.x*K*pxm,-Hb*0.7,Hb*0.7);
+    hatch(ctx,x0-40,yb,Wb+80,18,1,COL.mid); line(ctx,x0-40,yb,x0+Wb+40,yb,COL.ink,3.6);
+    for(let i=0;i<3;i++) circ(ctx,x0+Wb*(0.15+i*0.35),yb-4,4.5,COL.ink,'#fff',2);  // rivets
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.3; ctx.strokeRect(x0,yt,Wb,Hb); ctx.restore();
+    poly(ctx,[[x0,yb],[x0+Wb,yb],[x0+Wb+dx,yt],[x0+dx,yt]],COL.ink,'#f4f9fe',2.8);
+    for(let i=1;i<6;i++){ const u=i/6; line(ctx,x0+dx*u,yb-Hb*u,x0+Wb+dx*u,yb-Hb*u,'#bcd3ea',1.3); }
+    for(let i=1;i<4;i++) line(ctx,x0+Wb*i/4,yb,x0+Wb*i/4+dx,yt,'#d5e4f3',1.1);
+    rect(ctx,x0+dx-5,yt-11,Wb+10,11,COL.ink,'#fff',2.4);
+    const fl=10+F/150*Math.min(110,w*0.14);
+    vec(ctx,x0+dx-12-fl,yt-5,x0+dx-12,yt-5,COL.red,4.4); textAt(ctx,'F',x0+dx-12-fl/2,yt-16,{align:'center',size:14,weight:700,color:COL.red});
+    // displacement + angle
+    const thd=Math.atan2(dx,Hb);
+    dimH(ctx,yt-34,x0+Wb,x0+Wb+dx,COL.blue); textAt(ctx,'x = '+fmt(x*1e3,x*1e3<1?3:2)+' mm (true)',x0+Wb+dx/2,yt-42,{align:'center',size:12,weight:700,color:COL.blue});
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.beginPath(); ctx.arc(x0,yb,Hb*0.32,-Math.PI/2,-Math.PI/2+thd); ctx.stroke(); ctx.restore();
+    textAt(ctx,'θ',x0+Hb*0.32*Math.sin(thd/2)+6,yb-Hb*0.32*Math.cos(thd/2)-4,{size:15,weight:700,color:COL.blue});
+    dimV(ctx,x0-26,yt,yb,COL.green); textAt(ctx,'L',x0-34,(yt+yb)/2+4,{align:'right',size:13,weight:700,color:COL.green});
+    textAt(ctx,'face A = 50 cm × 10 cm · riveted to floor',cx,yb+38,{align:'center',size:11,color:COL.muted});
+    textAt(ctx,'deformation drawn ×'+K,cx,h-12,{align:'center',size:11,weight:600,color:COL.mid});
+    // the book (Fig. 8.2c): same shear, pages slide
+    const bx=w*0.64, by=h*0.62, bwid=w*0.2, bh=h*0.24, sk=Math.tan(thd)*bh;
+    textAt(ctx,'a book pushed sideways',bx+bwid/2,by-bh-30,{align:'center',size:12,weight:700,color:COL.ink});
+    line(ctx,bx-20,by,bx+bwid+20,by,COL.ink,3);
+    for(let i=0;i<=10;i++){ const u=i/10, yy=by-bh*u, off=sk*u; line(ctx,bx+off,yy,bx+bwid+off,yy,i%10===0?COL.ink:COL.blue,i%10===0?2.6:1.6); }
+    line(ctx,bx,by,bx+sk,by-bh,COL.ink,2.4); line(ctx,bx+bwid,by,bx+bwid+sk,by-bh,COL.ink,2.4);
+    vec(ctx,bx+sk-50,by-bh-8,bx+sk-6,by-bh-8,COL.red,3.6);
+    textAt(ctx,'layers slide · volume same',bx+bwid/2,by+24,{align:'center',size:10.5,color:COL.muted});
+    A.set('c1',fmt(sigma/1e6,2)+' MPa'); A.set('c2',sci(th,2)+' rad'); A.set('c3',fmt(x*1e3,x*1e3<1?3:2)+' mm'); A.set('c4','G = '+m.G+' GPa');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.5.3  BULK MODULUS
+   ΔV/V = −Δp / B   (Eq. 8.12)      solids ≪ liquids ≪ gases in B
+   Check (Example 8.5): water, p = 3×10⁷ Pa (3000 m of ocean) →
+     ΔV/V = 3×10⁷ / 2.2×10⁹ = 1.36 %.
+   Air is treated as an isothermal ideal gas:  V/V₀ = p₀/(p₀ + Δp),
+   which reproduces B(air) = p₀ = 1.0×10⁻⁴ GPa at STP.
+   ===================================================================== */
+function buildA7(){
+  const A=lab(
+    SL('p','Pressure p',0,60,0.5,30)+
+    TG('mg','Show squeeze of solid and liquid',['True size','×20 bigger'],0)+
+    CARDS([['c1','Steel  ΔV/V','var(--f-blue)'],['c2','Water  ΔV/V','var(--f-blue)'],['c3','Air  V/V₀','var(--f-blue)'],['c4','Sea depth for this p','var(--f-green)']]));
+  let mg=0; A.tog('mg',v=>mg=v);
+  const S={p:sp0(0)}, R=rng(7), gas=[]; for(let i=0;i<34;i++) gas.push({x:R(),y:R(),vx:(R()-0.5)*1.6,vy:(R()-0.5)*1.6});
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), t=A.t, pT=A.v('p');
+    A.set('pV',fmt(pT,1)+' MPa');
+    springTo(S.p,pT,38,5.5,dt); const p=Math.max(0,S.p.x);           // gauge + pistons settle
+    const dSteel=p*1e6/160e9, dWater=p*1e6/2.2e9, vAir=0.1/(0.1+p);   // fractions
+    const K=mg?20:1, fS=1-clamp(dSteel*K,0,0.9), fW=1-clamp(dWater*K,0,0.9), fA=Math.max(0.03,vAir);
+    const cw=Math.min(w*0.17,130), cH=Math.min(h*0.52,300), ct=h*0.3, xs=[w*0.19,w*0.46,w*0.73];
+    // pressure gauge (dial with a bouncing needle)
+    const gx=w*0.46, gy=h*0.115, gr=Math.min(34,h*0.075);
+    circ(ctx,gx,gy,gr,COL.ink,'#fff',2.8);
+    for(let i=0;i<=6;i++){ const a=Math.PI*(0.8+1.4*i/6); line(ctx,gx+Math.cos(a)*gr*0.78,gy+Math.sin(a)*gr*0.78,gx+Math.cos(a)*gr*0.95,gy+Math.sin(a)*gr*0.95,COL.ink,1.6); }
+    const na=Math.PI*(0.8+1.4*clamp(p/60,0,1)); vec(ctx,gx,gy,gx+Math.cos(na)*gr*0.78,gy+Math.sin(na)*gr*0.78,COL.red,2.6);
+    textAt(ctx,fmt(p,0)+' MPa',gx+gr+10,gy+5,{size:13,weight:700,color:COL.red});
+    const names=['Steel','Water','Air'], kind=['solid','liquid','gas'], fr=[fS,fW,fA];
+    for(let i=0;i<3;i++){
+      const x=xs[i], pistonY=ct+(1-fr[i])*cH;
+      // cylinder
+      line(ctx,x-cw/2,ct-8,x-cw/2,ct+cH,COL.ink,3.4); line(ctx,x+cw/2,ct-8,x+cw/2,ct+cH,COL.ink,3.4); line(ctx,x-cw/2-6,ct+cH,x+cw/2+6,ct+cH,COL.ink,3.4);
+      // contents
+      ctx.save(); ctx.beginPath(); ctx.rect(x-cw/2+2,pistonY,cw-4,ct+cH-pistonY); ctx.clip();
+      if(i===0){ ctx.fillStyle='#eef2f8'; ctx.fillRect(x-cw/2,pistonY,cw,cH); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath(); for(let q=-cH;q<cw+cH;q+=14){ ctx.moveTo(x-cw/2+q,pistonY); ctx.lineTo(x-cw/2+q-cH,pistonY+cH); ctx.moveTo(x-cw/2+q,pistonY); ctx.lineTo(x-cw/2+q+cH,pistonY+cH);} ctx.stroke(); }
+      if(i===1){ ctx.fillStyle='rgba(47,143,224,0.16)'; ctx.fillRect(x-cw/2,pistonY,cw,cH); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.5; for(let k=0;k<7;k++){ ctx.beginPath(); for(let q=0;q<=20;q++){ const xx=x-cw/2+cw*q/20, yy=pistonY+(k+0.6)*cH*fW/7*1.0+Math.sin(q*0.9+t*2.2+k)*2; q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); } }
+      if(i===2){ gas.forEach(g=>{ g.x+=g.vx*dt*(0.5+p*0.012); g.y+=g.vy*dt*(0.5+p*0.012); if(g.x<0||g.x>1){ g.vx*=-1; g.x=clamp(g.x,0,1);} if(g.y<0||g.y>1){ g.vy*=-1; g.y=clamp(g.y,0,1);}
+          const gxp=x-cw/2+6+g.x*(cw-12), gyp=pistonY+6+g.y*Math.max(2,(ct+cH-pistonY-12)); circ(ctx,gxp,gyp,3.2,COL.blue,COL.blue,1); }); }
+      ctx.restore();
+      // piston + rod + pressure arrows
+      rect(ctx,x-cw/2+2,pistonY-10,cw-4,10,COL.ink,'#fff',2.6); line(ctx,x,pistonY-10,x,ct-52,COL.ink,5);
+      const al=10+p/60*50; for(let q=-1;q<=1;q++) vec(ctx,x+q*cw*0.28,pistonY-14-al-(i===0?0:0),x+q*cw*0.28,pistonY-14,COL.red,3.2);
+      textAt(ctx,names[i],x,ct+cH+28,{align:'center',size:15,weight:700,color:COL.ink});
+      textAt(ctx,kind[i],x,ct+cH+44,{align:'center',size:11,color:COL.muted});
+      // dashed original volume level
+      line(ctx,x-cw/2-8,ct,x+cw/2+8,ct,COL.mid,1.3,[5,4]);
+      if(i<2 && mg) textAt(ctx,'drawn ×20',x,ct-60,{align:'center',size:10.5,weight:600,color:COL.mid});
+      if(i===2 && vAir<0.03) textAt(ctx,'(drawn at min height)',x,ct-60,{align:'center',size:10.5,weight:600,color:COL.mid});
+    }
+    A.set('c1',fmt(dSteel*100,3)+' %'); A.set('c2',fmt(dWater*100,2)+' %'); A.set('c3',fmt(vAir*100,1)+' %'); A.set('c4',fmt(pT*1e6/(1000*10),0)+' m');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.5.5  ELASTIC POTENTIAL ENERGY IN A STRETCHED WIRE
+   U = ½·F·l = ½·(YA/L)·l²   (area under the F–l line)    u = ½·σ·ε
+   Release the pull: U ⇄ kinetic energy, ω = √(k/m), k = YA/L.
+   Real periods are milliseconds, so the motion is shown in slow motion
+   (factor printed on screen); the energy numbers are the real ones.
+   ===================================================================== */
+function buildA8(){
+  const A=lab(
+    SL('l','Pull the wire by l',0,1.5,0.01,1.0)+SL('a','Wire area A',0.05,0.2,0.01,0.1)+SL('m','Block mass',20,500,5,100)+
+    BT([['go','Release ▶','play'],['again','Pull again ↺','navy']])+
+    CARDS([['c1','Force F','var(--f-red)'],['c2','Stored energy U','var(--f-green)'],['c3','Energy per volume u','var(--f-green)'],['c4','Slow motion','var(--f-blue)']]));
+  const Y=200e9, Ly=1.0, SY=300e6;                                  // steel wire, L = 1 m, yield 300 MPa → l_y = 1.5 mm
+  const S={mode:'hold', x:sp0(0), tt:0, amp:0};
+  A.$('#go').onclick=()=>{ S.mode='free'; S.tt=0; S.amp=S.x.x; S.x.v=0; };
+  A.$('#again').onclick=()=>{ S.mode='hold'; };
+  ['l','a','m'].forEach(id=>A.$('#'+id).addEventListener('input',()=>{ S.mode='hold'; }));
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), lT=A.v('l'), Acm=A.v('a'), mass=A.v('m'), Am=Acm*1e-4;
+    A.set('lV',fmt(lT,2)+' mm'); A.set('aV',fmt(Acm,2)+' cm²'); A.set('mV',fmt(mass,0)+' kg');
+    const k=Y*Am/Ly, wReal=Math.sqrt(k/mass), wDraw=2*Math.PI/1.1, N=wReal/wDraw, gam=0.3;
+    let x; // mm
+    if(S.mode==='hold'){ springTo(S.x,lT,70,9,dt); x=S.x.x; }
+    else { S.tt+=dt; const xx=S.amp*Math.cos(wDraw*S.tt)*Math.exp(-gam*S.tt); x=xx; S.x.x=xx; S.x.v=0; if(S.tt>14){ S.mode='hold'; } }
+    const F=k*x*1e-3, U=0.5*F*x*1e-3, KE=Math.max(0,0.5*k*Math.pow(S.amp*1e-3,2)*Math.exp(-2*gam*(S.mode==='free'?S.tt:0))-U*(S.mode==='free'?1:0));
+    const U0=0.5*k*Math.pow(lT*1e-3,2), Umax=0.5*k*Math.pow(1.5e-3,2);
+    const eps=x*1e-3/Ly, sigma=Y*eps, u=0.5*sigma*eps;
+    // ---------------------------------------------------- scene
+    const wallX=w*0.07, trackY=h*0.4, restX=w*0.4, pxPerMm=w*0.14/1.5, bx=restX+x*pxPerMm, bs=34+Math.sqrt(mass)*2.2;
+    hatch(ctx,wallX-20,trackY-60,20,120,1,COL.mid); line(ctx,wallX,trackY-60,wallX,trackY+60,COL.ink,4);
+    line(ctx,wallX,trackY-bs/2,bx-bs/2,trackY-bs/2,Math.abs(x)>0.75?COL.yellow:COL.green,Math.max(5,4+Acm*28));
+    line(ctx,wallX-6,trackY+bs/2+14,w*0.7,trackY+bs/2+14,COL.ink,3);
+    rect(ctx,bx-bs/2,trackY-bs/2,bs,bs,COL.ink,'#eef2f8',2.8); circ(ctx,bx-bs*0.28,trackY+bs/2+7,6,COL.ink,'#fff',2); circ(ctx,bx+bs*0.28,trackY+bs/2+7,6,COL.ink,'#fff',2);
+    textAt(ctx,fmt(mass,0)+' kg',bx,trackY+4,{align:'center',size:11.5,weight:700});
+    line(ctx,restX,trackY-bs/2-24,restX,trackY+bs/2+14,COL.mid,1.3,[5,4]);
+    if(S.mode==='hold'&&x>0.02){ vec(ctx,bx+bs/2+4,trackY,bx+bs/2+4+10+F/(k*1.5e-3)*60,trackY,COL.red,4.4); textAt(ctx,'pull F',bx+bs/2+40,trackY-12,{size:12,weight:700,color:COL.red});
+      rect(ctx,bx+bs/2+4,trackY+bs/2+2,12,12,COL.yellow,COL.yellow,1); }
+    // true horizontal ruler
+    const ry=trackY+bs/2+52, rx0=restX-pxPerMm*0.5;
+    line(ctx,rx0,ry,rx0+pxPerMm*2.5,ry,COL.ink,2); for(let i=0;i<=10;i++){ const xx=rx0+pxPerMm*0.25*i; line(ctx,xx,ry,xx,ry+(i%2===0?10:6),COL.ink,i%2?1.2:2); }
+    for(let i=0;i<=2;i++) textAt(ctx,String(i*1)+' mm',restX+ (i-0)*pxPerMm*1 - (0)+0,ry+26,{align:'center',size:10,weight:600,color:COL.muted});
+    poly(ctx,[[bx,ry],[bx-6,ry-12],[bx+6,ry-12]],COL.blue,COL.blue,1);
+    textAt(ctx,'stretch l = '+fmt(x,2)+' mm (true ruler)',restX+pxPerMm*1.0,ry+46,{align:'center',size:11.5,weight:700,color:COL.blue});
+    // F–l graph with the area = U
+    const gx0=w*0.1, gx1=w*0.46, gy0=h*0.68, gy1=h*0.94;
+    vec(ctx,gx0,gy1,gx1+10,gy1,COL.ink,2); vec(ctx,gx0,gy1,gx0,gy0-14,COL.ink,2);
+    textAt(ctx,'l',gx1+14,gy1+4,{size:13,weight:700,color:COL.blue}); textAt(ctx,'F',gx0-8,gy0-14,{align:'right',size:13,weight:700,color:COL.red});
+    const Fmax=k*1.5e-3, GX=v=>gx0+(gx1-gx0)*v/1.5, GY=f=>gy1-(gy1-gy0)*f/Fmax;
+    line(ctx,GX(0),GY(0),GX(1.5),GY(Fmax),COL.mid,1.8,[6,5]);
+    const xp=Math.max(0,x); poly(ctx,[[GX(0),GY(0)],[GX(xp),GY(0)],[GX(xp),GY(k*xp*1e-3)]],COL.green,'rgba(31,157,85,0.28)',2.4);
+    circ(ctx,GX(xp),GY(k*xp*1e-3),5.5,COL.ink,COL.yellow,2); textAt(ctx,'U = ½ F l',(GX(0)+GX(xp))/2+6,gy1-8,{size:12,weight:700,color:COL.green,alpha:xp>0.3?1:0});
+    // energy bars
+    const ex=w*0.62, ey=h*0.94, eh=h*0.3;
+    textAt(ctx,'energy',ex+60,ey-eh-18,{align:'center',size:12,weight:700,color:COL.muted});
+    const Utop=Math.max(U0,1e-9);
+    const KEv=S.mode==='free'? Math.max(0,U0*Math.exp(-2*gam*S.tt)-U):0;
+    [['elastic U',COL.green,U/Utop],['kinetic',COL.blue,KEv/Utop]].forEach(([n,c,f],i)=>{ const bxx=ex+i*70, bhh=eh*clamp(f,0,1.05); rect(ctx,bxx,ey-bhh,48,bhh,c,c+'44',2.4); textAt(ctx,n,bxx+24,ey+16,{align:'center',size:10.5,weight:700,color:c}); });
+    line(ctx,ex-8,ey,ex+130,ey,COL.ink,2);
+    A.set('c1',fmt(F,0)+' N'); A.set('c2',fmt(U,2)+' J'); A.set('c3',fmt(u/1e3,1)+' kJ/m³'); A.set('c4','×'+fmt(N,0)+' slower');
+    if(Math.abs(x)>1.495) textAt(ctx,'elastic limit',gx1-10,gy0+20,{align:'right',size:11,weight:700,color:COL.red});
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.6a  A BEAM UNDER A LOAD
+   Bar:     δ = W l³ / (4 b d³ Y)          (Eq. 8.16)
+   I-beam:  δ = W l³ / (48 Y I),  I = [b d³ − 0.8 b (0.7 d)³]/12
+            (flanges 0.15 d thick, web 0.2 b wide — same outer b × d)
+   Both reduce to the same law for a solid bar (I = b d³/12).
+   Deep thin bars twist sideways — "buckling" (Fig. 8.7b): drawn when d/b ≥ 5.
+   ===================================================================== */
+function buildA9(){
+  const MK=['steel','alu','conc','wood'];
+  const A=lab(
+    TG('mt','Material',MK.map(k=>MAT[k].n),0)+TG('sec','Cross-section',['Solid bar','I-beam'],0)+
+    SL('w','Load W',0,150,1,60)+SL('l','Span l',2,8,0.1,4)+SL('b','Breadth b',4,30,0.5,10)+SL('d','Depth d',5,40,0.5,20)+
+    CARDS([['c1','Sag δ (true)','var(--f-blue)'],['c2','Beam mass','var(--f-green)'],['c3','Depth ÷ breadth',''],['c4','Status','var(--f-red)']]));
+  let mi=0, sec=0; A.tog('mt',v=>mi=v); A.tog('sec',v=>sec=v);
+  const S={d:sp0(0), tilt:sp0(0), loadY:sp0(-200)};
+  const f=u=>{ u=u>0.5?1-u:u; return 3*u-4*u*u*u; };              // deflection shape / δ
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), W=A.v('w'), l=A.v('l'), bcm=A.v('b'), dcm=A.v('d'), m=MAT[MK[mi]];
+    A.set('wV',fmt(W,0)+' kN'); A.set('lV',fmt(l,1)+' m'); A.set('bV',fmt(bcm,1)+' cm'); A.set('dV',fmt(dcm,1)+' cm');
+    const b=bcm/100, d=dcm/100, Y=m.Y*1e9, Wn=W*1e3;
+    const I = sec===0 ? b*d*d*d/12 : (b*d*d*d-0.8*b*Math.pow(0.7*d,3))/12;
+    const area = sec===0 ? b*d : b*d-0.8*b*0.7*d;
+    const delta = Wn*l*l*l/(48*Y*I);                               // = W l³/(4 b d³ Y) for the bar
+    const buckle = sec===0 && d/b>=5 && W>=10;
+    const pxm=w*0.088, len=l*pxm, cx=w*0.4, y0=h*0.44, thick=clamp(d*pxm*3.4,10,110), KS=pxm*200;
+    const sagT=clamp(delta*KS,0,h*0.26);
+    springTo(S.d,sagT,60,3.2,dt);                                  // bounces when the load lands
+    springTo(S.tilt,buckle?0.5:0,22,2.6,dt);
+    const sag=S.d.x, x0=cx-len/2;
+    // supports
+    [x0,x0+len].forEach(sx=>{ poly(ctx,[[sx,y0+thick/2],[sx-16,y0+thick/2+26],[sx+16,y0+thick/2+26]],COL.ink,'#fff',2.6); });
+    line(ctx,x0-34,y0+thick/2+26,x0+len+34,y0+thick/2+26,COL.ink,3.4);
+    // beam
+    const N=60, top=[], bot=[];
+    for(let i=0;i<=N;i++){ const u=i/N, yc=y0+sag*f(u); top.push([x0+len*u,yc-thick/2]); bot.push([x0+len*u,yc+thick/2]); }
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.3; ctx.strokeRect(x0,y0-thick/2,len,thick); ctx.restore();
+    poly(ctx,top.concat(bot.reverse()),buckle?COL.red:COL.ink,sec?'#eef6fe':'#f4f9fe',3);
+    for(let i=1;i<N;i+=6){ line(ctx,top[i][0],top[i][1]+2,top[i][0],top[i][1]+Math.min(thick-4,thick),'rgba(47,143,224,0.18)',1.2); }
+    // load block lowered onto the centre
+    const bsz=24+Math.sqrt(W)*5, yCentreTop=y0+sag-thick/2;
+    springTo(S.loadY,yCentreTop-bsz*0.8,30,9,dt);
+    const ly=S.loadY.x;
+    rect(ctx,cx-bsz/2,ly,bsz,bsz*0.8,COL.ink,'#eef2f8',2.8); textAt(ctx,fmt(W,0)+' kN',cx,ly+bsz*0.4+4,{align:'center',size:12,weight:700});
+    vec(ctx,cx,ly-8-Math.min(80,10+W/150*80),cx,ly-6,COL.red,4.4);
+    // dimensions
+    dimV(ctx,cx+bsz/2+22,y0+thick/2,y0+thick/2+sag,COL.blue); textAt(ctx,'δ = '+fmt(delta*1e3,delta*1e3<10?2:1)+' mm (true)',cx+bsz/2+30,y0+thick/2+sag+22,{size:12,weight:700,color:COL.blue});
+    dimH(ctx,y0+thick/2+h*0.26+56,x0,x0+len,COL.green); textAt(ctx,'l = '+fmt(l,1)+' m',cx,y0+thick/2+h*0.26+76,{align:'center',size:12,weight:700,color:COL.green});
+    textAt(ctx,'sag drawn ×200',cx,h-14,{align:'center',size:11,weight:600,color:COL.mid});
+    // end-view inset: what the cross-section looks like
+    const ex=w*0.85, ey=h*0.3, sc=Math.min(w*0.1,h*0.2)/Math.max(d,b*1.0)*0.9;
+    ctx.save(); ctx.translate(ex,ey); ctx.rotate(S.tilt.x);
+    const bw=b*sc, bh=d*sc;
+    if(sec===0) poly(ctx,[[-bw/2,-bh/2],[bw/2,-bh/2],[bw/2,bh/2],[-bw/2,bh/2]],buckle?COL.red:COL.ink,'#eef6fe',3);
+    else { const tf=0.15*bh, tw=0.2*bw; poly(ctx,[[-bw/2,-bh/2],[bw/2,-bh/2],[bw/2,-bh/2+tf],[tw/2,-bh/2+tf],[tw/2,bh/2-tf],[bw/2,bh/2-tf],[bw/2,bh/2],[-bw/2,bh/2],[-bw/2,bh/2-tf],[-tw/2,bh/2-tf],[-tw/2,-bh/2+tf],[-bw/2,-bh/2+tf]],COL.ink,'#eef6fe',3); }
+    ctx.restore();
+    if(!buckle){ dimH(ctx,ey+bh/2+16,ex-bw/2,ex+bw/2,COL.yellow); dimV(ctx,ex+bw/2+16,ey-bh/2,ey+bh/2,COL.yellow); textAt(ctx,'b',ex,ey+bh/2+34,{align:'center',size:12,weight:700,color:COL.yellow}); textAt(ctx,'d',ex+bw/2+24,ey+4,{size:12,weight:700,color:COL.yellow}); }
+    textAt(ctx,buckle?'BUCKLES sideways':'cross-section',ex,ey-Math.max(bh,bw)/2-18,{align:'center',size:12,weight:700,color:buckle?COL.red:COL.muted});
+    // tiny lesson: δ ∝ d⁻³, δ ∝ b⁻¹
+    textAt(ctx,'δ ∝ 1/d³   δ ∝ 1/b',ex,h*0.64,{align:'center',size:13,weight:700,color:COL.blue});
+    textAt(ctx,'depth helps cubically',ex,h*0.64+17,{align:'center',size:11,color:COL.muted});
+    A.set('c1',fmt(delta*1e3,delta*1e3<10?2:1)+' mm'); A.set('c2',fmt(area*l*m.rho,0)+' kg'); A.set('c3',fmt(d/b,1)); A.set('c4',buckle?'Buckles!':(delta*1e3>l*1000/150?'Too floppy':'Holds'));
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.6b  A CRANE ROPE
+   Rope must not yield:  A ≥ M g / σy        (Eq. 8.15)
+   Check (text): M = 10 t, σy = 300×10⁶ Pa → A = 3.3×10⁻⁴ m², r ≈ 1 cm;
+   with a safety factor of ten → r ≈ 3 cm.
+   Past σy the rope stretches permanently; past σu (≈ 400 MPa) it snaps.
+   ===================================================================== */
+function buildA10(){
+  const SY=300, SU=400, G=9.8;
+  const A=lab(
+    SL('m','Load M',1,20,0.5,10)+SL('r','Rope radius r',0.5,5,0.05,1.0)+
+    BT([['lift','Lift ▲','play'],['rst','New rope','navy']])+
+    BT([['mn','Minimum r','navy'],['sf','Safety ×10','navy']])+
+    CARDS([['c1','Stress  Mg/A','var(--f-red)'],['c2','Safety factor σy/σ','var(--f-green)'],['c3','Least radius','var(--f-blue)'],['c4','Rope','']]));
+  const S={lift:sp0(0), want:0, bob:sp0(0), perm:0, broken:false, ly:0, vy:0, endY:sp0(0), landed:false, dust:[], bar:sp0(0)};
+  const rMin=()=>Math.sqrt(A.v('m')*1000*G/(Math.PI*SY*1e6))*100;      // cm
+  A.$('#lift').onclick=()=>{ if(S.broken) return; S.want=S.want?0:1; };
+  A.$('#rst').onclick=()=>{ S.want=0; S.perm=0; S.broken=false; S.lift.x=0; S.lift.v=0; S.bob.x=0; S.bob.v=0; S.landed=false; S.dust=[]; S.endY.x=0; S.endY.v=0; };
+  A.$('#mn').onclick=()=>A.slideTo('r',clamp(Math.ceil(rMin()*20)/20,0.5,5));
+  A.$('#sf').onclick=()=>A.slideTo('r',clamp(rMin()*Math.sqrt(10),0.5,5));
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), M=A.v('m'), r=A.v('r'), t=A.t;
+    A.set('mV',fmt(M,1)+' t'); A.set('rV',fmt(r,2)+' cm');
+    const Am=Math.PI*Math.pow(r/100,2), sigma=M*1000*G/Am/1e6, SF=SY/sigma;
+    // geometry
+    const gy=h*0.9, tx=w*0.1, jibY=h*0.12, jx=w*0.52, hl=h*0.46, bw=34+M*3.4, bh=bw*0.8, pxm=h*0.05, gPx=9.8*pxm;
+    springTo(S.lift,S.broken?0:S.want,7,5.6,dt);                       // heavy, near-critically damped hoist
+    const hang=!S.broken && S.lift.x>0.04;
+    if(hang){ springTo(S.bob,sigma/200e3*40*Math.sqrt(1),40,1.3,dt); if(sigma>SY) S.perm=Math.min(h*0.2,S.perm+(sigma/SY-1)*70*dt); } else { S.bob.x=approach(S.bob.x,0,6,dt); }
+    if(hang && sigma>SU && S.lift.x>0.12){ S.broken=true; S.ly=gy-bh-S.lift.x*hl+S.bob.x+S.perm; S.vy=-40; S.endY.x=0; S.endY.v=0; S.landed=false; S.sparkT=0; }
+    let loadTop;
+    if(!S.broken) loadTop=gy-bh-S.lift.x*hl+(hang?S.bob.x+S.perm:0);
+    else { S.vy+=gPx*dt; S.ly+=S.vy*dt; if(S.ly>gy-bh){ S.ly=gy-bh; if(Math.abs(S.vy)>60){ S.vy*=-0.28; for(let i=0;i<14;i++) S.dust.push({x:jx+(Math.random()-0.5)*bw,y:gy,vx:(Math.random()-0.5)*160,vy:-Math.random()*90,life:0}); } else S.vy=0; S.landed=true; } loadTop=S.ly; }
+    // ground, crane
+    line(ctx,w*0.02,gy,w*0.96,gy,COL.ink,3.4); hatch(ctx,w*0.02,gy,w*0.94,10,1,COL.faint);
+    rect(ctx,tx-34,gy-16,68,16,COL.ink,'#fff',2.6);
+    const mast=(x0)=>{ line(ctx,tx-14,gy-16,tx-14,jibY,COL.ink,3.2); line(ctx,tx+14,gy-16,tx+14,jibY,COL.ink,3.2);
+      for(let y=gy-16;y>jibY+20;y-=34){ line(ctx,tx-14,y,tx+14,y-34,COL.mid,1.5); line(ctx,tx+14,y,tx-14,y-34,COL.mid,1.5); line(ctx,tx-14,y,tx+14,y,COL.mid,1.5);} };
+    mast();
+    rect(ctx,tx-14,jibY-10,jx-tx+40,10,COL.ink,'#fff',2.8); line(ctx,tx-14,jibY-10,tx-14+(jx-tx)*0.5,jibY-70,COL.ink,2.4); line(ctx,tx-14+(jx-tx)*0.5,jibY-70,jx+26,jibY-10,COL.ink,2.4); line(ctx,tx+14,jibY-60,tx+14,jibY-10,COL.ink,2.4);
+    rect(ctx,jx-16,jibY,32,14,COL.ink,'#fff',2.4);
+    // rope
+    const rth=clamp(r*2.1,1.8,11), col=SF>=2?COL.green:SF>=1?COL.yellow:COL.red, ropeCol=S.perm>2?COL.yellow:col;
+    if(!S.broken){
+      line(ctx,jx,jibY+14,jx,loadTop-12,ropeCol,rth);
+      if(hang){ for(let y=jibY+22;y<loadTop-14;y+=9){ line(ctx,jx-rth/2,y,jx+rth/2,y+4,'rgba(19,42,68,0.35)',1); } }
+      line(ctx,jx,loadTop-12,jx,loadTop,COL.ink,2.6);
+    } else {
+      springTo(S.endY,1,22,2.2,dt); const ey=jibY+14+Math.min(1,S.endY.x)*h*0.18*(1+0.15*Math.sin(t*22)*Math.exp(-S.endY.x*0.5));
+      line(ctx,jx,jibY+14,jx+Math.sin(t*14)*4*Math.exp(-(t%99)*0),Math.min(ey,loadTop-30),ropeCol,rth);
+      line(ctx,jx,loadTop-14,jx+6,loadTop,COL.red,rth*0.8);
+      S.sparkT=(S.sparkT||0)+dt; if(S.sparkT<1.2) for(let i=0;i<5;i++){ const a=i*1.3+t*8; line(ctx,jx,Math.min(ey,loadTop-30),jx+Math.cos(a)*10,Math.min(ey,loadTop-30)+Math.sin(a)*10,COL.yellow,2); }
+    }
+    rect(ctx,jx-bw/2,loadTop,bw,bh,COL.ink,'#eef2f8',2.8); textAt(ctx,fmt(M,1)+' t',jx,loadTop+bh/2+5,{align:'center',size:13,weight:700});
+    vec(ctx,jx+bw/2+16,loadTop+bh/2,jx+bw/2+16,loadTop+bh/2+16+M*2.4,COL.red,3.6); textAt(ctx,'Mg',jx+bw/2+24,loadTop+bh/2+16+M*1.2+4,{size:12,weight:700,color:COL.red});
+    S.dust=S.dust.filter(p=>{ p.life+=dt; p.vy+=500*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.y>gy||p.life>0.8) return false; circ(ctx,p.x,p.y,2.2,COL.mid,COL.mid,1); return true; });
+    if(S.perm>2 && !S.broken) textAt(ctx,'rope has stretched permanently',w*0.4,h-14,{align:'center',size:12,weight:700,color:COL.yellow});
+    if(S.broken) textAt(ctx,'ROPE SNAPPED',jx,jibY+60,{align:'center',size:16,weight:700,color:COL.red});
+    // cross-section inset (true radius vs. radius needed)
+    const ix=w*0.76, iy=h*0.24, pxcm=Math.min(w,h)*0.04;
+    textAt(ctx,'rope cross-section',ix,iy-pxcm*5.6,{align:'center',size:12,weight:700,color:COL.muted});
+    circ(ctx,ix,iy,r*pxcm,col,col+'30',3.2);
+    ctx.save(); ctx.setLineDash([6,5]); circ(ctx,ix,iy,rMin()*pxcm,COL.red,null,2); ctx.restore();
+    textAt(ctx,'dashed = least safe r',ix,iy+pxcm*5.4,{align:'center',size:10.5,color:COL.red});
+    // stress bar
+    const bxx=w*0.93, by1=h*0.88, by0=h*0.14, bwid=20, Smax=500;
+    springTo(S.bar,sigma,45,8,dt);
+    const BY=v=>by1-(by1-by0)*clamp(v,0,Smax)/Smax;
+    rect(ctx,bxx,by0,bwid,by1-by0,COL.ink,'#fff',2.4);
+    ctx.save(); ctx.fillStyle=S.bar.x>SU?COL.red:S.bar.x>SY?COL.yellow:COL.green; ctx.globalAlpha=0.55; ctx.fillRect(bxx+1,BY(S.bar.x),bwid-2,by1-BY(S.bar.x)); ctx.restore();
+    line(ctx,bxx-8,BY(SY),bxx+bwid+8,BY(SY),COL.red,2.4); textAt(ctx,'σy 300',bxx-12,BY(SY)+4,{align:'right',size:11,weight:700,color:COL.red});
+    line(ctx,bxx-8,BY(SU),bxx+bwid+8,BY(SU),COL.red,2.4,[5,3]); textAt(ctx,'σu 400',bxx-12,BY(SU)+4,{align:'right',size:11,weight:700,color:COL.red});
+    textAt(ctx,'stress (MPa)',bxx+bwid/2,by0-10,{align:'center',size:11,weight:700,color:COL.muted});
+    A.$('#lift').textContent=S.want?'Lower ▼':'Lift ▲';
+    A.set('c1',fmt(sigma,0)+' MPa'); A.set('c2','× '+fmt(SF,SF<2?2:1)); A.set('c3',fmt(rMin(),2)+' cm');
+    A.set('c4',S.broken?'Snapped':sigma>SU?'Will snap':sigma>SY?'Yields':SF<2?'Barely safe':'Safe');
+  });
+  return A.wrap;
+}
+
+/* =====================================================================
+   8.6c  HOW HIGH CAN A MOUNTAIN BE?
+   Rock at the base is under  ρ g h.  It flows when ρ g h > 30×10⁷ Pa:
+     h_max = 30×10⁷ / (3×10³ × 10) = 10 km          (text, p.176)
+   ===================================================================== */
+function buildA11(){
+  const LIM=300e6;
+  const A=lab(
+    SL('h','Build to height',0,30,0.1,5)+SL('rho','Rock density ρ',2000,4000,50,3000)+
+    TG('gp','Planet',['Earth  g = 10','Mars  g = 3.7'],0)+
+    CARDS([['c1','Base stress ρgh','var(--f-red)'],['c2','Rock limit','var(--f-red)'],['c3','Highest possible','var(--f-blue)'],['c4','Mountain','var(--f-green)']]));
+  let gi=0; A.tog('gp',v=>gi=v);
+  const GG=[10,3.7], R=rng(11), noise=[]; for(let i=0;i<=80;i++) noise.push(R()-0.5);
+  const S={h:sp0(0), spread:1, bar:sp0(0), parts:[], shake:0};
+  animLoop(dt=>{
+    A.t+=dt; A.drive(dt);
+    const {ctx,w,h}=A.frame(), hT=A.v('h'), rho=A.v('rho'), g=GG[gi], t=A.t;
+    A.set('hV',fmt(hT,1)+' km'); A.set('rhoV',fmt(rho,0)+' kg/m³');
+    const hmax=LIM/(rho*g)/1e3, sigT=rho*g*hT*1e3, over=hT>hmax;                // km · Pa
+    springTo(S.h,Math.min(hT,hmax),4.2,2.1,dt);                                   // tectonic rise, slight overshoot, then slump
+    const Hk=Math.max(0,S.h.x);
+    S.spread=approach(S.spread,1+(over?0.4*clamp((hT-hmax)/hmax,0,1.4)+0.1:0),1.4,dt);
+    const gy=h*0.88, pk=h*0.78/30, cx=w*0.4, hp=Hk*pk, half=(0.95*Hk+1.5)*pk*S.spread;
+    // sky guides
+    line(ctx,w*0.03,gy-8.85*pk,w*0.76,gy-8.85*pk,COL.green,1.6,[7,5]); textAt(ctx,'Mt Everest  8.85 km',w*0.04,gy-8.85*pk-6,{size:11.5,weight:700,color:COL.green});
+    const hy=gy-Math.min(hmax,30.5)*pk; line(ctx,w*0.03,hy,w*0.76,hy,COL.red,2,[3,4]);
+    textAt(ctx,'highest possible  '+fmt(hmax,1)+' km'+(hmax>30?' (off scale)':''),w*0.04,hy-6,{size:11.5,weight:700,color:COL.red});
+    // ground + mountain profile
+    line(ctx,w*0.02,gy,w*0.78,gy,COL.ink,3.4); hatch(ctx,w*0.02,gy,w*0.76,10,1,COL.faint);
+    const pts=[[cx-half*1.5,gy]];
+    for(let i=0;i<=40;i++){ const u=-1+i/20*1.0; if(u>1) break; }
+    for(let i=0;i<=40;i++){ const u=-1+2*i/40, e=1-Math.abs(u), y=gy-hp*Math.pow(e,1.05)-noise[i]*hp*0.09*Math.sin(Math.PI*e)-Math.sin(t*38+i)*(S.shake*1.6)*(e>0?1:0); pts.push([cx+u*half,y]); }
+    pts.push([cx+half*1.5,gy]);
+    poly(ctx,pts,COL.ink,'#eef2f8',3);
+    for(let k=1;k<4;k++){ ctx.save(); ctx.strokeStyle='rgba(47,143,224,0.28)'; ctx.lineWidth=1.3; ctx.beginPath(); for(let i=0;i<=40;i++){ const u=-1+2*i/40, e=1-Math.abs(u); const yy=gy-hp*Math.pow(e,1.05)*(1-k*0.16)-noise[i]*hp*0.05*Math.sin(Math.PI*e); const xx=cx+u*half*(1-k*0.16*0.2); i?ctx.lineTo(xx,yy+k*hp*0.1):ctx.moveTo(xx,yy+k*hp*0.1);} ctx.stroke(); ctx.restore(); }
+    // rock sample at the base: squeezed by everything above
+    const sx=cx, sy=gy-26, ss=34, ratio=sigT/LIM, rr=clamp(Math.min(ratio,1.6),0,1.6);
+    S.shake=approach(S.shake,over?1:0,3,dt);
+    const bulge=over?(ratio-1)*10:0;
+    poly(ctx,[[sx-ss/2-bulge*0.6,sy+ss/2],[sx+ss/2+bulge*0.6,sy+ss/2],[sx+ss/2+bulge,sy],[sx+ss/2+bulge*0.6,sy-ss/2],[sx-ss/2-bulge*0.6,sy-ss/2],[sx-ss/2-bulge,sy]],over?COL.red:COL.ink,over?'#fdece7':'#fff',2.8);
+    const al=8+rr*34; vec(ctx,sx,sy-ss/2-8-al,sx,sy-ss/2-8,COL.red,3.6); vec(ctx,sx-18,sy-ss/2-8-al,sx-18,sy-ss/2-8,COL.red,3); vec(ctx,sx+18,sy-ss/2-8-al,sx+18,sy-ss/2-8,COL.red,3);
+    textAt(ctx,'rock at the base',sx,sy+ss/2+18,{align:'center',size:10.5,color:COL.muted,alpha:0});
+    if(over){ vec(ctx,sx+ss/2+bulge+2,sy,sx+ss/2+bulge+30,sy,COL.yellow,3.2); vec(ctx,sx-ss/2-bulge-2,sy,sx-ss/2-bulge-30,sy,COL.yellow,3.2); }
+    // debris rolling down the slopes while it slumps
+    if(over && Math.random()<dt*40*clamp((hT-hmax)/hmax+0.3,0,1.5)){ const sgn=Math.random()<0.5?-1:1, u=Math.random()*0.8; S.parts.push({x:cx+sgn*u*half,y:gy-hp*(1-u),vx:sgn*(30+Math.random()*50),vy:0,life:0}); }
+    S.parts=S.parts.filter(p=>{ p.life+=dt; p.vy+=380*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.y>=gy-2){ p.y=gy-2; p.vy=0; p.vx*=0.9; } if(p.life>2.2) return false; circ(ctx,p.x,p.y,2.4,COL.mid,COL.mid,1); return true; });
+    textAt(ctx,'height '+fmt(Hk,1)+' km',cx,gy-hp-14,{align:'center',size:13,weight:700,color:COL.ink});
+    // stress gauge
+    springTo(S.bar,ratio,40,8,dt);
+    const bx=w*0.92, by1=gy, by0=h*0.14, bwid=22, BY=v=>by1-(by1-by0)*clamp(v,0,2)/2;
+    rect(ctx,bx,by0,bwid,by1-by0,COL.ink,'#fff',2.4);
+    ctx.save(); ctx.fillStyle=S.bar.x>1?COL.red:COL.green; ctx.globalAlpha=0.5; ctx.fillRect(bx+1,BY(S.bar.x),bwid-2,by1-BY(S.bar.x)); ctx.restore();
+    line(ctx,bx-8,BY(1),bx+bwid+8,BY(1),COL.red,2.6); textAt(ctx,'rock limit',bx-12,BY(1)+4,{align:'right',size:11,weight:700,color:COL.red});
+    textAt(ctx,'ρgh ÷ limit',bx+bwid/2,by0-10,{align:'center',size:11,weight:700,color:COL.muted});
+    A.set('c1',fmt(sigT/1e6,0)+' MPa'); A.set('c2','300 MPa'); A.set('c3',fmt(hmax,1)+' km'); A.set('c4',over?'Rock flows — slumps':ratio>0.8?'Near the limit':'Stable');
+  });
+  return A.wrap;
+}
+
+/* ---------------------------------------------------------------------
+   1. ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'8.1',   title:'Elastic or Plastic?',   desc:'Pull · let go · does it come back?', build: buildA1 },
+  { num:'8.2',   title:'Stress and Strain',     desc:'Stretch · squeeze · shear · hydraulic', build: buildA2 },
+  { num:'8.4',   title:'Stress–Strain Curve',   desc:'Pull a wire until it breaks', build: buildA4 },
+  { num:'8.5.1', title:"Young's Modulus",       desc:'One load · two wires', build: buildA5 },
+  { num:'8.5.2', title:'Shear Modulus',         desc:'Push the top face sideways', build: buildA6 },
+  { num:'8.5.3', title:'Bulk Modulus',          desc:'Squeeze steel, water and air', build: buildA7 },
+  { num:'8.5.5', title:'Energy in a Wire',      desc:'Stretch it · store energy · release', build: buildA8 },
+  { num:'8.6a',  title:'A Beam Under Load',     desc:'Why bridges use deep I-beams', build: buildA9 },
+  { num:'8.6b',  title:'A Crane Rope',          desc:'How thick must it be?', build: buildA10 },
+  { num:'8.6c',  title:'Height of a Mountain',  desc:'Why Everest stops near 10 km', build: buildA11 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

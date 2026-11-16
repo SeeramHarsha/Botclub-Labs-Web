@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 5 — Linear Inequalities | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.play.on{background:var(--f-red); border-color:var(--f-red);}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn:hover{border-color:var(--navy-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.fb{font-size:var(--fs-xs); font-weight:600; padding:5px 8px; border-radius:7px; background:#fdf4dc; color:#8a6410;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">&lt;</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 5</div>
+      <h1>Linear Inequalities</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>x · the value you test</span>
+      <span><i style="background:var(--f-red)"></i>Left side · limit</span>
+      <span><i style="background:var(--f-green)"></i>Solution · true</span>
+      <span><i style="background:var(--f-blue)"></i>Right side · result</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">5.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* GRADE 11 — CHAPTER 5: LINEAR INEQUALITIES
+   Every activity runs a continuous animation loop. Sliders and buttons only set a TARGET;
+   the drawn object follows it on a spring-damper or real physics (falling and bouncing sacks,
+   a swinging balance beam, a ball rolling down a plank, rising mercury, a filling tank).
+   Colour code: yellow = the value you test · red = left side / limit · blue = right side / result · green = solution / true. */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<1.5) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.8);
+  if(L>(head||9)*1.2) arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||9);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  if(o.halo){ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.92)'; ctx.strokeText(txt,x,y); }
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function lab(ctx,txt,x,y,color,o){ o=o||{}; o.halo=true; o.color=color; o.weight=o.weight||700; o.size=o.size||13; textAt(ctx,txt,x,y,o); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,'#fff',col,1.8); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,stroke,fill,lw,dash){ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.setLineDash(dash||[]); ctx.lineJoin='round'; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sg(v,d){ if(!isFinite(v)) return 'not defined'; d=d===undefined?2:d; const s=Number(v.toFixed(d)); return (Object.is(s,-0)||s===0?'0':String(s)).replace('-','−'); }
+function fmt(x,d){ return sg(x,d); }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+function normAng(a){ return ((a%TAU)+TAU)%TAU; }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+
+/* angle (radians) as a multiple of π, e.g. 7π/3 */
+function piStr(x){
+  if(Math.abs(x)<1e-9) return '0';
+  const r=x/PI;
+  for(const d of [1,2,3,4,6,8,12]){
+    const n=Math.round(r*d);
+    if(n!==0 && Math.abs(r*d-n)<0.004){
+      const num=Math.abs(n)===1?'π':Math.abs(n)+'π';
+      return (n<0?'−':'')+num+(d>1?'/'+d:'');
+    }
+  }
+  return sg(x,2);
+}
+/* exact fraction if one exists with a small denominator, else a decimal */
+function frac(v){
+  if(!isFinite(v)) return 'not defined';
+  if(Math.abs(v)<1e-9) return '0';
+  for(let q=1;q<=100;q++){ const p=Math.round(v*q);
+    if(Math.abs(v-p/q)<1e-6) return (p<0?'−':'')+Math.abs(p)+(q>1?'/'+q:''); }
+  return sg(v,3);
+}
+/* point on a circle: maths angle a (anticlockwise), canvas y runs down */
+function pt(cx,cy,R,a){ return [cx+R*Math.cos(a), cy-R*Math.sin(a)]; }
+/* arc between two maths angles */
+function arcA(ctx,cx,cy,r,a0,a1,col,lw,dash){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2.4; ctx.lineCap='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.stroke(); ctx.restore();
+}
+function sector(ctx,cx,cy,r,a0,a1,fill){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.restore();
+}
+/* the unit circle with axes and radian ticks */
+function unitFrame(ctx,cx,cy,R,o){
+  o=o||{};
+  const E=R*(o.ext||1.3);
+  line(ctx,cx-E,cy,cx+E,cy,COL.mid,1.4); line(ctx,cx,cy-E,cx,cy+E,COL.mid,1.4);
+  arrowHead(ctx,cx+E,cy,0,COL.mid,6); arrowHead(ctx,cx,cy-E,-PI/2,COL.mid,6);
+  if(o.fill) circ(ctx,cx,cy,R,null,o.fill,1);
+  circ(ctx,cx,cy,R,COL.ink,null,2.4);
+  if(o.ticks!==false){
+    [[0,'0'],[PI/2,'π/2'],[PI,'π'],[1.5*PI,'3π/2']].forEach(([a,s])=>{
+      const [x,y]=pt(cx,cy,R,a), [lx,ly]=pt(cx,cy,R+17,a);
+      circ(ctx,x,y,3,COL.ink,'#fff',1.4);
+      textAt(ctx,s,lx,ly+4,{align:'center',size:10.5,weight:600,color:COL.muted});
+    });
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(); let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(st,target,k,damping,dt){
+  const acc = (target-st.x)*k - st.v*damping;
+  st.v += acc*dt; st.x += st.v*dt; return st.x;
+}
+const SK=70, SD=12;                         // the house spring: ω≈8.4 rad/s, ζ≈0.72
+function follow(st,target,dt){ return springTo(st,target,SK,SD,dt); }
+function S(v){ return {x:v,v:0}; }
+
+/* ---------------------------------------------------------------------
+   0c. UI BUILDERS
+   --------------------------------------------------------------------- */
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipRow(id,label,items){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">${items.map((it,i)=>`<button class="chip-btn" data-i="${i}">${it}</button>`).join('')}</div></div>`;
+}
+function cards(list,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">${list.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}"${c?` style="color:var(${c})"`:''}>—</div></div>`).join('')}</div></div>`;
+}
+function wireChips(wrap,id,fn){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach(b=>b.onclick=()=>fn(+b.dataset.i,b)); }
+function setActive(wrap,id,i){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach((b,k)=>b.classList.toggle('active',k===i)); }
+function playBtn(id,txt){ return `<button class="toggle-btn play" id="${id}" style="padding:10px;">${txt||'▶ Spin'}</button>`; }
+function setPlay(btn,on,txtOn,txtOff){ btn.textContent=on?(txtOn||'❚❚ Pause'):(txtOff||'▶ Spin'); btn.classList.toggle('on',on); }
+
+/* ---------------------------------------------------------------------
+   INEQUALITY TOOLKIT
+   --------------------------------------------------------------------- */
+const flipS = s => ({'<':'>','>':'<','≤':'≥','≥':'≤'})[s];
+const holds = (l,s,r)=>{ const e=1e-9; return s==='<'?l<r-e : s==='≤'?l<=r+e : s==='>'?l>r+e : l>=r-e; };
+const cmpS  = (l,r)=> Math.abs(l-r)<1e-9 ? '=' : (l<r?'<':'>');
+const ease=u=>u<=0?0:u>=1?1:u*u*(3-2*u);
+function val(wrap,id,txt){ wrap.querySelector('#'+id+'V').textContent=txt; }
+function showGroup(wrap,id,on){ wrap.querySelector('#'+id).closest('.control-group').classList.toggle('hidden',!on); }
+function lbl(wrap,id,txt){ wrap.querySelector('#'+id).closest('.control-group').querySelector('label').firstChild.nodeValue=txt; }
+function bounceSpring(st,target,dt){ return springTo(st,target,55,7,dt); }   // livelier: ζ≈0.47
+
+/* coloured text runs on one baseline */
+function runs(ctx,x,y,arr,size,align){
+  ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif'; ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+  const ws=arr.map(a=>ctx.measureText(a[0]).width), tot=ws.reduce((p,c)=>p+c,0);
+  let cx = align==='center'?x-tot/2 : align==='right'?x-tot : x;
+  arr.forEach((a,i)=>{ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.strokeText(a[0],cx,y); ctx.fillStyle=a[1]; ctx.fillText(a[0],cx,y); cx+=ws[i]; });
+  ctx.restore();
+}
+function pill(ctx,txt,x,y,col,size){
+  size=size||12; ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif';
+  const w=ctx.measureText(txt).width+20, h=size+13; rrect(ctx,x-w/2,y-h/2,w,h,h/2);
+  ctx.fillStyle=rgba(col,.13); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.fillStyle=col; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,x,y+1); ctx.restore();
+}
+/* number line; returns value→pixel mapper */
+function axis(ctx,x0,x1,y,lo,hi,step,o){
+  o=o||{}; const X=v=>x0+(v-lo)/(hi-lo)*(x1-x0);
+  line(ctx,x0+5,y,x1-5,y,COL.mid,2); arrowHead(ctx,x1,y,0,COL.mid,8); arrowHead(ctx,x0,y,PI,COL.mid,8);
+  const a=Math.ceil(lo/step-1e-9)*step, n=Math.floor((hi-a)/step+1e-9);
+  for(let i=0;i<=n;i++){ const v=a+i*step, x=X(v); line(ctx,x,y-5,x,y+5,COL.mid,1.4);
+    if(!o.noLabels) textAt(ctx,sg(v,2),x,y+21,{align:'center',size:o.size||11,weight:600,color:COL.mid}); }
+  return X;
+}
+/* thick interval / ray on a number line with open or closed end circles */
+function ivl(ctx,X,y,a,b,aOpen,bOpen,col,infA,infB,lw){
+  lw=lw||7; if(b<a-1e-9) return; const xa=X(a), xb=X(b);
+  line(ctx,xa,y,xb,y,col,lw);
+  if(infA) arrowHead(ctx,xa-3,y,PI,col,15); else circ(ctx,xa,y,9,col,aOpen?'#fff':col,3.4);
+  if(infB) arrowHead(ctx,xb+3,y,0,col,15);  else circ(ctx,xb,y,9,col,bOpen?'#fff':col,3.4);
+}
+/* a spring-balance style scene object: stand + swinging beam + two hanging trays */
+function balance(ctx,cx,by,S,ang,drawL,drawR){
+  const pv=by-1.35*S;
+  poly(ctx,[[cx-.5*S,by],[cx+.5*S,by],[cx+.36*S,by-.09*S],[cx-.36*S,by-.09*S]],COL.ink,'#eef2f8',2.2);
+  line(ctx,cx,by-.09*S,cx,pv,COL.ink,4.5);
+  const c=Math.cos(ang), s=Math.sin(ang), L=[cx-S*c,pv+S*s], R=[cx+S*c,pv-S*s];
+  line(ctx,L[0],L[1],R[0],R[1],COL.ink,5.5);
+  const hang=S, pw=.36*S;
+  [[L,drawL,COL.red],[R,drawR,COL.blue]].forEach(([e,fn,col])=>{
+    const py=e[1]+hang;
+    line(ctx,e[0],e[1],e[0]-pw,py,COL.mid,1.8); line(ctx,e[0],e[1],e[0]+pw,py,COL.mid,1.8);
+    if(fn) fn(e[0],py+.07*S,pw);
+    ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=4; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(e[0]-pw-4,py); ctx.quadraticCurveTo(e[0],py+.17*S,e[0]+pw+4,py); ctx.stroke(); ctx.restore();
+    dot(ctx,e[0],e[1],5,col);
+  });
+  circ(ctx,cx,pv,7,COL.ink,'#fff',3.2);
+}
+/* items that fall into place, bounce and settle (units of S; gravity 16 S/s²) */
+function mkDrops(n){ return Array.from({length:n},()=>({y:6,v:0,in:false})); }
+function stepDrops(ds,cnt,dt){
+  let landed=0, impact=0;
+  ds.forEach((s,i)=>{
+    const want=i<cnt;
+    if(want&&!s.in){ s.in=true; s.y=Math.max(s.y,3); s.v=0; }
+    if(!want&&s.in) s.in=false;
+    if(s.in){
+      s.v-=16*dt; s.y+=s.v*dt;
+      if(s.y<=0){ s.y=0; if(s.v<-1.4) impact+=-s.v; s.v=-s.v*0.36; if(Math.abs(s.v)<0.9) s.v=0; }
+      if(s.y<0.04&&s.v===0) landed++;
+    } else s.y+=(6-s.y)*(1-Math.exp(-4*dt));
+  });
+  return {landed,impact};
+}
+const dAlpha = s => s.in?1:clamp((4.6-s.y)/2.6,0,1);
+/* a pyramid slot: rows hold rn[0], rn[1], … items */
+function pyr(i,rn){ let r=0; while(i>=rn[r]){ i-=rn[r]; r++; } return {row:r,col:i,n:rn[r]}; }
+
+/* piston posts + plank + a ball rolling downhill on it; values in "units", u = px per unit */
+function plank(ctx,R,va,vb,u,zeroY,bs,dt,o){
+  o=o||{}; const cx=R.x+R.w/2, half=Math.min(R.w*.34,260), xl=cx-half, xr=cx+half, ground=R.y+R.h-4;
+  line(ctx,R.x+6,zeroY,R.x+R.w-6,zeroY,COL.mid,1.3,[5,5]); textAt(ctx,'0',R.x+10,zeroY-5,{size:11,weight:700,color:COL.mid});
+  line(ctx,R.x+6,ground,R.x+R.w-6,ground,COL.ink,2.4);
+  const yl=zeroY-va*u, yr=zeroY-vb*u;
+  if(o.ghost){ line(ctx,xl,zeroY-o.ghost[0]*u,xr,zeroY-o.ghost[1]*u,COL.mid,3,[7,6]); dot(ctx,xl,zeroY-o.ghost[0]*u,4,COL.mid); dot(ctx,xr,zeroY-o.ghost[1]*u,4,COL.mid); }
+  [[xl,yl,COL.red,va],[xr,yr,COL.blue,vb]].forEach(([x,y,col,v],i)=>{
+    ctx.save(); rrect(ctx,x-11,Math.min(y,ground-6),22,Math.max(6,ground-Math.min(y,ground-6)),5); ctx.fillStyle=rgba(col,.12); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    line(ctx,x,y,x,y+Math.min(26,ground-y),col,6);
+    lab(ctx,sg(v,1),x,y-(i?22:22),col,{align:'center',size:15});
+  });
+  line(ctx,xl,yl,xr,yr,COL.ink,6.5); dot(ctx,xl,yl,6,COL.ink); dot(ctx,xr,yr,6,COL.ink);
+  // rolling ball (real incline physics, rolling resistance)
+  const len=Math.hypot(xr-xl,yr-yl), sl=(yr-yl)/len, dx=(xr-xl)/len, dy=(yr-yl)/len, r=13;
+  bs.v+= (1500*sl - 1.6*bs.v)*dt; bs.s+=bs.v*dt/len;
+  const lo=(r+8)/len, hi=1-lo; if(bs.s<lo){ bs.s=lo; bs.v=Math.abs(bs.v)*.35; } if(bs.s>hi){ bs.s=hi; bs.v=-Math.abs(bs.v)*.35; }
+  bs.rot=(bs.rot||0)+bs.v*dt/r;
+  const bx=xl+(xr-xl)*bs.s + dy*(r+3), by=yl+(yr-yl)*bs.s - dx*(r+3);
+  circ(ctx,bx,by,r,COL.yellow,'#fff',3.2);
+  for(let k=0;k<3;k++){ const a=bs.rot+k*TAU/3; line(ctx,bx,by,bx+r*Math.cos(a),by+r*Math.sin(a),k?COL.mid:COL.yellow,k?1.4:3); }
+  return {xl,xr,yl,yr};
+}
+
+const tickStep = E => E<=12?1 : E<=26?2 : E<=60?5 : 10;
+
+/* =====================================================================
+   5.1 RAVI'S MARKET   30x < 200
+   Sacks drop into the left tray with a real bounce; the beam settles on a
+   spring-damper. Whether 30x is less than 200 is read from the tilt.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('x','Packets bought, x',0,10,1,0) +
+    slider('pr','Price of one packet (₹)',10,60,5,30) +
+    slider('bg','Money in hand (₹)',100,300,20,200) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="auto">▶ Try x = 0, 1, 2 …</button></div></div>` +
+    cards([['r1','L.H.S.  =  price × x'],['r2','Is the statement true?'],['r3','Solution set','--f-green',true],['r4','So  x  is  …','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xs=$('#x'), pr=$('#pr'), bg=$('#bg'), auto=$('#auto');
+  const sacks=mkDrops(10), beam=S(0), strip=S(0), bt={a:0}; let on=false, acc=0, lastImpact=0;
+  auto.onclick=()=>{ on=!on; setPlay(auto,on,'❚❚ Stop','▶ Try x = 0, 1, 2 …'); if(on){ xs.value=0; acc=0; } };
+  xs.addEventListener('input',()=>{ if(on){ on=false; setPlay(auto,false,'','▶ Try x = 0, 1, 2 …'); } });
+
+  animLoop(dt=>{
+    if(on){ acc+=dt; if(acc>1.0){ acc=0; if(+xs.value<10) xs.value=+xs.value+1; else { on=false; setPlay(auto,false,'','▶ Try x = 0, 1, 2 …'); } } }
+    const x=+xs.value, p=+pr.value, B=+bg.value;
+    val(wrap,'x',x); val(wrap,'pr','₹'+p); val(wrap,'bg','₹'+B);
+    const {landed,impact}=stepDrops(sacks,x,dt);
+    const target=clamp((landed*p-B)/(B*0.5),-1,1)*0.24;
+    if(impact>0) beam.v+=0.05*impact;
+    springTo(beam,target,38,3.6,dt);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const Sz=Math.min(w*.29,h*.3), cx=w*.5, by=h*.67;
+    const lhs=p*x, ok=lhs<B;
+    // coins in the right tray, one per ₹20
+    const nCoins=B/20;
+    balance(ctx,cx,by,Sz,beam.x,
+      (ex,ey,pw)=>{
+        const rn=[4,3,2,1], sw=.145*Sz, sh=.16*Sz;
+        sacks.forEach((s,i)=>{
+          const al=dAlpha(s); if(al<=0.01) return; const q=pyr(i,rn);
+          const sx=ex+(q.col-(q.n-1)/2)*sw*1.06, sy=ey-q.row*sh*1.04-s.y*Sz;
+          ctx.save(); ctx.globalAlpha=al;
+          rrect(ctx,sx-sw/2,sy-sh,sw,sh,sw*.28); ctx.fillStyle=rgba(COL.yellow,.2); ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.stroke();
+          line(ctx,sx-sw*.3,sy-sh*.8,sx+sw*.3,sy-sh*.8,COL.yellow,1.8);
+          textAt(ctx,'₹'+p,sx,sy-sh*.3,{align:'center',size:Math.max(8,sw*.34),weight:700,color:'#8a6410'});
+          ctx.restore();
+        });
+      },
+      (ex,ey,pw)=>{
+        const cr=.052*Sz;
+        for(let i=0;i<nCoins;i++){ const row=Math.floor(i/5), col=i%5, n=Math.min(5,nCoins-row*5);
+          const cx2=ex+(col-(n-1)/2)*cr*2.15, cy2=ey-cr-row*cr*2.1;
+          circ(ctx,cx2,cy2,cr,COL.blue,rgba(COL.blue,.16),2.2); textAt(ctx,'₹',cx2,cy2+cr*.34,{align:'center',size:cr*.95,weight:700,color:COL.blue}); }
+      });
+    // statement
+    runs(ctx,w/2,h*.09,[[p+' × '+x+' = ',COL.muted],[String(lhs),COL.red],['   '+(lhs<B?'<':lhs===B?'=':'>')+'   ',ok?COL.green:COL.red],[String(B),COL.blue]],Math.min(26,w*.04),'center');
+    pill(ctx,ok?'30x < 200 is TRUE':'not true — too heavy',w/2,h*.15,ok?COL.green:COL.red,13);
+    // trial strip
+    const sx0=w*.1, sx1=w*.9, sy=h*.9, XX=v=>sx0+v*(sx1-sx0)/10;
+    line(ctx,sx0-10,sy,sx1+10,sy,COL.mid,2);
+    const bnd=B/p;
+    line(ctx,XX(bnd),sy-30,XX(bnd),sy+30,COL.blue,2.2,[5,4]); textAt(ctx,'x = '+frac(bnd),XX(bnd),sy+46,{align:'center',size:12,weight:700,color:COL.blue});
+    for(let v=0;v<=10;v++){ const t=p*v<B; circ(ctx,XX(v),sy,15,t?COL.green:COL.red,t?rgba(COL.green,.18):'#fff',2.4);
+      textAt(ctx,String(v),XX(v),sy+5,{align:'center',size:13,weight:700,color:t?COL.green:COL.red}); }
+    follow(strip,x,dt); circ(ctx,XX(strip.x),sy,21,COL.yellow,null,4);
+    textAt(ctx,'tested values of x',sx0-10,sy-26,{size:11,weight:600,color:COL.mid});
+
+    const sol=[]; for(let v=0;v<=10;v++) if(p*v<B) sol.push(v);
+    $('#r1').textContent=p+' × '+x+' = '+lhs;
+    $('#r2').textContent=ok?'True  ('+lhs+' < '+B+')':'False  ('+lhs+(lhs===B?' = ':' > ')+B+')'; $('#r2').style.color=ok?'var(--f-green)':'var(--f-red)';
+    $('#r3').textContent='{'+sol.join(', ')+(sol.length===11?', …':'')+'}';
+    $('#r4').textContent='x < '+frac(bnd);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.2 STRICT OR SLACK     40x + 20y  vs  120
+   Notebooks and pens drop onto the table; the money bar fills on a spring.
+   <  → inequality (3) · =  → equation (4) · >  → too dear.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Try a basket',['1 reg + 2 pens','1 reg + 4 pens','3 registers','2 reg + 3 pens']) +
+    slider('x','Registers, x   (₹40 each)',0,4,1,1) +
+    slider('y','Pens, y   (₹20 each)',0,8,1,2) +
+    cards([['r1','Spent  40x + 20y'],['r2','Compared with ₹120','--f-blue'],['r3','Which statement?',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xs=$('#x'), ys=$('#y');
+  const sets=[[1,2],[1,4],[3,0],[2,3]];
+  wireChips(wrap,'pre',i=>{ xs.value=sets[i][0]; ys.value=sets[i][1]; setActive(wrap,'pre',i); });
+  [xs,ys].forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1)));
+  const regs=mkDrops(4), pens=mkDrops(8), spent=S(0), ring=[S(1),S(2)];
+
+  animLoop(dt=>{
+    const x=+xs.value, y=+ys.value; val(wrap,'x',x); val(wrap,'y',y);
+    const a=stepDrops(regs,x,dt), b=stepDrops(pens,y,dt);
+    const tot=40*x+20*y, st=tot<120?'<':tot===120?'=':'>', col=st==='<'?COL.blue:st==='='?COL.green:COL.red;
+    springTo(spent,40*a.landed+20*b.landed,60,6.5,dt); follow(ring[0],x,dt); follow(ring[1],y,dt);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- left: the shop table
+    const L={x:w*.03,w:w*.52}, U=Math.min(L.w/6,h/9);
+    const ty=h*.58;                                   // table top
+    line(ctx,L.x,ty,L.x+L.w,ty,COL.ink,4); line(ctx,L.x+14,ty,L.x+14,h*.9,COL.ink,3); line(ctx,L.x+L.w-14,ty,L.x+L.w-14,h*.9,COL.ink,3);
+    // purse
+    const px0=L.x+L.w*.5, py0=h*.07;
+    rrect(ctx,px0-U*1.5,py0,U*3,U*1.25,U*.3); ctx.save(); ctx.fillStyle=rgba(COL.blue,.1); ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    textAt(ctx,'₹120',px0,py0+U*.82,{align:'center',size:U*.55,weight:700,color:COL.blue});
+    // notebooks
+    regs.forEach((s,i)=>{ const al=dAlpha(s); if(al<.01) return; const bw=U*.9, bh=U*1.15, bx=L.x+L.w*.1+i*(bw+U*.14), byb=ty-s.y*U*3;
+      ctx.save(); ctx.globalAlpha=al; rrect(ctx,bx,byb-bh,bw,bh,5); ctx.fillStyle=rgba(COL.red,.13); ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.6; ctx.stroke();
+      for(let k=0;k<4;k++) line(ctx,bx+bw*.2,byb-bh*(.2+k*.2),bx+bw*.8,byb-bh*(.2+k*.2),COL.red,1.4);
+      for(let k=0;k<3;k++) circ(ctx,bx,byb-bh*(.25+k*.25),2.6,COL.red,'#fff',1.4);
+      ctx.restore(); });
+    // pens (tilted lines with a tip)
+    pens.forEach((s,i)=>{ const al=dAlpha(s); if(al<.01) return; const px=L.x+L.w*.1+(i%8)*U*.52, pyb=ty-U*1.45-s.y*U*3, pl=U*.95;
+      ctx.save(); ctx.globalAlpha=al; ctx.translate(px+pl*.2,pyb); ctx.rotate(-1.2);
+      rrect(ctx,-pl*.5,-4,pl*.8,8,3); ctx.fillStyle=rgba(COL.blue,.15); ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.stroke();
+      poly(ctx,[[pl*.3,-4],[pl*.5,0],[pl*.3,4]],COL.blue,COL.blue,1.5); ctx.restore(); });
+    // money bar
+    const mx0=L.x+14, mx1=L.x+L.w-14, my=h*.8, mh=h*.075, M=v=>mx0+(mx1-mx0)*v/200;
+    rrect(ctx,mx0,my,mx1-mx0,mh,mh/2); ctx.save(); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.stroke(); ctx.clip();
+    ctx.fillStyle=rgba(col,.35); ctx.fillRect(mx0,my,Math.max(0,M(spent.x)-mx0),mh); ctx.restore();
+    line(ctx,M(120),my-10,M(120),my+mh+10,COL.red,3.4); textAt(ctx,'₹120',M(120),my-16,{align:'center',size:12,weight:700,color:COL.red});
+    runs(ctx,mx0,my+mh+24,[['₹'+tot,col],['  spent',COL.muted]],15);
+    // ---- right: lattice of all baskets
+    const G={x:w*.6,y:h*.1,w:w*.36,h:h*.74}, gx=i=>G.x+G.w*(i+.5)/5, gy=j=>G.y+G.h-G.h*(j+.5)/9;
+    line(ctx,G.x,G.y+G.h,G.x+G.w,G.y+G.h,COL.mid,2); line(ctx,G.x,G.y,G.x,G.y+G.h,COL.mid,2);
+    textAt(ctx,'registers  x',G.x+G.w/2,G.y+G.h+26,{align:'center',size:12,weight:700,color:COL.muted}); textAt(ctx,'pens  y',G.x-4,G.y-12,{size:12,weight:700,color:COL.muted});
+    // boundary 40x+20y=120
+    line(ctx,gx(0),gy(6),gx(3),gy(0),COL.green,3.4);
+    for(let i=0;i<=4;i++) { textAt(ctx,String(i),gx(i),G.y+G.h+13,{align:'center',size:10.5,weight:600,color:COL.mid}); for(let j=0;j<=8;j++){
+      const t=40*i+20*j, c=t<120?COL.blue:t===120?COL.green:COL.red; dot(ctx,gx(i),gy(j),t===120?6.5:4.2,c); } }
+    for(let j=0;j<=8;j++) textAt(ctx,String(j),G.x-9,gy(j)+4,{align:'right',size:10.5,weight:600,color:COL.mid});
+    circ(ctx,gx(ring[0].x),gy(ring[1].x),12,COL.yellow,null,3.8);
+    textAt(ctx,'= 120',gx(3)+10,gy(0)-8,{size:11,weight:700,color:COL.green});
+    // verdict
+    pill(ctx,st==='<'?'40x + 20y < 120   inequality (3)':st==='='?'40x + 20y = 120   equation (4)':'40x + 20y > 120   over budget',L.x+L.w/2,h*.955,col,13);
+
+    $('#r1').textContent='₹'+tot; $('#r2').textContent=tot+' '+st+' 120'; $('#r2').style.color='var(--f-'+(st==='<'?'blue':st==='='?'green':'red')+')';
+    $('#r3').textContent=st==='<'?'inequality  (3)':st==='='?'equation  (4)':'neither — over ₹120';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.3 RULE 1   add or subtract the same number on both sides
+   Two posts hold a plank; a ball rolls down it. Lifting both posts by k
+   moves the whole plank rigidly — the slope, and the ball, do not change.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Try',['3 < 5','−4 < 2','7 > 1','−6 < −2']) +
+    slider('a','Left side,  a',-10,10,1,3) + slider('b','Right side,  b',-10,10,1,5) +
+    slider('k','Add k to both sides  (− = subtract)',-10,10,1,0) +
+    cards([['r1','Before'],['r2','After adding k','--f-blue'],['r3','Sign of the inequality','--f-green',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), as=$('#a'), bs=$('#b'), ks=$('#k');
+  const sets=[[3,5],[-4,2],[7,1],[-6,-2]];
+  wireChips(wrap,'pre',i=>{ as.value=sets[i][0]; bs.value=sets[i][1]; setActive(wrap,'pre',i); });
+  [as,bs].forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1)));
+  setActive(wrap,'pre',0);
+  const A=S(3), B=S(5), E=S(12), ball={s:.5,v:0};
+  animLoop(dt=>{
+    const a=+as.value, b=+bs.value, k=+ks.value; val(wrap,'a',a); val(wrap,'b',b); val(wrap,'k',(k>0?'+':'')+k);
+    bounceSpring(A,a+k,dt); bounceSpring(B,b+k,dt);
+    E.x=approach(E.x,Math.max(10,Math.abs(a+k),Math.abs(b+k),Math.abs(a),Math.abs(b))*1.15,4,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R={x:0,y:h*.2,w:w,h:h*.78}, u=(R.h*.5-34)/E.x, zeroY=R.y+R.h*.5;
+    plank(ctx,R,A.x,B.x,u,zeroY,ball,dt,{ghost:[a,b]});
+    // yellow lift arrows
+    const cx=w/2, half=Math.min(R.w*.34,260);
+    if(k!==0) [cx-half,cx+half].forEach((x,i)=>{ const y0=zeroY-(i?b:a)*u, y1=zeroY-(i?B.x:A.x)*u; vec(ctx,x+26,y0,x+26,y1,COL.yellow,4.4,10); });
+    const sa=cmpS(a,b), sb=cmpS(a+k,b+k), kk=(k<0?'− '+(-k):'+ '+k);
+    runs(ctx,w/2,h*.07,[[String(a),COL.red],['  '+sa+'  ',COL.ink],[String(b),COL.blue]],Math.min(24,w*.035),'center');
+    if(k!==0) runs(ctx,w/2,h*.15,[[a+' '+kk+' = ',COL.muted],[String(a+k),COL.red],['  '+sb+'  ',COL.ink],[b+' '+kk+' = ',COL.muted],[String(b+k),COL.blue]],Math.min(20,w*.03),'center');
+    if(k!==0) pill(ctx,sa===sb?'same sign — Rule 1':'?',w*.88,h*.07,COL.green,12);
+    $('#r1').textContent=sg(a,0)+' '+sa+' '+sg(b,0); $('#r2').textContent=sg(a+k,0)+' '+sb+' '+sg(b+k,0); $('#r3').textContent=k===0?'(change k)':(sa===sb?'unchanged  ✓':'changed');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.4 RULE 2   multiply both sides
+   The beads swing through 0 to m·a and m·b. For m > 0 they keep their
+   order; for m < 0 they swap sides, and the plank below tips the other way.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook cases',['3 > 2  ×(−1)','−8 < −7  ×(−2)','2 < 5  ×3']) +
+    slider('a','Left number,  a',-9,9,1,3) + slider('b','Right number,  b',-9,9,1,2) +
+    slider('m','Multiply both by  m',-4,4,0.5,1) +
+    cards([['r1','Before'],['r2','After × m','--f-blue'],['r3','The sign …','--f-green',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), as=$('#a'), bs=$('#b'), ms=$('#m');
+  const sets=[[3,2,-1],[-8,-7,-2],[2,5,3]];
+  wireChips(wrap,'pre',i=>{ as.value=sets[i][0]; bs.value=sets[i][1]; ms.value=sets[i][2]; setActive(wrap,'pre',i); });
+  [as,bs,ms].forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1)));
+  const PA=S(3), PB=S(2), E=S(10), ball={s:.5,v:0};
+  animLoop(dt=>{
+    const a=+as.value, b=+bs.value, m=+ms.value; val(wrap,'a',a); val(wrap,'b',b); val(wrap,'m',m<0?'−'+(-m):m);
+    bounceSpring(PA,a*m,dt); bounceSpring(PB,b*m,dt);
+    E.x=approach(E.x,Math.max(10,Math.abs(a*m),Math.abs(b*m),Math.abs(a),Math.abs(b))*1.15,4,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // number line with ghost and live beads
+    const ly=h*.3, X=axis(ctx,w*.04,w*.96,ly,-E.x,E.x,tickStep(E.x));
+    textAt(ctx,'0',X(0),ly-12,{align:'center',size:12,weight:700,color:COL.ink});
+    [[a,PA.x,COL.red,'a'],[b,PB.x,COL.blue,'b']].forEach(([v0,v1,col,nm],i)=>{
+      const x0=X(v0), x1=X(v1), dxm=Math.abs(x1-x0);
+      circ(ctx,x0,ly,14,col,null,2.2); ctx.save(); ctx.setLineDash([4,4]); ctx.stroke(); ctx.restore();
+      if(dxm>16){ ctx.save(); ctx.strokeStyle=rgba(COL.yellow,.9); ctx.lineWidth=3; ctx.setLineDash([6,5]); ctx.beginPath(); const dir=i?1:-1, ctl=ly-dir*Math.min(70,10+dxm*.28)*(i?-1:1);
+        ctx.moveTo(x0,ly+(i?18:-18)); ctx.quadraticCurveTo((x0+x1)/2,ly+(i?1:-1)*(18+Math.min(70,dxm*.3)),x1,ly+(i?18:-18)); ctx.stroke(); ctx.restore(); }
+      circ(ctx,x1,ly,15,'#fff',col,2.4); textAt(ctx,nm+'m',x1,ly+5,{align:'center',size:12.5,weight:700,color:'#fff'});
+      lab(ctx,sg(v1,1),x1,ly+(i?50:-30),col,{align:'center',size:15});
+    });
+    // the plank
+    const R={x:0,y:h*.5,w:w,h:h*.48}, u=(R.h*.5-30)/E.x;
+    plank(ctx,R,PA.x,PB.x,u,R.y+R.h*.5,ball,dt,{ghost:[a,b]});
+    const s0=cmpS(a,b), s1=cmpS(a*m,b*m);
+    runs(ctx,w/2,h*.08,[[String(a),COL.red],['  '+s0+'  ',COL.ink],[String(b),COL.blue],['      ×  '+(m<0?'('+sg(m,1)+')':sg(m,1))+'      ',COL.yellow],[sg(a*m,1),COL.red],['  '+s1+'  ',s0===s1||s0==='='?COL.green:COL.yellow],[sg(b*m,1),COL.blue]],Math.min(22,w*.032),'center');
+    pill(ctx,m===0?'×0 : both collapse to 0':(m<0&&a!==b?'m < 0 → sign REVERSED':'m > 0 → sign kept'),w/2,h*.15,m<0&&a!==b?COL.yellow:COL.green,12.5);
+    $('#r1').textContent=sg(a,0)+' '+s0+' '+sg(b,0); $('#r2').textContent=sg(a*m,1)+' '+s1+' '+sg(b*m,1);
+    $('#r3').textContent=m===0?'collapses':(m<0?(a!==b?'reversed':'—'):'kept');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.5 SOLVE  a·x + b  ?  c·x + d
+   Two lines (left side red, right side blue). A yellow probe slides along
+   x; the gap between the lines is the inequality. The green region and the
+   number-line ray grow out of the crossing point on springs.
+   ===================================================================== */
+function solveLin(a,b,c,d,s){
+  const A=a-c, B=d-b;
+  if(Math.abs(A)<1e-9) return {kind:holds(0,s,B)?'all':'none'};
+  const s2=A>0?s:flipS(s);
+  return {kind:'ray',x:B/A,s2,dirL:(s2==='<'||s2==='≤'),closed:(s2==='≤'||s2==='≥')};
+}
+function linStr(a,b){
+  let t=''; if(a!==0) t=(a===1?'':a===-1?'−':String(a).replace('-','−'))+'x';
+  if(b!==0||a===0) t+= a===0?String(b).replace('-','−') : (b>0?' + '+b:' − '+(-b));
+  return t;
+}
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook examples',['Ex 2','Ex 3','Ex 4','Ex 5','Ex 6']) +
+    chipRow('sy','Sign',['<','≤','>','≥']) +
+    slider('a','a   in the left side  ax + b',-9,9,1,5) + slider('b','b',-30,30,1,-3) +
+    slider('c','c   in the right side  cx + d',-9,9,1,3) + slider('d','d',-30,30,1,1) +
+    slider('t','Test value  x',-12,12,0.5,0) +
+    cards([['r1','Left side at x'],['r2','Right side at x','--f-blue'],['r3','True at this x?',null,true],['r4','Solution','--f-green'],['r5','Interval','--f-green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ids=['a','b','c','d'].map(k=>$('#'+k)), ts=$('#t');
+  const pre=[[5,-3,3,1,'<'],[4,3,6,7,'<'],[-4,10,1,-30,'≤'],[7,3,5,9,'<'],[6,-8,1,-3,'≥']], tags=['5x − 3 < 3x + 1','4x + 3 < 6x + 7','(5−2x)/3 ≤ x/6 − 5  ×6','7x + 3 < 5x + 9','(3x−4)/2 ≥ (x−3)/4  ×4'];
+  let sym='<';
+  const apply=i=>{ const p=pre[i]; ids.forEach((e,k)=>e.value=p[k]); sym=p[4]; setActive(wrap,'pre',i); setActive(wrap,'sy',SYMS.indexOf(sym)); };
+  const SYMS=['<','≤','>','≥'];
+  wireChips(wrap,'pre',apply); wireChips(wrap,'sy',i=>{ sym=SYMS[i]; setActive(wrap,'sy',i); setActive(wrap,'pre',-1); });
+  ids.forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1)));
+  apply(0);
+  const tx=S(0), sx=S(2), lo=S(-14), hi=S(14), al=S(1), Y=S(14);
+  animLoop(dt=>{
+    const [a,b,c,d]=ids.map(e=>+e.value), t=+ts.value; ['a','b','c','d'].forEach((k,i)=>val(wrap,k,[a,b,c,d][i]));
+    val(wrap,'t',sg(t,1));
+    const sol=solveLin(a,b,c,d,sym);
+    const xr=12.6;
+    if(sol.kind==='ray'){ follow(sx,sol.x,dt); follow(al,1,dt); follow(lo,sol.dirL?-xr:sol.x,dt); follow(hi,sol.dirL?sol.x:xr,dt); }
+    else if(sol.kind==='all'){ follow(lo,-xr,dt); follow(hi,xr,dt); follow(al,1,dt); }
+    else { follow(al,0,dt); }
+    const ystar = sol.kind==='ray'? a*sol.x+b : 10;
+    Y.x=approach(Y.x,clamp(1.5*Math.abs(ystar)+8,12,45),3,dt);
+    follow(tx,t,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const G={x:w*.05,y:h*.05,w:w*.9,h:h*.6}, X=v=>G.x+(v+12)/24*G.w, Yp=v=>G.y+G.h/2-v/Y.x*G.h/2;
+    ctx.save(); ctx.beginPath(); ctx.rect(G.x,G.y,G.w,G.h); ctx.clip();
+    for(let v=-12;v<=12;v+=2) line(ctx,X(v),G.y,X(v),G.y+G.h,COL.grid,1);
+    const ys=Y.x>30?10:Y.x>16?5:2; for(let v=-Math.floor(Y.x/ys)*ys;v<=Y.x;v+=ys) line(ctx,G.x,Yp(v),G.x+G.w,Yp(v),COL.grid,1);
+    // green solution band
+    if(al.x>.01){ const x0=X(clamp(lo.x,-12,12)), x1=X(clamp(hi.x,-12,12)); ctx.fillStyle=rgba(COL.green,.11*al.x); ctx.fillRect(x0,G.y,x1-x0,G.h); }
+    line(ctx,G.x,Yp(0),G.x+G.w,Yp(0),COL.ink,2); line(ctx,X(0),G.y,X(0),G.y+G.h,COL.mid,1.4);
+    line(ctx,X(-12),Yp(a*-12+b),X(12),Yp(a*12+b),COL.red,4.4); line(ctx,X(-12),Yp(c*-12+d),X(12),Yp(c*12+d),COL.blue,4.4);
+    // crossing
+    if(sol.kind==='ray'&&Math.abs(sol.x)<=12){ line(ctx,X(sx.x),Yp(a*sx.x+b),X(sx.x),Yp(0),COL.green,2.2,[5,4]); circ(ctx,X(sx.x),Yp(a*sx.x+b),9+2*Math.sin(performance.now()/260),COL.green,null,2.6); dot(ctx,X(sx.x),Yp(a*sx.x+b),5.5,COL.green); }
+    // probe
+    const Lx=a*tx.x+b, Rx=c*tx.x+d, ok=holds(a*t+b,sym,c*t+d);
+    line(ctx,X(tx.x),G.y,X(tx.x),G.y+G.h,rgba(COL.yellow,.55),2,[4,4]);
+    line(ctx,X(tx.x),Yp(Lx),X(tx.x),Yp(Rx),ok?COL.green:COL.yellow,5.5);
+    dot(ctx,X(tx.x),Yp(Lx),7,COL.red); dot(ctx,X(tx.x),Yp(Rx),7,COL.blue); dot(ctx,X(tx.x),Yp(0),6.5,COL.yellow);
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.border||'#dbe4f0'; ctx.lineWidth=1; ctx.strokeRect(G.x,G.y,G.w,G.h); ctx.restore();
+    lab(ctx,linStr(a,b),G.x+10,G.y+22,COL.red,{size:15}); lab(ctx,linStr(c,d),G.x+10,G.y+44,COL.blue,{size:15});
+    // number line
+    const ny=h*.84, XN=axis(ctx,w*.05,w*.95,ny,-12,12,2);
+    if(sol.kind==='ray'){ ivl(ctx,XN,ny,lo.x,hi.x,!sol.closed,!sol.closed,COL.green,sol.dirL,!sol.dirL); }
+    else if(sol.kind==='all'){ ivl(ctx,XN,ny,-12,12,true,true,COL.green,true,true); }
+    else lab(ctx,'no x makes it true',w/2,ny-18,COL.red,{align:'center',size:15});
+    const ballc=ok?COL.green:COL.red; circ(ctx,XN(tx.x),ny,12,'#fff',COL.yellow,3); circ(ctx,XN(tx.x),ny,5,null,ballc,1);
+    pill(ctx,ok?'true at this x':'false at this x',XN(tx.x),ny-34,ballc,12);
+    if(sol.kind==='ray') lab(ctx,'x = '+frac(sol.x),w*.5,h*.725,COL.green,{align:'center',size:14});
+
+    const sTxt = sol.kind==='ray'? 'x '+sol.s2+' '+frac(sol.x) : sol.kind==='all'?'every real x':'no solution';
+    $('#r1').textContent=sg(a*t+b,2); $('#r2').textContent=sg(c*t+d,2);
+    $('#r3').textContent=ok?'True':'False'; $('#r3').style.color=ok?'var(--f-green)':'var(--f-red)';
+    $('#r4').textContent=sTxt;
+    $('#r5').textContent= sol.kind==='ray'? (sol.dirL?'(−∞, '+frac(sol.x)+(sol.closed?']':')'):(sol.closed?'[':'(')+frac(sol.x)+', ∞)') : sol.kind==='all'?'(−∞, ∞)':'∅';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.6 N, Z OR R ?     the same inequality, three different sets of x
+   Test values drop onto the number line and bounce; the ones that satisfy
+   the inequality turn green, the rest red. In ℝ the whole ray is filled.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Inequality',['30x < 200','5x − 3 < 3x + 1','4x + 3 < 6x + 7','24x < 100','−12x > 30']) +
+    chipRow('dom','x is a …',['ℕ  natural','ℤ  integer','ℝ  real']) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="drop">▼ Drop the test values</button></div></div>` +
+    cards([['r1','Simplified','--f-blue'],['r2','Rule used'],['r3','Solution set','--f-green',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const P=[{a:30,s:'<',b:200,r:'÷ 30'},{a:2,s:'<',b:4,r:'collect terms, ÷ 2'},{a:-2,s:'<',b:4,r:'÷ (−2)  → sign flips'},{a:24,s:'<',b:100,r:'÷ 24'},{a:-12,s:'>',b:30,r:'÷ (−12)  → sign flips'}];
+  let pi=0, dm=0; wireChips(wrap,'pre',i=>{ pi=i; setActive(wrap,'pre',i); drop(); }); wireChips(wrap,'dom',i=>{ dm=i; setActive(wrap,'dom',i); drop(); });
+  setActive(wrap,'pre',0); setActive(wrap,'dom',0);
+  const LO=-7, HI=9, N=HI-LO+1, tk=Array.from({length:N},()=>({y:0,v:0,w:0})), dom=Array.from({length:N},()=>S(0)), end=S(6.67);
+  function drop(){ tk.forEach((t,i)=>{ t.y=3+i*.06; t.v=0; t.w=.0; }); }
+  $('#drop').onclick=drop; drop();
+  animLoop(dt=>{
+    const p=P[pi], s2=p.a>0?p.s:flipS(p.s), xb=p.b/p.a, dirL=(s2==='<'||s2==='≤');
+    const inDom=v=> dm===0? v>=1 : true;
+    const isSol=v=> holds(v,s2,xb);
+    follow(end,xb,dt);
+    tk.forEach((t,i)=>{ const v=LO+i; follow(dom[i],inDom(v)?1:0,dt);
+      t.v-=16*dt; t.y+=t.v*dt; if(t.y<=0){ t.y=0; t.v=-t.v*.4; if(Math.abs(t.v)<.8) t.v=0; } });
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ny=h*.64, x0=w*.05, x1=w*.95, X=axis(ctx,x0,x1,ny,LO-.7,HI+.7,1,{noLabels:true});
+    // the real ray
+    if(dm===2){ ivl(ctx,X,ny,dirL?LO-.7:end.x,dirL?end.x:HI+.7,!(s2==='≤'||s2==='≥'),!(s2==='≤'||s2==='≥'),COL.green,dirL,!dirL,8);
+      const t=performance.now()/1000; for(let k=0;k<14;k++){ const u=((t*.25+k/14)%1), a0=dirL?X(LO-.7):X(end.x), b0=dirL?X(end.x):X(HI+.7); circ(ctx,a0+(b0-a0)*u,ny-24+Math.sin(t*3+k)*4,3,null,rgba(COL.green,.7),1); } }
+    // boundary flag
+    line(ctx,X(end.x),ny-h*.42,X(end.x),ny+14,COL.blue,2.4,[6,5]);
+    runs(ctx,X(end.x),ny-h*.42-10,[['x '+s2+' '+frac(xb),COL.blue]],16,'center');
+    // tokens
+    const sc=Math.min((x1-x0)/N*.4,22);
+    tk.forEach((t,i)=>{ const v=LO+i, a=dom[i].x; if(a<.02) return; const sol=isSol(v)&&inDom(v), yy=ny-sc-t.y*h*.3;
+      ctx.save(); ctx.globalAlpha=clamp(a,0,1);
+      if(dm<2){ line(ctx,X(v),ny,X(v),yy+sc,COL.grid,1.5); circ(ctx,X(v),yy,sc,sol?COL.green:COL.red,sol?rgba(COL.green,.2):'#fff',3); textAt(ctx,sg(v,0),X(v),yy+5,{align:'center',size:Math.max(10,sc*.7),weight:700,color:sol?COL.green:COL.red}); }
+      ctx.restore();
+      if(dm>=2||true) textAt(ctx,sg(v,0),X(v),ny+24,{align:'center',size:11,weight:600,color:COL.mid}); });
+    textAt(ctx,dm===0?'x is a natural number  (1, 2, 3, …)':dm===1?'x is an integer  (… −1, 0, 1 …)':'x is a real number',w/2,h*.07,{align:'center',size:15,weight:700,color:COL.muted});
+    runs(ctx,w/2,h*.9,[[['30x < 200','5x − 3 < 3x + 1','4x + 3 < 6x + 7','24x < 100','−12x > 30'][pi],COL.red],['   ⟹   ',COL.muted],['x '+s2+' '+frac(xb),COL.blue]],20,'center');
+
+    // set text
+    const mem=[]; for(let v=LO;v<=HI;v++) if(inDom(v)&&isSol(v)) mem.push(sg(v,0));
+    let st;
+    if(dm===2) st='x '+(dirL?'∈ (−∞, ':'∈ '+(s2==='≥'?'[':'(')) + frac(xb) + (dirL?(s2==='≤'?']':')'):', ∞)');
+    else { st='{'+(dirL&&dm===1?'…, ':'')+mem.join(', ')+(!dirL?', …':'')+'}'; if(!mem.length) st='{ }  (empty)'; }
+    $('#r1').textContent='x '+s2+' '+frac(xb); $('#r2').textContent=p.r; $('#r3').textContent=st;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.7 AVERAGE MARKS    (Examples 7, 21, 22)
+   Bars rise and settle on springs. Press "Level the bars" and every bar
+   pours into the mean — the dashed average line is where they all end up.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook case',['Ex 7','Ex 21','Ex 22']) +
+    slider('x','Marks in the last test,  x',0,100,1,70) + slider('T','Average needed  (at least)',40,100,1,60) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="lev">⇊ Level the bars</button></div></div>` +
+    cards([['r1','Average now','--f-blue'],['r2','Smallest x that works','--f-green'],['r3','Is average ≥ needed?',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xs=$('#x'), Ts=$('#T'), lev=$('#lev');
+  const P=[{k:[62,48],T:60,x:70},{k:[70,75],T:60,x:50},{k:[87,92,94,95],T:90,x:70}]; let cur=P[0], levOn=false;
+  wireChips(wrap,'pre',i=>{ cur=P[i]; Ts.value=cur.T; xs.value=cur.x; setActive(wrap,'pre',i); rise(); });
+  setActive(wrap,'pre',0);
+  lev.onclick=()=>{ levOn=!levOn; setPlay(lev,levOn,'⇈ Restore the bars','⇊ Level the bars'); };
+  const bars=Array.from({length:5},()=>S(0)), L=S(0), meanS=S(0), minS=S(0);
+  function rise(){ bars.forEach(b=>{ b.x=0; b.v=0; }); }
+  animLoop(dt=>{
+    const x=+xs.value, T=+Ts.value, n=cur.k.length+1, sum=cur.k.reduce((p,c)=>p+c,0), mean=(sum+x)/n, need=n*T-sum;
+    val(wrap,'x',x); val(wrap,'T',T);
+    const marks=cur.k.concat([x]);
+    bars.forEach((b,i)=>springTo(b,i<n?marks[i]:0,60,7.5,dt));
+    follow(L,levOn?1:0,dt); springTo(meanS,mean,60,8,dt); springTo(minS,clamp(need,0,100),50,8,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const G={x:w*.08,y:h*.08,w:w*.88,h:h*.78}, Yv=v=>G.y+G.h-v/100*G.h;
+    for(let v=0;v<=100;v+=20){ line(ctx,G.x,Yv(v),G.x+G.w,Yv(v),v?COL.grid:COL.ink,v?1:2.4); textAt(ctx,String(v),G.x-8,Yv(v)+4,{align:'right',size:11,weight:600,color:COL.mid}); }
+    const bw=Math.min(G.w/(n*1.7),90), gap=(G.w-n*bw)/(n+1);
+    for(let i=0;i<n;i++){
+      const bx=G.x+gap+i*(bw+gap), isX=i===n-1, col=isX?COL.yellow:COL.blue, v=bars[i].x, vv=lerp(v,meanS.x,ease(L.x));
+      if(isX){ const ny=Yv(minS.x); ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.strokeRect(bx,ny,bw,G.y+G.h-ny); ctx.restore(); }
+      ctx.save(); ctx.beginPath(); ctx.rect(bx,Yv(vv),bw,G.y+G.h-Yv(vv)); ctx.fillStyle=rgba(col,.22); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+      if(L.x>.05&&Math.abs(v-meanS.x)>1){ const up=v>meanS.x; ctx.save(); ctx.globalAlpha=L.x*(1-L.x)*3.5; vec(ctx,bx+bw/2,Yv(vv)+(up?-30:30),bx+bw/2,Yv(vv)+(up?-4:4)+(up?30:-30)*0,COL.yellow,3,8); ctx.restore(); }
+      lab(ctx,sg(vv,1),bx+bw/2,Yv(vv)-8,col===COL.yellow?'#8a6410':COL.blue,{align:'center',size:14});
+      textAt(ctx,isX?'x':'Test '+(i+1),bx+bw/2,G.y+G.h+19,{align:'center',size:12.5,weight:700,color:isX?'#8a6410':COL.muted});
+    }
+    line(ctx,G.x,Yv(T),G.x+G.w,Yv(T),COL.red,3,[9,6]); lab(ctx,'needed '+T,G.x+G.w-4,Yv(T)-8,COL.red,{align:'right',size:13});
+    const good=mean>=T-1e-9, mc=good?COL.green:COL.blue;
+    line(ctx,G.x,Yv(meanS.x),G.x+G.w,Yv(meanS.x),mc,4); lab(ctx,'average '+sg(mean,1),G.x+4,Yv(meanS.x)-8,mc,{size:14});
+    pill(ctx,need<=100?'x ≥ '+need+'  is needed':'impossible — needs more than 100',w/2,h*.955,need<=100?COL.green:COL.red,13);
+
+    $('#r1').textContent=sg(mean,2); $('#r2').textContent=need<=100?(need<=0?'any x':'x ≥ '+need):'none (> 100)';
+    $('#r3').textContent=good?'Yes':'No'; $('#r3').style.color=good?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.8 TWO INEQUALITIES AT ONCE   (Examples 8, 9, 11)
+   Blue ray: x < p.  Red ray: x > q.  Green: both true — the overlap.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook case',['Ex 11','Ex 9','Ex 8']) +
+    slider('p','Blue:   x  <  p',-10,20,1,6) + chipRow('s1','',['<','≤']) +
+    slider('q','Red:   x  >  q',-10,20,1,2) + chipRow('s2','',['>','≥']) +
+    slider('t','Test value  x',-12,22,0.5,0) +
+    chipRow('odd','Count only',['all x','odd whole numbers']) +
+    cards([['r1','Common solution','--f-green',true],['r2','Interval','--f-green'],['r3','Pairs (x, x+2)']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ps=$('#p'), qs=$('#q'), ts=$('#t');
+  let s1=0, s2=1, odd=0;   // index 0 strict, 1 closed
+  const PRE=[[6,0,2,1,0],[2,0,-1,1,0],[19,0,10,0,1]];
+  const setAll=()=>{ setActive(wrap,'s1',s1); setActive(wrap,'s2',s2); setActive(wrap,'odd',odd); };
+  wireChips(wrap,'pre',i=>{ const p=PRE[i]; ps.value=p[0]; s1=p[1]; qs.value=p[2]; s2=p[3]; odd=p[4]; setActive(wrap,'pre',i); setAll(); });
+  wireChips(wrap,'s1',i=>{ s1=i; setAll(); setActive(wrap,'pre',-1); }); wireChips(wrap,'s2',i=>{ s2=i; setAll(); setActive(wrap,'pre',-1); }); wireChips(wrap,'odd',i=>{ odd=i; setAll(); });
+  [ps,qs].forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1)));
+  setActive(wrap,'pre',0); setAll();
+  const P=S(6), Q=S(2), tx=S(0), hop={y:0,v:0}; let was=false; const LOv=-12, HIv=22;
+  animLoop(dt=>{
+    const p=+ps.value, q=+qs.value, t=+ts.value, c1=s1?'≤':'<', c2=s2?'≥':'>';
+    val(wrap,'p',p); val(wrap,'q',q); val(wrap,'t',sg(t,1));
+    follow(P,p,dt); follow(Q,q,dt); follow(tx,t,dt);
+    const nonEmpty = q<p || (q===p && s1 && s2);
+    const in1=holds(t,c1,p), in2=holds(t,c2,q), both=in1&&in2;
+    if(both&&!was) hop.v=5.5; was=both; hop.v-=22*dt; hop.y+=hop.v*dt; if(hop.y<0){ hop.y=0; hop.v=0; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ay=h*.84, X=axis(ctx,w*.04,w*.96,ay,LOv,HIv,2);
+    const lane=[h*.2,h*.4,h*.62];
+    // guide lines
+    line(ctx,X(P.x),lane[0]-30,X(P.x),ay,COL.blue,1.8,[5,5]); line(ctx,X(Q.x),lane[0]-30,X(Q.x),ay,COL.red,1.8,[5,5]);
+    ivl(ctx,X,lane[0],LOv,P.x,true,!s1,COL.blue,true,false);
+    ivl(ctx,X,lane[1],Q.x,HIv,!s2,true,COL.red,false,true);
+    if(nonEmpty) ivl(ctx,X,lane[2],Q.x,P.x,!s2,!s1,COL.green,false,false,9);
+    else lab(ctx,'no common x',(X(LOv)+X(HIv))/2,lane[2]+5,COL.red,{align:'center',size:15});
+    lab(ctx,'x '+c1+' '+p,w*.05,lane[0]-14,COL.blue,{size:15}); lab(ctx,'x '+c2+' '+q,w*.05,lane[1]-14,COL.red,{size:15}); lab(ctx,'both',w*.05,lane[2]-14,COL.green,{size:15});
+    // odd whole numbers
+    const pairs=[];
+    if(odd){ for(let v=Math.ceil(LOv);v<=HIv;v++){ if(Math.abs(v)%2!==1) continue; const ok=holds(v,c1,p)&&holds(v,c2,q); if(ok) pairs.push(v);
+      circ(ctx,X(v),ay,ok?9:6,ok?COL.green:COL.mid,ok?rgba(COL.green,.25):'#fff',2.6); if(ok) textAt(ctx,String(v),X(v),ay-16,{align:'center',size:11.5,weight:700,color:COL.green}); } }
+    // probe
+    line(ctx,X(tx.x),lane[0]-30,X(tx.x),ay,rgba(COL.yellow,.6),2,[4,4]);
+    const bc=both?COL.green:COL.yellow, by=ay-14-hop.y*14;
+    circ(ctx,X(tx.x),by,13,'#fff',bc,3.4); circ(ctx,X(tx.x),by,5,null,bc,1);
+    pill(ctx,both?'x satisfies both':'not in the overlap',X(clamp(tx.x,LOv+2,HIv-2)),h*.075,both?COL.green:COL.red,12.5);
+
+    const lowS=(s2?'':''), txt = nonEmpty ? (sg(q,0)+' '+(s2?'≤':'<')+' x '+(s1?'≤':'<')+' '+sg(p,0)) : 'no x';
+    $('#r1').textContent=txt; $('#r2').textContent= nonEmpty? (s2?'[':'(')+sg(q,0)+', '+sg(p,0)+(s1?']':')') : '∅';
+    $('#r3').textContent= odd? (pairs.length? pairs.map(v=>'('+v+', '+(v+2)+')').join('  ') : 'none') : '— (choose odd)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.9 TEMPERATURE WINDOW    30 < C < 35   →   86 < F < 95   (Ex 12, Misc 11)
+   The mercury rises on a damped spring; the flask bubbles harder as it heats.
+   Both scales read the same level, so the Celsius window and the Fahrenheit
+   window are the same green band.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook case',['Ex 12:  30° – 35° C','Misc 11:  68° – 77° F']) +
+    slider('lo','Lower limit  (°C)',0,50,1,30) + slider('hi','Upper limit  (°C)',5,60,1,35) +
+    slider('t','Temperature of the solution  (°C)',0,60,0.5,32) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="heat">▶ Heat and cool</button></div></div>` +
+    cards([['r1','Celsius window','--f-red'],['r2','In Fahrenheit  F = 9C/5 + 32','--f-green'],['r3','Reading now'],['r4','Inside the window?',null,true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), los=$('#lo'), his=$('#hi'), ts=$('#t'), heat=$('#heat');
+  const PRE=[[30,35],[20,25]]; wireChips(wrap,'pre',i=>{ los.value=PRE[i][0]; his.value=PRE[i][1]; setActive(wrap,'pre',i); });
+  [los,his].forEach(e=>e.addEventListener('input',()=>setActive(wrap,'pre',-1))); setActive(wrap,'pre',0);
+  let sweep=false, dir=1; heat.onclick=()=>{ sweep=!sweep; setPlay(heat,sweep,'❚❚ Stop','▶ Heat and cool'); };
+  ts.addEventListener('input',()=>{ if(sweep){ sweep=false; setPlay(heat,false,'','▶ Heat and cool'); } });
+  const Hg=S(32), lo_=S(30), hi_=S(35), fl=S(0); let bub=[];
+  animLoop(dt=>{
+    if(sweep){ let t=+ts.value+dir*7*dt; if(t>=60){ t=60; dir=-1; } if(t<=0){ t=0; dir=1; } ts.value=t; }
+    let lo=+los.value, hi=+his.value; if(lo>hi){ const z=lo; lo=hi; hi=z; }
+    const T=+ts.value; val(wrap,'lo',lo+' °C'); val(wrap,'hi',hi+' °C'); val(wrap,'t',sg(T,1)+' °C');
+    springTo(Hg,T,42,5.2,dt); follow(lo_,lo,dt); follow(hi_,hi,dt); follow(fl,clamp(Hg.v/6,-1,1),dt);
+    const inside=T>lo&&T<hi, mc=T<=lo?COL.blue:T>=hi?COL.red:COL.green;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- thermometer
+    const cx=w*.3, tw=Math.max(22,Math.min(36,w*.035)), yT=h*.09, yB=h*.72, br=tw*1.15, yc0=yB+Math.sqrt(br*br-tw*tw/4), Y=c=>yB-(c/60)*(yB-yT), sc=tw*.5;
+    const bandX0=cx-tw/2-84, bandX1=cx+tw/2+84;
+    ctx.fillStyle=rgba(COL.green,.14); ctx.fillRect(bandX0,Y(hi_.x),bandX1-bandX0,Y(lo_.x)-Y(hi_.x));
+    [[lo_.x,lo],[hi_.x,hi]].forEach(([yv,vv])=>{ line(ctx,bandX0-6,Y(yv),bandX1+6,Y(yv),COL.red,2.6,[7,5]);
+      lab(ctx,vv+' °C',bandX0-10,Y(yv)+5,COL.red,{align:'right',size:13}); lab(ctx,sg(vv*9/5+32,1)+' °F',bandX1+10,Y(yv)+5,COL.red,{size:13}); });
+    // glass
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.fillStyle='#fff';
+    const yc=yB+Math.sqrt(br*br-tw*tw/4), th=Math.atan2(yB-yc,tw/2); ctx.beginPath(); ctx.moveTo(cx-tw/2,yB); ctx.lineTo(cx-tw/2,yT+tw/2); ctx.arc(cx,yT+tw/2,tw/2,PI,0); ctx.lineTo(cx+tw/2,yB); ctx.arc(cx,yc,br,th,PI-th,false);
+    ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    // mercury
+    ctx.save(); ctx.fillStyle=mc; const mw=tw*.42; ctx.fillRect(cx-mw/2,Y(Hg.x),mw,yB-Y(Hg.x)+4); ctx.beginPath(); ctx.arc(cx,yc0,br*.72,0,TAU); ctx.fill(); ctx.restore();
+    // scales
+    for(let c=0;c<=60;c+=5){ const yy=Y(c), big=c%10===0; line(ctx,cx-tw/2-(big?14:8),yy,cx-tw/2-2,yy,COL.mid,big?2:1.3); if(big) textAt(ctx,String(c),cx-tw/2-18,yy+4,{align:'right',size:11,weight:600,color:COL.mid}); }
+    for(let f=32;f<=140;f+=9){ const yy=Y((f-32)*5/9), big=(f-32)%18===0; line(ctx,cx+tw/2+2,yy,cx+tw/2+(big?14:8),yy,COL.mid,big?2:1.3); if(big) textAt(ctx,String(f),cx+tw/2+18,yy+4,{size:11,weight:600,color:COL.mid}); }
+    textAt(ctx,'°C',cx-tw/2-18,yT-8,{align:'right',size:12.5,weight:700,color:COL.muted}); textAt(ctx,'°F',cx+tw/2+18,yT-8,{size:12.5,weight:700,color:COL.muted});
+    // reading tag
+    circ(ctx,cx,Y(Hg.x),tw*.5+3,COL.yellow,null,3.2);
+    lab(ctx,sg(Hg.x,1)+' °C  =  '+sg(Hg.x*9/5+32,1)+' °F',cx,yc0+br+22,mc,{align:'center',size:15});
+    // ---- flask
+    const fx=w*.77, fb=h*.78, fw=Math.min(w*.27,270), fh=h*.5, nw=fw*.3, nh=fh*.38;
+    const poly1=[[fx-nw/2,fb-fh],[fx+nw/2,fb-fh],[fx+nw/2,fb-fh+nh],[fx+fw/2,fb],[fx-fw/2,fb],[fx-nw/2,fb-fh+nh]];
+    const surf=fb-fh*.52+Math.sin(performance.now()/300)*1.5;
+    ctx.save(); ctx.beginPath(); poly1.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.clip();
+    ctx.fillStyle=rgba(mc,.22); ctx.fillRect(fx-fw/2,surf,fw,fb-surf);
+    // bubbles
+    const rate=Math.pow(T/60,1.6)*38; if(Math.random()<rate*dt) bub.push({x:fx+(Math.random()-.5)*fw*.5,y:fb-4,r:2+Math.random()*3.5,v:30+Math.random()*50*(.4+T/60),p:Math.random()*6});
+    bub=bub.filter(b=>{ b.y-=b.v*dt; b.x+=Math.sin(b.y/14+b.p)*.4; return b.y>surf; });
+    bub.forEach(b=>circ(ctx,b.x,b.y,b.r,mc,'#fff',1.6)); ctx.restore();
+    ctx.save(); ctx.beginPath(); poly1.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.4; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    line(ctx,fx-nw/2-6,fb-fh,fx+nw/2+6,fb-fh,COL.ink,3.4);
+    // flame / ice
+    const tt=performance.now()/1000;
+    if(fl.x>.1){ const s=fl.x; for(let k=-1;k<=1;k++){ const fx2=fx+k*fw*.16, ph=Math.sin(tt*14+k*2)*4; ctx.save(); ctx.beginPath(); ctx.moveTo(fx2-9*s,fb+34); ctx.quadraticCurveTo(fx2-12*s,fb+16*s,fx2+ph,fb+34-(34+12*s)*s+12); ctx.quadraticCurveTo(fx2+12*s,fb+16*s,fx2+9*s,fb+34); ctx.closePath(); ctx.fillStyle=rgba(COL.red,.28); ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore(); } }
+    if(fl.x<-.1){ const s=-fl.x; [-1,1].forEach((k,i)=>{ ctx.save(); ctx.translate(fx+k*fw*.2,fb+22+Math.sin(tt*3+i)*2); ctx.rotate(.3*k); ctx.strokeStyle=COL.blue; ctx.fillStyle=rgba(COL.blue,.12); ctx.lineWidth=2.4; ctx.globalAlpha=Math.min(1,s*1.5); rrect(ctx,-14,-14,28,28,5); ctx.fill(); ctx.stroke(); ctx.restore(); }); }
+    line(ctx,fx-fw*.6,fb+36,fx+fw*.6,fb+36,COL.ink,2.4);
+    lab(ctx,'HCl solution',fx,fb-fh-14,COL.muted,{align:'center',size:13});
+    pill(ctx,inside?'inside the window':(T<=lo?'too cold':'too hot'),fx,h*.07,inside?COL.green:(T<=lo?COL.blue:COL.red),13);
+
+    $('#r1').textContent=lo+' < C < '+hi; $('#r2').textContent=sg(lo*9/5+32,1)+' < F < '+sg(hi*9/5+32,1);
+    $('#r3').textContent=sg(T,1)+' °C = '+sg(T*9/5+32,1)+' °F'; $('#r4').textContent=inside?'Yes':(T<=lo?'No — below':'No — above'); $('#r4').style.color=inside?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.10 ACID MIXTURE   (Ex 13, Misc Ex 12 and 13)
+   Pour x litres into the tank: the level rises on a spring, the colour
+   deepens or fades with the concentration c(x) = (c₀V₀ + c·x)/(V₀ + x).
+   The curve on the right shows when c stays inside the green window.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pre','Textbook case',['Ex 13  (add 30% acid)','Misc 12  (add 2% acid)','Misc 13  (add water)']) +
+    slider('x','Litres added,  x',0,400,5,150) +
+    cards([['r1','Mixture now'],['r2','Acid in it','--f-blue'],['r3','Window needed','--f-green',true],['r4','So  x  must satisfy','--f-green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xs=$('#x');
+  const P=[{V:600,c0:12,ca:30,lo:15,hi:18,xm:400,nm:'30% acid'},{V:640,c0:8,ca:2,lo:4,hi:6,xm:1500,nm:'2% acid'},{V:1125,c0:45,ca:0,lo:25,hi:30,xm:1200,nm:'water (0%)'}];
+  let cur=P[0]; const xmax=S(400);
+  const setP=i=>{ cur=P[i]; xs.max=cur.xm; xs.step=cur.xm>500?10:5; xs.value=Math.round(cur.xm*.375/5)*5; setActive(wrap,'pre',i); };
+  wireChips(wrap,'pre',setP); setP(0);
+  const lvl=S(.4), tilt=S(0); let drops=[];
+  animLoop(dt=>{
+    const x=+xs.value, {V,c0,ca,lo,hi,xm}=cur; val(wrap,'x',x+' L'); follow(xmax,xm,dt);
+    const c=(c0*V+ca*x)/(V+x), xa=V*(lo-c0)/(ca-lo), xb=V*(hi-c0)/(ca-hi), b1=Math.min(xa,xb), b2=Math.max(xa,xb), inside=c>lo&&c<hi;
+    const target=(V+x)/(V+xm*1.0), prev=lvl.x; springTo(lvl,target,34,4.4,dt);
+    const rising=lvl.v>.02, falling=lvl.v<-.02; follow(tilt,rising?1:0,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- tank
+    const T={x:w*.07,y:h*.3,w:w*.3,h:h*.58}, LV=f=>T.y+T.h-f*T.h*.94, tcol=inside?COL.green:COL.blue;
+    const cs=clamp(c/Math.max(c0,ca,hi,1)/1.15,0,1);
+    ctx.save(); ctx.beginPath(); ctx.rect(T.x,T.y,T.w,T.h); ctx.clip();
+    const ly=LV(lvl.x); ctx.beginPath(); ctx.moveTo(T.x,T.y+T.h); ctx.lineTo(T.x,ly);
+    for(let i=0;i<=40;i++){ const xx=T.x+T.w*i/40; ctx.lineTo(xx,ly+Math.sin(performance.now()/260+i*.5)*(1.5+Math.abs(lvl.v)*14)); }
+    ctx.lineTo(T.x+T.w,T.y+T.h); ctx.closePath(); ctx.fillStyle=rgba(COL.red,.08+.5*cs); ctx.fill();
+    // acid window on the wall
+    const y1=LV((V+b1)/(V+xm)), y2=LV((V+b2)/(V+xm));
+    ctx.fillStyle=rgba(COL.green,.14); ctx.fillRect(T.x,y2,T.w,y1-y2); ctx.restore();
+    [[y1,b1],[y2,b2]].forEach(([yy,bb])=>{ if(bb>xm) return; line(ctx,T.x-6,yy,T.x+T.w+6,yy,COL.green,2.4,[6,4]); lab(ctx,'x = '+sg(bb,1),T.x+T.w+10,yy+5,COL.green,{size:12.5}); });
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=4; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(T.x,T.y); ctx.lineTo(T.x,T.y+T.h); ctx.lineTo(T.x+T.w,T.y+T.h); ctx.lineTo(T.x+T.w,T.y); ctx.stroke(); ctx.restore();
+    lab(ctx,'V = '+sg(V+x,0)+' L',T.x+T.w/2,T.y+T.h+24,COL.muted,{align:'center',size:14});
+    // the jug and its stream
+    const jx=T.x+T.w*.78, jy=h*.1, ja=-.7*tilt.x, jw=T.w*.34, jh=h*.12;
+    ctx.save(); ctx.translate(jx,jy); ctx.rotate(ja); rrect(ctx,-jw/2,0,jw,jh,8); ctx.fillStyle=rgba(COL.red,.08+.5*clamp(ca/Math.max(c0,ca,1),0,1)*.9); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.stroke();
+    textAt(ctx,cur.nm,0,jh*.6,{align:'center',size:Math.max(10,jw*.12),weight:700,color:COL.ink}); ctx.restore();
+    const lipX=jx-Math.cos(ja)*jw/2-Math.sin(ja)*0, lipY=jy-Math.sin(ja)*jw/2*-1*-1 + (ja<0? -Math.sin(ja)*jw/2*0:0);
+    const lx=jx+Math.cos(ja)*(-jw/2), ly2=jy+Math.sin(ja)*(-jw/2);
+    if(rising){ for(let k=0;k<2;k++) drops.push({x:lx-2,y:ly2,vx:-30-Math.random()*20,vy:20}); }
+    if(falling){ drops.push({x:T.x+T.w+1,y:T.y+T.h-18,vx:70,vy:-10,drain:1}); }
+    drops=drops.filter(d=>{ d.vy+=900*dt; d.x+=d.vx*dt; d.y+=d.vy*dt; if(!d.drain&&d.y>=ly) return false; return d.y<h; });
+    drops.forEach(d=>circ(ctx,d.x,d.y,3,null,rgba(d.drain?COL.red:COL.red,.7),1));
+    // ---- chart c(x)
+    const Gc={x:w*.5,y:h*.22,w:w*.44,h:h*.6}, xm2=xmax.x, cmax=Math.max(c0,ca,hi)*1.15, CX=v=>Gc.x+v/xm2*Gc.w, CY=v=>Gc.y+Gc.h-v/cmax*Gc.h;
+    ctx.fillStyle=rgba(COL.green,.13); ctx.fillRect(Gc.x,CY(hi),Gc.w,CY(lo)-CY(hi));
+    line(ctx,Gc.x,Gc.y+Gc.h,Gc.x+Gc.w,Gc.y+Gc.h,COL.mid,2); line(ctx,Gc.x,Gc.y,Gc.x,Gc.y+Gc.h,COL.mid,2);
+    [lo,hi].forEach(v=>{ line(ctx,Gc.x,CY(v),Gc.x+Gc.w,CY(v),COL.red,2.4,[7,5]); lab(ctx,v+'%',Gc.x-6,CY(v)+5,COL.red,{align:'right',size:12.5}); });
+    [b1,b2].forEach(bb=>{ if(bb>xm2) return; line(ctx,CX(bb),Gc.y+Gc.h,CX(bb),CY(bb===b1?(xa<xb?lo:hi):(xa<xb?hi:lo)),COL.green,2.2,[5,4]); circ(ctx,CX(bb),Gc.y+Gc.h,6,COL.green,COL.green,1); lab(ctx,sg(bb,1),CX(bb),Gc.y+Gc.h+19,COL.green,{align:'center',size:12.5}); });
+    ctx.save(); ctx.beginPath(); ctx.rect(Gc.x,Gc.y,Gc.w,Gc.h); ctx.clip(); ctx.strokeStyle=COL.blue; ctx.lineWidth=4.4; ctx.beginPath();
+    for(let i=0;i<=120;i++){ const xx=xm2*i/120, cc=(c0*V+ca*xx)/(V+xx); i?ctx.lineTo(CX(xx),CY(cc)):ctx.moveTo(CX(xx),CY(cc)); } ctx.stroke(); ctx.restore();
+    const ccur=(c0*V+ca*Math.max(0,(lvl.x*(V+xm)-V)))/(lvl.x*(V+xm)); const xcur=Math.max(0,lvl.x*(V+xm)-V);
+    line(ctx,CX(xcur),Gc.y+Gc.h,CX(xcur),CY(ccur),rgba(COL.yellow,.8),2.4,[4,4]);
+    circ(ctx,CX(xcur),CY(ccur),11,COL.yellow,'#fff',3.6); dot(ctx,CX(xcur),CY(ccur),5,inside?COL.green:COL.yellow);
+    textAt(ctx,'litres added, x',Gc.x+Gc.w/2,Gc.y+Gc.h+42,{align:'center',size:12.5,weight:700,color:COL.muted}); textAt(ctx,'acid in the mixture, %',Gc.x,Gc.y-14,{size:12.5,weight:700,color:COL.muted});
+    pill(ctx,sg(c,2)+' % acid  —  '+(inside?'inside the window':(c<=lo?'too weak':'too strong')),Gc.x+Gc.w/2,h*.07,inside?COL.green:COL.red,13);
+
+    $('#r1').textContent=sg(V+x,0)+' L'; $('#r2').textContent=sg(c,2)+' %'; $('#r3').textContent=lo+'%  <  acid  <  '+hi+'%';
+    $('#r4').textContent=sg(b1,1)+' < x < '+sg(b2,1)+'  litres';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   5.11 CUTTING THE BOARD   (Misc. exercise 26)
+   A 91 cm board gives x, x + 3 and 2x.  Two conditions:
+   x + (x+3) + 2x ≤ 91   and   2x ≥ (x+3) + 5.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('x','Shortest piece,  x  (cm)',0,30,0.5,12) +
+    `<div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="cut">✂ Cut the board</button></div></div>` +
+    cards([['r1','Pieces  x,  x + 3,  2x'],['r2','Total used  ≤ 91 ?','--f-blue'],['r3','Third  ≥  second + 5 ?','--f-red'],['r4','x that works','--f-green',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), xs=$('#x'), cutB=$('#cut');
+  let cutOn=false, cutP=0; cutB.onclick=()=>{ cutOn=!cutOn; setPlay(cutB,cutOn,'↺ Join the pieces','✂ Cut the board'); };
+  const X1=S(12), X2=S(27), X3=S(51);
+  animLoop(dt=>{
+    const x=+xs.value; val(wrap,'x',sg(x,1)+' cm');
+    const tot=4*x+3, fit=tot<=91+1e-9, long=2*x>=x+8-1e-9, ok=fit&&long;
+    springTo(X1,x,60,7,dt); springTo(X2,x+3,60,7,dt); springTo(X3,2*x,60,7,dt);
+    cutP=clamp(cutP+(cutOn?1:-1)*dt*1.1,0,2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const bx0=w*.05, sc=(w*.9)/91, BX=v=>bx0+v*sc, by=h*.26, bh=Math.min(h*.14,64);
+    // ruler
+    for(let v=0;v<=91;v+=1){ const big=v%10===0; line(ctx,BX(v),by-bh/2-(big?14:6),BX(v),by-bh/2-2,COL.mid,big?1.8:1); if(big&&v<90) textAt(ctx,String(v),BX(v),by-bh/2-20,{align:'center',size:11,weight:600,color:COL.mid}); }
+    textAt(ctx,'91',BX(91),by-bh/2-20,{align:'center',size:11,weight:700,color:COL.ink});
+    // board outline
+    rrect(ctx,BX(0),by-bh/2,91*sc,bh,4); ctx.save(); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.stroke(); ctx.restore();
+    for(let k=0;k<7;k++){ ctx.save(); ctx.strokeStyle=rgba(COL.mid,.5); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(BX(2),by-bh/2+8+k*(bh-16)/6); ctx.bezierCurveTo(BX(30),by-bh/2+4+k*(bh-16)/6,BX(60),by-bh/2+14+k*(bh-16)/6,BX(89),by-bh/2+8+k*(bh-16)/6); ctx.stroke(); ctx.restore(); }
+    // pieces
+    const g1=ease(clamp(cutP-0,0,1))*16, g2=ease(clamp(cutP-1,0,1))*16;
+    const segs=[[0,X1.x,COL.yellow,'x',0],[X1.x,X1.x+X2.x,COL.red,'x + 3',g1],[X1.x+X2.x,X1.x+X2.x+X3.x,COL.blue,'2x',g1+g2]];
+    segs.forEach(([a,b,col,nm,gap])=>{ const xa=BX(a)+gap, xb=BX(b)+gap, ww=xb-xa; if(ww<1) return;
+      ctx.save(); const over=b>91; rrect(ctx,xa,by-bh/2+4,ww,bh-8,3); ctx.fillStyle=rgba(col,over?.12:.28); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=3; if(over) ctx.setLineDash([7,5]); ctx.stroke(); ctx.restore();
+      if(ww>40) textAt(ctx,nm,xa+ww/2,by+5,{align:'center',size:15,weight:700,color:col===COL.yellow?'#8a6410':col}); });
+    const used=X1.x+X2.x+X3.x;
+    if(used<91){ const xa=BX(used)+g1+g2; ctx.save(); ctx.beginPath(); ctx.rect(xa,by-bh/2+4,BX(91)-BX(used),bh-8); ctx.clip(); for(let q=-bh;q<(BX(91)-BX(used))+bh;q+=10) line(ctx,xa+q,by+bh/2,xa+q+bh,by-bh/2,COL.mid,1.3); ctx.restore(); textAt(ctx,'left over '+sg(91-tot,1),(xa+BX(91))/2,by+bh/2+20,{align:'center',size:12,weight:700,color:COL.mid}); }
+    if(used>91.05) lab(ctx,'needs '+sg(tot-91,1)+' cm more board',BX(91),by+bh/2+22,COL.red,{align:'right',size:14});
+    // the saw
+    if(cutP>0.02&&cutP<1.98){ const idx=cutP<1?0:1, cutAt=BX(idx?X1.x+X2.x:X1.x)+(idx?g1:0)-6, t=performance.now()/1000;
+      ctx.save(); ctx.translate(cutAt+8,by-bh/2-24+Math.sin(t*26)*6); ctx.rotate(-.5);
+      rrect(ctx,-16,-8,90,16,2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke();
+      ctx.beginPath(); for(let i=0;i<9;i++){ ctx.moveTo(-14+i*9,8); ctx.lineTo(-10+i*9,15); ctx.lineTo(-6+i*9,8); } ctx.stroke(); rrect(ctx,70,-12,34,26,8); ctx.stroke(); ctx.restore(); }
+    // ---- second condition: bars
+    const r1=h*.58, r2=h*.76, rh=Math.min(34,h*.07);
+    textAt(ctx,'second piece  +  5 cm',bx0,r1-rh/2-10,{size:12.5,weight:700,color:COL.red}); textAt(ctx,'third piece',bx0,r2-rh/2-10,{size:12.5,weight:700,color:COL.blue});
+    ctx.save(); rrect(ctx,BX(0),r1-rh/2,X2.x*sc,rh,4); ctx.fillStyle=rgba(COL.red,.25); ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.setLineDash([6,5]); rrect(ctx,BX(X2.x),r1-rh/2,5*sc,rh,4); ctx.strokeStyle=COL.red; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    ctx.save(); rrect(ctx,BX(0),r2-rh/2,Math.max(2,X3.x*sc),rh,4); ctx.fillStyle=rgba(COL.blue,.25); ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    const thr=BX(X2.x+5); line(ctx,thr,r1-rh/2-4,thr,r2+rh/2+4,long?COL.green:COL.yellow,3,[6,4]);
+    pill(ctx,long?'third piece is long enough':'third piece too short',BX(46),(r1+r2)/2,long?COL.green:COL.red,12.5);
+    pill(ctx,ok?'x = '+sg(x,1)+' cm works':(!fit?'board too short':'third piece too short'),w/2,h*.93,ok?COL.green:COL.red,14);
+    $('#r1').textContent=sg(x,1)+',  '+sg(x+3,1)+',  '+sg(2*x,1);
+    $('#r2').textContent=sg(tot,1)+(fit?' ≤ ':' > ')+'91'; $('#r2').style.color=fit?'var(--f-green)':'var(--f-red)';
+    $('#r3').textContent=sg(2*x,1)+(long?' ≥ ':' < ')+sg(x+8,1); $('#r3').style.color=long?'var(--f-green)':'var(--f-red)';
+    $('#r4').textContent='8 ≤ x ≤ 22';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'5.1',  title:'Ravi’s Market',        desc:'30x < 200 · sacks on a balance', build: buildA1 },
+  { num:'5.2',  title:'Strict or Slack',      desc:'40x + 20y  <  or  =  ₹120', build: buildA2 },
+  { num:'5.3',  title:'Add or Subtract',      desc:'Rule 1 · lift both sides together', build: buildA3 },
+  { num:'5.4',  title:'Multiply by a Negative', desc:'Rule 2 · the sign turns around', build: buildA4 },
+  { num:'5.5',  title:'Solve and Graph',      desc:'ax + b  vs  cx + d · Examples 2–6', build: buildA5 },
+  { num:'5.6',  title:'N, Z or R ?',          desc:'One inequality, three solution sets', build: buildA6 },
+  { num:'5.7',  title:'Average Marks',        desc:'Examples 7, 21, 22 · level the bars', build: buildA7 },
+  { num:'5.8',  title:'Two at Once',          desc:'Examples 8, 9, 11 · the overlap', build: buildA8 },
+  { num:'5.9',  title:'Temperature Window',   desc:'Example 12 · °C and °F together', build: buildA9 },
+  { num:'5.10', title:'Acid Mixture',         desc:'Example 13 · pour until it is right', build: buildA10 },
+  { num:'5.11', title:'Cutting the Board',    desc:'Exercise 26 · two conditions', build: buildA11 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

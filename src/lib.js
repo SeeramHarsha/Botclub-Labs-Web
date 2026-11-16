@@ -2,7 +2,7 @@
 const crypto = require('crypto');
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
-const CLASSES = [6, 7, 8, 9, 10];
+const CLASSES = [6, 7, 8, 9, 10, 11, 12];
 
 /** one line of text, no control characters, trimmed and cut */
 const text = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);

@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Chapter 1 — Electric Charges and Fields | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-group:first-child{margin-top:0;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.warn{background:#fff; border-color:var(--f-red); color:var(--f-red);}
+.toggle-btn.on{background:var(--f-yellow); border-color:var(--f-yellow); color:#fff;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚡</div>
+    <div>
+      <div class="chip">Grade 12 · Ch 1</div>
+      <h1>Electric Charges and Fields</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-red)"></i>Positive charge</span>
+      <span><i style="background:var(--f-blue)"></i>Negative charge</span>
+      <span><i style="background:var(--f-yellow)"></i>Electric field</span>
+      <span><i style="background:var(--f-green)"></i>Force · Flux</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1.2</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — CHAPTER 1: ELECTRIC CHARGES AND FIELDS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or integrates its real equation
+   of motion toward it every frame. Nothing jumps.
+   Colour code:  red = +charge · blue = −charge · yellow = field · green = force / flux
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', pale:'#dbe4f0'};
+const K_E = 8.9875e9;      // 1/(4π ε0)  N m² C⁻²
+const EPS0 = 8.854e-12;    // C² N⁻¹ m⁻²
+
+/* ---------------- 0. CANVAS + MATH HELPERS ---------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  return {ctx, w, h, u:Math.min(w/1.5,h)/560};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||8; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<2) return;
+  const hs=Math.min(head||9,L*0.6);
+  const a=Math.atan2(y2-y1,x2-x1);
+  line(ctx,x1,y1,x2-Math.cos(a)*hs*0.6,y2-Math.sin(a)*hs*0.6,color,width||2.8);
+  arrowHead(ctx,x2,y2,a,color,hs);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function tagBox(ctx,txt,x,y,color,size){
+  size=size||12; ctx.save(); ctx.font='600 '+size+'px Poppins, sans-serif';
+  const tw=ctx.measureText(txt).width; ctx.restore();
+  ctx.save(); rrect(ctx,x-tw/2-6,y-size*0.95,tw+12,size*1.6,6); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=color; ctx.lineWidth=1.3; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,x,y,{align:'center',size,weight:600,color});
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sgn(x){return x>0?1:x<0?-1:0;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+function sci(x,d){ if(!isFinite(x)) return '—'; if(Math.abs(x)<1e-300) return '0'; d=d===undefined?2:d;
+  let e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e);
+  if(Math.abs(m).toFixed(d)==='10.'+'0'.repeat(d)){ m/=10; e+=1; }
+  if(e>=-1&&e<=2) return Number(x.toFixed(Math.max(0,d-e))).toString();
+  return m.toFixed(d)+'×10'+String(e).split('').map(c=>SUP[c]).join(''); }
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function rgba(h,a){ const c=hexRgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+function qCol(q){ return q>0?COL.red:q<0?COL.blue:COL.mid; }
+/** charged ball with + / − drawn inside */
+function chargeBall(ctx,x,y,r,q,fill){
+  const c=qCol(q); circ(ctx,x,y,r,c,fill||'#fff',2.8);
+  if(q!==0){ const s=r*0.5; line(ctx,x-s,y,x+s,y,c,Math.max(2,r*0.14)); if(q>0) line(ctx,x,y-s,x,y+s,c,Math.max(2,r*0.14)); }
+}
+/** small sign mark (for surfaces) */
+function mark(ctx,x,y,s,q){ const c=qCol(q); line(ctx,x-s,y,x+s,y,c,1.8); if(q>0) line(ctx,x,y-s,x,y+s,c,1.8); }
+
+/* ---------------- 0b. ANIMATION ENGINE ---------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf, t=0;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; t+=dt;
+    tick(dt,t);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+
+/* ---------------- 0c. UI BUILDERS ---------------- */
+const UI = {
+  sl:(id,label,min,max,step,val)=>`<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`,
+  tg:(id,label,items,act)=>`<div class="control-group" id="${id}G">${label?`<label style="margin-bottom:7px">${label}</label>`:''}<div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn${i===(act||0)?' active':''}" data-v="${it[0]}">${it[1]}</button>`).join('')}</div></div>`,
+  btns:(id,items)=>`<div class="control-group" id="${id}G"><div class="toggle-group">${items.map(it=>`<button class="toggle-btn ${it[2]||'navy'}" id="${it[0]}">${it[1]}</button>`).join('')}</div></div>`,
+  cards:(items)=>`<div class="control-group"><div class="result-cards">${items.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}" style="color:${c||'inherit'}">—</div></div>`).join('')}</div></div>`,
+  hint:(t,id)=>`<p class="hint" ${id?`id="${id}"`:''}>${t}</p>`
+};
+function labShell(side){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side">${side}</div>`;
+  return wrap;
+}
+/** wire range inputs: fmts = {id: v=>text}. returns getter V(id) */
+function wireSliders(wrap,fmts){
+  Object.keys(fmts).forEach(id=>{
+    const el=wrap.querySelector('#'+id), lab=wrap.querySelector('#'+id+'V');
+    el._fmt=fmts[id]; const upd=()=>{ lab.textContent=fmts[id](+el.value); };
+    el.addEventListener('input',upd); upd();
+  });
+  return id=>+wrap.querySelector('#'+id).value;
+}
+function setSlider(wrap,id,v,silent){
+  const el=wrap.querySelector('#'+id); el.value=v;
+  const lab=wrap.querySelector('#'+id+'V'); if(lab&&el._fmt) lab.textContent=el._fmt(+el.value);
+  el.dispatchEvent(new Event('input'));
+}
+function wireToggle(wrap,id,cb){
+  const btns=[...wrap.querySelectorAll('#'+id+' button')];
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b.dataset.v,b); });
+  return v=>{ btns.forEach(x=>x.classList.toggle('active',x.dataset.v===String(v))); };
+}
+function setText(wrap,id,txt,color){ const e=wrap.querySelector('#'+id); if(e){ if(e._t!==txt){ e.textContent=txt; e._t=txt; } if(color) e.style.color=color; } }
+
+/* ---------------- 0d. FIELD-LINE TRACER (plane through the charges) ---------------- */
+function fieldAt(charges,x,y){
+  let ex=0,ey=0;
+  for(const c of charges){ const dx=x-c.x, dy=y-c.y, r2=dx*dx+dy*dy+1, r=Math.sqrt(r2), f=c.q/(r2*r); ex+=f*dx; ey+=f*dy; }
+  return [ex,ey];
+}
+function traceLine(charges,sx,sy,dir,W,H,rc,maxSteps,step){
+  const pts=[[sx,sy]]; let x=sx,y=sy; step=step||4;
+  for(let i=0;i<maxSteps;i++){
+    let f=fieldAt(charges,x,y), m=Math.hypot(f[0],f[1]); if(m<1e-16) break;
+    const mx=x+dir*f[0]/m*step*0.5, my=y+dir*f[1]/m*step*0.5;
+    f=fieldAt(charges,mx,my); m=Math.hypot(f[0],f[1]); if(m<1e-16) break;
+    x+=dir*f[0]/m*step; y+=dir*f[1]/m*step; pts.push([x,y]);
+    if(x<-30||x>W+30||y<-30||y>H+30) break;
+    if(i>3){ let hit=false; for(const c of charges){ if(Math.hypot(x-c.x,y-c.y)<rc){ hit=true; break; } } if(hit) break; }
+  }
+  return pts;
+}
+/** charges: {x,y,q (field strength), u (charge in units, sets the line count)}. lines drawn from + charges (forward) and from the excess − charge (backward). Every polyline runs ALONG the field. */
+function buildLines(charges,W,H,rc,perUnit,rot){
+  const Qp=charges.filter(c=>c.u>0).reduce((s,c)=>s+c.u,0), Qm=charges.filter(c=>c.u<0).reduce((s,c)=>s-c.u,0);
+  const out=[];
+  charges.forEach(c=>{
+    let N=0, dir=1;
+    if(c.u>0){ N=Math.round(perUnit*c.u); dir=1; }
+    else if(c.u<0 && Qm>Qp){ N=Math.round(perUnit*(-c.u)*(Qm-Qp)/Qm); dir=-1; }
+    for(let k=0;k<N;k++){
+      const a=k/N*Math.PI*2+(rot||0);
+      let pts=traceLine(charges,c.x+Math.cos(a)*rc*1.15,c.y+Math.sin(a)*rc*1.15,dir,W,H,rc,900,4);
+      if(dir<0) pts.reverse();
+      out.push(pts);
+    }
+  });
+  return out;
+}
+function strokePts(ctx,pts){ ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); }
+/** field lines with flowing dots and mid-line arrowheads */
+function drawLines(ctx,lines,t,color,alpha){
+  ctx.save(); ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.globalAlpha=alpha===undefined?1:alpha;
+  ctx.strokeStyle=rgba(color,0.45); ctx.lineWidth=1.5; ctx.setLineDash([]);
+  lines.forEach(p=>strokePts(ctx,p));
+  ctx.strokeStyle=color; ctx.lineWidth=3.2; ctx.setLineDash([1.5,15]); ctx.lineDashOffset=-t*34;
+  lines.forEach(p=>strokePts(ctx,p));
+  ctx.setLineDash([]);
+  lines.forEach(p=>{ if(p.length>16){ const i=Math.floor(p.length*0.42), a=p[i], b=p[Math.min(p.length-1,i+2)]; arrowHead(ctx,b[0],b[1],Math.atan2(b[1]-a[1],b[0]-a[0]),color,8); } });
+  ctx.restore();
+}
+
+/* =====================================================================
+   1.2  RUBBING & TWO KINDS OF CHARGE   (Fig 1.1)
+   Electrons hop from one body to the other; nothing is created.
+   q = n e ,  total charge of rod + cloth stays 0.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell(
+    UI.tg('mode','Step',[['rub','1 · Rub'],['near','2 · Bring rods near']],0)+
+    `<div id="gRub">`+
+      UI.tg('pair','Rub with',[['gs','Glass + silk'],['pf','Plastic + fur']],0)+
+      UI.btns('rb',[['rubBtn','▶ Rub','play'],['touchBtn','Touch together','navy']])+
+      UI.cards([['cRod','Rod','var(--f-red)'],['cCloth','Cloth','var(--f-blue)'],['cTot','Total','var(--f-green)'],['cN','Electrons moved (n)']])+
+      UI.hint('q = n e · glass → silk: electrons leave the glass.')+
+    `</div><div id="gNear" class="hidden">`+
+      UI.tg('rodS','Hanging rod',[['1','Glass (+)'],['-1','Plastic (−)']],0)+
+      UI.tg('rodH','Held rod',[['1','Glass (+)'],['-1','Plastic (−)']],1)+
+      UI.sl('dist','Distance between rods',3,30,0.5,14)+
+      UI.cards([['cF','Force (q = 1 nC each)','var(--f-green)'],['cK','Result']])+
+      UI.hint('Like charges repel · unlike charges attract.')+
+    `</div>`);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='rub', pair='gs', rubbing=false, touching=false, arrived=0, pending=0, sShown=0, amp=0, phase=0, spawnT=0, touchT=0;
+  let sS=1, sH=-1;
+  const el=[]; const th={x:0,v:0}; let heldX=0;
+  const V=wireSliders(wrap,{dist:v=>fmt(v,1)+' cm'});
+  const mSet=wireToggle(wrap,'mode',v=>{ mode=v; $('#gRub').classList.toggle('hidden',v!=='rub'); $('#gNear').classList.toggle('hidden',v!=='near'); });
+  wireToggle(wrap,'pair',v=>{ pair=v; arrived=0; pending=0; el.length=0; rubbing=false; $('#rubBtn').textContent='▶ Rub'; $('.hint').textContent='q = n e · '+(v==='gs'?'glass → silk: electrons leave the glass.':'fur → plastic: electrons enter the plastic.'); });
+  wireToggle(wrap,'rodS',v=>sS=+v); wireToggle(wrap,'rodH',v=>sH=+v);
+  $('#rubBtn').onclick=()=>{ rubbing=!rubbing; touching=false; $('#rubBtn').textContent=rubbing?'■ Stop':'▶ Rub'; };
+  $('#touchBtn').onclick=()=>{ if(arrived>0||pending>0){ touching=true; rubbing=false; touchT=0; $('#rubBtn').textContent='▶ Rub'; } };
+
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const rodSign = pair==='gs'?1:-1;
+    if(mode==='rub'){
+      const rx0=w*0.10, rx1=w*0.74, cy=h*0.50, rt=46*u;
+      // cloth sweeps along the rod (real reciprocating motion); settles to the middle when stopped
+      amp=approach(amp,rubbing?1:0,3,dt); if(rubbing) phase+=dt*5.2;
+      const cx = touching ? lerp((rx0+rx1)/2,(rx0+rx1)/2,1) : (rx0+rx1)/2 + Math.sin(phase)*amp*(rx1-rx0)*0.34;
+      // electrons in flight
+      if(rubbing){ spawnT+=dt; if(spawnT>0.32 && arrived+pending<8){ spawnT=0; pending++; el.push({t:0,fwd:true,ox:(Math.random()-0.5)*50*u,rx:cx}); } }
+      if(touching){ touchT+=dt; if(touchT>0.16){ touchT=0; if(arrived>0){ arrived--; el.push({t:0,fwd:false,ox:(Math.random()-0.5)*50*u,rx:cx}); } else if(!el.length&&pending===0) touching=false; } }
+      for(let i=el.length-1;i>=0;i--){ const e=el[i]; e.t+=dt/0.7; if(e.t>=1){ if(e.fwd){ arrived++; pending--; } el.splice(i,1); } }
+      sShown=approach(sShown,arrived/8,8,dt);
+      // rod
+      ctx.save(); rrect(ctx,rx0,cy-rt/2,rx1-rx0,rt,rt/2); ctx.fillStyle=rodSign>0?'#fdf2ef':'#eef6fe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+      textAt(ctx,pair==='gs'?'Glass rod':'Plastic rod',rx0,cy+rt/2+22*u,{size:13*Math.max(0.9,u),weight:600,color:COL.muted});
+      // rod marks
+      const mk=arrived; for(let k=0;k<mk;k++){ mark(ctx,rx0+(rx1-rx0)*(k+0.5)/8,cy,8*u+3,rodSign); }
+      // cloth wrapped over the rod
+      const cw=170*u, ch=rt+64*u;
+      ctx.save(); rrect(ctx,cx-cw/2,cy-ch/2,cw,ch,16*u); ctx.fillStyle='rgba(238,242,248,0.72)'; ctx.fill(); ctx.strokeStyle=COL.mid; ctx.lineWidth=2.2; ctx.stroke();
+      for(let f=-2;f<=2;f++){ ctx.beginPath(); ctx.moveTo(cx+f*cw*0.17,cy-ch/2+4); ctx.quadraticCurveTo(cx+f*cw*0.17+6*Math.sin(phase+f),cy,cx+f*cw*0.17,cy+ch/2-4); ctx.strokeStyle=rgba(COL.mid,0.5); ctx.lineWidth=1.2; ctx.stroke(); }
+      ctx.restore();
+      textAt(ctx,pair==='gs'?'Silk':'Fur',cx,cy-ch/2-8*u,{size:13*Math.max(0.9,u),weight:600,color:COL.muted,align:'center'});
+      for(let k=0;k<arrived;k++){ const a=(k%4), b=Math.floor(k/4); mark(ctx,cx-cw*0.33+a*cw*0.22,cy-ch/2+15*u+b*(ch-30*u),7*u+2,-rodSign); }
+      // flying electrons (blue −), arcs between rod surface and cloth
+      el.forEach(e=>{
+        const p=e.fwd?e.t:1-e.t, ease=p*p*(3-2*p);
+        // direction: glass → electrons go rod→cloth ; plastic → fur→rod
+        const toCloth = (rodSign>0)===e.fwd;
+        const q=toCloth?ease:1-ease;
+        const x0=e.rx+e.ox, x=x0+Math.sin(q*Math.PI)*0; const y=lerp(cy,cy-ch/2+10*u,q)-Math.sin(q*Math.PI)*18*u;
+        circ(ctx,x,y,11*u+3,COL.blue,'#fff',2.4); line(ctx,x-5*u-2,y,x+5*u+2,y,COL.blue,2.4);
+      });
+      // contact flash when touching
+      if(touching) textAt(ctx,'charges cancel',w*0.5,h*0.18,{size:15*Math.max(0.9,u),weight:600,color:COL.green,align:'center'});
+      // electron legend
+      circ(ctx,w*0.10,h*0.84,8*u+2,COL.blue,'#fff',2); line(ctx,w*0.10-4*u,h*0.84,w*0.10+4*u,h*0.84,COL.blue,2);
+      textAt(ctx,'electron (−e)',w*0.10+18*u,h*0.84+4,{size:12*Math.max(0.9,u),color:COL.muted});
+      // readouts
+      const q=sShown*1.0; // nC
+      const sign=rodSign;
+      setText(wrap,'cRod',(sign>0?'+':'−')+fmt(q,2)+' nC',qCol(sign>0?1:-1));
+      setText(wrap,'cCloth',(sign>0?'−':'+')+fmt(q,2)+' nC',qCol(sign>0?-1:1));
+      setText(wrap,'cTot','0.00 nC');
+      setText(wrap,'cN',sci(sShown*6.24e9,2));
+    } else {
+      // ---------- near mode : suspended rod on a thread, held rod brought up ----------
+      const px=w*0.64, py=h*0.07, Lth=h*0.50, scale=w*0.0115;
+      const restX=px, cyB=py+Lth, rodH=h*0.30, rodW=30*u+4;
+      const hx = restX - V('dist')*scale;
+      heldX=approach(heldX||hx,hx,6,dt);
+      // pendulum with real Coulomb force (inverse-square), semi-implicit steps
+      const sub=4; for(let s=0;s<sub;s++){
+        const d=dt/sub, bobx=px+Lth*Math.sin(th.x);
+        const rcm=Math.max((rodW+6)/scale,(bobx-heldX)/scale);
+        const Fa=12*sS*sH*Math.pow(10/Math.abs(rcm),2);
+        const acc=-24*Math.sin(th.x)+Fa*Math.cos(th.x)-2*0.22*Math.sqrt(24)*th.v;
+        th.v+=acc*d; th.x+=th.v*d; th.x=clamp(th.x,-1.2,1.2);
+        const nb=px+Lth*Math.sin(th.x); if(nb-heldX<rodW+6){ th.x=Math.asin(clamp((heldX+rodW+6-px)/Lth,-1,1)); if(th.v<0) th.v*=-0.1; }
+      }
+      const bobx=px+Lth*Math.sin(th.x), boby=py+Lth*Math.cos(th.x);
+      // stand
+      line(ctx,w*0.90,h*0.95,w*0.90,py,COL.ink,3); line(ctx,w*0.90,py,px,py,COL.ink,3); line(ctx,w*0.84,h*0.95,w*0.96,h*0.95,COL.ink,3);
+      circ(ctx,px,py,4,COL.ink,COL.ink,1);
+      line(ctx,px,py,bobx,boby-rodH/2,COL.mid,1.8);
+      const drawRod=(x,y,s,lab)=>{
+        ctx.save(); rrect(ctx,x-rodW/2,y-rodH/2,rodW,rodH,rodW/2); ctx.fillStyle=s>0?'#fdf2ef':'#eef6fe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+        for(let k=0;k<5;k++) mark(ctx,x,y-rodH/2+rodH*(k+0.5)/5,5*u+1.5,s);
+        textAt(ctx,lab,x,y-rodH/2-10*u,{size:12*Math.max(0.9,u),weight:600,color:COL.muted,align:'center'});
+      };
+      // held rod + handle + hand
+      const hy=cyB;
+      line(ctx,heldX,hy+rodH/2,heldX,hy+rodH/2+h*0.2,COL.ink,5*u+1);
+      ctx.save(); rrect(ctx,heldX-20*u,hy+rodH/2+h*0.2,40*u,34*u,12*u); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+      drawRod(heldX,hy,sH,sH>0?'glass':'plastic');
+      drawRod(bobx,boby,sS,sS>0?'glass':'plastic');
+      // forces (equal and opposite)
+      const rcm=Math.max((rodW+6)/scale,(bobx-heldX)/scale);
+      const Fmag=K_E*1e-18/Math.pow(rcm*0.01,2); // N, q = 1 nC each
+      const like=sS*sH>0, dirB=like?1:-1;
+      const L=clamp(Math.log10(1+Fmag*1e9)*20*u,14,120*u);
+      vec(ctx,bobx,boby-rodH*0.22,bobx+dirB*L,boby-rodH*0.22,COL.green,4,12*u+3);
+      vec(ctx,heldX,hy+rodH*0.22,heldX-dirB*L,hy+rodH*0.22,COL.green,4,12*u+3);
+      tagBox(ctx,like?'repel':'attract',(bobx+heldX)/2,hy-rodH/2-34*u,COL.green,13);
+      dimLine(ctx,heldX,bobx,hy+rodH/2+14*u,fmt(rcm,1)+' cm',u);
+      setText(wrap,'cF',fmt(Fmag*1e6,2)+' µN');
+      setText(wrap,'cK',like?'Repel':'Attract',COL.green);
+    }
+  });
+  return wrap;
+}
+/** horizontal dimension line with end ticks */
+function dimLine(ctx,x1,x2,y,txt,u){
+  line(ctx,x1,y,x2,y,COL.ink,1.4); line(ctx,x1,y-5,x1,y+5,COL.ink,1.4); line(ctx,x2,y-5,x2,y+5,COL.ink,1.4);
+  textAt(ctx,txt,(x1+x2)/2,y+17,{align:'center',size:12*Math.max(0.9,u||1),weight:600,color:COL.ink});
+}
+
+/* =====================================================================
+   1.2  GOLD-LEAF ELECTROSCOPE   (Fig 1.2)
+   Leaves repel with force ∝ Q² and are pulled down by gravity:
+   tanφ·sin²φ ∝ Q²  (solved every frame; the leaf swings in on a spring)
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell(
+    UI.tg('rod','Charged rod',[['1','Glass (+)'],['-1','Plastic (−)']],0)+
+    UI.sl('str','Charge on the rod',0.2,1,0.05,0.8)+
+    UI.sl('dist','Rod above the knob',0,10,0.1,10)+
+    UI.btns('b',[['fing','☝ Touch knob','navy'],['reset','Discharge','warn']])+
+    UI.cards([['cSp','Leaf spread','var(--f-green)'],['cQ','Charge on leaves']])+
+    UI.hint('Near = induction. Touch (0 cm) = same sign stays. Finger + near, then remove = opposite sign.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{str:v=>fmt(v,2),dist:v=>v<0.15?'touching':fmt(v,1)+' cm'});
+  let sign=1, finger=false, Qperm=0, fy=1, rodD=10; const leaf={x:0,v:0};
+  wireToggle(wrap,'rod',v=>sign=+v);
+  $('#fing').onclick=()=>{ finger=!finger; $('#fing').classList.toggle('on',finger); };
+  $('#reset').onclick=()=>{ Qperm=0; finger=false; $('#fing').classList.remove('on'); };
+  const phiEq=Q=>{ const c=1.3*Q*Q; let lo=0,hi=1.35; for(let i=0;i<30;i++){ const m=(lo+hi)/2; (Math.tan(m)*Math.pow(Math.sin(m),2)<c)?lo=m:hi=m; } return (lo+hi)/2; };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const cx=w*0.5, jarT=h*0.57, jarB=h*0.95, jw=Math.min(w*0.34,300*u+80);
+    const knobY=h*0.46, hingeY=h*0.75, Ll=h*0.15;
+    // rod descends smoothly toward the slider value
+    rodD=approach(rodD,V('dist'),7,dt);
+    const Qr=sign*V('str'), f=1/(1+Math.pow(rodD/3.2,2));
+    const indLeaf=0.6*Qr*f*(rodD>0.08?1:0.0);
+    const touch=rodD<0.12;
+    if(touch) Qperm=approach(Qperm,0.8*Qr,3.2,dt);
+    if(finger){ // finger on knob: leaves earthed — induced charge is cancelled by flow to earth
+      Qperm=approach(Qperm,-indLeaf,6,dt);
+    }
+    const QL=Qperm+indLeaf;
+    const phi=phiEq(Math.min(1,Math.abs(QL)));
+    // spring-damper leaf (settle with a little overshoot)
+    const sub=3; for(let s=0;s<sub;s++){ const d=dt/sub; const a=70*(phi-leaf.x)-9*leaf.v; leaf.v+=a*d; leaf.x+=leaf.v*d; }
+    leaf.x=clamp(leaf.x,0,1.45);
+    // jar
+    ctx.save(); rrect(ctx,cx-jw/2,jarT,jw,jarB-jarT,22*u); ctx.fillStyle='rgba(238,242,248,0.5)'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    line(ctx,cx-jw/2+6,jarT+12,cx+jw/2-6,jarT+12,COL.ink,1.6);
+    // metal rod + knob
+    line(ctx,cx,knobY,cx,hingeY,COL.ink,5*u+1.5);
+    circ(ctx,cx,knobY-12*u,16*u,COL.ink,'#fff',2.8);
+    // rod above
+    const rodLen=h*0.14, rodBottom=knobY-28*u-rodD*h*0.024;
+    ctx.save(); rrect(ctx,cx-13*u,rodBottom-rodLen,26*u,rodLen,13*u); ctx.fillStyle=sign>0?'#fdf2ef':'#eef6fe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    for(let k=0;k<4;k++) mark(ctx,cx,rodBottom-rodLen+rodLen*(k+0.5)/4,5*u+1,sign);
+    // leaves
+    for(const s of [-1,1]){
+      const ex=cx+s*Math.sin(leaf.x)*Ll, ey=hingeY+Math.cos(leaf.x)*Ll;
+      line(ctx,cx,hingeY,ex,ey,COL.yellow,5*u+1.5);
+      circ(ctx,cx,hingeY,3.5,COL.ink,COL.ink,1);
+      const n=Math.min(5,Math.round(Math.abs(QL)*6)); for(let k=0;k<n;k++){ const p=(k+0.8)/(n+0.6); mark(ctx,lerp(cx,ex,p)+s*10*u,lerp(hingeY,ey,p),4*u+1,QL); }
+    }
+    // knob side charge (induced, opposite to rod)
+    const nk=Math.min(4,Math.round(Math.abs(indLeaf)*7)); for(let k=0;k<nk;k++) mark(ctx,cx+(k%2?10:-10)*u*1.4,knobY-12*u-22*u-Math.floor(k/2)*13*u*0+0+((k%2)*2)*u,4*u+1,-Qr);
+    // spread arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,hingeY,Ll*0.5,Math.PI/2-leaf.x,Math.PI/2+leaf.x); ctx.strokeStyle=COL.green; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+    tagBox(ctx,fmt(leaf.x*2*180/Math.PI,0)+'°',cx,hingeY+Ll*0.5+22*u+Ll*0.1,COL.green,13);
+    // finger
+    fy=approach(fy,finger?0:1,7,dt);
+    const fyPix=knobY-30*u-fy*h*0.18;
+    ctx.save(); const fx=cx+jw*0.55-fy*jw*0.55; rrect(ctx,fx-14*u,fyPix-36*u,28*u,38*u,13*u); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    if(fy<0.6){ textAt(ctx,'to earth',fx+22*u,fyPix-14*u,{size:12*Math.max(0.9,u),color:COL.muted}); }
+    setText(wrap,'cSp',fmt(leaf.x*2*180/Math.PI,0)+'°');
+    setText(wrap,'cQ',Math.abs(QL)<0.04?'≈ neutral':(QL>0?'+  positive':'−  negative'),Math.abs(QL)<0.04?'inherit':qCol(QL));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.3  CONDUCTORS AND INSULATORS
+   Charge placed on a conductor repels itself over the whole surface (and
+   leaks to earth through a hand); on an insulator it stays where put.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell(
+    UI.tg('mat','Rod material',[['metal','Metal spoon'],['plastic','Plastic comb']],0)+
+    UI.tg('grip','Held by',[['hand','Bare hand'],['wood','Insulating handle']],0)+
+    UI.btns('b',[['rub','Charge one end','play'],['neut','Neutralise','warn']])+
+    UI.sl('hgt','Rod height above paper',2,14,0.1,12)+
+    UI.cards([['cOn','Charges on rod','var(--f-blue)'],['cLeak','Leaked to earth'],['cLift','Paper bits lifted','var(--f-green)']])+
+    UI.hint('Metal in a bare hand loses its charge to earth. Plastic keeps it and picks up paper.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{hgt:v=>fmt(v,1)+' cm'});
+  let mat='metal', grip='hand', leaked=0;
+  wireToggle(wrap,'mat',v=>{ mat=v; ch.length=0; leaked=0; });
+  wireToggle(wrap,'grip',v=>grip=v);
+  const ch=[]; const leak=[]; // charges: {x (0..1), v, side}
+  const bits=[]; for(let i=0;i<9;i++) bits.push({fx:0.12+i*0.095,y:0,v:0,stuck:false,k:0.85+Math.random()*0.35});
+  $('#rub').onclick=()=>{ for(let i=0;i<8&&ch.length<30;i++) ch.push({x:0.03+Math.random()*0.05,v:0,side:Math.random()<0.5?-1:1,jit:Math.random()*6}); };
+  $('#neut').onclick=()=>{ ch.length=0; leaked=0; };
+  let rodY=0;
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const tableY=h*0.90, rt=52*u;
+    const rx0=w*0.10, rx1=w*0.74, L=rx1-rx0;
+    // rod height eases (spring-like settle)
+    const tgtY=tableY-V('hgt')*h*0.052-rt/2-10*u;
+    rodY=rodY?approach(rodY,tgtY,6,dt):tgtY;
+    const cy=rodY;
+    // --- charge physics ---
+    const metalLeak = mat==='metal' && grip==='hand';
+    if(mat==='metal'){
+      for(let s=0;s<3;s++){ const d=dt/3;
+        for(const a of ch){ let F=0; for(const b of ch){ if(a===b) continue; const dx=a.x-b.x, sg=sgn(dx)||(Math.random()-0.5); F+=sg*0.0016/(dx*dx+0.0006); }
+          a.v+=(F*18-5*a.v)*d; a.x+=a.v*d; if(a.x<0.01){ a.x=0.01; a.v=Math.abs(a.v)*0.3; } if(a.x>0.985&&!metalLeak){ a.x=0.985; a.v=-Math.abs(a.v)*0.3; } }
+      }
+      if(metalLeak){ for(let i=ch.length-1;i>=0;i--){ if(ch[i].x>0.88 && Math.random()<dt*3.2){ leak.push({t:0,x:rx0+L*ch[i].x,side:ch[i].side}); ch.splice(i,1); leaked++; } } }
+    } else { ch.forEach(a=>{ a.x=Math.max(0.01,a.x); }); }
+    for(let i=leak.length-1;i>=0;i--){ leak[i].t+=dt/1.1; if(leak[i].t>=1) leak.splice(i,1); }
+    // --- drawing ---
+    // table
+    line(ctx,w*0.04,tableY,w*0.96,tableY,COL.ink,3);
+    // rod
+    ctx.save(); rrect(ctx,rx0,cy-rt/2,L,rt,mat==='metal'?rt/2:5*u); ctx.fillStyle=mat==='metal'?'#f6f9fc':'#eef6fe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+    if(mat==='plastic'){ for(let k=0;k<18;k++){ const x=rx0+8*u+k*(L-16*u)/17; line(ctx,x,cy+rt/2,x,cy+rt/2+10*u,COL.ink,2); } }
+    // handle / hand at right end
+    const hx=rx1;
+    if(grip==='wood'){ ctx.save(); rrect(ctx,hx,cy-rt/2*0.8,70*u,rt*0.8,6*u); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.setLineDash([5,4]); ctx.stroke(); ctx.restore(); textAt(ctx,'wood / plastic grip',hx+35*u,cy-rt/2-10*u,{size:11.5*Math.max(0.9,u),color:COL.muted,align:'center'}); }
+    const gx = grip==='wood'? hx+70*u : hx-20*u;
+    ctx.save(); rrect(ctx,gx-6*u,cy-rt/2-6*u,52*u,rt+12*u,14*u); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    line(ctx,gx+20*u,cy+rt/2+6*u,gx+20*u,tableY-22*u,COL.ink,3);  // arm to earth
+    // earth symbol
+    const ex=gx+20*u, ey=h*0.96-0; /* just above bottom edge */
+    textAt(ctx,'earth',ex+14*u,tableY+22*u,{size:11.5*Math.max(0.9,u),color:COL.muted});
+    for(let k=0;k<3;k++) line(ctx,ex-(14-k*4)*u,tableY+6*u+k*5*u,ex+(14-k*4)*u,tableY+6*u+k*5*u,COL.ink,2);
+    line(ctx,ex,tableY-22*u,ex,tableY+6*u,COL.ink,3);
+    // charges on rod (blue, −) : they sit on the surface
+    ch.forEach((a,i)=>{
+      const x=rx0+L*a.x+(mat==='plastic'?Math.sin(t*3+i)*0.6:0), y=cy+a.side*(rt/2-1);
+      circ(ctx,x,y,9*u+2,COL.blue,'#fff',2); line(ctx,x-4*u-1,y,x+4*u+1,y,COL.blue,2);
+    });
+    // leaking charges run down through hand → earth
+    leak.forEach(l=>{ const p=l.t; const x0=l.x, y0=cy+l.side*(rt/2); const x1=ex, y1=tableY-22*u;
+      const xx = p<0.35? lerp(x0,x1,p/0.35) : x1, yy = p<0.35? lerp(y0,cy,p/0.35) : lerp(cy,y1,(p-0.35)/0.65);
+      circ(ctx,xx,yy,9*u+2,COL.blue,'#fff',2); line(ctx,xx-4*u-1,yy,xx+4*u+1,yy,COL.blue,2); });
+    // paper bits: attracted by induced polarisation ∝ charge / gap²
+    const Q=ch.length/30; let lifted=0;
+    bits.forEach((b,i)=>{
+      const bx=w*0.10+L*(0.10+i*0.1), size=12*u+3;
+      const rodBottom=cy+rt/2+(mat==='plastic'?10*u:0);
+      if(b.y===0) b.y=tableY-size;
+      const gap=Math.max(6,b.y-size-rodBottom);
+            const attr = 4e7*Q*b.k/(gap*gap)*Math.exp(-Math.pow((bx-(rx0+L*0.5))/(L*0.62),2));
+      const floorY=tableY-size;
+      if(b.stuck){ b.y=rodBottom+size; b.v=0; if(Q===0) b.stuck=false; }
+      else { b.v+=(900-attr)*dt; b.v*=Math.exp(-3*dt); b.y+=b.v*dt; if(b.y>=floorY){ b.y=floorY; if(b.v>0) b.v*=-0.2; } if(b.y-size<=rodBottom){ b.stuck=true; } }
+      if(b.stuck) lifted++;
+      const jig=Math.abs(b.v)>5?Math.sin(t*30+i)*1.5:0;
+      ctx.save(); ctx.translate(bx+jig,b.y-size/2); ctx.rotate(0.3*Math.sin(i*2+b.y*0.05)); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; ctx.fillStyle='#fff'; ctx.fillRect(-size/2,-size/2,size,size); ctx.strokeRect(-size/2,-size/2,size,size); ctx.restore();
+    });
+    textAt(ctx,'paper bits',w*0.10+L*0.5,tableY+22*u,{size:12*Math.max(0.9,u),color:COL.muted,align:'center'});
+    setText(wrap,'cOn',String(ch.length));
+    setText(wrap,'cLeak',String(leaked));
+    setText(wrap,'cLift',String(lifted));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.5  COULOMB'S LAW   F = k q1 q2 / r²      (Examples 1.3, 1.4)
+   Held: the ball follows the slider. Released: it moves under the real
+   force, with sliding friction (μ = 0.2) and bouncing walls.
+   Real motion lasts ~25 ms, so it is shown 25× slower (×0.04).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell(
+    UI.sl('q1','Charge q₁',-5,5,0.1,3)+
+    UI.sl('q2','Charge q₂',-5,5,0.1,3)+
+    UI.sl('r','Separation r',4.4,32,0.1,14)+
+    UI.btns('b1',[['rel','▶ Release q₂','play'],['half','Halve r','navy']])+
+    UI.btns('b2',[['ex14','Touch both with neutral spheres','navy']])+
+    UI.btns('b3',[['rst','Reset','warn']])+
+    UI.cards([['cF','Force F','var(--f-green)'],['cR','F ÷ F₀ (Ex 1.4)'],['cA','Acceleration of q₂']])+
+    UI.hint('Slow motion ×0.04 · m = 20 g · μ = 0.2. For e⁻ and p⁺: Fₑ/F_G = 2.4×10³⁹.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{q1:v=>(v>0?'+':'')+fmt(v,1)+' µC',q2:v=>(v>0?'+':'')+fmt(v,1)+' µC',r:v=>fmt(v,1)+' cm'});
+  let free=false, r=14, vr=0, q1s=3, q2s=3, half=1, F0=null, nTouch=0, ex=-1, exDone=false, sliderLock=false;
+  const rEl=$('#r'), rLab=$('#rV');
+  rEl.addEventListener('input',()=>{ free=false; vr=0; $('#rel').textContent='▶ Release q₂'; });
+  $('#rel').onclick=()=>{ free=true; vr=0; };
+  $('#half').onclick=()=>{ setSlider(wrap,'r',clamp(r/2,4.4,32)); };
+  $('#ex14').onclick=()=>{ if(ex<0&&nTouch<2){ ex=0; exDone=false; const q1=V('q1')*half, q2=V('q2')*half; const rr=r; F0=K_E*Math.abs(q1*q2)*1e-12/Math.pow(rr*0.01,2); } };
+  $('#rst').onclick=()=>{ half=1; F0=null; nTouch=0; ex=-1; free=false; setSlider(wrap,'r',14); };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const P=w*0.90/40, x0=w*0.05, ty=h*0.52, rad=Math.max(16,2.2*P);
+    const q1t=V('q1')*half, q2t=V('q2')*half;
+    q1s=approach(q1s,q1t,6,dt); q2s=approach(q2s,q2t,6,dt);
+    // neutral-sphere touch animation: C and D swing in, touch, and leave. Charge halves at contact.
+    if(ex>=0){ ex+=dt/1.8; if(ex>=0.5&&!exDone){ exDone=true; half*=0.5; nTouch++; } if(ex>=1){ ex=-1; } }
+    // --- dynamics ---
+    const qq1=q1s, qq2=q2s;
+    const Fs=K_E*qq1*qq2*1e-12/Math.pow(Math.max(r,2)*0.01,2);   // + repulsive
+    if(free){
+      const S=0.04, sub=8; for(let s=0;s<sub;s++){ const d=dt*S/sub;
+        const Fc=K_E*qq1*qq2*1e-12/Math.pow(Math.max(r,2)*0.01,2);
+        let a=Fc/0.02; // m/s²
+        const fr=0.2*9.8;
+        if(Math.abs(vr)<0.02 && Math.abs(a)<=fr){ vr=0; a=0; }
+        else a-= fr*sgn(vr||a);
+        vr+=a*100*d; r+=vr*d;
+        if(r<4.4){ r=4.4; if(vr<0) vr*=-0.3; } if(r>32){ r=32; if(vr>0) vr*=-0.5; }
+      }
+      rEl.value=r; rLab.textContent=fmt(r,1)+' cm';
+      $('#rel').textContent='▶ Release q₂';
+    } else {
+      r=approach(r,V('r'),9,dt);
+    }
+    const X1=x0+5*P, X2=X1+r*P;
+    // track + ruler
+    line(ctx,x0,ty+rad+10,x0+40*P,ty+rad+10,COL.ink,2.4);
+    for(let c=0;c<=40;c+=5){ const x=x0+c*P, big=c%10===0; line(ctx,x,ty+rad+10,x,ty+rad+(big?22:17),COL.ink,1.6); if(big) textAt(ctx,String(c),x,ty+rad+37,{align:'center',size:11*Math.max(0.9,u),color:COL.muted}); }
+    textAt(ctx,'cm',x0+40*P+6,ty+rad+37,{size:11*Math.max(0.9,u),color:COL.muted});
+    rect(ctx,x0+37*P+rad+2,ty-rad-14,6,2*rad+28,null,COL.pale,0);
+    // balls
+    chargeBall(ctx,X1,ty,rad,q1s); chargeBall(ctx,X2,ty,rad,q2s);
+    textAt(ctx,'q₁ = '+fmt(q1s,2)+' µC',X1,ty-rad-12,{align:'center',size:12.5*Math.max(0.9,u),weight:600,color:qCol(q1s)});
+    textAt(ctx,'q₂ = '+fmt(q2s,2)+' µC',X2,ty-rad-12,{align:'center',size:12.5*Math.max(0.9,u),weight:600,color:qCol(q2s)});
+    // r dimension
+    dimLine(ctx,X1,X2,ty-rad-40*u-8,'r = '+fmt(r,1)+' cm',u);
+    // neutral spheres
+    if(ex>=0){ const p=ex, off=rad*(2.05+4*Math.pow(Math.abs(2*p-1),1.4));
+      [X1,X2].forEach((X,i)=>{ const sw=(i?1:-1)*rad*0.9*(Math.abs(2*p-1)); circ(ctx,X+sw*0.3,ty-off,rad,COL.mid,'#fff',2.6); textAt(ctx,i?'D':'C',X+sw*0.3,ty-off+5,{align:'center',size:13*Math.max(0.9,u),weight:700,color:COL.mid}); }); }
+    // force arrows (equal and opposite)
+    const F=Math.abs(Fs), like=qq1*qq2>0, L=clamp(Math.log10(1+F*30)*38*u,0,200*u);
+    if(F>1e-4){
+      vec(ctx,X2,ty,X2+(like?1:-1)*L,ty,COL.green,4,12*u+3);
+      vec(ctx,X1,ty,X1-(like?1:-1)*L,ty,COL.green,4,12*u+3);
+      tagBox(ctx,'F = '+fmt(F,F<10?2:1)+' N',(X1+X2)/2,ty+rad+68,COL.green,12.5);
+    }
+    // readouts
+    setText(wrap,'cF',sci(F,2)+' N');
+    setText(wrap,'cR',F0?fmt(F/F0,2):'—');
+    setText(wrap,'cA',sci(F/0.02,2)+' m/s²');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.6  FORCES BETWEEN MULTIPLE CHARGES   (superposition, Ex 1.5, 1.6)
+   F on one charge = vector sum of forces from the others.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell(
+    UI.tg('tgt','Force on charge',[['0','A'],['1','B'],['2','C']],0)+
+    UI.sl('qA','Charge A',-5,5,0.5,2)+UI.sl('qB','Charge B',-5,5,0.5,2)+UI.sl('qC','Charge C',-5,5,0.5,-2)+
+    UI.sl('l','Side of triangle l',6,30,0.5,14)+
+    UI.btns('b1',[['p6','Ex 1.6 · q, q, −q','navy'],['p5','Ex 1.5 · q, q, q','navy']])+
+    UI.btns('b2',[['free','Let it move','play'],['rst','Reset','warn']])+
+    UI.cards([['cF','|F| on target','var(--f-green)'],['cAng','Direction'],['cR','|F| ÷ (k q²/l²)','var(--f-green)',true]])+
+    UI.hint('Component forces (thin) add as vectors to the resultant (thick).'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{qA:v=>(v>0?'+':'')+fmt(v,1)+' µC',qB:v=>(v>0?'+':'')+fmt(v,1)+' µC',qC:v=>(v>0?'+':'')+fmt(v,1)+' µC',l:v=>fmt(v,1)+' cm'});
+  let tgt=0, free=false, G=1;
+  const qs=[2,2,-2], off={x:0,y:0,vx:0,vy:0};
+  wireToggle(wrap,'tgt',v=>{ tgt=+v; off.x=off.y=off.vx=off.vy=0; });
+  $('#p6').onclick=()=>{ setSlider(wrap,'qA',2); setSlider(wrap,'qB',2); setSlider(wrap,'qC',-2); };
+  $('#p5').onclick=()=>{ setSlider(wrap,'qA',2); setSlider(wrap,'qB',2); setSlider(wrap,'qC',2); };
+  $('#free').onclick=()=>{ free=!free; $('#free').classList.toggle('on',free); };
+  $('#rst').onclick=()=>{ free=false; $('#free').classList.remove('on'); off.x=off.y=off.vx=off.vy=0; };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const P=h*0.0225, cx=w*0.5, cy=h*0.54, l=V('l');
+    ['qA','qB','qC'].forEach((id,i)=>qs[i]=approach(qs[i],V(id),6,dt));
+    // positions in cm (y up), centroid at origin
+    const base=[[0,l*0.57735],[-l/2,-l*0.288675],[l/2,-l*0.288675]];
+    const pos=base.map((b,i)=>i===tgt?[b[0]+off.x,b[1]+off.y]:b);
+    const forceOn=(i)=>{ let fx=0,fy=0; const parts=[];
+      for(let j=0;j<3;j++){ if(j===i) continue; const dx=pos[i][0]-pos[j][0], dy=pos[i][1]-pos[j][1], d=Math.max(1.5,Math.hypot(dx,dy));
+        const F=K_E*qs[i]*qs[j]*1e-12/Math.pow(d*0.01,2); const fxj=F*dx/d, fyj=F*dy/d; fx+=fxj; fy+=fyj; parts.push([fxj,fyj,j]); }
+      return {fx,fy,parts}; };
+    const f=forceOn(tgt);
+    if(free){ const S=0.05, sub=6; for(let s=0;s<sub;s++){ const d=dt*S/sub; const ff=forceOn(tgt); const ax=ff.fx/0.02*100, ay=ff.fy/0.02*100;
+        off.vx+=(ax-8*off.vx)*d; off.vy+=(ay-8*off.vy)*d; off.x+=off.vx*d; off.y+=off.vy*d;
+        const lim=Math.min(w,h*1.3)/(2*P)-2; const px=base[tgt][0]+off.x, py=base[tgt][1]+off.y;
+        if(Math.abs(px)>lim){ off.x=sgn(px)*lim-base[tgt][0]; off.vx*=-0.4; } if(Math.abs(py)>h*0.45/P){ off.y=sgn(py)*h*0.45/P-base[tgt][1]; off.vy*=-0.4; } } }
+    const S2=(p)=>[cx+p[0]*P, cy-p[1]*P];
+    // faint triangle
+    ctx.save(); ctx.setLineDash([6,6]); ctx.strokeStyle=COL.pale; ctx.lineWidth=2; ctx.beginPath(); base.forEach((b,i)=>{ const s=S2(b); i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]); }); ctx.closePath(); ctx.stroke(); ctx.restore();
+    // vectors
+    const mags=[Math.hypot(f.fx,f.fy),...f.parts.map(p=>Math.hypot(p[0],p[1]))], mx=Math.max(1e-6,...mags);
+    G=approach(G,150*u/mx,5,dt);
+    const T=S2(pos[tgt]);
+    const names=['A','B','C'];
+    f.parts.forEach(p=>{ const e=[T[0]+p[0]*G, T[1]-p[1]*G];
+      vec(ctx,T[0],T[1],e[0],e[1],COL.green,2.4,9*u+3);
+      ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=rgba(COL.green,0.6); ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(e[0],e[1]); ctx.lineTo(T[0]+f.fx*G,T[1]-f.fy*G); ctx.stroke(); ctx.restore();
+      textAt(ctx,'F'+names[tgt]+names[p[2]],e[0]+(e[0]>T[0]?8:-8),e[1]-8,{size:12*Math.max(0.9,u),weight:600,color:COL.green,align:e[0]>T[0]?'left':'right'}); });
+    vec(ctx,T[0],T[1],T[0]+f.fx*G,T[1]-f.fy*G,COL.green,5,14*u+3);
+    // balls
+    pos.forEach((p,i)=>{ const s=S2(p);
+      if(i===tgt){ ctx.save(); ctx.setLineDash([4,4]); circ(ctx,s[0],s[1],25*u+4,COL.yellow,null,2.4); ctx.restore(); }
+      chargeBall(ctx,s[0],s[1],17*u+3,qs[i]);
+      textAt(ctx,names[i],s[0]+(i===0?0:(i===1?-1:1))*(30*u+4),s[1]+(i===0?-28*u-4:6),{align:'center',size:14*Math.max(0.9,u),weight:700,color:COL.ink});
+    });
+    // side label
+    const sb=S2(base[1]), sc=S2(base[2]); dimLine(ctx,sb[0],sc[0],sb[1]+46*u,'l = '+fmt(l,1)+' cm',u);
+    const Fn=Math.hypot(f.fx,f.fy), ang=Math.atan2(f.fy,f.fx)*180/Math.PI, F0=K_E*qs[tgt]*qs[tgt]*1e-12/Math.pow(l*0.01,2);
+    setText(wrap,'cF',Fn<1e-9?'0':fmt(Fn,2)+' N');
+    setText(wrap,'cAng',Fn<1e-6?'—':fmt(((ang%360)+360)%360,0)+'° from +x');
+    setText(wrap,'cR',F0>1e-9&&!free&&off.x===0&&off.y===0?fmt(Fn/F0,2):'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.7  CHARGE IN A UNIFORM FIELD   F = qE ,  a = qE/m     (Example 1.7)
+   h = ½ a t²  →  t = √(2h m / qE).  Electron: 2.9 ns, proton: 1.25×10² ns.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell(
+    UI.tg('part','Particle',[['e','Electron'],['p','Proton'],['race','Race both']],0)+
+    UI.tg('dir','Field direction',[['up','E ↑'],['down','E ↓']],0)+
+    UI.sl('E','Field strength E',0.5,5,0.1,2)+
+    UI.btns('b',[['go','▶ Release','play'],['rst','Reset','warn']])+
+    UI.cards([['cA','Acceleration','var(--f-green)'],['cT','Real fall time (1.5 cm)'],['cV','Speed at the plate'],['cS','Slow-motion factor']])+
+    UI.hint('Plates 3 cm apart; particle starts at the middle. Example 1.7: E = 2×10⁴ N/C. Compare g = 9.8 m/s².'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{E:v=>fmt(v,1)+' ×10⁴ N/C'});
+  const e=1.6e-19, me=9.11e-31, mp=1.67e-27, hh=0.015;
+  const tRef=m=>Math.sqrt(2*hh/(e*2e4/m));
+  let part='e', dir='up', run=false, td=0; const trail={e:[],p:[]};
+  wireToggle(wrap,'part',v=>{ part=v; reset(); }); wireToggle(wrap,'dir',v=>{ dir=v; reset(); });
+  function reset(){ run=false; td=0; trail.e.length=0; trail.p.length=0; }
+  $('#go').onclick=()=>{ reset(); run=true; };
+  $('#rst').onclick=reset;
+  setTimeout(()=>{ if(!run&&td===0) run=true; },500);
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const y1=h*0.14, y2=h*0.86, ym=(y1+y2)/2, px0=w*0.10, px1=w*0.90;
+    const E=V('E')*1e4, Esign=dir==='up'?-1:1;   // screen y: up is negative
+    // plates and signs
+    const topSign = dir==='up'?-1:1;
+    ctx.save(); ctx.lineCap='butt';
+    line(ctx,px0,y1,px1,y1,COL.ink,6); line(ctx,px0,y2,px1,y2,COL.ink,6); ctx.restore();
+    for(let x=px0+14*u;x<px1;x+=26*u){ mark(ctx,x,y1-14*u,5*u+1.5,topSign); mark(ctx,x,y2+14*u,5*u+1.5,-topSign); }
+    textAt(ctx,'3 cm',px0-8,ym+4,{align:'right',size:12*Math.max(0.9,u),weight:600,color:COL.muted});
+    line(ctx,px0-30*u,y1,px0-30*u,y2,COL.ink,1.4); arrowHead(ctx,px0-30*u,y1,-Math.PI/2,COL.ink,6); arrowHead(ctx,px0-30*u,y2,Math.PI/2,COL.ink,6);
+    // field lines (yellow, flowing along E)
+    const nCol=Math.floor((px1-px0)/(58*u));
+    for(let i=0;i<=nCol;i++){ const x=px0+30*u+i*(px1-px0-60*u)/nCol;
+      const a=Esign<0?y2-4:y1+4, b=Esign<0?y1+4:y2-4;
+      ctx.save(); ctx.strokeStyle=rgba(COL.yellow,0.45); ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x,a); ctx.lineTo(x,b); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.2; ctx.setLineDash([1.5,15]); ctx.lineCap='round'; ctx.lineDashOffset=-t*40; ctx.beginPath(); ctx.moveTo(x,a); ctx.lineTo(x,b); ctx.stroke(); ctx.restore();
+      arrowHead(ctx,x,ym+Esign*18*u,Esign<0?-Math.PI/2:Math.PI/2,COL.yellow,10*u+2);
+    }
+    textAt(ctx,'E',px1+0,ym+4,{size:15*Math.max(0.9,u),weight:700,color:COL.yellow,align:'right'});
+    // particles
+    const list = part==='race'?['e','p']:[part];
+    const info={};
+    list.forEach(k=>{
+      const q = k==='e'?-1:1, m = k==='e'?me:mp, a=e*E/m, treal=Math.sqrt(2*hh/a);
+      const Sc = part==='race' ? 6.0/tRef(mp) : 2.2/tRef(m);
+      info[k]={a,treal,Sc,v:a*treal};
+    });
+    if(run) td+=dt;
+    let allDone=true;
+    list.forEach((k,idx)=>{
+      const inf=info[k], q=k==='e'?-1:1, Td=inf.treal*inf.Sc;
+      const frac = Math.min(1,(td/Td)*(td/Td)), done=td>=Td;
+      if(!done) allDone=false;
+      const fdir = Esign*q;   // screen direction of force (−1 = up)
+      const X = part==='race'? (idx===0?w*0.38:w*0.62) : w*0.5;
+      const Y = ym + fdir*frac*(y2-y1)/2*0.985;
+      const vNow = done?0:Math.sqrt(frac)*2; // velocity ∝ t
+      const tr=trail[k]; if(run&&!done&&(!tr.length||Math.abs(tr[tr.length-1]-Y)>5)) tr.push(Y);
+      tr.forEach((yy,i)=>circ(ctx,X,yy,3.5*u+1,rgba(COL.mid,0.5),null,1.2));
+      // force arrow (green) and velocity arrow (ink)
+      const FL=(34+10*V('E'))*u; vec(ctx,X,Y,X,Y+fdir*FL,COL.green,3.6,12*u+3);
+      if(!done&&frac>0.002){ const vl=Math.sqrt(frac)*70*u; vec(ctx,X+26*u+4,Y,X+26*u+4,Y+fdir*vl,COL.ink,2.6,10*u+2); }
+      chargeBall(ctx,X,Y,20*u+4,q,'#fff');
+      textAt(ctx,k==='e'?'electron':'proton',X,Y+(fdir<0?36*u:-26*u),{align:'center',size:12*Math.max(0.9,u),weight:600,color:qCol(q)});
+      if(done&&run){ // arrival ring
+        const rr=((td-Td)*70)%90; ctx.save(); ctx.globalAlpha=Math.max(0,1-rr/90); circ(ctx,X,fdir<0?y1:y2,rr*u,COL.green,null,2.5); ctx.restore(); }
+    });
+    if(allDone&&run&&td>0.1) { /* hold final frame */ }
+    // gravity comparison tag
+    const k0=list[list.length-1], i0=info[k0];
+    if(part==='race'){
+      setText(wrap,'cA','e⁻ '+sci(info.e.a,2)+' · p⁺ '+sci(info.p.a,2));
+      setText(wrap,'cT',fmt(info.e.treal*1e9,1)+' ns  vs  '+fmt(info.p.treal*1e9,0)+' ns');
+      setText(wrap,'cV','e⁻ '+sci(Math.sqrt(2*info.e.a*hh),2)+' · p⁺ '+sci(Math.sqrt(2*info.p.a*hh),2));
+      setText(wrap,'cS','×'+sci(info.p.Sc,1)+' (both)');
+    } else {
+      setText(wrap,'cA',sci(i0.a,2)+' m/s²');
+      setText(wrap,'cT',fmt(i0.treal*1e9,i0.treal<1e-8?2:0)+' ns');
+      setText(wrap,'cV',sci(Math.sqrt(2*i0.a*hh),2)+' m/s');
+      setText(wrap,'cS','×'+sci(i0.Sc,1));
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.8  ELECTRIC FIELD LINES   (Figs 1.12 – 1.14)
+   Lines leave + , enter − ; the number drawn ∝ |q|. A positive test
+   charge released in the field crawls along the line (E sets its drift).
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell(
+    UI.btns('pre1',[['s1','Single +','navy'],['s2','Single −','navy'],['s3','Dipole','navy']])+
+    UI.btns('pre2',[['s4','Like (+ +)','navy'],['s5','+2 and −1','navy']])+
+    UI.sl('q1','Left charge q₁',-4,4,1,4)+UI.sl('q2','Right charge q₂',-4,4,1,-4)+
+    UI.sl('sep','Separation',10,60,1,40)+
+    UI.sl('px','Test charge: x',0.05,0.95,0.01,0.5)+UI.sl('py','Test charge: y',0.1,0.9,0.01,0.2)+
+    UI.btns('b',[['go','▶ Release test charge','play'],['back','Put back','warn']])+
+    UI.cards([['cN1','Lines from q₁','var(--f-yellow)'],['cN2','Lines from q₂','var(--f-yellow)']])+
+    UI.hint('Number of lines ∝ |q|. Lines never cross · closer lines = stronger field.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{q1:v=>(v>0?'+':'')+v,q2:v=>(v>0?'+':'')+v,sep:v=>v+' cm',px:v=>fmt(v,2),py:v=>fmt(v,2)});
+  const pre=(a,b)=>()=>{ setSlider(wrap,'q1',a); setSlider(wrap,'q2',b); };
+  $('#s1').onclick=pre(4,0); $('#s2').onclick=pre(-4,0); $('#s3').onclick=pre(4,-4); $('#s4').onclick=pre(4,4); $('#s5').onclick=pre(4,-2);
+  let q1=4,q2=-4,x1=0,x2=0,released=false,tc={x:0,y:0,flash:0,gone:false},trail=[],tcInit=false;
+  $('#go').onclick=()=>{ released=true; tc.gone=false; trail=[]; };
+  $('#back').onclick=()=>{ released=false; tc.gone=false; trail=[]; tcInit=false; };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    q1=approach(q1,V('q1'),7,dt); q2=approach(q2,V('q2'),7,dt);
+    const sepPx=V('sep')*w*0.0095, cx=w*0.5, cy=h*0.5;
+    const single=Math.abs(V('q2'))<0.5;
+    const t1=single?cx:cx-sepPx/2, t2=single?cx+sepPx/2:cx+sepPx/2;
+    x1=x1?approach(x1,t1,7,dt):t1; x2=x2?approach(x2,t2,7,dt):t2;
+    const ch=[]; if(Math.abs(q1)>0.05) ch.push({x:x1,y:cy,q:q1*6400,u:q1});
+    if(Math.abs(q2)>0.05) ch.push({x:x2,y:cy,q:q2*6400,u:q2});
+    const rc=17*u+3;
+    const lines=buildLines(ch,w,h,rc,4,0);
+    drawLines(ctx,lines,t,COL.yellow);
+    if(Math.abs(q1)>0.05) chargeBall(ctx,x1,cy,rc,q1);
+    if(Math.abs(q2)>0.05) chargeBall(ctx,x2,cy,rc,q2);
+    if(Math.abs(q1)>0.05) textAt(ctx,(q1>0?'+':'−')+Math.round(Math.abs(q1))+'q',x1,cy+rc+22*u,{align:'center',size:13*Math.max(0.9,u),weight:700,color:qCol(q1)});
+    if(Math.abs(q2)>0.05) textAt(ctx,(q2>0?'+':'−')+Math.round(Math.abs(q2))+'q',x2,cy+rc+22*u,{align:'center',size:13*Math.max(0.9,u),weight:700,color:qCol(q2)});
+    // test charge
+    const sx=V('px')*w, sy=V('py')*h;
+    if(!released){ tc.x=tcInit?approach(tc.x,sx,9,dt):sx; tc.y=tcInit?approach(tc.y,sy,9,dt):sy; tcInit=true; tc.gone=false; }
+    else if(!tc.gone){
+      const f=fieldAt(ch,tc.x,tc.y), m=Math.hypot(f[0],f[1]);
+      if(m>1e-12){ const sp=(60+190*Math.min(1,m/0.35))*u; // faster where the field is stronger
+        tc.x+=f[0]/m*sp*dt; tc.y+=f[1]/m*sp*dt; }
+      if(!trail.length||Math.hypot(trail[trail.length-1][0]-tc.x,trail[trail.length-1][1]-tc.y)>6) trail.push([tc.x,tc.y]);
+      for(const c of ch){ if(Math.hypot(tc.x-c.x,tc.y-c.y)<rc*0.9){ if(c.q<0){ tc.gone=true; tc.flash=1; } } }
+      if(tc.x<-20||tc.x>w+20||tc.y<-20||tc.y>h+20) tc.gone=true;
+    }
+    if(trail.length>1){ ctx.save(); ctx.strokeStyle=rgba(COL.red,0.55); ctx.lineWidth=2.4; ctx.setLineDash([2,5]); strokePts(ctx,trail); ctx.restore(); }
+    tc.flash=Math.max(0,tc.flash-dt*1.6);
+    if(!tc.gone||tc.flash>0){
+      const E=fieldAt(ch,tc.x,tc.y), Em=Math.hypot(E[0],E[1]);
+      if(Em>1e-12&&!tc.gone){ const L=(16+54*Math.min(1,Em/0.5))*u; vec(ctx,tc.x,tc.y,tc.x+E[0]/Em*L,tc.y+E[1]/Em*L,COL.yellow,3.4,11*u+3); }
+      if(!tc.gone) chargeBall(ctx,tc.x,tc.y,9*u+3,1);
+      if(tc.flash>0){ ctx.save(); ctx.globalAlpha=tc.flash; circ(ctx,tc.x,tc.y,(1-tc.flash)*40*u+10,COL.green,null,3); ctx.restore(); }
+    }
+    setText(wrap,'cN1',Math.abs(q1)>0.05?String(Math.round(4*Math.abs(q1))):'—');
+    setText(wrap,'cN2',Math.abs(q2)>0.05?String(Math.round(4*Math.abs(q2))):'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.9  ELECTRIC FLUX   Φ = E · A cosθ     (Figs 1.15, 1.16)
+   Top view: field lines flow left → right through a square loop.
+   Flux = number of lines threading the loop (those are lit green).
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell(
+    UI.sl('E','Field strength E',1,5,0.1,3)+
+    UI.sl('a','Side of square loop',5,30,0.5,20)+
+    UI.sl('th','Tilt θ (normal vs field)',0,360,1,0)+
+    UI.btns('pre',[['t0','0°','navy'],['t60','60°','navy'],['t90','90°','navy'],['t180','180°','navy']])+
+    UI.btns('b',[['spin','↻ Spin the loop','play']])+
+    UI.cards([['cPhi','Flux Φ','var(--f-green)'],['cA','Area A'],['cN','Lines through loop','var(--f-yellow)']])+
+    UI.hint('Φ = E A cosθ · E = 2×10³ N/C, 10 cm square, θ = 0 → 20 N m²/C.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{E:v=>fmt(v,1)+' ×10³ N/C',a:v=>fmt(v,1)+' cm',th:v=>Math.round(v)+'°'});
+  let th=0, vel=0, spin=false, trail=[], tEl=$('#th');
+  [['t0',0],['t60',60],['t90',90],['t180',180]].forEach(([id,a])=>$('#'+id).onclick=()=>{ spin=false; $('#spin').classList.remove('on'); setSlider(wrap,'th',a); });
+  $('#spin').onclick=()=>{ spin=!spin; $('#spin').classList.toggle('on',spin); };
+  tEl.addEventListener('input',()=>{ if(spin){ spin=false; $('#spin').classList.remove('on'); } });
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    let tgt=V('th');
+    if(spin){ tgt=((th*180/Math.PI+dt*85)%360); tEl.value=tgt; wrap.querySelector('#thV').textContent=Math.round(tgt)+'°'; th=tgt*Math.PI/180; vel=0; }
+    else { // spring toward the slider (shortest way round)
+      const tr=tgt*Math.PI/180; let d=Math.atan2(Math.sin(tr-th),Math.cos(tr-th));
+      vel+=(90*d-13*vel)*dt; th+=vel*dt; }
+    const thd=((th*180/Math.PI)%360+360)%360;
+    const Erel=V('E'), sp=100*u/Erel, cx=w*0.5, cy=h*0.40, seg=V('a')*10*u;
+    const half=seg*Math.abs(Math.cos(th))/2;
+    // field lines
+    let n=0; const nl=Math.ceil(h*0.7/sp/2)+1;
+    for(let k=-nl;k<=nl;k++){ const y=cy+k*sp; if(y<10||y>h*0.66) continue;
+      const hit=Math.abs(k*sp)<=half+0.01 && half>0.5; if(hit) n++;
+      ctx.save(); ctx.strokeStyle=rgba(hit?COL.green:COL.yellow,hit?0.55:0.4); ctx.lineWidth=hit?2.4:1.5; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+      ctx.strokeStyle=hit?COL.green:COL.yellow; ctx.lineWidth=hit?3.8:3.2; ctx.setLineDash([1.5,15]); ctx.lineCap='round'; ctx.lineDashOffset=-t*(30+14*Erel); ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); ctx.restore();
+      if(Math.abs(y-cy)>1||true){ arrowHead(ctx,w*0.14,y,0,hit?COL.green:COL.yellow,9); arrowHead(ctx,w*0.86,y,0,hit?COL.green:COL.yellow,9); }
+    }
+    textAt(ctx,'E',w*0.04,cy-10,{size:16*Math.max(0.9,u),weight:700,color:COL.yellow});
+    // loop (oblique view of a square sheet, seen edge-on from above)
+    const nx=Math.cos(th), ny=-Math.sin(th), tx=Math.sin(th), ty=Math.cos(th);
+    const p1=[cx-tx*seg/2,cy-ty*seg/2], p2=[cx+tx*seg/2,cy+ty*seg/2], dx=-14*u, dy=-12*u;
+    ctx.save(); ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.lineTo(p2[0]+dx,p2[1]+dy); ctx.lineTo(p1[0]+dx,p1[1]+dy); ctx.closePath();
+    ctx.fillStyle=rgba(COL.green,0.12); ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+    line(ctx,p1[0],p1[1],p2[0],p2[1],COL.green,5);
+    // normal and angle
+    vec(ctx,cx,cy,cx+nx*70*u,cy+ny*70*u,COL.green,3.6,12*u+3);
+    textAt(ctx,'n̂',cx+nx*84*u,cy+ny*84*u+4,{align:'center',size:15*Math.max(0.9,u),weight:700,color:COL.green});
+    line(ctx,cx,cy,cx+60*u,cy,COL.mid,1.4,[4,4]);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,38*u,-th,0); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+    textAt(ctx,'θ',cx+48*u,cy-8*u,{size:14*Math.max(0.9,u),weight:700,color:COL.ink});
+    // Φ(θ) graph
+    const gx0=w*0.10, gx1=w*0.90, gy=h*0.855, ga=h*0.085;
+    line(ctx,gx0,gy,gx1,gy,COL.ink,1.4); line(ctx,gx0,gy-ga-8,gx0,gy+ga+8,COL.ink,1.4);
+    for(let a=0;a<=360;a+=90){ const x=lerp(gx0,gx1,a/360); line(ctx,x,gy-4,x,gy+4,COL.ink,1.4); textAt(ctx,a+'°',x,gy+ga+22*Math.max(0.8,u),{align:'center',size:11*Math.max(0.9,u),color:COL.muted}); }
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2.6; ctx.beginPath(); for(let a=0;a<=360;a+=3){ const x=lerp(gx0,gx1,a/360), y=gy-Math.cos(a*Math.PI/180)*ga; a?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.restore();
+    const mx=lerp(gx0,gx1,thd/360), my=gy-Math.cos(th)*ga;
+    line(ctx,mx,gy,mx,my,COL.green,1.6,[3,3]); circ(ctx,mx,my,6*u+2,COL.green,'#fff',2.6);
+    textAt(ctx,'Φ',gx0-12,gy-ga+2,{align:'right',size:14*Math.max(0.9,u),weight:700,color:COL.green});
+    const A=Math.pow(V('a')/100,2), Phi=V('E')*1e3*A*Math.cos(th);
+    setText(wrap,'cPhi',(Math.abs(Phi)<0.005?'0':fmt(Phi,2))+' N m²/C',COL.green);
+    setText(wrap,'cA',fmt(A,4)+' m²');
+    setText(wrap,'cN',String(n));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.10  ELECTRIC DIPOLE FIELD      (Example 1.9)
+   Exact: E = E₊ + E₋ .  Far away: axis 2kp/r³ , equator kp/r³ (opposite to p)
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell(
+    UI.tg('pos','Field point',[['0','On the axis'],['90','On the equator']],0)+
+    UI.sl('q','Charge ±q',1,10,0.5,10)+
+    UI.sl('sep','Separation 2a',0.5,10,0.5,0.5)+
+    UI.sl('r','Distance r from centre',5,40,0.5,15)+
+    UI.btns('b',[['ex','Example 1.9 values','navy']])+
+    UI.cards([['cE','Exact |E|','var(--f-yellow)'],['cD','Dipole formula'],['cDiff','Difference'],['cDir','Direction']])+
+    UI.hint('Example 1.9: q = 10 µC, 2a = 5 mm, r = 15 cm → 2.7×10⁵ (axis), 1.33×10⁵ N/C (equator).'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{q:v=>fmt(v,1)+' µC',sep:v=>fmt(v,1)+' cm',r:v=>fmt(v,1)+' cm'});
+  let phiT=0, phi=0, rS=15, G=1;
+  wireToggle(wrap,'pos',v=>phiT=+v*Math.PI/180);
+  $('#ex').onclick=()=>{ setSlider(wrap,'q',10); setSlider(wrap,'sep',0.5); setSlider(wrap,'r',15); };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    phi=approach(phi,phiT,6,dt); rS=approach(rS,V('r'),8,dt);
+    const pc=Math.min(w*0.0125,h*0.0125), ox=w*0.28, oy=h*0.64;
+    const q=V('q')*1e-6, a=V('sep')/2;           // cm
+    const P=[rS*Math.cos(phi), rS*Math.sin(phi)]; // cm, y up
+    const Pp=[ox+P[0]*pc, oy-P[1]*pc];
+    const comp=(cx,qq)=>{ const dx=P[0]-cx, dy=P[1], d=Math.hypot(dx,dy), E=K_E*qq/Math.pow(d*0.01,2); return [E*dx/d,E*dy/d]; };
+    const Ep=comp(a,q), Em=comp(-a,-q), Et=[Ep[0]+Em[0],Ep[1]+Em[1]];
+    const Emag=Math.hypot(Et[0],Et[1]);
+    const p=q*2*a*0.01, cosp=Math.cos(phi), Ed=K_E*p/Math.pow(rS*0.01,3)*Math.sqrt(1+3*cosp*cosp);
+    // dipole drawn enlarged when the real separation is tiny
+    const hv=Math.max(a*pc,17*u+3), enlarged=a*pc<17*u+3;
+    // dashed lines from charges to the field point
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=COL.pale; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(ox+hv,oy); ctx.lineTo(Pp[0],Pp[1]); ctx.moveTo(ox-hv,oy); ctx.lineTo(Pp[0],Pp[1]); ctx.stroke(); ctx.restore();
+    // vectors at P
+    const m1=Math.hypot(Ep[0],Ep[1]), m2=Math.hypot(Em[0],Em[1]);
+    G=approach(G,120*u/Math.max(m1,m2,1e-9),6,dt);
+    const drawV=(E,col,wd,off,label)=>{ const L=Math.hypot(E[0],E[1]); if(L<1e-9) return;
+      const bx=Pp[0]+(E[1]/L)*off, by=Pp[1]+(E[0]/L)*off;  // shift perpendicular to the vector (screen coords)
+      vec(ctx,bx,by,bx+E[0]*G,by-E[1]*G,col,wd,10*u+3);
+      if(label) textAt(ctx,label,bx+E[0]*G+(E[0]>=0?8:-8),by-E[1]*G-(E[1]>0?6:-14),{align:E[0]>=0?'left':'right',size:12*Math.max(0.9,u),weight:700,color:COL.yellow}); };
+    drawV(Ep,rgba(COL.yellow,0.75),2.6,9*u,'E₊'); drawV(Em,rgba(COL.yellow,0.75),2.6,9*u,'E₋');
+    drawV(Et,COL.yellow,5.4,0,'E');
+    circ(ctx,Pp[0],Pp[1],6*u+1.5,COL.ink,COL.ink,1);
+    textAt(ctx,phiT>0.5?'Q':'P',Pp[0]+(phiT>0.5?-14:0),Pp[1]+(phiT>0.5?4:22*u),{align:phiT>0.5?'right':'center',size:14*Math.max(0.9,u),weight:700});
+    // r dimension
+    ctx.save(); ctx.setLineDash([3,4]); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(Pp[0],Pp[1]); ctx.stroke(); ctx.restore();
+    tagBox(ctx,'r = '+fmt(rS,1)+' cm',(ox+Pp[0])/2,(oy+Pp[1])/2-12-(phiT>0.5?0:10),COL.ink,12);
+    // dipole
+    line(ctx,ox-hv,oy,ox+hv,oy,COL.ink,3);
+    chargeBall(ctx,ox+hv,oy,15*u+3,1); chargeBall(ctx,ox-hv,oy,15*u+3,-1);
+    vec(ctx,ox-hv*0.8,oy+34*u,ox+hv*0.8,oy+34*u,COL.ink,2.6,10*u+3); textAt(ctx,'p',ox,oy+54*u,{align:'center',size:14*Math.max(0.9,u),weight:700});
+    if(enlarged) textAt(ctx,'charges drawn enlarged',ox,oy+78*u,{align:'center',size:11*Math.max(0.9,u),color:COL.muted});
+    setText(wrap,'cE',sci(Emag,2)+' N/C');
+    setText(wrap,'cD',sci(Ed,2)+' N/C');
+    setText(wrap,'cDiff',fmt((Emag-Ed)/Ed*100,1)+' %');
+    setText(wrap,'cDir',phiT<0.01&&Math.abs(phi)<0.05?'along p':(Math.abs(phi-Math.PI/2)<0.05?'opposite to p':'turning…'));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.11  DIPOLE IN A UNIFORM FIELD   τ = p × E ,  U = −pE cosθ
+   θ'' = −(pE/I) sinθ − cθ'   → a damped swing about E.
+   Non-uniform field: net force pulls the aligned dipole to stronger field.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell(
+    UI.sl('E','Field strength E',1,10,0.5,5)+
+    UI.sl('p','Dipole moment p',1,10,0.5,4)+
+    UI.sl('th0','Start angle θ',0,180,1,60)+
+    UI.tg('fld','Field',[['u','Uniform'],['n','Non-uniform']],0)+
+    UI.btns('b',[['go','▶ Release','play'],['q110','Q 1.10 values','navy']])+
+    UI.cards([['cT','Torque τ','var(--f-green)'],['cU','Energy U'],['cF','Net force','var(--f-green)']])+
+    UI.hint('E in 10⁴ N/C · p in 10⁻⁹ C m. τ = pE sinθ turns p toward E.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{E:v=>fmt(v,1)+' ×10⁴ N/C',p:v=>fmt(v,1)+' ×10⁻⁹ C m',th0:v=>Math.round(v)+'°'});
+  let th=Math.PI/3, om=0, hold=true, fld='u', xs=0, vx=0;
+  wireToggle(wrap,'fld',v=>{ fld=v; vx=0; });
+  $('#th0').addEventListener('input',()=>{ hold=true; om=0; });
+  $('#go').onclick=()=>{ hold=false; };
+  $('#q110').onclick=()=>{ setSlider(wrap,'p',4); setSlider(wrap,'E',5); setSlider(wrap,'th0',30); };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const E=V('E'), p=V('p'), I=1.25, c=0.8;
+    if(hold){ const tg=V('th0')*Math.PI/180; om+=(70*(tg-th)-14*om)*dt; th+=om*dt; }
+    else { const sub=4; for(let s=0;s<sub;s++){ const d=dt/sub; om+=(-(p*E/I)*Math.sin(th)-c*om)*d; th+=om*d; } }
+    const cx0=w*0.5, cy=h*0.44, L=170*u+30, W=w*0.7;
+    // non-uniform: E grows to the right, so a free dipole drifts that way when p ∥ E
+    const g=fld==='n'?1.5:0;
+    if(fld==='n'&&!hold){ const ax=70*u*(p*E/20)*g*Math.cos(th); vx+=(ax-2.4*vx)*dt; xs+=vx*dt; const lim=w*0.26; if(xs>lim){ xs=lim; vx*=-0.35; } if(xs<-lim){ xs=-lim; vx*=-0.35; } }
+    else { xs=approach(xs,0,5,dt); vx=0; }
+    const cx=cx0+xs;
+    const Eloc=x=>E*(1+g*(x-w*0.5)/W);
+    // field arrows (flowing). Non-uniform: stronger (thicker, denser) to the right.
+    const rows=Math.floor(h*0.72/(62*u));
+    for(let k=0;k<=rows;k++){ const y=h*0.08+k*(h*0.72)/rows;
+      const N=44; for(let i=0;i<N;i++){ const xa=w*0.03+i*(w*0.94)/N, xb=xa+(w*0.94)/N+0.5; const e=Eloc((xa+xb)/2)/E;
+        ctx.save(); ctx.strokeStyle=rgba(COL.yellow,0.25+0.25*e); ctx.lineWidth=1.2+1.4*e; ctx.beginPath(); ctx.moveTo(xa,y); ctx.lineTo(xb,y); ctx.stroke(); ctx.restore(); }
+      ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineCap='round'; ctx.lineWidth=3; ctx.setLineDash([1.5,15]); ctx.lineDashOffset=-t*40; ctx.beginPath(); ctx.moveTo(w*0.03,y); ctx.lineTo(w*0.97,y); ctx.stroke(); ctx.restore();
+      for(let x=w*0.12;x<w*0.97;x+=150*u/Math.max(0.4,Eloc(x)/E)) arrowHead(ctx,x,y,0,COL.yellow,8); }
+    textAt(ctx,'E'+(fld==='n'?' (stronger →)':''),w*0.03,h*0.075,{size:15*Math.max(0.9,u),weight:700,color:COL.yellow});
+    // dipole
+    const dxp=Math.cos(th)*L/2, dyp=-Math.sin(th)*L/2;
+    const pp=[cx+dxp,cy+dyp], pm=[cx-dxp,cy-dyp];
+    // force arrows on each charge (equal & opposite when uniform)
+    const fl=(10*Math.sqrt(p*E)+8)*u, flP=fl*Eloc(pp[0])/E, flM=fl*Eloc(pm[0])/E;
+    vec(ctx,pp[0],pp[1],pp[0]+flP,pp[1],COL.green,4,12*u+3); vec(ctx,pm[0],pm[1],pm[0]-flM,pm[1],COL.green,4,12*u+3);
+    // torque arc around the + charge, drawn in the sense of rotation (p swings toward E)
+    const tauZ=-p*E*Math.sin(th), rr=L/2+36*u;
+    if(Math.abs(tauZ)>0.15){ const dc=Math.sin(th)>0?1:-1, span=clamp(Math.abs(tauZ)/60,0.12,1)*1.5+0.35, am=-th, as=am-dc*span/2, ae=am+dc*span/2;
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=4.4; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(cx,cy,rr,Math.min(as,ae),Math.max(as,ae)); ctx.stroke(); ctx.restore();
+      arrowHead(ctx,cx+Math.cos(ae)*rr,cy+Math.sin(ae)*rr,ae+dc*Math.PI/2,COL.green,13*u+3);
+      tagBox(ctx,'τ',cx+Math.cos(am)*(rr+24*u),cy+Math.sin(am)*(rr+24*u)+4,COL.green,13); }
+    line(ctx,pm[0],pm[1],pp[0],pp[1],COL.ink,4);
+    chargeBall(ctx,pp[0],pp[1],16*u+3,1); chargeBall(ctx,pm[0],pm[1],16*u+3,-1);
+    vec(ctx,cx,cy,cx+Math.cos(th)*L*0.32,cy-Math.sin(th)*L*0.32,COL.ink,3,11*u+3);
+    textAt(ctx,'p',cx+Math.cos(th)*L*0.32+10*Math.cos(th),cy-Math.sin(th)*L*0.32-10,{size:15*Math.max(0.9,u),weight:700});
+    circ(ctx,cx,cy,4,COL.ink,COL.ink,1);
+    // θ arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,34*u,-th,0); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore();
+    textAt(ctx,'θ = '+Math.round(((th*180/Math.PI+180)%360+360)%360-180)+'°',cx+42*u,cy+22*u,{size:12.5*Math.max(0.9,u),weight:600,color:COL.muted});
+    // potential-energy well: U(θ) = −pE cosθ with a ball that rolls in it
+    const bw=Math.min(w*0.3,260*u+40), bh=96*u+14, bx=w-bw-w*0.04, by=h-bh-h*0.05;
+    ctx.save(); rrect(ctx,bx-8,by-24*u-8,bw+16,bh+24*u+22,10); ctx.fillStyle='rgba(255,255,255,0.93)'; ctx.fill(); ctx.strokeStyle=COL.border||COL.pale; ctx.lineWidth=1.5; ctx.stroke(); ctx.restore();
+    textAt(ctx,'U = −pE cosθ',bx,by-8*u,{size:11.5*Math.max(0.9,u),weight:600,color:COL.muted});
+    const ux=a=>bx+((a+Math.PI)/(2*Math.PI))*bw;
+    const Uy=a=>by+bh*0.5+Math.cos(a)*bh*0.42;  // lowest at θ=0 (cosθ=1 → U min) → plotted lower
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.beginPath(); for(let a=-Math.PI;a<=Math.PI+0.01;a+=0.06){ const x=ux(a), y=Uy(a); a>-Math.PI?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke(); ctx.restore();
+    let tw=((th+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;
+    circ(ctx,ux(tw),Uy(tw)-9*u-2,8*u+2,COL.green,'#fff',2.6);
+    textAt(ctx,'0',ux(0),by+bh+16*u,{align:'center',size:11*Math.max(0.9,u),color:COL.muted}); textAt(ctx,'−π',ux(-Math.PI),by+bh+16*u,{size:11*Math.max(0.9,u),color:COL.muted}); textAt(ctx,'π',ux(Math.PI),by+bh+16*u,{align:'right',size:11*Math.max(0.9,u),color:COL.muted});
+    const T=p*1e-9*E*1e4*Math.sin(th), U=-p*1e-9*E*1e4*Math.cos(th);
+    setText(wrap,'cT',sci(Math.abs(T),2)+' N m');
+    setText(wrap,'cU',sci(U,2)+' J');
+    setText(wrap,'cF',fld==='u'?'0  (equal & opposite)':(Math.cos(th)>0.1?'→ toward stronger E':(Math.cos(th)<-0.1?'← toward weaker E':'≈ 0')));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.13  GAUSS'S LAW   ∮ E·dA = q_enclosed / ε0      (Q 1.18: 2 µC → 2.26×10⁵)
+   The flux is integrated numerically over the closed surface (3-D sphere
+   or cube) for the real inverse-square fields of both charges.
+   ===================================================================== */
+const FIB=(()=>{ const N=3200, a=[]; const ga=Math.PI*(3-Math.sqrt(5)); for(let i=0;i<N;i++){ const z=1-2*(i+0.5)/N, r=Math.sqrt(1-z*z), th=ga*i; a.push([z,r*Math.cos(th),r*Math.sin(th)]); } return a; })();
+function fluxSurface(shape,R,ch){ // returns {out,inn}; charges at z=0 ; world metres
+  let out=0,inn=0;
+  const add=(px,py,pz,nx,ny,nz,dA)=>{ let ex=0,ey=0,ez=0;
+    for(const c of ch){ const dx=px-c.x, dy=py-c.y, dz=pz, r2=dx*dx+dy*dy+dz*dz, r=Math.sqrt(r2), f=K_E*c.q*1e-6/(r2*r); ex+=f*dx; ey+=f*dy; ez+=f*dz; }
+    const en=(ex*nx+ey*ny+ez*nz)*dA; if(en>0) out+=en; else inn+=en; };
+  if(shape==='sphere'){ const dA=4*Math.PI*R*R/FIB.length; for(const f of FIB){ add(R*f[1],R*f[2],R*f[0],f[1],f[2],f[0],dA); } }
+  else { const M=36, d=2*R/M, dA=d*d; for(let i=0;i<M;i++) for(let j=0;j<M;j++){ const a=-R+(i+0.5)*d, b=-R+(j+0.5)*d;
+      add(R,a,b,1,0,0,dA); add(-R,a,b,-1,0,0,dA); add(a,R,b,0,1,0,dA); add(a,-R,b,0,-1,0,dA); add(a,b,R,0,0,1,dA); add(a,b,-R,0,0,-1,dA); } }
+  return {out,inn};
+}
+function buildA11(){
+  const wrap=labShell(
+    UI.tg('shape','Closed surface',[['sphere','Sphere'],['cube','Cube']],0)+
+    UI.sl('R','Size of surface',0.6,2,0.05,1.5)+
+    UI.sl('q1','Charge q₁ (movable)',-4,4,0.5,2)+
+    UI.sl('x1','Move q₁ along x',-3.2,3.2,0.05,0)+
+    UI.sl('q2','Charge q₂ (fixed outside)',-4,4,0.5,2)+
+    UI.cards([['cOut','Flux out','var(--f-green)'],['cIn','Flux in','var(--f-blue)'],['cNet','Net ∮E·dA','var(--f-green)'],['cG','q_enclosed ÷ ε₀','var(--f-green)']])+
+    UI.hint('Only charge inside counts. Size and shape do not matter. Units N m²/C.'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const V=wireSliders(wrap,{R:v=>fmt(v,2)+' m',q1:v=>(v>0?'+':'')+fmt(v,1)+' µC',x1:v=>fmt(v,2)+' m',q2:v=>(v>0?'+':'')+fmt(v,1)+' µC'});
+  let shape='sphere', R=1.5, q1=2, q2=2, x1=0, fl={out:0,inn:0};
+  wireToggle(wrap,'shape',v=>shape=v);
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    R=approach(R,V('R'),8,dt); q1=approach(q1,V('q1'),7,dt); q2=approach(q2,V('q2'),7,dt); x1=approach(x1,V('x1'),6,dt);
+    const ppm=Math.min(w/10,h/6.6), cx=w*0.5, cy=h*0.5, S=(x,y)=>[cx+x*ppm,cy-y*ppm];
+    const c1={x:x1,y:0,q:q1}, c2={x:3.2,y:0.8,q:q2};
+    const chW=[c1,c2];
+    fl=fluxSurface(shape,R,chW);
+    // faint field lines of both charges (screen space)
+    const s1=S(c1.x,c1.y), s2=S(c2.x,c2.y), rc=16*u+3;
+    const ch=[]; if(Math.abs(q1)>0.05) ch.push({x:s1[0],y:s1[1],q:q1*6400,u:q1}); if(Math.abs(q2)>0.05) ch.push({x:s2[0],y:s2[1],q:q2*6400,u:q2});
+    const lines=buildLines(ch,w,h,rc,3,0.2);
+    drawLines(ctx,lines,t,COL.yellow,0.9);
+    // surface cross-section coloured by E·n : green out / blue in
+    const nS=140, pts=[];
+    for(let i=0;i<nS;i++){ const f=i/nS; let px,py,nx,ny;
+      if(shape==='sphere'){ const a=f*2*Math.PI; px=R*Math.cos(a); py=R*Math.sin(a); nx=Math.cos(a); ny=Math.sin(a); }
+      else { const sd=Math.floor(f*4), s=f*4-sd, v=-R+2*R*s; if(sd===0){px=R;py=v;nx=1;ny=0;} else if(sd===1){px=-v;py=R;nx=0;ny=1;} else if(sd===2){px=-R;py=-v;nx=-1;ny=0;} else {px=v;py=-R;nx=0;ny=-1;} }
+      let ex=0,ey=0; for(const c of chW){ const dx=px-c.x, dy=py-c.y, r2=dx*dx+dy*dy+1e-6, r=Math.sqrt(r2), f2=K_E*c.q*1e-6/(r2*r); ex+=f2*dx; ey+=f2*dy; }
+      pts.push([px,py,ex*nx+ey*ny]); }
+    if(shape==='sphere'){ ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,R*ppm,0,Math.PI*2); ctx.fillStyle=rgba(COL.green,0.05); ctx.fill(); ctx.restore(); }
+    else { const a=S(-R,R); rect(ctx,a[0],a[1],2*R*ppm,2*R*ppm,null,rgba(COL.green,0.05),0); }
+    for(let i=0;i<nS;i++){ const a=pts[i], b=pts[(i+1)%nS], A=S(a[0],a[1]), B=S(b[0],b[1]);
+      const wd=clamp(1.8+4.2*Math.sqrt(Math.abs(a[2])/9000),1.8,13), c=a[2]>=0?COL.green:COL.blue;
+      ctx.save(); ctx.strokeStyle=c; ctx.lineWidth=wd; ctx.lineCap='butt'; ctx.globalAlpha=Math.abs(a[2])<30?0.35:1; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); ctx.restore(); }
+    // dashed outline on top
+    ctx.save(); ctx.setLineDash([6,6]); ctx.lineDashOffset=-t*20; ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; if(shape==='sphere'){ ctx.beginPath(); ctx.arc(cx,cy,R*ppm,0,Math.PI*2); ctx.stroke(); } else { const a=S(-R,R); ctx.strokeRect(a[0],a[1],2*R*ppm,2*R*ppm); } ctx.restore();
+    // charges
+    [[c1,s1,'q₁'],[c2,s2,'q₂']].forEach(([c,s,l])=>{ if(Math.abs(c.q)>0.05){ chargeBall(ctx,s[0],s[1],rc,c.q); textAt(ctx,l,s[0],s[1]+rc+18*u,{align:'center',size:13*Math.max(0.9,u),weight:700,color:qCol(c.q)}); } });
+    const inside=c=>shape==='sphere'?(c.x*c.x+c.y*c.y<R*R):(Math.abs(c.x)<R&&Math.abs(c.y)<R);
+    const qenc=(inside(c1)?V('q1'):0)+(inside(c2)?V('q2'):0);
+    // use eased values for the enclosed-charge readout so it moves with the picture
+    const qencS=(inside(c1)?q1:0)+(inside(c2)?q2:0);
+    tagBox(ctx,'q inside = '+(Math.abs(qencS)<0.05?'0':(qencS>0?'+':'−')+fmt(Math.abs(qencS),1))+' µC',cx,h*0.07,qCol(qencS),13);
+    setText(wrap,'cOut',sci(fl.out,2)); setText(wrap,'cIn',sci(fl.inn,2));
+    setText(wrap,'cNet',sci(fl.out+fl.inn,2));
+    setText(wrap,'cG',sci(qencS*1e-6/EPS0,2));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.14  APPLICATIONS OF GAUSS'S LAW
+   line  E = λ/(2π ε0 r)   ·   plane  E = σ/(2 ε0)   ·   shell  E = 0 (r<R), kQ/r² (r>R)
+   Check (Q 1.21): R = 1.2 m, σ = 80 µC/m² → E = σ/ε0 = 9.0×10⁶ N/C, Φ = 1.6×10⁸ N m²/C
+   ===================================================================== */
+function buildA12(){
+  const wrap=labShell(
+    UI.tg('geo','Charge distribution',[['line','Long wire'],['plane','Flat sheet'],['shell','Spherical shell']],0)+
+    UI.sl('dens','Charge density',0.5,10,0.5,5)+
+    UI.sl('rp','Gaussian surface radius / distance',0.1,3,0.05,0.8)+
+    UI.cards([['cE','Field E at the surface','var(--f-yellow)'],['cPhi','Flux Φ','var(--f-green)'],['cQ','Enclosed charge']])+
+    UI.hint('Pick the surface that matches the symmetry, then E comes straight from Φ = q/ε₀.','h12'));
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let geo='line', rS=0.8, YM=1e5, Rsh=1.2;
+  const dEl=$('#dens');
+  const dFmt=v=>geo==='line'?fmt(v,1)+' µC/m':fmt(v,geo==='shell'?0:1)+' µC/m²';
+  const V=wireSliders(wrap,{dens:dFmt,rp:v=>fmt(v,2)+' m'});
+  wireToggle(wrap,'geo',v=>{ geo=v;
+    if(v==='shell'){ dEl.min=10; dEl.max=100; dEl.step=5; dEl.value=80; } else { dEl.min=0.5; dEl.max=10; dEl.step=0.5; dEl.value=5; }
+    dEl.dispatchEvent(new Event('input'));
+    wrap.querySelector('#h12').textContent = v==='line'?'Cylinder surface: E·2πrL = λL/ε₀':(v==='plane'?'Pillbox: E·2A = σA/ε₀ — E does not depend on distance':'Sphere: E = 0 inside; outside it acts like a point charge'); });
+  const Efun=(r,d)=>{ if(geo==='line') return 2*K_E*d*1e-6/Math.max(r,0.02);
+    if(geo==='plane') return d*1e-6/(2*EPS0);
+    const Q=d*1e-6*4*Math.PI*Rsh*Rsh; return r<Rsh-0.012?0:K_E*Q/(r*r); };
+  animLoop((dt,t)=>{
+    const {ctx,w,h,u}=fitCanvas(canvas);
+    const d=V('dens'); rS=approach(rS,V('rp'),8,dt);
+    const Ymax=geo==='line'?Efun(0.3,d)*1.1:(geo==='plane'?Efun(1,d)*1.5:Efun(Rsh,d)*1.2);
+    YM=approach(YM,Ymax,6,dt);
+    const Wg=w*0.54, gx=Wg*0.5, cy=h*0.5, pm=Wg*0.49/3;
+    const E=Efun(rS,d), Elen=r=>18*u+78*u*clamp(Efun(r,d)/YM,0,1.15);
+    const rpx=rS*pm;
+    // divider
+    line(ctx,Wg,h*0.08,Wg,h*0.92,COL.pale,2);
+    if(geo==='line'){
+      const half=h*0.36, cl=h*0.17;
+      // field lines radiating from the wire (end view of cylinder-symmetric field)
+      for(let i=-5;i<=5;i++){ const y=cy+i*h*0.06; for(const s of [-1,1]){ ctx.save(); ctx.strokeStyle=rgba(COL.yellow,0.4); ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(gx+s*8,y); ctx.lineTo(gx+s*(Wg*0.48),y); ctx.stroke();
+        ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.lineCap='round'; ctx.setLineDash([1.5,15]); ctx.lineDashOffset=-t*34; ctx.beginPath(); ctx.moveTo(gx+s*8,y); ctx.lineTo(gx+s*(Wg*0.48),y); ctx.stroke(); ctx.restore(); } }
+      line(ctx,gx,cy-half,gx,cy+half,COL.red,5);
+      for(let y=cy-half+14*u;y<cy+half;y+=28*u) mark(ctx,gx-12*u,y,4*u+1,1);
+      // Gaussian cylinder
+      const ry=Math.min(rpx*0.32,40*u)+2;
+      ctx.save(); ctx.setLineDash([7,5]); ctx.strokeStyle=COL.green; ctx.lineWidth=2.6;
+      ctx.beginPath(); ctx.moveTo(gx-rpx,cy-cl); ctx.lineTo(gx-rpx,cy+cl); ctx.moveTo(gx+rpx,cy-cl); ctx.lineTo(gx+rpx,cy+cl); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(gx,cy-cl,rpx,ry,0,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.ellipse(gx,cy+cl,rpx,ry,0,Math.PI*2*0,Math.PI); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.fillStyle=rgba(COL.green,0.06); ctx.fillRect(gx-rpx,cy-cl,2*rpx,2*cl); ctx.restore();
+      for(let i=-1;i<=1;i++){ const y=cy+i*cl*0.5; const L=Elen(rS); vec(ctx,gx+rpx,y,gx+rpx+L,y,COL.yellow,4,12*u+3); vec(ctx,gx-rpx,y,gx-rpx-L,y,COL.yellow,4,12*u+3); }
+      dimLine(ctx,gx,gx+rpx,cy+cl+ry+26*u,'r',u);
+    } else if(geo==='plane'){
+      const half=h*0.38, cl=h*0.11;
+      for(let i=-5;i<=5;i++){ const y=cy+i*h*0.06; for(const s of [-1,1]){ ctx.save(); ctx.strokeStyle=rgba(COL.yellow,0.4); ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(gx+s*8,y); ctx.lineTo(gx+s*(Wg*0.48),y); ctx.stroke();
+        ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.lineCap='round'; ctx.setLineDash([1.5,15]); ctx.lineDashOffset=-t*34; ctx.beginPath(); ctx.moveTo(gx+s*8,y); ctx.lineTo(gx+s*(Wg*0.48),y); ctx.stroke(); ctx.restore(); } }
+      ctx.save(); ctx.fillStyle='#fdf2ef'; ctx.fillRect(gx-5,cy-half,10,2*half); ctx.restore(); line(ctx,gx,cy-half,gx,cy+half,COL.red,5);
+      for(let y=cy-half+14*u;y<cy+half;y+=28*u) mark(ctx,gx-15*u,y,4*u+1,1);
+      ctx.save(); ctx.setLineDash([7,5]); ctx.strokeStyle=COL.green; ctx.lineWidth=2.6; ctx.strokeRect(gx-rpx,cy-cl,2*rpx,2*cl); ctx.fillStyle=rgba(COL.green,0.06); ctx.fillRect(gx-rpx,cy-cl,2*rpx,2*cl); ctx.restore();
+      const L=Elen(rS); vec(ctx,gx+rpx,cy,gx+rpx+L,cy,COL.yellow,4.4,12*u+3); vec(ctx,gx-rpx,cy,gx-rpx-L,cy,COL.yellow,4.4,12*u+3);
+      dimLine(ctx,gx,gx+rpx,cy+cl+28*u,'distance',u);
+    } else {
+      const Rp=Rsh*pm;
+      if(rS>Rsh||true){ for(let i=0;i<16;i++){ const a=i/16*Math.PI*2, x0=gx+Math.cos(a)*Rp, y0=cy+Math.sin(a)*Rp, x1=gx+Math.cos(a)*Wg*0.46, y1=cy+Math.sin(a)*Math.min(Wg*0.46,h*0.46);
+        ctx.save(); ctx.strokeStyle=rgba(COL.yellow,0.4); ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+        ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.lineCap='round'; ctx.setLineDash([1.5,15]); ctx.lineDashOffset=-t*34; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.restore(); } }
+      ctx.save(); ctx.beginPath(); ctx.arc(gx,cy,Rp,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=5; ctx.stroke(); ctx.restore();
+      for(let i=0;i<24;i++){ const a=i/24*Math.PI*2; mark(ctx,gx+Math.cos(a)*(Rp-14*u),cy+Math.sin(a)*(Rp-14*u),4*u+1,1); }
+      textAt(ctx,'R = 1.2 m',gx,cy+4,{align:'center',size:12*Math.max(0.9,u),weight:600,color:COL.muted});
+      ctx.save(); ctx.setLineDash([7,5]); ctx.lineDashOffset=-t*18; ctx.beginPath(); ctx.arc(gx,cy,rpx,0,Math.PI*2); ctx.strokeStyle=COL.green; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+      if(rS>Rsh-0.012){ for(let i=0;i<8;i++){ const a=i/8*Math.PI*2+0.4, L=Elen(rS); vec(ctx,gx+Math.cos(a)*rpx,cy+Math.sin(a)*rpx,gx+Math.cos(a)*(rpx+L),cy+Math.sin(a)*(rpx+L),COL.yellow,4,12*u+3); } }
+      else { tagBox(ctx,'E = 0 inside',gx,cy-Rp*0.45,COL.yellow,13); }
+    }
+    // ---- graph E(r) ----
+    const x0=Wg+w*0.07, x1=w-w*0.04, gy0=h*0.82, gy1=h*0.14;
+    line(ctx,x0,gy0,x1,gy0,COL.ink,1.6); line(ctx,x0,gy0,x0,gy1,COL.ink,1.6);
+    arrowHead(ctx,x1,gy0,0,COL.ink,7); arrowHead(ctx,x0,gy1,-Math.PI/2,COL.ink,7);
+    textAt(ctx,'E',x0-8,gy1+4,{align:'right',size:14*Math.max(0.9,u),weight:700,color:COL.yellow});
+    textAt(ctx,geo==='plane'?'distance (m)':'r (m)',x1,gy0+34*u,{align:'right',size:12*Math.max(0.9,u),weight:600,color:COL.muted});
+    for(let m=0;m<=3;m++){ const x=lerp(x0,x1-12,m/3); line(ctx,x,gy0,x,gy0+5,COL.ink,1.4); textAt(ctx,String(m),x,gy0+19*Math.max(0.8,u),{align:'center',size:11*Math.max(0.9,u),color:COL.muted}); }
+    const X=r=>lerp(x0,x1-12,r/3), Y=e=>gy0-clamp(e/YM,0,1.12)*(gy0-gy1)*0.88;
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.6; ctx.lineJoin='round'; ctx.beginPath(); let first=true;
+    for(let r=(geo==='line'?0.12:0.02);r<=3.001;r+=0.02){ const x=X(r), y=Y(Efun(r,d)); if(geo==='shell'&&Math.abs(r-Rsh)<0.011){ ctx.lineTo(x,gy0); ctx.lineTo(x,Y(Efun(Rsh+0.001,d))); continue; } first?ctx.moveTo(x,y):ctx.lineTo(x,y); first=false; }
+    ctx.stroke(); ctx.restore();
+    const mx=X(rS), my=Y(E);
+    line(ctx,mx,gy0,mx,my,COL.green,1.6,[4,4]); line(ctx,x0,my,mx,my,COL.green,1.6,[4,4]);
+    circ(ctx,mx,my,7*u+2,COL.green,'#fff',2.8);
+    // flux and enclosed charge
+    let q, Phi;
+    if(geo==='line'){ q=d*1e-6*1; Phi=q/EPS0; }
+    else if(geo==='plane'){ q=d*1e-6*1; Phi=q/EPS0; }
+    else { q=rS>Rsh-0.012?d*1e-6*4*Math.PI*Rsh*Rsh:0; Phi=q/EPS0; }
+    setText(wrap,'cE',sci(E,2)+' N/C');
+    setText(wrap,'cPhi',sci(Phi,2)+' N m²/C'+(geo==='shell'?'':'  (per 1 '+(geo==='line'?'m of wire':'m² of sheet')+')'));
+    setText(wrap,'cQ',sci(q*1e6,3)+' µC');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'A1',  title:'Rubbing & Two Kinds of Charge', desc:'§1.2 · Fig 1.1 — electrons hop, like repels, unlike attracts', build: buildA1 },
+  { num:'A2',  title:'Gold-Leaf Electroscope',        desc:'§1.2 · Fig 1.2 — touch it, bring a rod near, earth it',        build: buildA2 },
+  { num:'A3',  title:'Conductors & Insulators',       desc:'§1.3 — where does the charge go?',                              build: buildA3 },
+  { num:'A4',  title:"Coulomb's Law",                 desc:'§1.5 · Ex 1.3, 1.4 — F = k q₁q₂ / r²',                          build: buildA4 },
+  { num:'A5',  title:'Forces on Many Charges',        desc:'§1.6 · Ex 1.5, 1.6 — vector sum of forces',                     build: buildA5 },
+  { num:'A6',  title:'Charge in a Uniform Field',     desc:'§1.7 · Ex 1.7 — electron vs proton',                            build: buildA6 },
+  { num:'A7',  title:'Electric Field Lines',          desc:'§1.8 · Figs 1.12–1.14 — follow a test charge',                  build: buildA7 },
+  { num:'A8',  title:'Electric Flux',                 desc:'§1.9 · Figs 1.15–1.16 — Φ = E A cosθ',                          build: buildA8 },
+  { num:'A9',  title:'Field of a Dipole',             desc:'§1.10 · Ex 1.9 — axis vs equator',                              build: buildA9 },
+  { num:'A10', title:'Dipole in an External Field',   desc:'§1.11 · Figs 1.19–1.20 — torque, swing, drift',                 build: buildA10 },
+  { num:'A11', title:"Gauss's Law",                   desc:'§1.13 · Q 1.18 — ∮E·dA = q / ε₀',                               build: buildA11 },
+  { num:'A12', title:"Gauss's Law: Applications",     desc:'§1.14 · wire, sheet, shell',                                    build: buildA12 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

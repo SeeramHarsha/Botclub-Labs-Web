@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 7 — Binomial Theorem | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+sup{font-size:0.7em; line-height:0;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px; min-width:0;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px; overflow-wrap:anywhere;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">∑</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 7</div>
+      <h1>Binomial Theorem</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>a · first term</span>
+      <span><i style="background:var(--f-red)"></i>b · second term</span>
+      <span><i style="background:var(--f-green)"></i>Mixed · total</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">7.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 7: BINOMIAL THEOREM
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or falls under gravity toward it
+   every frame. Nothing jumps. Colours: blue = a, red = b, green = mixed /
+   totals, yellow = what you change.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#dbe4f0'};
+
+/* ---------- canvas + drawing helpers ---------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dim(ctx,x1,y1,x2,y2,color){ line(ctx,x1,y1,x2,y2,color,1.6); const a=Math.atan2(y2-y1,x2-x1); arrowHead(ctx,x1,y1,a+Math.PI,color,5); arrowHead(ctx,x2,y2,a,color,5); }
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.max(0,Math.min(r,w/2,h/2)); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function box(ctx,x,y,w,h,stroke,fill,lw,r){ ctx.save(); rrect(ctx,x,y,w,h,r===undefined?4:r); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.stroke();} ctx.restore(); }
+function poly(ctx,pts,fill,stroke,lw){ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.lineJoin='round'; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function easeOutBack(t){ t=clamp(t,0,1); const c1=1.9, c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2); }
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toLocaleString('en-US',{maximumFractionDigits:d}); }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return '#'+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,'0')).join(''); }
+function tint(c,k){ return mixCol(c,'#ffffff',k===undefined?0.82:k); }
+function Cn(n,k){ if(k<0||k>n) return 0; let r=1; for(let i=1;i<=k;i++) r=r*(n-k+i)/i; return Math.round(r); }
+
+/* rich text: "a^2", "x^{n-k}", "^nC_r"  — ^ raises, _ lowers. segs = [[text,colour],...] */
+function parseRich(s){
+  const out=[]; let i=0, cur='';
+  const flush=()=>{ if(cur){ out.push([cur,'n']); cur=''; } };
+  while(i<s.length){
+    const ch=s[i];
+    if(ch==='^'||ch==='_'){
+      flush(); i++; let txt;
+      if(s[i]==='{'){ const j=s.indexOf('}',i); txt=s.slice(i+1,j); i=j+1; } else { txt=s[i]; i++; }
+      out.push([txt,ch==='^'?'sup':'sub']);
+    } else { cur+=ch; i++; }
+  }
+  flush(); return out;
+}
+function rtm(ctx,segs,x,y,o){
+  o=o||{}; const size=o.size||14, wt=o.weight||600;
+  const parts=[]; segs.forEach(sg=>{ parseRich(sg[0]).forEach(p=>parts.push([p[0],p[1],sg[1]||o.color||COL.ink])); });
+  ctx.save(); const fn=m=>wt+' '+(m==='n'?size:size*0.64)+'px Poppins, sans-serif';
+  let W=0; const ws=parts.map(p=>{ ctx.font=fn(p[1]); const w=ctx.measureText(p[0]).width; W+=w; return w; });
+  let cx=o.align==='center'?x-W/2:o.align==='right'?x-W:x;
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic'; if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  parts.forEach((p,i)=>{ ctx.font=fn(p[1]); ctx.fillStyle=p[2]; const dy=p[1]==='sup'?-size*0.42:p[1]==='sub'?size*0.24:0; ctx.fillText(p[0],cx,y+dy); cx+=ws[i]; });
+  ctx.restore(); return W;
+}
+function rt(ctx,s,x,y,o){ return rtm(ctx,[[s,(o&&o.color)||COL.ink]],x,y,o); }
+
+/* ---------- animation engine ---------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function springTo(s,target,k,damping,dt){ const acc=(target-s.x)*k - s.v*damping; s.v+=acc*dt; s.x+=s.v*dt; return s.x; }
+function toggleWire(btns,cb){ btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); }); }
+
+/* ---------- router ---------- */
+const activities = [
+  { num:'7.1', title:'Squares & Cubes',   desc:'Pull (a + b)ⁿ apart into its pieces', build: buildA1 },
+  { num:'7.2', title:'Pascal’s Triangle', desc:'Each number is the sum of the two above', build: buildA2 },
+  { num:'7.3', title:'Galton Board',      desc:'Falling balls land in Pascal’s pattern', build: buildA3 },
+  { num:'7.4', title:'Picking the Terms', desc:'Why the coefficient is ⁿCᵣ', build: buildA4 },
+  { num:'7.5', title:'Signs & Sums',      desc:'(1 + x)ⁿ and (1 − x)ⁿ on a balance', build: buildA5 },
+  { num:'7.6', title:'Big Powers',        desc:'Add terms · zoom in on the true value', build: buildA6 },
+  { num:'7.7', title:'Add or Cancel',     desc:'(a + b)ⁿ ± (a − b)ⁿ', build: buildA7 },
+  { num:'7.8', title:'Remainder Crates',  desc:'6ⁿ − 5n leaves 1 when packed in 25s', build: buildA8 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   7.1 SQUARES & CUBES        (a+b)² = a² + 2ab + b²,  (a+b)³ = a³ + 3a²b + 3ab² + b³
+   Area / volume model. Slider "Pull apart" explodes the figure into its
+   4 (or 8) pieces on a spring. Textbook check: a=3,b=2 → 9+12+4 = 25.
+   ===================================================================== */
+const C3=[COL.blue,COL.green,COL.red], C4=[COL.blue,COL.green,COL.yellow,COL.red];
+function drawSquare(ctx,cx,cy,s,A,B,E,alpha){
+  const T=A+B, gap=E*0.25*T, Te=T+2*gap;
+  ctx.save(); ctx.globalAlpha=alpha;
+  const x0=cx-Te*s/2, y0=cy+Te*s/2;
+  const lab=['a^2','ab','b^2'];
+  for(let i=0;i<2;i++) for(let j=0;j<2;j++){
+    const wv=i?B:A, hv=j?B:A, c=i+j;
+    const px=x0+((i?A+2*gap:0))*s, py=y0-(((j?A+2*gap:0)+hv))*s;
+    box(ctx,px,py,wv*s,hv*s,C3[c],tint(C3[c],0.84),2.4,3);
+    const fs=clamp(Math.min(wv,hv)*s*0.34,11,24);
+    rt(ctx,lab[c],px+wv*s/2,py+hv*s/2+fs*0.1,{size:fs,align:'center',color:C3[c],weight:700});
+    if(Math.min(wv,hv)*s>46) textAt(ctx,fmt(wv*hv,2),px+wv*s/2,py+hv*s/2+fs*1.2,{size:Math.max(10,fs*0.6),align:'center',color:COL.muted,weight:600});
+  }
+  // dimension arrows: a | b along the top and the left
+  const topY=y0-Te*s-16, lx=x0-18;
+  dim(ctx,x0,topY,x0+A*s,topY,COL.blue); dim(ctx,x0+(A+2*gap)*s,topY,x0+Te*s,topY,COL.red);
+  textAt(ctx,'a',x0+A*s/2,topY-6,{align:'center',weight:700,size:14,color:COL.blue});
+  textAt(ctx,'b',x0+(A+2*gap+B/2)*s,topY-6,{align:'center',weight:700,size:14,color:COL.red});
+  dim(ctx,lx,y0,lx,y0-A*s,COL.blue); dim(ctx,lx,y0-(A+2*gap)*s,lx,y0-Te*s,COL.red);
+  textAt(ctx,'a',lx-8,y0-A*s/2+5,{align:'right',weight:700,size:14,color:COL.blue});
+  textAt(ctx,'b',lx-8,y0-(A+2*gap+B/2)*s+5,{align:'right',weight:700,size:14,color:COL.red});
+  ctx.restore();
+}
+function drawCube(ctx,cx,cy,s,A,B,E,alpha){
+  const T=A+B, gap=E*0.25*T, Te=T+2*gap, DX=0.55, DY=0.42;
+  const ox=cx-Te*(1+DX)*s/2, oy=cy+Te*(1+DY)*s/2;
+  const P=(x,y,z)=>[ox+(x+z*DX)*s, oy-(y+z*DY)*s];
+  const bs=[]; for(let k=0;k<2;k++) for(let i=0;i<2;i++) for(let j=0;j<2;j++) bs.push({i,j,k});
+  bs.sort((p,q)=>(q.k-p.k)||(p.i-q.i)||(p.j-q.j));
+  const lab=['a^3','a^2b','ab^2','b^3'];
+  ctx.save(); ctx.globalAlpha=alpha;
+  bs.forEach(({i,j,k})=>{
+    const c=i+j+k, col=C4[c];
+    const x=i?A+2*gap:0, y=j?A+2*gap:0, z=k?A+2*gap:0, dx=i?B:A, dy=j?B:A, dz=k?B:A;
+    poly(ctx,[P(x+dx,y,z),P(x+dx,y,z+dz),P(x+dx,y+dy,z+dz),P(x+dx,y+dy,z)],tint(col,0.6),col,2);
+    poly(ctx,[P(x,y+dy,z),P(x+dx,y+dy,z),P(x+dx,y+dy,z+dz),P(x,y+dy,z+dz)],tint(col,0.72),col,2);
+    poly(ctx,[P(x,y,z),P(x+dx,y,z),P(x+dx,y+dy,z),P(x,y+dy,z)],tint(col,0.86),col,2);
+    let lp, la=1;
+    if(k===0) lp=P(x+dx/2,y+dy/2,z);
+    else if(j===1) lp=P(x+dx/2,y+dy,z+dz/2);
+    else if(i===1) lp=P(x+dx,y+dy/2,z+dz/2);
+    else { lp=P(x+dx/2,y+dy/2,z+dz/2); la=smooth01(0.25,0.6,E); }
+    if(la>0.02) rt(ctx,lab[c],lp[0],lp[1]+4,{size:clamp(Math.min(dx,dy)*s*0.3,11,19),align:'center',color:col,weight:700,alpha:la});
+  });
+  ctx.restore();
+}
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Power</label>
+      <div class="toggle-group" id="nB"><button class="toggle-btn active" data-n="2">(a+b)²</button><button class="toggle-btn" data-n="3">(a+b)³</button></div></div>
+    <div class="control-group"><label style="color:var(--f-blue)">a <span class="val" id="aV"></span></label><input type="range" id="aR" min="1" max="6" step="0.5" value="3"></div>
+    <div class="control-group"><label style="color:var(--f-red)">b <span class="val" id="bV"></span></label><input type="range" id="bR" min="1" max="6" step="0.5" value="2"></div>
+    <div class="control-group"><label>Pull apart <span class="val" id="eV"></span></label><input type="range" id="eR" min="0" max="1" step="0.01" value="0">
+      <button class="toggle-btn navy" id="auto">▶ Breathe</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Pieces</div><div class="rval" id="pV"></div></div>
+      <div class="rcard"><div class="rlabel">Total</div><div class="rval" id="tV" style="color:var(--f-green)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const SA={x:3,v:0}, SB={x:2,v:0}, SE={x:0,v:0}; let n=2, nA=0, t=0, auto=false;
+  toggleWire(wrap.querySelectorAll('#nB button'),b=>n=+b.dataset.n);
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Stop':'▶ Breathe'; };
+  animLoop(dt=>{
+    t+=dt;
+    if(auto) $('#eR').value=0.5-0.5*Math.cos(t*1.3);
+    const a=+$('#aR').value, b=+$('#bR').value, e=+$('#eR').value;
+    $('#aV').textContent=a; $('#bV').textContent=b; $('#eV').textContent=Math.round(e*100)+'%';
+    springTo(SA,a,70,13,dt); springTo(SB,b,70,13,dt); springTo(SE,e,38,6.5,dt);
+    nA=approach(nA,n===3?1:0,7,dt); if(Math.abs(nA-(n===3?1:0))<0.02) nA=n===3?1:0;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const A=Math.max(0.3,SA.x), B=Math.max(0.3,SB.x), E=clamp(SE.x,-0.1,1.2), T=A+B, Te=T*(1+0.5*Math.max(0,E));
+    const cy=h*0.47;
+    if(nA<1) drawSquare(ctx,w/2,cy,Math.min(w*0.5,h*0.56)/Te,A,B,E,1-nA);
+    if(nA>0) drawCube(ctx,w/2,cy,Math.min(w*0.56/(Te*1.55),h*0.56/(Te*1.42)),A,B,E,nA);
+    // equation
+    const v=(a+b)**n, o={size:17,align:'center'};
+    if(nA<0.5){
+      rtm(ctx,[['(a+b)^2 = ',COL.ink],['a^2',COL.blue],[' + 2',COL.ink],['ab',COL.green],[' + ',COL.ink],['b^2',COL.red]],w/2,h-46,{...o,alpha:1-nA*2});
+      textAt(ctx,`(${a}+${b})² = ${fmt(a*a)} + ${fmt(2*a*b)} + ${fmt(b*b)} = ${fmt(v)}`,w/2,h-20,{align:'center',size:14,weight:600,color:COL.muted,alpha:1-nA*2});
+    } else {
+      rtm(ctx,[['(a+b)^3 = ',COL.ink],['a^3',COL.blue],[' + 3',COL.ink],['a^2b',COL.green],[' + 3',COL.ink],['ab^2',COL.yellow],[' + ',COL.ink],['b^3',COL.red]],w/2,h-46,{...o,alpha:nA*2-1});
+      textAt(ctx,`(${a}+${b})³ = ${fmt(a**3)} + ${fmt(3*a*a*b)} + ${fmt(3*a*b*b)} + ${fmt(b**3)} = ${fmt(v)}`,w/2,h-20,{align:'center',size:14,weight:600,color:COL.muted,alpha:nA*2-1});
+    }
+    $('#pV').textContent=n===2?'4  (1 + 2 + 1)':'8  (1 + 3 + 3 + 1)'; $('#tV').textContent=fmt(v);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.2 PASCAL'S TRIANGLE     ⁿCᵣ = ⁿ⁻¹Cᵣ₋₁ + ⁿ⁻¹Cᵣ
+   Rows build one after another: two tokens fly from the parents and merge
+   into the sum. Toggle morphs numbers ↔ ⁿCᵣ labels.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Row  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="0" max="12" step="1" value="5">
+      <button class="toggle-btn navy" id="auto">▶ Auto-build</button></div>
+    <div class="control-group"><label style="color:var(--f-yellow)">Pick entry  r <span class="val" id="rV"></span></label><input type="range" id="rR" min="0" max="5" step="1" value="2"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Show as</label>
+      <div class="toggle-group" id="lB"><button class="toggle-btn active" data-m="0">Numbers</button><button class="toggle-btn" data-m="1">ⁿCᵣ</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Entry ⁿCᵣ</div><div class="rval" id="eV" style="color:var(--f-yellow)"></div></div>
+      <div class="rcard"><div class="rlabel">Row sum</div><div class="rval" id="sV" style="color:var(--f-green)"></div></div></div>
+      <p class="hint">Row n has n + 1 numbers → (a + b)ⁿ has n + 1 terms.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let P=0, LB=0, lbT=0, auto=false, autoT=0;
+  toggleWire(wrap.querySelectorAll('#lB button'),b=>lbT=+b.dataset.m);
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Pause':'▶ Auto-build'; autoT=0; };
+  const N=12;
+  animLoop(dt=>{
+    const nR=$('#nR'), rR=$('#rR');
+    if(auto){ autoT+=dt; if(autoT>1.5){ autoT=0; nR.value=(+nR.value>=N)?1:(+nR.value+1); } }
+    const n=+nR.value; rR.max=n; const r=Math.min(+rR.value,n); if(+rR.value>n) rR.value=n;
+    $('#nV').textContent=n; $('#rV').textContent=r;
+    const tgt=n+1, d=tgt-P; P+=Math.sign(d)*Math.min(Math.abs(d),dt*2.3);
+    LB=approach(LB,lbT,7,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const dx=Math.min(w/(N+2.4),76), dy=Math.min((h-70)/(N+0.6),56), cx=w/2, top=44, rad=Math.min(dx*0.43,dy*0.47);
+    const X=(rr,k)=>cx+(k-rr/2)*dx, Y=rr=>top+rr*dy;
+    const q=rr=>clamp(P-rr,0,1);
+    // current-row band
+    if(q(n)>0){ ctx.save(); ctx.fillStyle='rgba(47,143,224,0.07)'; ctx.fillRect(8,Y(n)-dy/2,w-16,dy); ctx.restore(); }
+    // row labels + edges
+    for(let rr=0;rr<=N;rr++){
+      if(q(rr)<=0) continue;
+      textAt(ctx,'n='+rr,X(rr,0)-dx*0.72,Y(rr)+4,{align:'right',size:11,weight:rr===n?700:500,color:rr===n?COL.blue:COL.mid,alpha:q(rr)});
+      if(rr>0) for(let k=0;k<=rr;k++){
+        [k-1,k].forEach(pk=>{ if(pk<0||pk>rr-1) return; line(ctx,X(rr-1,pk),Y(rr-1),lerp(X(rr-1,pk),X(rr,k),q(rr)),lerp(Y(rr-1),Y(rr),q(rr)),COL.grid,1.6); });
+      }
+    }
+    // selected parents (drawn under the nodes)
+    const sel = q(n)>=1;
+    if(sel && n>0){
+      if(r-1>=0 && r-1<=n-1) line(ctx,X(n-1,r-1),Y(n-1),X(n,r),Y(n),COL.blue,3.4);
+      if(r<=n-1) line(ctx,X(n-1,r),Y(n-1),X(n,r),Y(n),COL.red,3.4);
+    }
+    // nodes
+    for(let rr=0;rr<=N;rr++){
+      const qq=q(rr); if(qq<=0) continue;
+      for(let k=0;k<=rr;k++){
+        const x=X(rr,k), y=Y(rr), val=Cn(rr,k);
+        let sc=1;
+        if(rr===0){ sc=easeOutBack(qq); }
+        else {
+          const fly=clamp(qq/0.55,0,1), pop=clamp((qq-0.55)/0.45,0,1);
+          if(fly<1 || pop<=0){
+            const fe=smooth01(0,1,fly);
+            [k-1,k].forEach((pk,idx)=>{
+              if(pk<0||pk>rr-1) return;
+              const px=lerp(X(rr-1,pk),x,fe), py=lerp(Y(rr-1),y,fe);
+              const c=idx===0?COL.blue:COL.red;
+              circ(ctx,px,py,rad*0.8*(1-0.25*fe),c,tint(c,0.88),2);
+              textAt(ctx,String(Cn(rr-1,pk)),px,py+rad*0.28,{align:'center',size:rad*0.72,weight:700,color:c});
+            });
+            sc=0;
+          } else sc=easeOutBack(pop);
+        }
+        if(sc<=0.01) continue;
+        const isSel=sel&&rr===n&&k===r, isPar=sel&&rr===n-1&&(k===r-1||k===r);
+        const stroke=isSel?COL.yellow:isPar?(k===r-1?COL.blue:COL.red):COL.ink;
+        const fill=isSel?'#fff6d9':isPar?tint(stroke,0.88):'#fff';
+        circ(ctx,x,y,rad*sc,stroke,fill,isSel?3.4:isPar?3:1.8);
+        const dg=String(val).length, fs=rad*(dg>=3?0.66:0.85);
+        ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc);
+        textAt(ctx,String(val),0,fs*0.34,{align:'center',size:fs,weight:700,color:COL.ink,alpha:1-LB});
+        rt(ctx,`^{${rr}}C_{${k}}`,0,rad*0.18,{align:'center',size:rad*0.68,weight:700,color:COL.ink,alpha:LB});
+        ctx.restore();
+      }
+    }
+    // equation
+    const eo={size:16};
+    if(sel){
+      if(n===0) textAt(ctx,'Apex: ⁰C₀ = 1',14,28,{size:15,weight:700,color:COL.ink});
+      else if(r===0||r===n) textAt(ctx,'Edges are always 1  (ⁿC₀ = ⁿCₙ = 1)',14,28,{size:14,weight:700,color:COL.muted});
+      else {
+        rtm(ctx,[[`^{${n}}C_{${r}}`,COL.yellow],[' = ',COL.ink],[`^{${n-1}}C_{${r-1}}`,COL.blue],[' + ',COL.ink],[`^{${n-1}}C_{${r}}`,COL.red]],14,28,eo);
+        textAt(ctx,`${Cn(n,r)} = ${Cn(n-1,r-1)} + ${Cn(n-1,r)}`,14,50,{size:14,weight:600,color:COL.muted});
+      }
+    }
+    $('#eV').textContent=Cn(n,r); $('#sV').textContent='2ⁿ = '+Math.pow(2,n);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.3 GALTON BOARD   P(bin k) = ⁿCₖ aⁿ⁻ᵏ bᵏ / (a+b)ⁿ
+   Balls really fall: parabolic hops from peg to peg, then free-fall with
+   bounce onto the stack. Left = a (blue), right = b (red).
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Rows of pegs  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="1" max="10" step="1" value="6"></div>
+    <div class="control-group"><label style="color:var(--f-blue)">Pull left  a <span class="val" id="aV"></span></label><input type="range" id="aR" min="1" max="5" step="1" value="1"></div>
+    <div class="control-group"><label style="color:var(--f-red)">Pull right  b <span class="val" id="bV"></span></label><input type="range" id="bR" min="1" max="5" step="1" value="1"></div>
+    <div class="control-group"><div class="toggle-group" style="margin-top:0"><button class="toggle-btn" id="d1">Drop 1</button><button class="toggle-btn play" id="d40">Drop 40</button></div>
+      <div class="toggle-group"><button class="toggle-btn" id="rst">Reset</button><button class="toggle-btn active" id="ex">Expected</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Landed</div><div class="rval" id="lV"></div></div>
+      <div class="rcard"><div class="rlabel">Chance right</div><div class="rval" id="pV" style="color:var(--f-red)"></div></div></div>
+      <p class="hint">Green dots = ⁿCₖ aⁿ⁻ᵏ bᵏ ÷ (a+b)ⁿ</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let balls=[], counts=[], queue=0, spawnT=0, landed=0, sig='', unit=10, showExp=true;
+  $('#d1').onclick=()=>{ queue+=1; spawnT=0; };
+  $('#d40').onclick=()=>{ queue+=40; };
+  $('#rst').onclick=()=>{ sig=''; };
+  $('#ex').onclick=()=>{ showExp=!showExp; $('#ex').classList.toggle('active',showExp); };
+  animLoop(dt=>{
+    const n=+$('#nR').value, a=+$('#aR').value, b=+$('#bR').value, pR=b/(a+b);
+    $('#nV').textContent=n; $('#aV').textContent=a; $('#bV').textContent=b;
+    const key=n+'|'+a+'|'+b;
+    if(key!==sig){ sig=key; balls=[]; counts=new Array(n+1).fill(0); landed=0; queue=0; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w/2, dx=Math.min(w*0.9/(n+1),76), pegsTop=Math.max(h*0.2,92), pegsBot=h*0.6, dy=(pegsBot-pegsTop)/n;
+    const yb=h-62, cap=yb-pegsBot-10, rb=Math.min(dx*0.15,dy*0.3,8), pegR=rb*0.55, topY=62, G=1800;
+    const PX=(i,j)=>cx+(j-i/2)*dx, PY=i=>pegsTop+i*dy, off=pegR+rb;
+    // spawn
+    spawnT-=dt;
+    if(queue>0 && spawnT<=0 && balls.length<140){
+      const path=[]; for(let i=0;i<n;i++) path.push(Math.random()<pR);
+      balls.push({path,st:'drop',i:0,j:0,u:0,x:cx,y:topY,vy:0,k:path.filter(Boolean).length,bn:0});
+      queue--; spawnT=0.1;
+    }
+    // stack scale
+    const maxC=Math.max(1,...counts);
+    unit=approach(unit,Math.min(rb*1.7,(cap-8)/(maxC+1.5)),5,dt);
+    const binX=k=>cx+(k-n/2)*dx;
+    // funnel + weight arrows
+    line(ctx,cx-26,26,cx-5,topY-8,COL.ink,2.4); line(ctx,cx+26,26,cx+5,topY-8,COL.ink,2.4);
+    vec(ctx,cx-34,18,cx-34-(14+a*13),18,COL.blue,3+a*0.5); vec(ctx,cx+34,18,cx+34+(14+b*13),18,COL.red,3+b*0.5);
+    textAt(ctx,'a',cx-34-(14+a*13)-8,22,{align:'right',size:14,weight:700,color:COL.blue});
+    textAt(ctx,'b',cx+34+(14+b*13)+8,22,{size:14,weight:700,color:COL.red});
+    // bin walls + baseline
+    for(let k=0;k<=n+1;k++){ const x=binX(k)-dx/2; line(ctx,x,pegsBot+4,x,yb,COL.grid,1.6); }
+    line(ctx,binX(0)-dx/2,yb,binX(n)+dx/2,yb,COL.ink,2.6);
+    // pegs
+    for(let i=0;i<n;i++) for(let j=0;j<=i;j++) circ(ctx,PX(i,j),PY(i),pegR,COL.ink,COL.ink,1);
+    // bars
+    for(let k=0;k<=n;k++){
+      const bh=counts[k]*unit, col=mixCol(COL.blue,COL.red,n?k/n:0);
+      if(bh>0){ box(ctx,binX(k)-dx/2+3,yb-bh,dx-6,bh,col,tint(col,0.55),1.6,2);
+        if(bh>14) textAt(ctx,String(counts[k]),binX(k),yb-bh+12,{align:'center',size:11,weight:700,color:COL.ink}); }
+      rt(ctx,String(Cn(n,k)),binX(k),yb+22,{align:'center',size:15,weight:700,color:COL.green});
+      textAt(ctx,'k='+k,binX(k),yb+40,{align:'center',size:10.5,weight:500,color:COL.mid});
+    }
+    textAt(ctx,'ⁿCₖ',binX(0)-dx/2-6,yb+22,{align:'right',size:12,weight:700,color:COL.green});
+    // expected
+    if(showExp && landed>0){
+      const tot=a+b, pts=[];
+      for(let k=0;k<=n;k++){ const pk=Cn(n,k)*Math.pow(a,n-k)*Math.pow(b,k)/Math.pow(tot,n); pts.push([binX(k),yb-pk*landed*unit]); }
+      ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+      pts.forEach(p=>circ(ctx,p[0],p[1],4,COL.green,'#fff',2));
+    }
+    // balls
+    for(let bi=balls.length-1;bi>=0;bi--){
+      const bl=balls[bi];
+      if(bl.st==='drop'){
+        bl.vy+=G*dt; bl.y+=bl.vy*dt;
+        const contact=PY(0)-off;
+        if(bl.y>=contact){ bl.y=contact; bl.st='hop'; bl.i=0; bl.j=0; bl.u=0; }
+      } else if(bl.st==='hop'){
+        bl.u+=dt/0.3;
+        const i=bl.i, j=bl.j, right=bl.path[i];
+        const x0=PX(i,j), y0=PY(i)-off, jn=j+(right?1:0);
+        const last=i===n-1;
+        const x1=last?binX(jn):PX(i+1,jn), y1=last?pegsBot-rb-2:PY(i+1)-off;
+        const u=Math.min(1,bl.u);
+        bl.x=lerp(x0,x1,u); bl.y=lerp(y0,y1,u)-4*dy*0.3*u*(1-u);
+        if(bl.u>=1){
+          if(last){ bl.st='fall'; bl.x=x1; bl.y=y1; bl.vy=dy*4; bl.k=jn; }
+          else { bl.i=i+1; bl.j=jn; bl.u=0; }
+        }
+      } else if(bl.st==='fall'){
+        bl.vy+=G*dt; bl.y+=bl.vy*dt;
+        const topS=yb-counts[bl.k]*unit;
+        if(bl.y+rb>=topS){ bl.y=topS-rb; bl.vy=-bl.vy*0.4; bl.bn++; if(bl.bn>=2||Math.abs(bl.vy)<90){ counts[bl.k]++; landed++; balls.splice(bi,1); continue; } }
+      }
+      circ(ctx,bl.x,bl.y,rb,COL.yellow,'#fff1c4',2);
+    }
+    $('#lV').textContent=landed; $('#pV').textContent=b+'/'+(a+b)+' = '+fmt(pR,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.4 PICKING THE TERMS      coefficient of aⁿ⁻ᵏbᵏ  =  ⁿCₖ
+   Each of the n brackets (a+b) hands over an a or a b. The k red b-tokens
+   hop between brackets until every arrangement has been visited.
+   ===================================================================== */
+function combos(n,k){ const out=[]; (function rec(s,cur){ if(cur.length===k){ out.push(cur.slice()); return; } for(let i=s;i<n;i++){ cur.push(i); rec(i+1,cur); cur.pop(); } })(0,[]); return out; }
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Brackets  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="2" max="7" step="1" value="5"></div>
+    <div class="control-group"><label style="color:var(--f-red)">Number of b’s  k <span class="val" id="kV"></span></label><input type="range" id="kR" min="0" max="5" step="1" value="2"></div>
+    <div class="control-group"><label>Speed <span class="val" id="sV"></span></label><input type="range" id="sR" min="0.5" max="3" step="0.1" value="1">
+      <div class="toggle-group"><button class="toggle-btn play" id="pp">⏸ Pause</button><button class="toggle-btn" id="nx">Next ▸</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Ways found</div><div class="rval" id="wV" style="color:var(--f-green)"></div></div>
+      <div class="rcard"><div class="rlabel">Term</div><div class="rval" id="tV"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let n=0,k=-1,list=[],ci=0,vis=[],tok=[],stepT=0,playing=true;
+  function reset(){ list=combos(n,k); ci=0; vis=list.map((_,i)=>i===0); tok=list[0].map(s=>({from:s,to:s,u:1})); stepT=0; }
+  function next(){
+    ci=(ci+1)%list.length;
+    if(ci===0) vis=list.map((_,i)=>i===0); else vis[ci]=true;
+    tok.forEach((tk,i)=>{ tk.from=tk.to; tk.to=list[ci][i]; tk.u=0; });
+    stepT=0;
+  }
+  $('#pp').onclick=()=>{ playing=!playing; $('#pp').textContent=playing?'⏸ Pause':'▶ Play'; };
+  $('#nx').onclick=()=>next();
+  animLoop(dt=>{
+    const nn=+$('#nR').value, kR=$('#kR'); kR.max=nn;
+    const kk=Math.min(+kR.value,nn), sp=+$('#sR').value;
+    $('#nV').textContent=nn; $('#kV').textContent=kk; $('#sV').textContent='×'+sp.toFixed(1);
+    if(nn!==n||kk!==k){ n=nn; k=kk; reset(); }
+    stepT+=dt; if(playing && stepT>=1.15/sp && list.length>1) next();
+    tok.forEach(tk=>tk.u=Math.min(1,tk.u+dt*sp/0.5));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const slotW=Math.min(w*0.9/n,118), cx=w/2, sx=s=>cx+(s-(n-1)/2)*slotW;
+    const rad=Math.min(slotW*0.32,46), by=h*0.08, ry=h*0.3, red=list[ci];
+    // brackets + arrows + rings
+    for(let s=0;s<n;s++){
+      const x=sx(s);
+      box(ctx,x-slotW*0.36,by,slotW*0.72,32,COL.ink,'#f6f9fc',2,8);
+      rt(ctx,'(a + b)',x,by+21,{align:'center',size:Math.min(15,slotW*0.17),color:COL.ink});
+      vec(ctx,x,by+34,x,ry-rad-8,COL.mid,1.8);
+      ctx.save(); ctx.setLineDash([4,4]); circ(ctx,x,ry,rad+4,COL.grid,null,1.6); ctx.restore();
+      circ(ctx,x,ry,rad,COL.blue,tint(COL.blue,0.86),2.6);
+      textAt(ctx,'a',x,ry+rad*0.36,{align:'center',size:rad*1.05,weight:700,color:COL.blue});
+    }
+    tok.forEach(tk=>{
+      const e=smooth01(0,1,tk.u), x=lerp(sx(tk.from),sx(tk.to),e), moving=tk.from!==tk.to;
+      const y=ry-(moving?Math.sin(Math.PI*tk.u)*rad*1.5:0);
+      circ(ctx,x,y,rad,COL.red,tint(COL.red,0.8),3);
+      textAt(ctx,'b',x,y+rad*0.36,{align:'center',size:rad*1.05,weight:700,color:COL.red});
+    });
+    // chosen term text
+    const segs=[]; for(let s=0;s<n;s++){ const isB=red.includes(s); if(s) segs.push([' · ',COL.mid]); segs.push([isB?'b':'a',isB?COL.red:COL.blue]); }
+    rtm(ctx,segs,cx,ry+rad+30,{size:18,align:'center'});
+    // all arrangements
+    const C=list.length, sc0=Math.min(1.5,slotW/64), mr=5*sc0, cw=n*(mr*2+2)+12, ch=mr*2+12, gx=12;
+    const gTop=h*0.56, gW=w*0.94, cols=Math.max(1,Math.floor((gW+gx)/(cw+gx)));
+    const rows=Math.ceil(C/cols), availH=h-gTop-70, rowH=Math.min(ch+8,availH/rows), sc=Math.min(1,rowH/(ch+8));
+    const gl=cx-(Math.min(cols,C)*(cw+gx)-gx)/2;
+    list.forEach((cfg,idx)=>{
+      const cc=idx%cols, rr=Math.floor(idx/cols), x=gl+cc*(cw+gx), y=gTop+rr*rowH;
+      const cur=idx===ci, seen=vis[idx];
+      box(ctx,x,y,cw,ch*sc,cur?COL.yellow:seen?COL.green:COL.grid,cur?'#fff6d9':'#fff',cur?3:1.6,5);
+      for(let s=0;s<n;s++) circ(ctx,x+8+mr+s*(mr*2+2),y+ch*sc/2,mr*sc,cfg.includes(s)?COL.red:COL.blue,cfg.includes(s)?COL.red:COL.blue,1);
+    });
+    // bottom equation
+    const fact=m=>{let r=1;for(let i=2;i<=m;i++)r*=i;return r;};
+    rtm(ctx,[[`^{${n}}C_{${k}}`,COL.green],[` = ${n}! ÷ (${k}! · ${n-k}!) = `,COL.ink],[String(C),COL.green],['  →  ',COL.mid],[`${C}`,COL.green],[` a^{${n-k}}b^{${k}}`,COL.ink]],cx,h-22,{size:17,align:'center'});
+    const found=vis.filter(Boolean).length;
+    $('#wV').textContent=found+' / '+C; wrap.querySelector('#tV').innerHTML=`${C}·a<sup>${n-k}</sup>b<sup>${k}</sup>`;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.5 SIGNS & SUMS     (1+x)ⁿ at x=1 → 2ⁿ ;  (1−x)ⁿ at x=1 → 0
+   Coefficient blocks fall onto a real balance (angular spring-damper).
+   At x = 1 it balances exactly; move x and it tips.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Expansion</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="+">(1 + x)ⁿ</button><button class="toggle-btn" data-m="-">(1 − x)ⁿ</button></div></div>
+    <div class="control-group"><label>Power  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="1" max="10" step="1" value="5"></div>
+    <div class="control-group"><label style="color:var(--f-yellow)">x <span class="val" id="xV"></span></label><input type="range" id="xR" min="0.5" max="1.5" step="0.01" value="1">
+      <button class="toggle-btn navy" id="again">↻ Drop again</button><p class="hint">x = 1 is the textbook case.</p></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel" id="lL">Left</div><div class="rval" id="lV"></div></div>
+      <div class="rcard"><div class="rlabel" id="rL">Right</div><div class="rval" id="rV"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='+', sig='', th=0, om=0, blocks=[];
+  function drop(){ blocks=[]; for(let i=0;i<12;i++) blocks.push({oy:-(300+i*34),v:0,delay:i*0.12,landed:false}); }
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>mode=b.dataset.m);
+  $('#again').onclick=drop; drop();
+  animLoop(dt=>{
+    const n=+$('#nR').value, x=+$('#xR').value;
+    $('#nV').textContent=n; $('#xV').textContent=x.toFixed(2);
+    const key=n+mode; if(key!==sig){ sig=key; drop(); }
+    // weights
+    const wts=[]; for(let r=0;r<=n;r++) wts.push(Cn(n,r)*Math.pow(x,r));
+    const CW=Math.pow(2,n), CWI=11;
+    const L=[], R=[];
+    if(mode==='+'){ L.push(CWI); for(let r=0;r<=n;r++) R.push(r); }
+    else { for(let r=0;r<=n;r++) (r%2===0?L:R).push(r); }
+    const wOf=i=>i===CWI?CW:wts[i];
+    const sum=a=>a.reduce((s,i)=>s+wOf(i),0);
+    const Lt=sum(L), Rt=sum(R);
+    // blocks fall
+    blocks.forEach(bk=>{
+      if(bk.delay>0){ bk.delay-=dt; return; }
+      bk.v+=2600*dt; bk.oy+=bk.v*dt;
+      if(bk.oy>=0){ bk.oy=0; bk.landed=true; bk.v=-bk.v*0.3; if(Math.abs(bk.v)<140) bk.v=0; }
+    });
+    const eL=sum(L.filter(i=>blocks[i].landed)), eR=sum(R.filter(i=>blocks[i].landed));
+    const thT=eL+eR>0?clamp(1.6*(eR-eL)/(eR+eL),-0.32,0.32):0;
+    om+=((thT-th)*42-om*3.4)*dt; th+=om*dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w/2, py=h*0.3, Lb=Math.min(w*0.34,300), S=h*0.3, capH=h*0.25;
+    const unit=capH/Math.max(Lt,Rt,1e-9);
+    // stand
+    const baseY=h*0.93;
+    line(ctx,cx,py,cx,baseY,COL.ink,5); line(ctx,cx-70,baseY,cx+70,baseY,COL.ink,6);
+    circ(ctx,cx,py,9,COL.ink,'#fff',3);
+    // beam
+    const lx=cx-Lb*Math.cos(th), ly=py-Lb*Math.sin(th), rx=cx+Lb*Math.cos(th), ry=py+Lb*Math.sin(th);
+    const level=Math.abs(Lt-Rt)<1e-6*Math.max(1,Lt,Rt)&&blocks.every(b=>b.landed);
+    line(ctx,lx,ly,rx,ry,level?COL.green:COL.ink,6);
+    if(level) line(ctx,cx-Lb,py,cx+Lb,py,COL.green,1.6,[4,5]);
+    // pointer
+    line(ctx,cx,py-34,cx,py-8,COL.mid,2); line(ctx,cx,py-34,cx+th*150,py-34,COL.yellow,4);
+    // pans
+    function pan(ex,ey,list,sideCol){
+      const pw=Lb*0.46, plateY=ey+S;
+      line(ctx,ex,ey,ex,plateY,COL.mid,2);
+      let yb=plateY;
+      list.forEach(i=>{
+        const bk=blocks[i]; if(bk.delay>0) return;
+        const bh=Math.max(4,wOf(i)*unit), col=i===CWI?COL.green:(i%2===0?COL.blue:COL.red);
+        const y=yb-bh+bk.oy;
+        box(ctx,ex-pw*0.62,y,pw*1.24,bh,col,tint(col,0.76),2,2);
+        if(bh>15) { if(i===CWI) rt(ctx,`2^n = ${CW}`,ex,y+bh/2+5,{align:'center',size:12,color:col,weight:700});
+          else rt(ctx,`^{${n}}C_{${i}}${x===1?'':'x^'+i}`,ex,y+bh/2+5,{align:'center',size:12,color:col,weight:700}); }
+        yb-=bh;
+      });
+      ctx.save(); ctx.lineCap='round'; line(ctx,ex-pw,plateY,ex+pw,plateY,COL.ink,5); line(ctx,ex-pw,plateY,ex-pw,plateY-9,COL.ink,3); line(ctx,ex+pw,plateY,ex+pw,plateY-9,COL.ink,3); ctx.restore();
+      return plateY;
+    }
+    pan(lx,ly,L); pan(rx,ry,R);
+    // captions
+    if(mode==='+'){
+      rtm(ctx,[['2^n',COL.green],[`  =  ${fmt(CW,0)}`,COL.ink]],lx,Math.max(18,ly-24),{align:'center',size:14});
+      rtm(ctx,[['(1+x)^n',COL.blue],[`  =  ${fmt(Rt,2)}`,COL.ink]],rx,Math.max(18,ry-24),{align:'center',size:14});
+    } else {
+      rtm(ctx,[['even terms',COL.blue],[`  =  ${fmt(Lt,2)}`,COL.ink]],lx,Math.max(18,ly-24),{align:'center',size:14});
+      rtm(ctx,[['odd terms',COL.red],[`  =  ${fmt(Rt,2)}`,COL.ink]],rx,Math.max(18,ry-24),{align:'center',size:14});
+    }
+    const msg=mode==='+'?`(1+${x.toFixed(2)})^n = ${fmt(Rt,2)}  vs  2^n = ${fmt(CW,0)}`:`(1−${x.toFixed(2)})^n = even − odd = ${fmt(Lt-Rt,2)}`;
+    rt(ctx,msg.replace(/\^n/g,'^'+n),cx,h-14,{align:'center',size:15,color:level?COL.green:COL.muted});
+    $('#lL').textContent=mode==='+'?'2ⁿ':'Even terms'; $('#rL').textContent=mode==='+'?'(1 + x)ⁿ':'Odd terms';
+    $('#lV').textContent=fmt(Lt,2); $('#rV').textContent=fmt(Rt,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.6 BIG POWERS     (98)⁵ = (100 − 2)⁵ ,   Example 3: (1.01)¹⁰⁰⁰⁰⁰⁰ > 10000
+   Terms are exact (BigInt). A "zoom gauge" re-scales itself with every
+   term you add, so you watch the sum home in on the true value.
+   Textbook check: 98⁵ = 10040008000 − 1000800032 = 9039207968.
+   ===================================================================== */
+function sci(x){ if(x===0) return '0'; const e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e); return (x<0?'−':'+')+Math.abs(m).toFixed(1)+'×10^{'+e+'}'; }
+function big(bi){ return (bi<0n?'−':'+')+(bi<0n?-bi:bi).toLocaleString('en-US'); }
+function buildA6(){
+  const wrap=labShell();
+  const PRE=[
+    {lab:'96<sup>3</sup>',base:100,d:-4,n:3},{lab:'98<sup>5</sup>',base:100,d:-2,n:5},{lab:'99<sup>5</sup>',base:100,d:-1,n:5},
+    {lab:'101<sup>4</sup>',base:100,d:1,n:4},{lab:'102<sup>5</sup>',base:100,d:2,n:5},
+    {lab:'1.01<sup>10⁶</sup> vs 10⁴',bound:true,x:0.01,n:1e6,target:1e4,name:'(1.01)^{10⁶}',tgt:'10,000'},
+    {lab:'1.1<sup>10⁴</sup> vs 10³',bound:true,x:0.1,n:1e4,target:1e3,name:'(1.1)^{10⁴}',tgt:'1,000'}];
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Number</label><div class="chip-wrap" id="chips">${PRE.map((p,i)=>`<button class="chip-btn${i===1?' active':''}" data-i="${i}">${p.lab}</button>`).join('')}</div></div>
+    <div class="control-group"><label style="color:var(--f-yellow)">Terms used <span class="val" id="mV"></span></label><input type="range" id="mR" min="1" max="6" step="1" value="1">
+      <button class="toggle-btn navy" id="auto">▶ Add terms one by one</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">Sum so far</div><div class="rval" id="sV" style="color:var(--f-blue)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Error left</div><div class="rval" id="eV" style="color:var(--f-red)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let P=PRE[1], terms=[], sums=[], tru=0n, lens=[], needle={x:0,v:0}, lr=0, auto=false, autoT=0, hold=0, t=0;
+  function setPreset(i){
+    P=PRE[i]; wrap.querySelectorAll('#chips .chip-btn').forEach((c,j)=>c.classList.toggle('active',j===i));
+    const mR=$('#mR');
+    if(P.bound){ mR.max=3; terms=[]; sums=[]; }
+    else {
+      terms=[]; sums=[]; let s=0n;
+      for(let k=0;k<=P.n;k++){ const T=BigInt(Cn(P.n,k))*BigInt(P.base)**BigInt(P.n-k)*BigInt(P.d)**BigInt(k); terms.push(T); s+=T; sums.push(s); }
+      tru=BigInt(P.base+P.d)**BigInt(P.n); mR.max=P.n+1;
+    }
+    mR.value=1; lens=new Array(8).fill(0); needle.x=0; needle.v=0;
+  }
+  wrap.querySelectorAll('#chips .chip-btn').forEach(c=>c.onclick=()=>setPreset(+c.dataset.i));
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Stop':'▶ Add terms one by one'; autoT=0; hold=0; };
+  setPreset(1);
+  animLoop(dt=>{
+    t+=dt;
+    const mR=$('#mR');
+    if(auto){ autoT+=dt; if(autoT>1.25){ autoT=0; const v=+mR.value; if(v<+mR.max) mR.value=v+1; else if(++hold>=2){ hold=0; mR.value=1; } } }
+    const m=+mR.value; $('#mV').textContent=m;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const gx=w*0.77, gy=h*0.54, gh=h*0.31;
+    if(!P.bound){
+      /* ----- exact mode ----- */
+      const n=P.n, rowH=Math.min(54,(h*0.66)/(n+1)), y0=h*0.2, x0=w*0.04;
+      const dig=terms.map(T=>(T<0n?-T:T).toString().length), maxD=Math.max(...dig);
+      const barMax=Math.max(60,w*0.5-x0-36-150);
+      rtm(ctx,[[`${P.base+P.d}^${n}`,COL.ink],[' = (',COL.mid],[`${P.base}`,COL.blue],[P.d<0?' − ':' + ',COL.mid],[`${Math.abs(P.d)}`,COL.red],[`)^${n}`,COL.mid]],x0,y0-34,{size:17});
+      terms.forEach((T,k)=>{
+        const y=y0+k*rowH, inc=k<m, cur=k===m-1;
+        lens[k]=approach(lens[k],inc?dig[k]/maxD:0,7,dt);
+        const col=T<0n?COL.red:COL.blue;
+        rt(ctx,`T_${k}`,x0,y+rowH*0.5+5,{size:13,color:inc?COL.ink:COL.mid});
+        box(ctx,x0+34,y+rowH*0.18,barMax,rowH*0.64,cur?COL.yellow:COL.grid,null,cur?2.6:1.2,5);
+        if(lens[k]>0.01) box(ctx,x0+34,y+rowH*0.18,Math.max(8,barMax*lens[k]),rowH*0.64,col,tint(col,0.62),1.6,5);
+        textAt(ctx,big(T),x0+34+barMax+10,y+rowH*0.5+4,{size:12.5,weight:700,color:inc?col:COL.mid,alpha:inc?1:0.45});
+      });
+      // gauge
+      const S=sums[m-1], trueN=Number(tru), errB=S-tru, errRel=Number(errB<0n?-errB:errB)/trueN;
+      const relTarget=Math.max(errRel*2.2,2e-11);
+      lr=approach(lr,Math.log10(relTarget),4,dt); const R=Math.pow(10,lr);
+      const norm=errRel===0?0:Number(errB)/trueN/R;
+      springTo(needle,clamp(norm,-1.4,1.4),90,13,dt);
+      rt(ctx,`${P.base+P.d}^${n}`,gx,h*0.07,{align:'center',size:17,color:COL.green});
+      textAt(ctx,tru.toLocaleString('en-US'),gx,h*0.07+22,{align:'center',size:13,weight:700,color:COL.green});
+      box(ctx,gx-34,gy-gh,68,2*gh,COL.ink,'#f9fbfd',2.4,8);
+      [-1,-0.5,0,0.5,1].forEach(f=>{
+        const y=gy-f*gh; line(ctx,gx-34,y,gx-22,y,COL.ink,1.6); line(ctx,gx+22,y,gx+34,y,COL.ink,1.6);
+        if(f!==0) rt(ctx,sci(f*R*trueN),gx+42,y+4,{size:11.5,color:COL.muted,weight:600});
+      });
+      line(ctx,gx-34,gy,gx+34,gy,COL.green,3.4); textAt(ctx,'true value',gx-42,gy+4,{align:'right',size:11.5,weight:700,color:COL.green});
+      // history dots
+      for(let i=0;i<m-1;i++){
+        const rel=Number(sums[i]-tru)/trueN/R, yy=gy-clamp(rel,-1.07,1.07)*gh;
+        circ(ctx,gx,yy,5,COL.blue,Math.abs(rel)>1.05?'#fff':tint(COL.blue,0.7),1.6);
+        textAt(ctx,String(i+1),gx,yy+3.5,{align:'center',size:8.5,weight:700,color:COL.blue});
+      }
+      const ny=gy-needle.x*gh;
+      poly(ctx,[[gx+36,ny],[gx+54,ny-8],[gx+54,ny+8]],COL.yellow,COL.yellow,1);
+      circ(ctx,gx,ny,8,COL.yellow,'#fff1c4',2.6);
+      textAt(ctx,String(m),gx,ny+3.7,{align:'center',size:10.5,weight:700,color:COL.ink});
+      rt(ctx,'zoom ±'+sci(R*trueN).slice(1),gx,gy+gh+34,{align:'center',size:12.5,color:COL.muted});
+      $('#sV').textContent=S.toLocaleString('en-US');
+      $('#eV').style.color=errB===0n?'var(--f-green)':'var(--f-red)';
+      $('#eV').textContent=errB===0n?'0  (exact)':(errB<0n?'−':'+')+(errB<0n?-errB:errB).toLocaleString('en-US');
+    } else {
+      /* ----- bound mode ----- */
+      const T0=1, T1=P.n*P.x, tg=P.target, x0=w*0.04;
+      const S=m===1?T0:T0+T1, shown=Math.max(tg,T0+T1)*1.3, tH=h*0.58, tb=h*0.82, tx=w*0.55, tw=120;
+      rtm(ctx,[[P.name,COL.ink],[' = (1 + ',COL.mid],[String(P.x),COL.green],[`)^{${P.n.toLocaleString('en-US')}}`,COL.mid]],x0,h*0.14,{size:17});
+      const rows=[['T_0 = 1',COL.blue,1],['T_1 = n·x = '+T1.toLocaleString('en-US'),COL.green,2],['+ more terms, all positive',COL.green,3]];
+      rows.forEach((r,k)=>{
+        const y=h*0.24+k*54, inc=m>=r[2]; lens[k]=approach(lens[k],inc?1:0,7,dt);
+        box(ctx,x0,y,w*0.42,38,m===r[2]?COL.yellow:COL.grid,null,m===r[2]?2.6:1.2,6);
+        if(lens[k]>0.01) box(ctx,x0,y,w*0.42*lens[k],38,r[1],tint(r[1],0.78),1.6,6);
+        rt(ctx,r[0],x0+12,y+24,{size:13.5,color:inc?COL.ink:COL.mid});
+      });
+      // tank
+      const Y=v=>tb-v/shown*tH;
+      box(ctx,tx,tb-tH,tw,tH,COL.ink,'#f9fbfd',2.4,4);
+      const seg1=lerp(0,T0,lens[0]), seg2=lerp(0,T1,lens[1]);
+      if(seg1>0) { ctx.save(); ctx.fillStyle=tint(COL.blue,0.55); ctx.fillRect(tx+3,Y(seg1),tw-6,Math.max(3,tb-Y(seg1))); ctx.restore(); line(ctx,tx+3,Y(seg1),tx+tw-3,Y(seg1),COL.blue,2.4); }
+      if(seg2>0) { ctx.save(); ctx.fillStyle=tint(COL.green,0.55); ctx.fillRect(tx+3,Y(seg1+seg2),tw-6,Math.max(2,Y(seg1)-Y(seg1+seg2))); ctx.restore(); line(ctx,tx+3,Y(seg1+seg2),tx+tw-3,Y(seg1+seg2),COL.green,2.4); }
+      if(lens[2]>0.01){ ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.green; ctx.lineWidth=2.2; const top=Y(seg1+seg2); ctx.strokeRect(tx+3,top-lens[2]*(top-(tb-tH))-0.5,tw-6,lens[2]*(top-(tb-tH))); ctx.restore(); vec(ctx,tx+tw/2,tb-tH+30,tx+tw/2,tb-tH-8,COL.green,3); }
+      line(ctx,tx-14,Y(tg),tx+tw+14,Y(tg),COL.yellow,3.4);
+      textAt(ctx,'must beat '+P.tgt,tx+tw+20,Y(tg)+4,{size:12.5,weight:700,color:COL.yellow});
+      const over=(T0+T1)>tg;
+      if(m>=2) rt(ctx,`1 + ${T1.toLocaleString('en-US')} = ${(T0+T1).toLocaleString('en-US')} ${over?'>':'≤'} ${P.tgt}`,tx+tw/2,tb+34,{align:'center',size:14,color:over?COL.green:COL.red});
+      if(m>=3) rt(ctx,over?'so the whole power is larger':'',tx+tw/2,tb+56,{align:'center',size:14,color:COL.green});
+      $('#sV').textContent=(m>=3?'> ':'')+S.toLocaleString('en-US'); $('#eV').style.color='var(--f-green)'; $('#eV').textContent=m>=3?'positive terms add even more':'—';
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.7 ADD OR CANCEL     (a+b)ⁿ + (a−b)ⁿ  and  (a+b)ⁿ − (a−b)ⁿ
+   Each term of (a−b)ⁿ slides onto the matching term of (a+b)ⁿ.
+   Equal-and-opposite terms wipe out; equal-and-same terms double.
+   Textbook check: n=4, a=√3, b=√2, minus → 40√6 ≈ 97.98.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Combine</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-s="1">(a+b)ⁿ + (a−b)ⁿ</button><button class="toggle-btn" data-s="-1">(a+b)ⁿ − (a−b)ⁿ</button></div></div>
+    <div class="control-group"><label>Power  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="2" max="8" step="1" value="4"></div>
+    <div class="control-group"><label style="color:var(--f-blue)">a <span class="val" id="aV"></span></label><input type="range" id="aR" min="0.5" max="3" step="0.001" value="1.732">
+      <label style="margin-top:8px;color:var(--f-red)">b <span class="val" id="bV"></span></label><input type="range" id="bR" min="0.5" max="3" step="0.001" value="1.414">
+      <div class="toggle-group"><button class="toggle-btn" id="rt">a = √3, b = √2</button></div></div>
+    <div class="control-group"><label style="color:var(--f-yellow)">Slide together <span class="val" id="cV"></span></label><input type="range" id="cR" min="0" max="1" step="0.01" value="0">
+      <button class="toggle-btn navy" id="auto">▶ Play</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Result</div><div class="rval" id="rV" style="color:var(--f-green)"></div></div>
+      <div class="rcard"><div class="rlabel">Terms left</div><div class="rval" id="tV"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let s=1, auto=false, t=0, dir=1; const CS={x:0,v:0}; let aEx=null,bEx=null;
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>s=+b.dataset.s);
+  $('#rt').onclick=()=>{ aEx=Math.sqrt(3); bEx=Math.sqrt(2); $('#aR').value=aEx; $('#bR').value=bEx; };
+  $('#aR').oninput=()=>aEx=null; $('#bR').oninput=()=>bEx=null;
+  $('#auto').onclick=()=>{ auto=!auto; $('#auto').textContent=auto?'⏸ Stop':'▶ Play'; };
+  animLoop(dt=>{
+    t+=dt;
+    const n=+$('#nR').value, a=aEx??+$('#aR').value, b=bEx??+$('#bR').value;
+    if(auto){ const c=+$('#cR').value; let nc=c+dir*dt*0.28; if(nc>=1.25){ dir=-1; nc=1; } if(nc<=-0.25){ dir=1; nc=0; } $('#cR').value=clamp(nc,0,1); if(nc>1||nc<0) { /* pause at the ends */ } }
+    const cT=+$('#cR').value;
+    $('#nV').textContent=n; $('#aV').textContent=fmt(a,3); $('#bV').textContent=fmt(b,3); $('#cV').textContent=Math.round(cT*100)+'%';
+    springTo(CS,cT,34,8,dt); const c=clamp(CS.x,0,1);
+    const T=[], B=[]; for(let k=0;k<=n;k++){ const tk=Cn(n,k)*Math.pow(a,n-k)*Math.pow(b,k); T.push(tk); B.push(s*(k%2?-1:1)*tk); }
+    const maxV=Math.max(...T.map((v,k)=>Math.max(v,v+B[k])));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const base=h*0.68, hmax=h*0.44, u=hmax/maxV, left=w*0.05, slotW=(w*0.9)/(n+1), bw=Math.min(slotW*0.3,36);
+    line(ctx,left-6,base,w*0.95+6,base,COL.ink,2.4);
+    const cs=smooth01(0,0.5,c), v=smooth01(0.5,1,c);
+    let live=0, tot=0;
+    for(let k=0;k<=n;k++){
+      const xc=left+(k+0.5)*slotW, x1=xc-(1-cs)*bw*0.72, x2=xc+(1-cs)*bw*0.72;
+      const Tk=T[k], Bk=B[k], base2=Tk*v, tt=Tk+Bk, dead=Math.abs(tt)<1e-9*Tk;
+      tot+=tt; if(!dead) live++;
+      const dim2=dead?smooth01(0.8,1,v)*0.6:0;
+      ctx.save(); ctx.globalAlpha=1-dim2;
+      box(ctx,x1-bw/2,base-Tk*u,bw,Tk*u,COL.blue,tint(COL.blue,0.7),2,2);
+      // second bar: from base2 to base2+Bk
+      const yA=base-base2*u, yB=base-(base2+Bk)*u;
+      box(ctx,x2-bw/2,Math.min(yA,yB),bw,Math.max(2,Math.abs(yA-yB)),COL.red,tint(COL.red,0.7),2,2);
+      ctx.restore();
+      const gl=smooth01(0.8,1,v);
+      if(gl>0.02){
+        if(dead) { rt(ctx,'0',xc,base-6,{align:'center',size:15,color:COL.green,alpha:gl}); }
+        else { box(ctx,xc-bw/2-4,base-tt*u-3,bw+8,tt*u+3,COL.green,null,2.6,3); }
+      }
+      rt(ctx,`^{${n}}C_{${k}}`,xc,base+(Bk<0?Math.abs(Bk)*u:0)+26,{align:'center',size:11,color:COL.mid,alpha:0});
+      textAt(ctx,'k='+k,xc,h-26,{align:'center',size:11,weight:600,color:COL.mid});
+      rt(ctx,(k%2? 'odd':'even'),xc,h-10,{align:'center',size:10.5,color:k%2?COL.red:COL.blue,weight:600});
+    }
+    // legend
+    box(ctx,left,18,14,14,COL.blue,tint(COL.blue,0.7),2,2); rt(ctx,'(a+b)^n term',left+20,31,{size:13});
+    box(ctx,left+150,18,14,14,COL.red,tint(COL.red,0.7),2,2); rt(ctx,s>0?'(a−b)^n term':'−(a−b)^n term',left+170,31,{size:13});
+    rtm(ctx,[['(a+b)^n',COL.blue],[s>0?' + ':' − ',COL.ink],['(a−b)^n',COL.red],[' = ',COL.ink],[fmt(tot,3),COL.green]],w/2,68,{size:17,align:'center',alpha:smooth01(0.3,1,c)});
+    textAt(ctx,s>0?'odd terms cancel · even terms double':'even terms cancel · odd terms double',w/2,90,{size:13,align:'center',weight:600,color:COL.muted,alpha:smooth01(0.5,1,c)});
+    $('#rV').textContent=fmt(tot,3); $('#tV').textContent=live+' of '+(n+1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   7.8 REMAINDER CRATES     6ⁿ − 5n = 25k + 1   and   9ⁿ⁺¹ − 8n − 9 = 64k
+   (1+5)ⁿ = 1 + 5n + 25·(…): the 25-multiples pack into crates, leaving
+   1 + 5n loose. Take away 5n and exactly 1 is left. Crates drop with
+   gravity and bounce; loose items follow.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Claim</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="1">6ⁿ − 5n ÷ 25</button><button class="toggle-btn" data-m="2">9ⁿ⁺¹ − 8n − 9 ÷ 64</button></div></div>
+    <div class="control-group"><label>Power  n <span class="val" id="nV"></span></label><input type="range" id="nR" min="1" max="5" step="1" value="3">
+      <button class="toggle-btn navy" id="again">↻ Drop again</button></div>
+    <div class="control-group"><label style="color:var(--f-yellow)" id="rmL">Take away 5n <span class="val" id="pV"></span></label><input type="range" id="pR" min="0" max="1" step="0.01" value="0"></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Crates</div><div class="rval" id="kV" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">Left over</div><div class="rval" id="lV" style="color:var(--f-yellow)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode=1, sig='', crates=[], loose=[], t=0, cfg=null;
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>mode=+b.dataset.m);
+  $('#again').onclick=()=>{ sig=''; };
+  function setup(n,w,h){
+    const M=mode===1?25:64, total=mode===1?Math.pow(6,n):Math.pow(9,n+1);
+    const L=mode===1?1+5*n:8*n+9, R=mode===1?5*n:8*n+9, K=(total-L)/M;
+    cfg={n,M,total,L,R,K,cols:mode===1?5:8};
+    crates=[]; loose=[]; t=0;
+    const RW=w*0.6, RH=h*0.6;
+    if(K>0){
+      let cs=Math.min(RW,RH), cols=Math.max(1,Math.ceil(Math.sqrt(K*RW/RH)));
+      let rows=Math.ceil(K/cols); cs=Math.min(RW/cols,RH/rows);
+      if(cs>60){ cs=60; cols=Math.max(1,Math.min(K,Math.floor(RW/cs))); rows=Math.ceil(K/cols); }
+      cfg.cs=cs; cfg.gcols=cols; cfg.grows=rows;
+    }
+    for(let i=0;i<K;i++) crates.push({i,y:-400-Math.random()*60,v:0,delay:i*(2.2/Math.max(K,1)),done:false,rest:false});
+    for(let j=0;j<L;j++) loose.push({j,y:-400,v:0,delay:2.3+j*0.045,rm:0,rest:false});
+  }
+  animLoop(dt=>{
+    const nR=$('#nR'); nR.max=mode===1?5:4; if(+nR.value>+nR.max) nR.value=nR.max;
+    const n=+nR.value, p=+$('#pR').value;
+    $('#nV').textContent=n; $('#pV').textContent=Math.round(p*100)+'%';
+    $('#rmL').firstChild.textContent=mode===1?'Take away 5n ':'Take away 8n + 9 ';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const key=mode+'|'+n; if(key!==sig||!cfg){ sig=key; setup(n,w,h); }
+    t+=dt; const G=2600*(h/600);
+    const RX=w*0.04, RW=w*0.6, RY=h*0.2, RH=h*0.6, floor=RY+RH;
+    // header
+    rtm(ctx,mode===1?[['6^n',COL.ink],[` = ${cfg.total}`,COL.ink],['  =  25 × ',COL.mid],[String(cfg.K),COL.blue],['  +  (1 + 5n) = ',COL.mid],[String(cfg.L),COL.green]]:
+      [['9^{n+1}',COL.ink],[` = ${cfg.total}`,COL.ink],['  =  64 × ',COL.mid],[String(cfg.K),COL.blue],['  +  (8n + 9) = ',COL.mid],[String(cfg.L),COL.green]],14,34,{size:16});
+    textAt(ctx,`crates of ${cfg.M}`,RX,RY-10,{size:13,weight:700,color:COL.blue});
+    textAt(ctx,'loose items',w*0.7,RY-10,{size:13,weight:700,color:COL.green});
+    line(ctx,RX-4,floor,RX+RW+4,floor,COL.ink,3);
+    // crates
+    if(cfg.K>0) crates.forEach(cr=>{
+      if(cr.delay>0){ cr.delay-=dt; return; }
+      const row=Math.floor(cr.i/cfg.gcols), col=cr.i%cfg.gcols, sx=RX+col*cfg.cs, sy=floor-(row+1)*cfg.cs;
+      if(!cr.rest){ cr.v+=G*dt; cr.y+=cr.v*dt; if(cr.y>=sy){ cr.y=sy; cr.v=-cr.v*0.32; if(Math.abs(cr.v)<110){ cr.v=0; cr.rest=true; } } }
+      else cr.y=sy;
+      const cs=cfg.cs, col2=COL.blue;
+      box(ctx,sx+1,cr.y+1,cs-2,cs-2,col2,tint(col2,0.86),Math.min(1.8,cs/10),Math.min(4,cs/8));
+      if(cs>=22){ ctx.save(); ctx.strokeStyle=tint(col2,0.45); ctx.lineWidth=0.8; ctx.beginPath(); const m=Math.sqrt(cfg.M);
+        for(let q=1;q<m;q++){ ctx.moveTo(sx+1+q*(cs-2)/m,cr.y+3); ctx.lineTo(sx+1+q*(cs-2)/m,cr.y+cs-3); ctx.moveTo(sx+3,cr.y+1+q*(cs-2)/m); ctx.lineTo(sx+cs-3,cr.y+1+q*(cs-2)/m);} ctx.stroke(); ctx.restore(); }
+    });
+    else textAt(ctx,'no full crate yet — try a bigger n',RX+RW/2,RY+RH/2,{align:'center',size:13,weight:600,color:COL.mid});
+    // loose items
+    const LX=w*0.7, LW=w*0.26, sp=Math.min(LW/cfg.cols,RH/Math.ceil(cfg.L/cfg.cols),30), rr=sp*0.38;
+    line(ctx,LX-6,floor,LX+LW+6,floor,COL.ink,3);
+    const removed=cfg.R*p; let remain=0;
+    loose.forEach(it=>{
+      const row=Math.floor(it.j/cfg.cols), col=it.j%cfg.cols, sx=LX+col*sp+sp/2, sy=floor-(row+0.5)*sp-rr*0.0;
+      if(it.delay>0){ it.delay-=dt; return; }
+      if(!it.rest){ it.v+=G*dt; it.y+=it.v*dt; if(it.y>=sy){ it.y=sy; it.v=-it.v*0.35; if(Math.abs(it.v)<110){ it.v=0; it.rest=true; } } } else it.y=sy;
+      const tgtRm=clamp(removed-(cfg.L-1-it.j),0,1); it.rm=approach(it.rm,tgtRm,8,dt);
+      if(it.rm<0.5) remain++;
+      const keep=cfg.R<cfg.L&&it.j===0, col2=keep?COL.yellow:(it.rm>0.05?COL.red:COL.green);
+      if(it.rm>0.985) return;
+      ctx.save(); ctx.globalAlpha=1-it.rm;
+      circ(ctx,sx,it.y-it.rm*60,rr*(1-it.rm*0.5),col2,tint(col2,0.72),keep?3:2); ctx.restore();
+      if(keep && it.rest) circ(ctx,sx,it.y,rr+5,COL.yellow,null,1.4);
+    });
+    const left=Math.max(0,cfg.L-Math.round(removed)), rem=cfg.total-cfg.R-cfg.M*cfg.K;
+    // result line
+    const done=p>0.98;
+    if(mode===1) rtm(ctx,[[`6^n − 5n = ${cfg.total-cfg.R}`,COL.ink],['  =  25 × ',COL.mid],[String(cfg.K),COL.blue],['  +  ',COL.mid],[String(cfg.L-Math.round(cfg.R*clamp(p,0,1))),COL.yellow]],14,h-18,{size:16,alpha:0.35+0.65*p});
+    else rtm(ctx,[[`9^{n+1} − 8n − 9 = ${cfg.total-cfg.R}`,COL.ink],['  =  64 × ',COL.mid],[String(cfg.K),COL.blue],['  +  ',COL.mid],[String(cfg.L-Math.round(cfg.R*clamp(p,0,1))),COL.yellow]],14,h-18,{size:16,alpha:0.35+0.65*p});
+    if(done) textAt(ctx,`remainder ${mode===1?1:0}`,w-14,h-18,{align:'right',size:16,weight:700,color:COL.green});
+    $('#kV').textContent=cfg.K+' × '+cfg.M; $('#lV').textContent=left;
+  });
+  return wrap;
+}
+
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

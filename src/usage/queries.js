@@ -14,7 +14,7 @@ function filters(user, q) {
   let from = DATE_RE.test(q.from) ? q.from : addDays(to, -29);
   if (from > to) [from, to] = [to, from];
   if (addDays(from, 400) < to) from = addDays(to, -400);
-  const cls = [6, 7, 8, 9, 10].includes(Number(q.cls)) ? Number(q.cls) : null;
+  const cls = [6, 7, 8, 9, 10, 11, 12].includes(Number(q.cls)) ? Number(q.cls) : null;
   const platform = ['windows', 'linux', 'android', 'other'].includes(q.platform) ? q.platform : null;
   let school = typeof q.school === 'string' && q.school ? q.school.slice(0, 80) : null;
   const scope = user && user.role !== 'admin' && user.schools && user.schools.length ? user.schools : null;
@@ -80,7 +80,7 @@ async function overview(user, q) {
       avgMinutesPerActiveDevicePerDay: t.devices.length ? Math.round((t.sec / 60) / (t.devices.length * days) * 10) / 10 : 0,
     },
     daily: series(f.from, f.to, agg.perDay, (r) => ({ hours: r ? hours(r.sec) : 0, lessonHours: r ? hours(r.lesson) : 0, devices: r ? r.devices.length : 0 })),
-    byClass: [6, 7, 8, 9, 10].map((c) => { const r = agg.byClass.find((x) => x._id === c); return { cls: c, hours: r ? hours(r.sec) : 0, devices: r ? r.devices.length : 0 }; }),
+    byClass: [6, 7, 8, 9, 10, 11, 12].map((c) => { const r = agg.byClass.find((x) => x._id === c); return { cls: c, hours: r ? hours(r.sec) : 0, devices: r ? r.devices.length : 0 }; }),
     byPlatform: agg.byPlatform.map((r) => ({ platform: r._id, hours: hours(r.sec), devices: r.devices.length })),
     topChapters: agg.topChapters.map((r) => ({ page: r._id, cls: r.cls, chapter: r.chapter, hours: hours(r.sec), devices: r.devices.length })),
     bySchool: agg.bySchool.map((r) => ({ school: r._id, hours: hours(r.sec), devices: r.devices.length })),
@@ -168,7 +168,7 @@ async function exportRows(user, q) {
 }
 
 /** Chapters per class in the learning site (used for "curriculum progress"). */
-const CHAPTER_COUNTS = { 6: 12, 7: 12, 8: 13, 9: 11, 10: 13 };
+const CHAPTER_COUNTS = { 6: 12, 7: 12, 8: 13, 9: 11, 10: 13, 11: 36, 12: 37 };
 
 /**
  * ONE school = ONE progress. Adds up every screen of the school: time, sessions, classes, chapters, and how much of the
@@ -222,7 +222,7 @@ async function schoolDetail(user, name, q) {
     },
     daily: series(f.from, f.to, agg.perDay, (r) => ({ hours: r ? hours(r.sec) : 0, lessonHours: r ? hours(r.lesson) : 0, screens: r ? r.devices.length : 0 })),
     // curriculum progress: how many of the class's chapters the school has opened at least once (all time), plus this period's time
-    byClass: [6, 7, 8, 9, 10].map((c) => { const r = agg.byClass.find((x) => x._id === c), cv = covBy.get(c); return {
+    byClass: [6, 7, 8, 9, 10, 11, 12].map((c) => { const r = agg.byClass.find((x) => x._id === c), cv = covBy.get(c); return {
       cls: c, hours: r ? hours(r.sec) : 0, screens: r ? r.devices.length : 0, sessions: sessBy.get(c) || 0,
       chaptersUsed: cv ? cv.pages.length : 0, chaptersTotal: CHAPTER_COUNTS[c], allTimeHours: cv ? hours(cv.sec) : 0 }; }),
     byPlatform: agg.byPlatform.map((x) => ({ platform: x._id, hours: hours(x.sec) })),
@@ -236,7 +236,7 @@ async function schoolDetail(user, name, q) {
 
 
 
-/** CLASS-WISE: every class (6 to 10) across all schools - time, schools, screens, and how much of the class's curriculum has been opened. */
+/** CLASS-WISE: every class (6 to 12) across all schools - time, schools, screens, and how much of the class's curriculum has been opened. */
 async function classes(user, q) {
   const f = filters(user, { ...q, cls: '' }), d = db.usage();
   if (f.impossible) return { range: { from: f.from, to: f.to }, classes: [] };
@@ -246,7 +246,7 @@ async function classes(user, q) {
     d.collection('chapters').aggregate([{ $match: { sec: { $gt: 0 }, ...schoolMatch(f) } }, { $group: { _id: '$cls', pages: { $addToSet: '$page' } } }]).toArray(),
     d.collection('sessions').aggregate([{ $match: { start: { $gte: f.from + 'T00:00:00', $lte: f.to + 'T23:59:59.999Z' }, ...schoolMatch(f) } }, { $group: { _id: '$cls', n: { $sum: 1 } } }]).toArray(),
   ]);
-  return { range: { from: f.from, to: f.to }, classes: [6, 7, 8, 9, 10].map((c) => {
+  return { range: { from: f.from, to: f.to }, classes: [6, 7, 8, 9, 10, 11, 12].map((c) => {
     const u = use.find((x) => x._id === c), v = cov.find((x) => x._id === c), s = sess.find((x) => x._id === c);
     return { cls: c, hours: u ? hours(u.sec) : 0, schools: u ? u.schools.length : 0, screens: u ? u.devices.length : 0, activeDays: u ? u.days.length : 0, sessions: s ? s.n : 0,
       chaptersUsed: v ? v.pages.length : 0, chaptersTotal: CHAPTER_COUNTS[c] };
@@ -255,7 +255,7 @@ async function classes(user, q) {
 
 /** One class: which schools use it (and how far each has got), which sections, and which chapters. */
 async function classDetail(user, cls, q) {
-  const c = Number(cls); if (![6, 7, 8, 9, 10].includes(c)) return null;
+  const c = Number(cls); if (![6, 7, 8, 9, 10, 11, 12].includes(c)) return null;
   const f = filters(user, q), d = db.usage();
   if (f.impossible) return null;
   const m = { date: { $gte: f.from, $lte: f.to }, cls: c, page: { $ne: 'dash' }, ...schoolMatch(f), ...(f.platform ? { platform: f.platform } : {}) };

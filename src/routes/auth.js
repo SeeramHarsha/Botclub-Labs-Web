@@ -22,7 +22,7 @@ router.post('/register', registerLimit, wrap(async (req, res) => {
   if (!isEmail(email)) return res.status(400).json({ error: 'Please enter a valid email address.' });
   if (!auth.strongEnough(b.password)) return res.status(400).json({ error: 'The password must be at least 8 characters.' });
   if (String(b.password).toLowerCase() === email) return res.status(400).json({ error: 'The password cannot be your email address.' });
-  if (!c) return res.status(400).json({ error: 'Please choose the class (6 to 10).' });
+  if (!c) return res.status(400).json({ error: 'Please choose the class (6 to 12).' });
   if (b.consent !== true) return res.status(400).json({ error: 'Please confirm that you are a parent/guardian, or have a parent/guardian\'s permission.' });
   let user;
   try { user = await auth.register({ email, name, password: b.password, cls: c, school, phone, consent: true }); }

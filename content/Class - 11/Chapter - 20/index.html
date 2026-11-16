@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Part 2 · Chapter 1 — Redox Reactions | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚗️</div>
+    <div>
+      <div class="chip">Grade 11 · Part 2 · Ch 1</div>
+      <h1>Redox Reactions</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>Electrons · What you change</span>
+      <span><i style="background:var(--f-red)"></i>Oxidised · Reducing agent</span>
+      <span><i style="background:var(--f-blue)"></i>Reduced · Oxidising agent</span>
+      <span><i style="background:var(--f-green)"></i>Products · Measured</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — PART 2 — CHAPTER 1: REDOX REACTIONS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Atoms vibrate, electrons hop, ions drift, bubbles rise —
+   nothing is ever a static picture with only a label changed.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+/* frame scheduler — real requestAnimationFrame, or a manual queue (window.__manual) used for deterministic testing */
+const __Q=new Map(); let __id=0, __clock=0;
+function raf(cb){ if(window.__manual){ __Q.set(++__id,cb); return -__id; } return requestAnimationFrame(cb); }
+function caf(i){ if(i<0) __Q.delete(-i); else cancelAnimationFrame(i); }
+window.__step=function(n,dt){ for(let k=0;k<n;k++){ const arr=[...__Q.values()]; __Q.clear(); __clock+=dt*1000; arr.forEach(cb=>cb(__clock)); } };
+function animLoop(tick){
+  let last = performance.now();
+  let id;
+  function frame(now){
+    const dt = Math.max(0, Math.min(window.__maxdt||0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    id = raf(frame);
+  }
+  id = raf(frame);
+  const stop = ()=>caf(id);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function lw(k,base){ return clamp(k*base,1,3); }
+
+function tag(ctx,px,py,tx,ty,txt,col){
+  const W=ctx.canvas._w||800;
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const right=tx>px; let bx=right?tx+4:tx-tw-12;
+  if(bx+tw+10>W-4) bx=W-tw-14;
+  line(ctx,px,py,right?bx:bx+tw+8,ty,col,1.6); circ(ctx,px,py,3,col,col,1);
+  ctx.save(); rrect(ctx,bx,ty-10,tw+10,20,6); ctx.fillStyle='rgba(255,255,255,0.94)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+5,ty+4,{size:12,weight:700,color:col});
+}
+
+/* ---------------------------------------------------------------------
+   0c. CHEMISTRY HELPERS — sub/superscript text, beakers, ions, electrons
+   --------------------------------------------------------------------- */
+function chemTokens(s){
+  const out=[]; let i=0, buf='';
+  const flush=()=>{ if(buf){ out.push({t:buf,m:0}); buf=''; } };
+  while(i<s.length){
+    const c=s[i];
+    if(c==='_'){ flush(); let j=i+1, v=''; while(j<s.length && /[0-9]/.test(s[j])){ v+=s[j]; j++; } out.push({t:v,m:1}); i=j; }
+    else if(c==='^'){ flush(); let j=i+1, v=''; while(j<s.length && /[0-9]/.test(s[j])){ v+=s[j]; j++; } if(j<s.length && /[+\-−]/.test(s[j])){ v+=s[j]; j++; } out.push({t:v.replace('-','−'),m:2}); i=j; }
+    else { buf+=c; i++; }
+  }
+  flush(); return out;
+}
+function chemHTML(s){ return chemTokens(s).map(k=>k.m===1?'<sub>'+k.t+'</sub>':k.m===2?'<sup>'+k.t+'</sup>':k.t).join(''); }
+function chemW(ctx,s,size,wt){
+  ctx.save(); const sm=size*0.7; let W=0;
+  chemTokens(s).forEach(k=>{ ctx.font=(wt||600)+' '+(k.m?sm:size)+'px Poppins, sans-serif'; W+=ctx.measureText(k.t).width; });
+  ctx.restore(); return W;
+}
+function chemAt(ctx,s,x,y,o){
+  o=o||{}; const size=o.size||12, wt=o.weight||600, sm=size*0.7, toks=chemTokens(s);
+  ctx.save(); ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+  const wd=toks.map(k=>{ ctx.font=wt+' '+(k.m?sm:size)+'px Poppins, sans-serif'; return ctx.measureText(k.t).width; });
+  const W=wd.reduce((a,b)=>a+b,0);
+  let X=o.align==='center'?x-W/2:o.align==='right'?x-W:x;
+  ctx.fillStyle=o.color||COL.ink; if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  toks.forEach((k,i)=>{ ctx.font=wt+' '+(k.m?sm:size)+'px Poppins, sans-serif'; const dy=k.m===1?size*0.22:k.m===2?-size*0.4:0; ctx.fillText(k.t,X,y+dy); X+=wd[i]; });
+  ctx.restore(); return W;
+}
+function sgn(n){ return n>0?'+'+n:n<0?'−'+(-n):'0'; }
+/* pill label with chemistry text */
+function chemPill(ctx,s,cx,cy,col,size,fill){
+  size=size||13; const W=chemW(ctx,s,size,700)+14, H=size+10;
+  ctx.save(); rrect(ctx,cx-W/2,cy-H/2,W,H,H/2); ctx.fillStyle=fill||'rgba(255,255,255,0.96)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore();
+  chemAt(ctx,s,cx,cy+size*0.36,{size,weight:700,color:col,align:'center'});
+  return W;
+}
+function electron(ctx,x,y,r){ r=r||3.4; circ(ctx,x,y,r,'#a9780a',COL.yellow,1.2); }
+/* glass beaker. returns inner geometry. level 0..1 */
+function beaker(ctx,x,y,w,h,level,liquid,t,opts){
+  opts=opts||{}; const lip=8, top=y, bot=y+h, L=x-w/2, Rr=x+w/2;
+  const ly=bot-(h-12)*level;
+  if(level>0.001){
+    ctx.save(); ctx.beginPath(); ctx.rect(L+2,ly,w-4,bot-ly-2); ctx.fillStyle=liquid; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=opts.surf||'rgba(19,42,68,0.35)'; ctx.lineWidth=1.6; ctx.beginPath();
+    for(let xx=L+3;xx<=Rr-3;xx+=3){ const yy=ly+Math.sin(xx*0.06+t*2.4)*1.3*(opts.wave===undefined?1:opts.wave); xx===L+3?ctx.moveTo(xx,yy):ctx.lineTo(xx,yy); } ctx.stroke(); ctx.restore();
+  }
+  ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(L-lip,top-2); ctx.lineTo(L,top+2); ctx.lineTo(L,bot-8); ctx.quadraticCurveTo(L,bot,L+8,bot); ctx.lineTo(Rr-8,bot); ctx.quadraticCurveTo(Rr,bot,Rr,bot-8); ctx.lineTo(Rr,top+2); ctx.lineTo(Rr+lip,top-2); ctx.stroke();
+  if(!opts.noTicks){ ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; for(let i=1;i<=4;i++){ const yy=bot-8-(h-16)*i/5; ctx.beginPath(); ctx.moveTo(Rr-12-(i%2?0:6),yy); ctx.lineTo(Rr-2,yy); ctx.stroke(); } }
+  ctx.restore();
+  return {L:L+3,R:Rr-3,top:top+4,bot:bot-3,ly};
+}
+
+/* ---------------------------------------------------------------------
+   0d. REACTION MORPH ENGINE — atoms glide from reactant to product layout
+   atom: {e,x,y,X,Y,on0,on1,role,arc}   bonds: [i,j,order]
+   p: 0 → 1 progress.  Reactants vibrate; bonds fade out then in.
+   --------------------------------------------------------------------- */
+const EL_R={H:0.46,C:0.7,N:0.68,O:0.66,F:0.6,Mg:0.95,S:0.8,Hg:1.0,Cl:0.82,Zn:0.95,Ca:0.95,Na:0.95};
+function rxnPos(a,i,p,t){
+  const u=smooth01(0.2,0.82,p), j=0.06+0.05*(1-u);
+  const x=lerp(a.x,a.X,u)+Math.sin(t*9+i*1.9)*j, y=lerp(a.y,a.Y,u)-(a.arc||0)*Math.sin(Math.PI*u)+Math.cos(t*8+i*2.3)*j;
+  return [x,y];
+}
+function drawRxn(ctx,cx,cy,sc,R,p,t,o){
+  o=o||{};
+  const pos=R.atoms.map((a,i)=>rxnPos(a,i,p,t));
+  const fR=1-smooth01(0.28,0.5,p), fP=smooth01(0.58,0.82,p);
+  const key=(b)=>Math.min(b[0],b[1])+'-'+Math.max(b[0],b[1]);
+  const seen={};
+  R.bR.forEach(b=>{ seen[key(b)]={b,r:1,p:0,oR:b[2]||1}; });
+  R.bP.forEach(b=>{ const k=key(b); if(seen[k]){ seen[k].p=1; seen[k].oP=b[2]||1; } else seen[k]={b,r:0,p:1}; });
+  Object.values(seen).forEach(s=>{
+    const al=s.r&&s.p?1:(s.r?fR:fP); if(al<0.02) return;
+    const A=pos[s.b[0]], B=pos[s.b[1]], ord=(s.r&&s.p)?(p<0.5?s.oR:s.oP):(s.b[2]||1);
+    const dx=B[0]-A[0], dy=B[1]-A[1], L=Math.hypot(dx,dy)||1, nx=-dy/L, ny=dx/L;
+    ctx.save(); ctx.globalAlpha=al;
+    for(let k=0;k<ord;k++){ const off=(k-(ord-1)/2)*0.26*sc;
+      line(ctx,cx+A[0]*sc+nx*off,cy+A[1]*sc+ny*off,cx+B[0]*sc+nx*off,cy+B[1]*sc+ny*off,COL.ink,2.4); }
+    ctx.restore();
+  });
+  const roleMix=smooth01(0.45,0.85,p);
+  R.atoms.forEach((a,i)=>{
+    const [x,y]=pos[i], X=cx+x*sc, Y=cy+y*sc, r=(EL_R[a.e]||0.7)*sc;
+    let role=a.role; if(o.autoRole){ role=a.on1>a.on0?'ox':a.on1<a.on0?'rd':null; }
+    const col=role==='ox'?COL.red:role==='rd'?COL.blue:COL.ink;
+    const stroke=role?mixCol(COL.ink,col,roleMix):COL.ink;
+    circ(ctx,X,Y,r,stroke,'#fff',2.4);
+    textAt(ctx,a.e,X,Y+4.5,{align:'center',size:Math.max(10,r*0.72),weight:700,color:stroke});
+    if(o.showON && a.on0!==undefined){
+      const flip=smooth01(0.42,0.62,p), v=flip<0.5?a.on0:a.on1, ch=a.on1!==a.on0;
+      const pulse=ch?1+0.35*Math.sin(Math.PI*clamp((p-0.42)/0.2,0,1)):1;
+      const tc=ch&&flip>0.5?col:COL.ink;
+      ctx.save(); ctx.translate(X,Y-r-12); ctx.scale(pulse,pulse); textAt(ctx,sgn(v),0,0,{align:'center',size:14,weight:700,color:tc}); ctx.restore();
+    }
+  });
+}
+function rxnFlash(ctx,cx,cy,sc,p,xc){
+  const q=(p-0.5)/0.3; if(q<=0||q>=1) return;
+  ctx.save(); ctx.globalAlpha=1-q; ctx.strokeStyle=COL.yellow; ctx.lineWidth=3*(1-q)+0.5;
+  ctx.beginPath(); ctx.arc(cx+xc*sc,cy,sc*(1+q*3),0,Math.PI*2); ctx.stroke();
+  ctx.strokeStyle=COL.red; ctx.lineWidth=1.5*(1-q); ctx.beginPath(); ctx.arc(cx+xc*sc,cy,sc*(0.6+q*2.2),0,Math.PI*2); ctx.stroke(); ctx.restore();
+}
+/* shared progress driver: slider + Run/Replay, eased draw value */
+let SNAP=false; window.__snap=function(v){ SNAP=v!==false; };
+function progressDriver(wrap,sliderSel,runSel,dur){
+  const S=wrap.querySelector(sliderSel), B=wrap.querySelector(runSel);
+  const L0=B.textContent, st={tgt:0,x:0,auto:false};
+  S.oninput=()=>{ st.auto=false; st.tgt=S.value/100; B.textContent=L0; };
+  B.onclick=()=>{ if(st.tgt>=0.999||st.x>=0.995){ st.tgt=0; st.x=0; } st.auto=true; B.textContent='⏳ Reacting…'; };
+  st.step=(dt)=>{
+    if(st.auto){ st.tgt=Math.min(1,st.tgt+dt/(dur||4)); if(st.tgt>=1){ st.auto=false; B.textContent='↺ Run again'; } S.value=Math.round(st.tgt*100); }
+    st.x=SNAP?st.tgt:approach(st.x,st.tgt,st.auto?9:6,dt);
+    if(Math.abs(st.x-st.tgt)<0.0007) st.x=st.tgt;
+    return st.x;
+  };
+  st.reset=()=>{ st.tgt=0; st.x=0; st.auto=false; S.value=0; B.textContent=L0; };
+  return st;
+}
+
+/* springy scalar state used with springTo */
+function spr(x,v){ return {x:x||0,v:v||0}; }
+
+/* ---------------------------------------------------------------------
+   1. ROUTER + SHARED UI PIECES
+   --------------------------------------------------------------------- */
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function chipsHTML(id,items,active){
+  return `<div class="chip-wrap" id="${id}">${items.map((s,i)=>`<button class="chip-btn${i===(active||0)?' active':''}" data-i="${i}"><span>${chemHTML(s)}</span></button>`).join('')}</div>`;
+}
+function wireChips(wrap,sel,cb){ toggleWire([...wrap.querySelectorAll(sel+' .chip-btn')],b=>cb(+b.dataset.i)); }
+function rcard(label,id,color,wide){ return `<div class="rcard${wide?' wide':''}"><div class="rlabel">${label}</div><div class="rval" id="${id}"${color?` style="color:${color}"`:''}>—</div></div>`; }
+/* rounded note card with a leader to a point */
+function noteCard(ctx,x,y,w,h,title,body,col,alpha,fromX,fromY){
+  if(alpha<0.02) return;
+  ctx.save(); ctx.globalAlpha=alpha;
+  if(fromX!==undefined) line(ctx,fromX,fromY,x+w/2,y,col,1.6,[5,4]);
+  rrect(ctx,x,y,w,h,10); ctx.fillStyle='rgba(255,255,255,0.97)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+  ctx.restore();
+  chemAt(ctx,title,x+12,y+19,{size:11.5,weight:700,color:col,alpha});
+  chemAt(ctx,body,x+12,y+h-12,{size:12.5,weight:600,color:COL.ink,alpha});
+}
+
+/* =====================================================================
+   1.1 CLASSICAL REDOX — oxygen & hydrogen (Section 7.1, eqs 7.1–7.11)
+   Oxidation: gain of O / electronegative element, loss of H / electropositive.
+   Reduction: loss of O / electronegative element, gain of H / electropositive.
+   ===================================================================== */
+const RX1=[
+  { chip:'2Mg + O_2', eq:'2Mg + O_2 → 2MgO', flash:-1.2,
+    atoms:[ {e:'Mg',x:-6,y:1.6,X:1.2,Y:1.6,role:'ox',arc:-1.5},{e:'Mg',x:-6,y:-1.6,X:1.2,Y:-1.6,role:'ox',arc:1.5},
+            {e:'O',x:-1.2,y:0.62,X:3.0,Y:1.6,role:'rd'},{e:'O',x:-1.2,y:-0.62,X:3.0,Y:-1.6,role:'rd'} ],
+    bR:[[2,3,2]], bP:[[0,2],[1,3]],
+    ox:['Mg is OXIDISED','gains oxygen'], rd:['O_2 is REDUCED','gains electropositive Mg'] },
+  { chip:'2H_2S + O_2', eq:'2H_2S + O_2 → 2S + 2H_2O', flash:-2.5,
+    atoms:[ {e:'S',x:-6.2,y:1.9,X:5,Y:1.6,role:'ox',arc:-1.7},{e:'H',x:-7.2,y:1.0,X:-0.2,Y:0.75},{e:'H',x:-5.2,y:1.0,X:1.8,Y:0.75},
+            {e:'S',x:-6.2,y:-1.9,X:5,Y:-1.6,role:'ox',arc:1.7},{e:'H',x:-7.2,y:-1.0,X:-0.2,Y:-0.75},{e:'H',x:-5.2,y:-1.0,X:1.8,Y:-0.75},
+            {e:'O',x:-2.2,y:0.5,X:0.8,Y:1.6,role:'rd'},{e:'O',x:-2.2,y:-0.5,X:0.8,Y:-1.6,role:'rd'} ],
+    bR:[[0,1],[0,2],[3,4],[3,5],[6,7,2]], bP:[[6,1],[6,2],[7,4],[7,5]],
+    ox:['H_2S is OXIDISED','loses hydrogen'], rd:['O_2 is REDUCED','gains hydrogen'] },
+  { chip:'2HgO', eq:'2HgO → 2Hg + O_2', flash:-3, heat:true,
+    atoms:[ {e:'Hg',x:-6,y:1.7,X:4.2,Y:1.8,role:'rd'},{e:'O',x:-4.2,y:1.7,X:0,Y:0.62},
+            {e:'Hg',x:-6,y:-1.7,X:4.2,Y:-1.8,role:'rd'},{e:'O',x:-4.2,y:-1.7,X:0,Y:-0.62} ],
+    bR:[[0,1],[2,3]], bP:[[1,3,2]],
+    rd:['HgO is REDUCED','loses oxygen'] },
+  { chip:'C_2H_4 + H_2', eq:'CH_2=CH_2 + H_2 → CH_3–CH_3', flash:-1.5,
+    atoms:[ {e:'C',x:-6.5,y:0,X:1.5,Y:0,role:'rd'},{e:'C',x:-4.5,y:0,X:3.5,Y:0,role:'rd'},
+            {e:'H',x:-7.4,y:1.2,X:0.4,Y:1.0},{e:'H',x:-7.4,y:-1.2,X:0.4,Y:-1.0},{e:'H',x:-3.6,y:1.2,X:4.6,Y:1.0},{e:'H',x:-3.6,y:-1.2,X:4.6,Y:-1.0},
+            {e:'H',x:-1.2,y:0.5,X:1.5,Y:-1.9},{e:'H',x:-1.2,y:-0.5,X:3.5,Y:1.9} ],
+    bR:[[0,1,2],[0,2],[0,3],[1,4],[1,5],[6,7]], bP:[[0,1],[0,2],[0,3],[1,4],[1,5],[0,6],[1,7]],
+    rd:['C_2H_4 is REDUCED','gains hydrogen'] },
+  { chip:'Mg + F_2', eq:'Mg + F_2 → MgF_2', flash:-1,
+    atoms:[ {e:'Mg',x:-6,y:0,X:2,Y:0,role:'ox',arc:2.6},{e:'F',x:-1.2,y:0.5,X:0.0,Y:0,role:'rd'},{e:'F',x:-1.2,y:-0.5,X:4.0,Y:0,role:'rd',arc:-2.4} ],
+    bR:[[1,2]], bP:[[0,1],[0,2]],
+    ox:['Mg is OXIDISED','gains electronegative F'], rd:['F_2 is REDUCED','gains electropositive Mg'] }
+];
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Reaction</label>${chipsHTML('rxC',RX1.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Progress <span class="val" id="pV">0%</span></label><input type="range" id="pR" min="0" max="100" step="1" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Run reaction</button></div>
+    <div class="control-group"><div class="result-cards">
+      ${rcard('Oxidation','oV',COL.red)}${rcard('Reduction','rV',COL.blue)}</div>
+      <p class="hint">Oxidation and reduction always happen together — the word “redox”.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let R=RX1[0], t=0;
+  const PD=progressDriver(wrap,'#pR','#runB',4.2);
+  wireChips(wrap,'#rxC',i=>{ R=RX1[i]; PD.reset(); });
+  animLoop(dt=>{
+    t+=dt; const p=PD.step(dt);
+    $('#pV').textContent=Math.round(p*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/17,(h-170)/7.6), cx=w/2-0.5*sc, cy=(74+h-112)/2;
+    chemAt(ctx,R.eq,w/2,40,{size:Math.min(26,w/26),weight:700,align:'center'});
+    line(ctx,w*0.3,56,w*0.7,56,'#dbe4f0',2);
+    // reaction arrow bar
+    const bx0=w*0.3, bx1=w*0.7; line(ctx,bx0,56,bx0+(bx1-bx0)*p,56,COL.green,3.4);
+    if(R.heat) flame(ctx,cx-5.1*sc,cy+3.6*sc,3.4*sc,0.9*(1-smooth01(0.55,0.85,p)),t);
+    drawRxn(ctx,cx,cy,sc,R,p,t);
+    if(R.flash!==undefined) rxnFlash(ctx,cx,cy,sc,p,R.flash);
+    const mixA=smooth01(0.55,0.9,p), cw=Math.min(250,w*0.4), ch=62, yy=h-ch-18;
+    const posOf=(role)=>{ const i=R.atoms.findIndex(a=>a.role===role); const q=rxnPos(R.atoms[i],i,p,t); return [cx+q[0]*sc, cy+q[1]*sc+(EL_R[R.atoms[i].e]||0.7)*sc]; };
+    if(R.ox){ const f=posOf('ox'); noteCard(ctx,w*0.5-cw-14,yy,cw,ch,R.ox[0],R.ox[1],COL.red,mixA,f[0],f[1]); }
+    if(R.rd){ const f=posOf('rd'); noteCard(ctx,R.ox?w*0.5+14:w*0.5-cw/2,yy,cw,ch,R.rd[0],R.rd[1],COL.blue,mixA,f[0],f[1]); }
+    $('#oV').textContent=R.ox?(mixA>0.5?R.ox[1]:'…'):'—'; $('#rV').textContent=R.rd?(mixA>0.5?R.rd[1]:'…'):'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.2 ELECTRON TRANSFER (Section 7.2, eqs 7.12–7.14)
+   Each Na donates one valence electron; Cl, O, S, H accept.
+   Oxidation = loss of e⁻ ; Reduction = gain of e⁻.
+   ===================================================================== */
+const ET=[
+  { chip:'Na + Cl_2', don:'Na', nd:2, acc:'Cl', na:2, k:1, mol:true, eq:'2Na + Cl_2 → 2NaCl', ox:'2Na → 2Na^+ + 2e^-', rd:'Cl_2 + 2e^- → 2Cl^-', sum:'2Na + Cl_2 → 2Na^+Cl^-' },
+  { chip:'Na + O_2', don:'Na', nd:4, acc:'O', na:2, k:2, mol:true, eq:'4Na + O_2 → 2Na_2O', ox:'4Na → 4Na^+ + 4e^-', rd:'O_2 + 4e^- → 2O^2-', sum:'4Na + O_2 → 2(Na^+)_2O^2-' },
+  { chip:'Na + S', don:'Na', nd:2, acc:'S', na:1, k:2, mol:false, eq:'2Na + S → Na_2S', ox:'2Na → 2Na^+ + 2e^-', rd:'S + 2e^- → S^2-', sum:'2Na + S → (Na^+)_2S^2-' },
+  { chip:'Na + H_2', don:'Na', nd:2, acc:'H', na:2, k:1, mol:true, eq:'2Na + H_2 → 2NaH', ox:'2Na → 2Na^+ + 2e^-', rd:'H_2 + 2e^- → 2H^-', sum:'2Na + H_2 → 2Na^+H^-' }
+];
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Sodium reacts with</label>${chipsHTML('etC',ET.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Electron transfer <span class="val" id="pV">0%</span></label><input type="range" id="pR" min="0" max="100" step="1" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Run reaction</button></div>
+    <div class="control-group"><div class="result-cards three">
+      ${rcard('e⁻ given','eG',COL.red)}${rcard('e⁻ taken','eT',COL.blue)}${rcard('Ions','iV',COL.green)}</div>
+      <p class="hint">Oxidation = loss of e⁻ · Reduction = gain of e⁻<br>Reducing agent donates · oxidising agent accepts.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let S=ET[0], t=0;
+  const PD=progressDriver(wrap,'#pR','#runB',4.6);
+  wireChips(wrap,'#etC',i=>{ S=ET[i]; PD.reset(); });
+  animLoop(dt=>{
+    t+=dt; const p=PD.step(dt);
+    $('#pV').textContent=Math.round(p*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/16,(h-250)/8.2), cx=w*0.46, cy=h*0.4;
+    chemAt(ctx,S.eq,w/2,40,{size:Math.min(26,w/26),weight:700,align:'center'});
+    const move=smooth01(0.55,0.95,p), nd=S.nd, na=S.na, k=S.k;
+    // geometry
+    const D=[], A=[];
+    for(let d=0;d<nd;d++){ const a=Math.floor(d/k), j=d%k;
+      const ya=(na===1?0:(a-(na-1)/2)*4.2);
+      D.push({x0:-6,y0:(d-(nd-1)/2)*2.5, x1:4.5-2.4,y1:ya+(j-(k-1)/2)*2.3, a}); }
+    for(let a=0;a<na;a++){ const y0=(a-(na-1)/2)*(S.mol?1.9:0), ya=(na===1?0:(a-(na-1)/2)*4.2); A.push({x0:0.5,y0,x1:4.5,y1:ya}); }
+    const P=o=>[lerp(o.x0,o.x1,move)*sc+cx, lerp(o.y0,o.y1,move)*sc+cy];
+    // acceptor-acceptor covalent bond fades as electrons arrive
+    if(S.mol){ const a0=P(A[0]), a1=P(A[1]); ctx.save(); ctx.globalAlpha=1-smooth01(0.3,0.6,p); line(ctx,a0[0],a0[1],a1[0],a1[1],COL.ink,2.6); ctx.restore(); }
+    // ionic attraction (dashed) once close
+    const ionA=smooth01(0.88,1,p);
+    if(ionA>0.02) D.forEach((d,i)=>{ const dp=P(d), ap=P(A[d.a]); ctx.save(); ctx.globalAlpha=ionA; line(ctx,dp[0],dp[1],ap[0],ap[1],COL.green,2,[5,4]); ctx.restore(); });
+    // electrons: start/finish hop windows
+    const eState=[];
+    D.forEach((d,i)=>{ const t0=0.1+0.42*(i/Math.max(1,nd-0.001)), t1=t0+0.2; eState.push({t0,t1,q:clamp((p-t0)/(t1-t0),0,1)}); });
+    const arrived=A.map(()=>0); D.forEach((d,i)=>{ if(eState[i].q>=1) arrived[d.a]++; });
+    const gone=eState.filter(e=>e.q>0.5).length;
+    // atoms
+    const rD=(EL_R.Na)*sc, rA=(EL_R[S.acc]||0.8)*sc;
+    D.forEach((d,i)=>{
+      const [x,y]=P(d), lost=eState[i].q>0.5, wob=Math.sin(t*9+i*2)*1.2*(1-move);
+      const col=lost?mixCol(COL.ink,COL.red,1):COL.ink;
+      if(!lost){ ctx.save(); ctx.globalAlpha=0.5; ctx.setLineDash([3,4]); circ(ctx,x+wob,y,rD*1.5,COL.yellow,null,1.4); ctx.restore(); }
+      circ(ctx,x+wob,y,rD,col,'#fff',2.4);
+      chemAt(ctx,lost?'Na^+':'Na',x+wob,y+5,{size:Math.max(11,rD*0.62),weight:700,color:col,align:'center'});
+    });
+    A.forEach((a,i)=>{
+      const [x,y]=P(a), n=arrived[i], full=n>=k, col=n>0?mixCol(COL.ink,COL.blue,Math.min(1,n/k)):COL.ink;
+      const charge=n===0?'':(n===1?'^-':'^'+n+'-');
+      circ(ctx,x,y,rA*(1+0.1*n/k),col,'#fff',2.4);
+      chemAt(ctx,S.acc+charge,x,y+5,{size:Math.max(11,rA*0.6),weight:700,color:col,align:'center'});
+      if(full){ const q=smooth01(0.0,1,(p-0.7)/0.2); }
+    });
+    // arrival pulses + electron dots
+    D.forEach((d,i)=>{
+      const e=eState[i], dp=P(d), ap=P(A[d.a]);
+      const idx=(i%k), phase=t*3.2+i*1.7;
+      let ex,ey;
+      if(e.q<=0){ ex=dp[0]+Math.cos(phase)*rD*1.5; ey=dp[1]+Math.sin(phase)*rD*1.5; }
+      else if(e.q>=1){ const rr=rA*(1.45+0.22*idx); const ang=phase*(1)+idx*(Math.PI/k)*1.2+Math.PI; ex=ap[0]+Math.cos(ang)*rr; ey=ap[1]+Math.sin(ang)*rr; }
+      else {
+        const sx=dp[0]+Math.cos(phase)*rD*1.5, sy=dp[1]+Math.sin(phase)*rD*1.5;
+        const rr=rA*(1.45+0.22*idx), ang=phase+idx*(Math.PI/k)*1.2+Math.PI, tx=ap[0]+Math.cos(ang)*rr, ty=ap[1]+Math.sin(ang)*rr;
+        const q=e.q*e.q*(3-2*e.q), lift=Math.sin(Math.PI*q)*sc*(i%2?1.3:-1.3);
+        ex=lerp(sx,tx,q); ey=lerp(sy,ty,q)+lift;
+        for(let tr=1;tr<=4;tr++){ const qq=Math.max(0,e.q-tr*0.04), q2=qq*qq*(3-2*qq); ctx.save(); ctx.globalAlpha=0.5-tr*0.11; electron(ctx,lerp(sx,tx,q2),lerp(sy,ty,q2)+Math.sin(Math.PI*q2)*sc*(i%2?1.3:-1.3),3.4-tr*0.5); ctx.restore(); }
+      }
+      electron(ctx,ex,ey,4);
+      const since=(p-e.t1)/0.08; if(since>0&&since<1){ ctx.save(); ctx.globalAlpha=1-since; circ(ctx,ap[0],ap[1],rA*(1.2+since*1.1),COL.yellow,null,2.2); ctx.restore(); }
+    });
+    // half-reaction cards
+    const cw=Math.min(300,w*0.3), ch=54, yy=h-ch-60, ga=smooth01(0.25,0.55,p);
+    const x0=w/2-cw*1.5-16;
+    noteCard(ctx,x0,yy,cw,ch,'OXIDATION (loses e^-)',S.ox,COL.red,0.35+0.65*ga);
+    noteCard(ctx,x0+cw+16,yy,cw,ch,'REDUCTION (gains e^-)',S.rd,COL.blue,0.35+0.65*ga);
+    noteCard(ctx,x0+2*cw+32,yy,cw,ch,'OVERALL',S.sum,COL.green,0.35+0.65*smooth01(0.85,1,p));
+    $('#eG').textContent=gone+'/'+nd; $('#eT').textContent=arrived.reduce((a,b)=>a+b,0)+'/'+nd; $('#iV').textContent=p>0.95?(nd+na):'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.3 METALS COMPETE FOR ELECTRONS (Section 7.2.1, Fig 7.1, 7.2)
+   Zn + Cu²⁺ → Zn²⁺ + Cu   (K ≫ 1)        Cu + 2Ag⁺ → Cu²⁺ + 2Ag (K ≫ 1)
+   Co + Ni²⁺ ⇌ Co²⁺ + Ni   (K ≈ 5, both present)   Cu + Zn²⁺ → no reaction
+   Extent follows  ξ(t) = ξ_eq (1 − e^(−t/τ)),   ξ_eq = K/(1+K).
+   ===================================================================== */
+const MP=[
+  { chip:'Zn in Cu^2+', metal:'Zn', ox:'Cu^2+', pr:'Zn^2+', dep:'Cu', eq:'Zn(s) + Cu^2+(aq) → Zn^2+(aq) + Cu(s)', xi:0.99, tau:12, ratio:1, mCol:'#cdd6e0', tOx:'#7dbdf0', tPr:'#f7fafd', cOx:'#cfe6fa', cPr:'#ffffff', dCol:'#c9784a', K:'K ≈ 10^37' },
+  { chip:'Cu in Ag^+',  metal:'Cu', ox:'Ag^+',  pr:'Cu^2+', dep:'Ag', eq:'Cu(s) + 2Ag^+(aq) → Cu^2+(aq) + 2Ag(s)', xi:0.99, tau:9, ratio:0.5, mCol:'#e3a47c', tOx:'#f7fafd', tPr:'#7dbdf0', cOx:'#ffffff', cPr:'#cfe6fa', dCol:'#eef3f8', K:'K ≈ 10^15' },
+  { chip:'Co in Ni^2+', metal:'Co', ox:'Ni^2+', pr:'Co^2+', dep:'Ni', eq:'Co(s) + Ni^2+(aq) ⇌ Co^2+(aq) + Ni(s)', xi:0.83, tau:20, ratio:1, mCol:'#b4bccb', tOx:'#9ddcaa', tPr:'#f4b9c9', cOx:'#d6f1dc', cPr:'#f9dae2', dCol:'#8ea39d', K:'K ≈ 5' },
+  { chip:'Cu in Zn^2+', metal:'Cu', ox:'Zn^2+', pr:'Cu^2+', dep:'Zn', eq:'Cu(s) + Zn^2+(aq) ⇏ no reaction', xi:0, tau:10, ratio:1, mCol:'#e3a47c', tOx:'#f7fafd', tPr:'#7dbdf0', cOx:'#ffffff', cPr:'#cfe6fa', dCol:'#cdd6e0', K:'K ≈ 10^-37' }
+];
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Metal strip in a solution of</label>${chipsHTML('mpC',MP.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Time <span class="val" id="tV">0 min</span></label><input type="range" id="tR" min="0" max="60" step="0.5" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Leave for 1 hour</button></div>
+    <div class="control-group"><div class="result-cards three">
+      ${rcard('Reacted','xV',COL.green)}${rcard('Oxidising ions','oV',COL.blue)}${rcard('Ions formed','pV',COL.red)}</div>
+      <p class="hint" id="kH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), tR=$('#tR'), runB=$('#runB');
+  const N=22; let M=MP[0], t=0, ions=[], deps=[], hops=[], timeD=0, auto=false, Tm=25, bars={o:1,p:0}, nConvDone=0, nEmit=0;
+  const pits=(()=>{ const R=rng(5), a=[]; for(let i=0;i<40;i++) a.push([R(),R()]); return a; })();
+  function reset(){
+    const R=rng(17+MP.indexOf(M)); ions=[]; deps=[]; hops=[]; nConvDone=0; nEmit=0; Tm=25;
+    for(let i=0;i<N;i++){ let fx=R(); if(Math.abs(fx-0.5)<0.07) fx+=0.15; ions.push({fx,fy:R(),vx:0,vy:0,k:'ox',tx:0,ty:0,fl:0}); }
+    timeD=0; tR.value=0; auto=false; runB.textContent='▶ Leave for 1 hour';
+  }
+  reset();
+  wireChips(wrap,'#mpC',i=>{ M=MP[i]; reset(); });
+  tR.oninput=()=>{ auto=false; runB.textContent='▶ Leave for 1 hour'; };
+  runB.onclick=()=>{ if(+tR.value>=59.9){ tR.value=0; timeD=0; reset(); } auto=true; runB.textContent='⏳ Waiting…'; };
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ tR.value=Math.min(60,+tR.value+dt*60/9); if(+tR.value>=60){ auto=false; runB.textContent='↺ Run again'; } }
+    const tgtT=+tR.value; timeD=SNAP?tgtT:approach(timeD,tgtT,5,dt); if(Math.abs(timeD-tgtT)<0.02) timeD=tgtT;
+    $('#tV').textContent=fmt(timeD,0)+' min';
+    const xi=M.xi*(1-Math.exp(-timeD/M.tau));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    chemAt(ctx,M.eq,w/2,38,{size:Math.min(22,w/30),weight:700,align:'center'});
+    // geometry
+    const by=Math.max(h*0.27,150), bw=Math.min(w*0.44,400), bh=Math.min(h*0.56,h-by-118,330), bx=w*0.38;
+    const liquid=mixCol(M.tOx,M.tPr,Math.min(1,xi*(M.ratio<1?1.15:1)));
+    const g=beaker(ctx,bx,by,bw,bh,0.72,liquid,t,{wave:1});
+    const W=g.R-g.L, H=g.bot-g.ly, sx=g.L+W*0.5, hw=9*(1-0.35*xi*(M.xi>0?1:0));
+    // ---- ions: brownian motion, steering, conversion ----
+    const nConv=Math.round(N*xi);
+    while(nConvDone<nConv){ // pick the oxidising ion nearest the strip
+      let best=null,bd=1e9; ions.forEach(o=>{ if(o.k==='ox'){ const d=Math.abs(o.fx-0.5); if(d<bd){bd=d;best=o;} } });
+      if(!best) break; best.k='go'; best.side=best.fx<0.5?-1:1; nConvDone++; }
+    while(nConvDone>nConv){ const o=ions.find(q=>q.k==='pr'); if(!o) break; o.k='ox'; o.fl=1; deps.pop(); nConvDone--; }
+    ions.forEach((o,i)=>{
+      const rr=8;
+      if(o.k==='go'){
+        const ty=clamp(g.ly+H*o.fy,g.ly+14,g.bot-40), txp=sx+o.side*(hw+rr+1);
+        const px=g.L+W*o.fx, py=g.ly+H*o.fy, dx=txp-px, dy=ty-py, dl=Math.hypot(dx,dy)||1, sp=Math.min(dl/dt*0.5,320);
+        o.fx+=(dx/dl*sp*dt)/W; o.fy+=(dy/dl*sp*dt)/H;
+        if(dl<5){ o.k='dep'; o.ay=ty; deps.push({y:ty,side:o.side,r:Math.random()}); hops.push({y0:g.ly+10+Math.random()*(H-60),y1:ty,q:0,side:o.side});
+          nEmit+=M.ratio; if(nEmit>=1-1e-6){ nEmit-=1; o.emit=true; } }
+        return;
+      }
+      if(o.k==='dep'){
+        if(o.emit){ o.k='pr'; o.emit=false; o.fx=(sx+(-o.side)*(hw+rr+2)-g.L)/W; o.fy=(o.ay-g.ly)/H; o.vx=-o.side*30/W; o.vy=0; o.fl=1; }
+        else return;
+      }
+      o.vx+=gauss()*38*Math.sqrt(dt)/W; o.vy+=gauss()*38*Math.sqrt(dt)/H;
+      o.vx*=Math.exp(-0.6*dt); o.vy*=Math.exp(-0.6*dt);
+      o.fx+=o.vx*dt; o.fy+=o.vy*dt;
+      const mx=rr/W, my=rr/H;
+      if(o.fx<mx){ o.fx=mx; o.vx=Math.abs(o.vx); } if(o.fx>1-mx){ o.fx=1-mx; o.vx=-Math.abs(o.vx); }
+      if(o.fy<my+0.02){ o.fy=my+0.02; o.vy=Math.abs(o.vy); } if(o.fy>1-my){ o.fy=1-my; o.vy=-Math.abs(o.vy); }
+      const px=g.L+W*o.fx, d=px-sx, lim=hw+rr+1;
+      if(Math.abs(d)<lim){ o.fx=(sx+(d<0?-lim:lim)-g.L)/W; o.vx=(d<0?-1:1)*Math.abs(o.vx); }
+      if(o.fl>0) o.fl=Math.max(0,o.fl-dt*2.5);
+    });
+    // ---- strip hanging from clamp ----
+    const sTop=by-62, sBot=g.bot-26;
+    line(ctx,sx,by-92,sx,sTop,COL.ink,2.4); rect(ctx,sx-26,by-96,52,8,COL.ink,'#fff',2.2);
+    ctx.save(); ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(sx-hw,sTop);
+    for(let i=0;i<pits.length;i++){ const yy=lerp(sTop,sBot,i/(pits.length-1)); const sub=yy>g.ly; ctx.lineTo(sx-hw+(sub?pits[i][0]*3.2*xi*(M.xi>0?1:0):0),yy); }
+    ctx.lineTo(sx-hw*0.9,sBot+3); ctx.lineTo(sx+hw*0.9,sBot+3);
+    for(let i=pits.length-1;i>=0;i--){ const yy=lerp(sTop,sBot,i/(pits.length-1)); const sub=yy>g.ly; ctx.lineTo(sx+hw-(sub?pits[i][1]*3.2*xi*(M.xi>0?1:0):0),yy); }
+    ctx.closePath(); ctx.fillStyle=M.mCol; ctx.globalAlpha=0.92; ctx.fill(); ctx.globalAlpha=1; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+    chemPill(ctx,M.metal+'(s)',sx+46,by-80,COL.ink,12);
+    // deposit nodules on the strip surface
+    deps.forEach((d,i)=>{ const L=Math.floor(i/10)%3, xo=sx+d.side*(hw+1.5+L*3.6); circ(ctx,xo,d.y+(d.r-0.5)*14,3.1+d.r*1.8,COL.blue,M.dCol,1.3);
+      if(L>0) line(ctx,xo,d.y+(d.r-0.5)*14,xo+d.side*5,d.y+(d.r-0.5)*14-3,COL.blue,1.1); });
+    // electrons hopping through the strip
+    hops=hops.filter(hp=>{ hp.q+=dt/0.42; if(hp.q>=1) return false; const q=hp.q*hp.q*(3-2*hp.q);
+      electron(ctx,sx,lerp(hp.y0,hp.y1,q),3.8); electron(ctx,sx,lerp(hp.y0,hp.y1,Math.max(0,q-0.12)),2.4); return true; });
+    // ions
+    ions.forEach(o=>{
+      if(o.k==='dep') return;
+      const px=g.L+W*o.fx, py=g.ly+H*o.fy, isOx=(o.k==='ox'||o.k==='go'), col=isOx?COL.blue:COL.red;
+      circ(ctx,px,py,8+o.fl*5,col,isOx?M.cOx:M.cPr,2);
+      const ch=(isOx?M.ox:M.pr).split('^')[1]||''; textAt(ctx,ch.replace('-','−'),px,py+3,{align:'center',size:8.5,weight:700,color:col});
+    });
+    // legend
+    chemPill(ctx,M.ox+' (oxidising ion)',w*0.04+chemW(ctx,M.ox+' (oxidising ion)',11,700)/2+8,h-26,COL.blue,11);
+    chemPill(ctx,M.pr+' (formed)',w*0.04+chemW(ctx,M.ox+' (oxidising ion)',11,700)+60+chemW(ctx,M.pr+' (formed)',11,700)/2,h-26,COL.red,11);
+    // ---- thermometer: heat is evolved while the reaction runs ----
+    const rate=M.xi>0?Math.exp(-timeD/M.tau)*Math.min(1,timeD/1.5):0;
+    Tm=SNAP?25+7*rate:approach(Tm,25+7*rate,0.9,dt);
+    const tx=bx+bw/2+90;
+    thermo(ctx,tx,by+10,by+bh*0.78,clamp((Tm-20)/20,0,1),COL.ink,COL.red);
+    textAt(ctx,fmt(Tm,1)+' °C',tx,by-2,{align:'center',size:13,weight:700,color:COL.red});
+    textAt(ctx,'heat',tx,by+bh*0.78+36,{align:'center',size:11,weight:600,color:COL.muted});
+    // ---- ion-count bars ----
+    const cO=ions.filter(o=>o.k==='ox'||o.k==='go').length, cP=ions.filter(o=>o.k==='pr').length;
+    bars.o=approach(bars.o,cO/N,6,dt); bars.p=approach(bars.p,cP/N,6,dt);
+    const bx2=tx+70, bTop=by+10, bBot=by+bh*0.78, bwid=26;
+    [[bars.o,COL.blue,'ox'],[bars.p,COL.red,'pr']].forEach(([v,c,k],i)=>{
+      const xx=bx2+i*52; rect(ctx,xx,bTop,bwid,bBot-bTop,COL.mid,'#fff',1.4); ctx.save(); ctx.fillStyle=c; ctx.globalAlpha=0.85; ctx.fillRect(xx+2,bBot-(bBot-bTop-3)*clamp(v,0,1),bwid-4,(bBot-bTop-3)*clamp(v,0,1)); ctx.restore();
+      chemAt(ctx,k==='ox'?M.ox:M.pr,xx+bwid/2,bBot+18,{size:11,weight:700,color:c,align:'center'}); });
+    textAt(ctx,'ions in solution',bx2+bwid+13,bTop-8,{align:'center',size:11,weight:600,color:COL.muted});
+    // ---- equilibrium meter ----
+    const mx0=w*0.12, mx1=w*0.64, my=h-66;
+    line(ctx,mx0,my,mx1,my,COL.mid,5); line(ctx,mx0,my,lerp(mx0,mx1,xi),my,COL.green,5);
+    textAt(ctx,'reactants',mx0,my+20,{size:11,weight:600,color:COL.muted}); textAt(ctx,'products',mx1,my+20,{size:11,weight:600,color:COL.muted,align:'right'});
+    const ex=lerp(mx0,mx1,M.xi); ctx.save(); ctx.fillStyle=COL.yellow; ctx.translate(ex,my-12); ctx.rotate(Math.PI/4); ctx.fillRect(-5,-5,10,10); ctx.restore();
+    textAt(ctx,'equilibrium position',ex,my-24,{align:'center',size:11,weight:700,color:COL.yellow});
+    circ(ctx,lerp(mx0,mx1,xi),my,7,COL.green,'#fff',2.4);
+    // readouts
+    $('#xV').textContent=Math.round(xi*100)+'%'; $('#oV').textContent=cO+'/'+N; $('#pV').textContent=cP+'';
+    $('#kH').innerHTML=M.xi===0?'No Cu²⁺ detectable — equilibrium lies entirely on the reactant side. '+M.K:(M.xi<0.9?'Both metals’ ions stay at moderate concentration. '+M.K:'Equilibrium lies far on the product side. '+M.K);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.4 OXIDATION NUMBER (Section 7.3) — electron-pair book-keeping.
+   Each bonding pair is assigned wholly to the more electronegative atom;
+   ON = Σ(±1 per pair) + formal charge of the Lewis structure.
+   ===================================================================== */
+const ENEG={H:2.20,C:2.55,N:3.04,O:3.44,F:3.98,S:2.58,Cl:3.16,Cr:1.66,Mn:1.55,Na:0.93};
+const OX=[
+  { chip:'Cl_2', q:0, rule:'Rule 1 · an element in its free state has oxidation number 0',
+    A:[['Cl',-1.5,0],['Cl',1.5,0]], B:[[0,1,1]] },
+  { chip:'H_2O', q:0, rule:'Rules 3 & 4 · O is −2, H is +1 · the sum is 0',
+    A:[['O',0,-0.5],['H',-2.3,1.3],['H',2.3,1.3]], B:[[0,1,1],[0,2,1]] },
+  { chip:'NH_3', q:0, rule:'Rule 4 · H is +1 · so N must be −3',
+    A:[['N',0,0],['H',-2.4,1.2],['H',2.4,1.2],['H',0,-2.5]], B:[[0,1,1],[0,2,1],[0,3,1]] },
+  { chip:'CH_4', q:0, rule:'C is more electronegative than H · so C is −4',
+    A:[['C',0,0],['H',-2.4,-1.8],['H',2.4,-1.8],['H',-2.4,1.8],['H',2.4,1.8]], B:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]] },
+  { chip:'CO_2', q:0, rule:'Rule 3 · O is −2 · so C is +4',
+    A:[['O',-3.3,0],['C',0,0],['O',3.3,0]], B:[[0,1,2],[1,2,2]] },
+  { chip:'H_2O_2', q:0, rule:'Peroxide · the O–O pair is shared equally · O is −1',
+    A:[['H',-3.6,1.4],['O',-1.2,0],['O',1.2,0],['H',3.6,1.4]], B:[[0,1,1],[1,2,1],[2,3,1]] },
+  { chip:'NaH', q:0, rule:'Hydride · H bonded to a metal is −1',
+    A:[['Na',-2.1,0],['H',2.1,0]], B:[[0,1,1]] },
+  { chip:'OF_2', q:0, rule:'Rule 5 · F is always −1 · so O is +2 here',
+    A:[['F',-2.6,1.2],['O',0,0],['F',2.6,1.2]], B:[[0,1,1],[1,2,1]] },
+  { chip:'CO_3^2-', q:-2, rule:'Rule 6 · the sum equals the ion charge (−2)',
+    A:[['C',0,0],['O',0,-2.7,0],['O',-2.5,1.5,-1],['O',2.5,1.5,-1]], B:[[0,1,2],[0,2,1],[0,3,1]] },
+  { chip:'SO_4^2-', q:-2, rule:'Rule 6 · S + 4(−2) = −2 · so S is +6',
+    A:[['S',0,0],['O',-2.5,-2,0],['O',2.5,-2,0],['O',-2.5,2,-1],['O',2.5,2,-1]], B:[[0,1,2],[0,2,2],[0,3,1],[0,4,1]] },
+  { chip:'MnO_4^-', q:-1, rule:'Rule 6 · Mn + 4(−2) = −1 · so Mn is +7',
+    A:[['Mn',0,0],['O',-2.5,-2,0],['O',2.5,-2,0],['O',-2.5,2,0],['O',2.5,2,-1]], B:[[0,1,2],[0,2,2],[0,3,2],[0,4,1]] },
+  { chip:'Cr_2O_7^2-', q:-2, rule:'Rule 6 · 2Cr + 7(−2) = −2 · so Cr is +6',
+    A:[['Cr',-2.1,0],['O',0,0,0],['Cr',2.1,0],['O',-3.9,-1.6,0],['O',-3.6,1.7,0],['O',-2.1,-2.9,-1],['O',3.9,-1.6,0],['O',3.6,1.7,0],['O',2.1,-2.9,-1]],
+    B:[[0,1,1],[1,2,1],[0,3,2],[0,4,2],[0,5,1],[2,6,2],[2,7,2],[2,8,1]] }
+];
+OX.forEach(c=>{ // derive oxidation numbers + pair ownership from electronegativity
+  c.on=c.A.map(a=>a[3]||0); c.fc=c.A.map(a=>a[3]||0); c.own=[];
+  c.B.forEach((b,bi)=>{ const ei=ENEG[c.A[b[0]][0]], ej=ENEG[c.A[b[1]][0]]; let to=-1;
+    if(Math.abs(ei-ej)>1e-6){ to=ei>ej?b[0]:b[1]; const from=to===b[0]?b[1]:b[0]; c.on[to]-=b[2]; c.on[from]+=b[2]; }
+    c.own.push(to); });
+  const grp={}; c.A.forEach((a,i)=>{ const k=a[0]+'|'+c.on[i]; (grp[k]=grp[k]||{e:a[0],v:c.on[i],n:0}).n++; });
+  c.sumTxt=Object.values(grp).map(g=>(g.n>1?g.n+'×':'')+'('+sgn(g.v)+')').join(' + ')+' = '+sgn(c.q).replace('+','');
+  c.sum=c.on.reduce((a,b)=>a+b,0);
+});
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Species</label>${chipsHTML('oxC',OX.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Give each pair to the more electronegative atom <span class="val" id="pV">0%</span></label><input type="range" id="pR" min="0" max="100" step="1" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Assign electrons</button></div>
+    <div class="control-group"><div class="result-cards">${rcard('Σ oxidation numbers','sV',COL.green)}${rcard('Charge on species','qV',COL.ink)}</div>
+      <p class="hint">Yellow pairs are the bonding electrons. A pair that moves wholly to one atom makes that atom more negative (blue) and the other more positive (red).</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let C=OX[0], t=0;
+  const PD=progressDriver(wrap,'#pR','#runB',3.6);
+  wireChips(wrap,'#oxC',i=>{ C=OX[i]; PD.reset(); });
+  animLoop(dt=>{
+    t+=dt; const p=PD.step(dt);
+    $('#pV').textContent=Math.round(p*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const xs=C.A.map(a=>a[1]), ys=C.A.map(a=>a[2]), span=Math.max(Math.max(...xs)-Math.min(...xs)+3.6,6), spanY=Math.max(...ys)-Math.min(...ys)+3.4;
+    const sc=Math.min(w*0.86/span,(h-200)/spanY,96), cx=w/2-(Math.max(...xs)+Math.min(...xs))/2*sc, cy=h*0.45-(Math.max(...ys)+Math.min(...ys))/2*sc;
+    chemAt(ctx,C.chip,w/2,42,{size:Math.min(30,w/22),weight:700,align:'center'});
+    const pe=p*p*(3-2*p), P=C.A.map(a=>[cx+a[1]*sc,cy+a[2]*sc]);
+    // bonds
+    C.B.forEach(b=>{ const A=P[b[0]],B=P[b[1]]; line(ctx,A[0],A[1],B[0],B[1],COL.mid,2); });
+    // atoms
+    C.A.forEach((a,i)=>{
+      const r=(EL_R[a[0]]||0.7)*sc*0.92, v=C.on[i], col=v>0?COL.red:v<0?COL.blue:COL.ink, mix=smooth01(0.3,0.95,p);
+      const stroke=v===0?COL.ink:mixCol(COL.ink,col,mix);
+      circ(ctx,P[i][0],P[i][1],r,stroke,'#fff',2.6+mix*Math.min(2.2,Math.abs(v)*0.4));
+      textAt(ctx,a[0],P[i][0],P[i][1]+5,{align:'center',size:Math.max(11,r*0.7),weight:700,color:stroke});
+      textAt(ctx,'EN '+ENEG[a[0]].toFixed(2),P[i][0],P[i][1]+r+14,{align:'center',size:10,weight:600,color:COL.mid});
+      const al=smooth01(0.55,0.9,p); textAt(ctx,sgn(v),P[i][0],P[i][1]-r-9,{align:'center',size:17,weight:800,color:v===0?COL.ink:col,alpha:al});
+      if(C.fc[i]<0){ const an=t*2.6+i, rr=r*1.35; electron(ctx,P[i][0]+Math.cos(an)*rr,P[i][1]+Math.sin(an)*rr,3.8); }
+    });
+    // bonding pairs
+    C.B.forEach((b,bi)=>{
+      const A=P[b[0]], B=P[b[1]], dx=B[0]-A[0], dy=B[1]-A[1], L=Math.hypot(dx,dy), ux=dx/L, uy=dy/L, nx=-uy, ny=ux, to=C.own[bi];
+      const rA=(EL_R[C.A[b[0]][0]]||0.7)*sc*0.92, rB=(EL_R[C.A[b[1]][0]]||0.7)*sc*0.92;
+      let sT=0.5; if(to===b[1]) sT=1-(rB+9)/L; else if(to===b[0]) sT=(rA+9)/L;
+      for(let k=0;k<b[2];k++){
+        const off=(k-(b[2]-1)/2)*10, s=lerp(0.5,sT,pe), jx=Math.sin(t*14+bi*3+k)*1.4, jy=Math.cos(t*12+bi+k*2)*1.4;
+        const mx=A[0]+dx*s+nx*off+jx, my=A[1]+dy*s+ny*off+jy;
+        electron(ctx,mx-ux*3.5,my-uy*3.5,3.6); electron(ctx,mx+ux*3.5,my+uy*3.5,3.6);
+      }
+    });
+    // sum row
+    const al=smooth01(0.8,1,p);
+    chemAt(ctx,'Σ  '+C.sumTxt+(al>0.5?'   ✓':''),w/2,h-62,{size:Math.min(20,w/38),weight:700,align:'center',color:COL.green,alpha:0.25+0.75*al});
+    textAt(ctx,C.rule,w/2,h-28,{align:'center',size:Math.min(13,w/54),weight:600,color:COL.muted});
+    $('#sV').textContent=p>0.9?sgn(C.sum).replace('+','')+' ✓':'…'; $('#qV').textContent=sgn(C.q).replace('+','');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.5 FOUR TYPES OF REDOX REACTION (Section 7.3.1, eqs 7.24–7.45)
+   Oxidation number labels flip as the atoms rearrange; red = ON rises
+   (oxidised), blue = ON falls (reduced). CaCO₃ shows a non-redox change.
+   ===================================================================== */
+const RX5=[
+  { chip:'C + O_2', type:'Combination', def:'A + B → C  (one or both are elements)', eq:'C + O_2 → CO_2', flash:1,
+    atoms:[ {e:'C',x:-6.5,y:0,X:2.6,Y:0,on0:0,on1:4,arc:1.9},{e:'O',x:-2.5,y:0.55,X:0.4,Y:0,on0:0,on1:-2},{e:'O',x:-2.5,y:-0.55,X:4.8,Y:0,on0:0,on1:-2,arc:-2.3} ],
+    bR:[[1,2,2]], bP:[[0,1,2],[0,2,2]], redox:true, ox:'C: 0 → +4  oxidised', rd:'O: 0 → −2  reduced' },
+  { chip:'2H_2O → 2H_2 + O_2', type:'Decomposition', def:'C → A + B  (at least one product is an element)', eq:'2H_2O → 2H_2 + O_2', flash:2.4,
+    atoms:[ {e:'O',x:-6,y:1.9,X:5,Y:0.62,on0:-2,on1:0,arc:-1.4},{e:'H',x:-7.1,y:1.0,X:0.4,Y:2.0,on0:1,on1:0},{e:'H',x:-4.9,y:1.0,X:1.6,Y:2.0,on0:1,on1:0},
+            {e:'O',x:-6,y:-1.2,X:5,Y:-0.62,on0:-2,on1:0,arc:1.4},{e:'H',x:-7.1,y:-2.1,X:0.4,Y:-2.0,on0:1,on1:0},{e:'H',x:-4.9,y:-2.1,X:1.6,Y:-2.0,on0:1,on1:0} ],
+    bR:[[0,1],[0,2],[3,4],[3,5]], bP:[[1,2],[4,5],[0,3,2]], redox:true, ox:'O: −2 → 0  oxidised', rd:'H: +1 → 0  reduced' },
+  { chip:'Zn + 2HCl', type:'Displacement', def:'X + YZ → XZ + Y  (an atom or ion is replaced)', eq:'Zn + 2HCl → ZnCl_2 + H_2', flash:0.5,
+    atoms:[ {e:'Zn',x:-6.5,y:0,X:2.6,Y:0,on0:0,on1:2},{e:'H',x:-3.4,y:1.8,X:5.3,Y:0.6,on0:1,on1:0},{e:'Cl',x:-1.9,y:1.8,X:2.6,Y:2.4,on0:-1,on1:-1},
+            {e:'H',x:-3.4,y:-1.8,X:5.3,Y:-0.6,on0:1,on1:0},{e:'Cl',x:-1.9,y:-1.8,X:2.6,Y:-2.4,on0:-1,on1:-1} ],
+    bR:[[1,2],[3,4]], bP:[[0,2],[0,4],[1,3]], redox:true, ox:'Zn: 0 → +2  oxidised', rd:'H: +1 → 0  reduced' },
+  { chip:'2H_2O_2 → 2H_2O + O_2', type:'Disproportionation', def:'one element, one oxidation state → both higher and lower', eq:'2H_2O_2 → 2H_2O + O_2', flash:2.5,
+    atoms:[ {e:'H',x:-7.2,y:2.4,X:0.1,Y:1.2,on0:1,on1:1},{e:'O',x:-6,y:1.6,X:1.2,Y:2.1,on0:-1,on1:-2},{e:'O',x:-4.5,y:1.6,X:5.4,Y:0.6,on0:-1,on1:0,arc:1.3},{e:'H',x:-3.3,y:2.4,X:2.3,Y:1.2,on0:1,on1:1},
+            {e:'H',x:-7.2,y:-2.4,X:0.1,Y:-1.2,on0:1,on1:1},{e:'O',x:-6,y:-1.6,X:1.2,Y:-2.1,on0:-1,on1:-2},{e:'O',x:-4.5,y:-1.6,X:5.4,Y:-0.6,on0:-1,on1:0,arc:-1.3},{e:'H',x:-3.3,y:-2.4,X:2.3,Y:-1.2,on0:1,on1:1} ],
+    bR:[[0,1],[1,2],[2,3],[4,5],[5,6],[6,7]], bP:[[1,0],[1,3],[5,4],[5,7],[2,6,2]], redox:true, ox:'O: −1 → 0  oxidised', rd:'O: −1 → −2  reduced' },
+  { chip:'CaCO_3 → CaO + CO_2', type:'Not a redox change', def:'no atom changes its oxidation number', eq:'CaCO_3 → CaO + CO_2', flash:2,
+    atoms:[ {e:'Ca',x:-6.4,y:0,X:0.6,Y:-2.0,on0:2,on1:2},{e:'O',x:-4.6,y:0,X:2.6,Y:-2.0,on0:-2,on1:-2},{e:'C',x:-2.8,y:0,X:3.0,Y:1.6,on0:4,on1:4},
+            {e:'O',x:-2.8,y:-1.8,X:1.0,Y:1.6,on0:-2,on1:-2},{e:'O',x:-1.0,y:0,X:5.0,Y:1.6,on0:-2,on1:-2} ],
+    bR:[[0,1],[1,2],[2,3,2],[2,4]], bP:[[0,1],[3,2,2],[2,4,2]], redox:false }
+];
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Reaction</label>${chipsHTML('r5C',RX5.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Progress <span class="val" id="pV">0%</span></label><input type="range" id="pR" min="0" max="100" step="1" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Run reaction</button></div>
+    <div class="control-group"><div class="result-cards">${rcard('Type','tV',COL.green,true)}${rcard('Oxidised','oV',COL.red)}${rcard('Reduced','rV',COL.blue)}</div>
+      <p class="hint" id="dH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let R=RX5[0], t=0;
+  const PD=progressDriver(wrap,'#pR','#runB',4.6);
+  wireChips(wrap,'#r5C',i=>{ R=RX5[i]; PD.reset(); });
+  animLoop(dt=>{
+    t+=dt; const p=PD.step(dt);
+    $('#pV').textContent=Math.round(p*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w/17,(h-185)/7.6), cx=w/2-0.7*sc, cy=h*0.45;
+    chemAt(ctx,R.eq,w/2,38,{size:Math.min(26,w/26),weight:700,align:'center'});
+    const done=smooth01(0.55,0.9,p);
+    const tw=chemW(ctx,R.type,13,700)+24; rrect(ctx,w/2-tw/2,50,tw,26,13); ctx.fillStyle=R.redox?'#e4f7ec':'#fdf4dc'; ctx.fill(); ctx.strokeStyle=R.redox?COL.green:COL.yellow; ctx.lineWidth=1.8; ctx.stroke();
+    textAt(ctx,R.type,w/2,68,{align:'center',size:13,weight:700,color:R.redox?'#1f6b3d':'#8a6410'});
+    drawRxn(ctx,cx,cy,sc,R,p,t,{autoRole:true,showON:true});
+    if(R.redox) rxnFlash(ctx,cx,cy,sc,p,R.flash);
+    const cw=Math.min(240,w*0.36), ch=58, yy=h-ch-14;
+    const pt=(pred)=>{ const i=R.atoms.findIndex(pred); const q=rxnPos(R.atoms[i],i,p,t); return [cx+q[0]*sc,cy+q[1]*sc+(EL_R[R.atoms[i].e]||0.7)*sc]; };
+    if(R.redox){
+      const fo=pt(a=>a.on1>a.on0), fr=pt(a=>a.on1<a.on0);
+      noteCard(ctx,w/2-cw-12,yy,cw,ch,'OXIDATION · ON increases',R.ox,COL.red,done,fo[0],fo[1]);
+      noteCard(ctx,w/2+12,yy,cw,ch,'REDUCTION · ON decreases',R.rd,COL.blue,done,fr[0],fr[1]);
+    } else noteCard(ctx,w/2-cw,yy,cw*2,ch,'NO CHANGE IN ANY OXIDATION NUMBER','not a redox reaction',COL.yellow,done);
+    $('#tV').textContent=R.type; $('#oV').textContent=R.redox?(done>0.5?R.ox.split('  ')[0]:'…'):'—'; $('#rV').textContent=R.redox?(done>0.5?R.rd.split('  ')[0]:'…'):'—';
+    $('#dH').textContent=R.def;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.6 METALS IN ACID — activity series (Section 7.3.1, eqs 7.37–7.39)
+   M + 2HCl → MCl₂ + H₂.  Rate (mL H₂ per min at 1 M, 25 °C):
+   Mg 24 · Zn 6 · Fe 0.9 · Cu 0 · Ag 0  (limit 48 mL = 0.002 mol).
+   Rate scales with [HCl] and doubles every 10 °C.
+   ===================================================================== */
+const MA=[
+  {m:'Mg',rate:24,col:'#dfe5ec'},{m:'Zn',rate:6,col:'#b7c2cf'},{m:'Fe',rate:0.9,col:'#8d99a8'},{m:'Cu',rate:0,col:'#e3a47c'},{m:'Ag',rate:0,col:'#eef2f6'}
+];
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Time <span class="val" id="tV">0 min</span></label><input type="range" id="tR" min="0" max="10" step="0.05" value="0">
+      <button class="toggle-btn navy" id="runB">▶ Start the clock</button></div>
+    <div class="control-group"><label>HCl concentration <span class="val" id="cV">1.0 M</span></label><input type="range" id="cR" min="0.5" max="3" step="0.1" value="1"></div>
+    <div class="control-group"><label>Temperature <span class="val" id="kV">25 °C</span></label><input type="range" id="kR" min="15" max="60" step="1" value="25"></div>
+    <div class="control-group"><div class="result-cards three">${rcard('Mg  H₂','vMg',COL.green)}${rcard('Zn  H₂','vZn',COL.green)}${rcard('Fe  H₂','vFe',COL.green)}</div>
+      <p class="hint">Cu and Ag sit below hydrogen in the series — they cannot displace it from acid. Less active metal → slower gas.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), tR=$('#tR'), runB=$('#runB'), cR=$('#cR'), kR=$('#kR');
+  let t=0, timeD=0, auto=false;
+  const tubes=MA.map(()=>({V:0,bub:[],pops:[],bal:{x:0,v:0},sway:0}));
+  tR.oninput=()=>{ auto=false; runB.textContent='▶ Start the clock'; };
+  runB.onclick=()=>{ if(+tR.value>=9.95){ tR.value=0; timeD=0; tubes.forEach(q=>{q.V=0;q.bub=[];}); } auto=true; runB.textContent='⏳ Running…'; };
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ tR.value=Math.min(10,+tR.value+dt*10/9); if(+tR.value>=10){ auto=false; runB.textContent='↺ Run again'; } }
+    const conc=+cR.value, T=+kR.value, tgt=+tR.value; const fT=Math.pow(2,(T-25)/10);
+    const tPrev=timeD; timeD=SNAP?tgt:approach(timeD,tgt,6,dt); if(Math.abs(timeD-tgt)<0.01) timeD=tgt;
+    $('#tV').textContent=fmt(timeD,1)+' min'; $('#cV').textContent=fmt(conc,1)+' M'; $('#kV').textContent=T+' °C';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    chemAt(ctx,'M(s) + 2HCl(aq) → MCl_2(aq) + H_2(g)',w/2,36,{size:Math.min(22,w/30),weight:700,align:'center'});
+    const n=MA.length, sp=w/(n+0.4), tw=Math.min(62,sp*0.42), tTop=h*0.46, tH=Math.min(h*0.28,200), tBot=tTop+tH;
+    const rMax=Math.min(sp*0.46,(tTop-84)/2.1,78);
+    MA.forEach((a,i)=>{
+      const Q=tubes[i], x=sp*(i+0.7), rate=a.rate*conc*fT;
+      const Vnew=Math.min(48,rate*timeD), dV=Vnew-Q.V; Q.V=Vnew;
+      // bubbles: one per 1.5 mL of new gas, born on the metal surface
+      if(dV>0){ const nb=dV/1.5+(Q.carry||0); const k=Math.floor(nb); Q.carry=nb-k; for(let b=0;b<Math.min(k,12);b++) Q.bub.push({x:(Math.random()-0.5)*tw*0.55,y:tBot-26-Math.random()*8,r:2+Math.random()*2.4,vy:55+Math.random()*60,ph:Math.random()*6}); }
+      // tube
+      const lvl=tTop+tH*0.28;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(x-tw/2+2,lvl); ctx.lineTo(x+tw/2-2,lvl); ctx.lineTo(x+tw/2-2,tBot-tw/2); ctx.arc(x,tBot-tw/2,tw/2-2,0,Math.PI); ctx.closePath(); ctx.fillStyle='#eaf3fb'; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.strokeStyle='rgba(19,42,68,0.3)'; ctx.lineWidth=1.5; ctx.beginPath(); for(let xx=x-tw/2+3;xx<=x+tw/2-3;xx+=3){ const yy=lvl+Math.sin(xx*0.12+t*3+i)*1.2; xx===x-tw/2+3?ctx.moveTo(xx,yy):ctx.lineTo(xx,yy); } ctx.stroke(); ctx.restore();
+      // metal piece, eaten away as gas is made
+      const left=1-0.85*Q.V/48, mh=34*left, mw=tw*0.46;
+      ctx.save(); rrect(ctx,x-mw/2,tBot-tw/2-mh+8,mw,mh,3); ctx.fillStyle=a.col; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      // bubbles rise, wobble, pop at surface
+      Q.bub=Q.bub.filter(b=>{ b.y-=b.vy*dt; const bxx=x+b.x+Math.sin(t*7+b.ph)*2.2; if(b.y<=lvl+2){ Q.pops.push({x:bxx,y:lvl,q:0}); return false; } circ(ctx,bxx,b.y,b.r,COL.green,'rgba(255,255,255,0.8)',1.4); return true; });
+      Q.pops=Q.pops.filter(p=>{ p.q+=dt*4; if(p.q>=1) return false; ctx.save(); ctx.globalAlpha=1-p.q; circ(ctx,p.x,p.y-2,3+p.q*5,COL.green,null,1.4); ctx.restore(); return true; });
+      // glass
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x-tw/2,tTop-4); ctx.lineTo(x-tw/2,tBot-tw/2); ctx.arc(x,tBot-tw/2,tw/2,Math.PI,0,true); ctx.lineTo(x+tw/2,tTop-4); ctx.stroke();
+      ctx.lineWidth=3.4; ctx.beginPath(); ctx.moveTo(x-tw/2-4,tTop-4); ctx.lineTo(x+tw/2+4,tTop-4); ctx.stroke(); ctx.restore();
+      // balloon on the mouth — spring-damped radius, gentle sway
+      const rest=Q.V>0.2?8+(rMax-8)*Math.cbrt(Q.V/48):4;
+      springTo(Q.bal,rest,70,6.5,dt); const r=Math.max(3,Q.bal.x);
+      const sw=Math.sin(t*1.7+i*1.3)*0.05*Math.min(1,r/rMax+0.3), by=tTop-4-14-r*1.05;
+      ctx.save(); ctx.translate(x,tTop-4-8); ctx.rotate(sw);
+      const nk=Math.min(r*0.25,tw*0.2); ctx.beginPath(); ctx.moveTo(-tw*0.34,0); ctx.lineTo(tw*0.34,0); ctx.lineTo(nk,-14); ctx.lineTo(-nk,-14); ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(0,-14-r*1.05,r*0.92,r*1.08,0,0,Math.PI*2);
+      ctx.fillStyle=Q.V>0.2?'rgba(31,157,85,0.12)':'rgba(129,149,171,0.1)'; ctx.fill(); ctx.strokeStyle=Q.V>0.2?COL.green:COL.mid; ctx.lineWidth=2.4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(-r*0.3,-14-r*1.3,r*0.5,Math.PI*1.1,Math.PI*1.45); ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=2.4; ctx.stroke();
+      ctx.restore();
+      // labels
+      chemPill(ctx,a.m,x,tBot+24,COL.ink,14);
+      textAt(ctx,fmt(Q.V,1)+' mL',x,tBot+48,{align:'center',size:13,weight:700,color:Q.V>0.05?COL.green:COL.mid});
+      if(a.rate===0) textAt(ctx,'no reaction',x,tBot+64,{align:'center',size:11,weight:600,color:COL.red});
+    });
+    // series arrow
+    const ay=h-14; vec(ctx,sp*0.7-20,ay,sp*(n-0.3)+20,ay,COL.red,2.4);
+    textAt(ctx,'stronger reducing agent',sp*0.7-20,ay-8,{size:11,weight:700,color:COL.red}); textAt(ctx,'weaker',sp*(n-0.3)+20,ay-8,{size:11,weight:700,color:COL.red,align:'right'});
+    $('#vMg').textContent=fmt(tubes[0].V,1)+' mL'; $('#vZn').textContent=fmt(tubes[1].V,1)+' mL'; $('#vFe').textContent=fmt(tubes[2].V,1)+' mL';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.7 HALOGEN DISPLACEMENT — the “layer test” (eqs 7.41–7.43)
+   Oxidising power  Cl₂ > Br₂ > I₂ : a halogen displaces a halide only of
+   a weaker halogen.  X₂ is extracted into CCl₄ (denser → bottom layer):
+   Br₂ orange · I₂ violet.  Extraction ∝ time spent shaking.
+   ===================================================================== */
+const HAL=[{s:'Cl',r:3,wCol:'#e9f2bd',oCol:'#dfe86b'},{s:'Br',r:2,wCol:'#f8cf7d',oCol:'#e8821a'},{s:'I',r:1,wCol:'#c58a52',oCol:'#8a3ea8'}];
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Tube holds (aq) + CCl<sub>4</sub></label>${chipsHTML('hxC',['KCl','KBr','KI'],1)}</div>
+    <div class="control-group"><label style="margin-bottom:4px;">Halogen water added</label>${chipsHTML('hoC',['Cl_2','Br_2','I_2'],0)}
+      <label style="margin-top:9px;">Amount <span class="val" id="aV">0</span></label><input type="range" id="aR" min="0" max="6" step="0.1" value="0"></div>
+    <div class="control-group"><label>Shaking <span class="val" id="sV">0%</span></label><input type="range" id="sR" min="0" max="100" step="1" value="0">
+      <button class="toggle-btn navy" id="shB">🧪 Shake for 3 s</button></div>
+    <div class="control-group"><div class="result-cards"><div class="rcard wide"><div class="rlabel">Reaction</div><div class="rval" id="rxV" style="font-size:var(--fs-sm)">—</div></div>${rcard('Bottom layer','bV',COL.green)}${rcard('In CCl₄','fV',COL.green)}</div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), aR=$('#aR'), sR=$('#sR');
+  let hx=1, ho=0, t=0, aApp=0, aLand=0, ext=0, ext2=0, emu=0, shAuto=0, drops=[], ripple=[], ph=0, tilt={x:0,v:0}, rxn=0, dropAcc=0;
+  const parts={hal:[],ox:[],cl:[],x2:[]};
+  wireChips(wrap,'#hxC',i=>{ hx=i; resetAll(); }); wireChips(wrap,'#hoC',i=>{ ho=i; resetAll(); });
+  function resetAll(){ aR.value=0; sR.value=0; aApp=0; aLand=0; ext=0; rxn=0; drops=[]; ripple=[]; Object.keys(parts).forEach(k=>parts[k]=[]); }
+  $('#shB').onclick=()=>{ shAuto=3; };
+  const HN=12;
+  function adjust(cat,n,phase,spawn){
+    const arr=parts[cat]; n=Math.max(0,Math.round(n));
+    while(arr.length<n) arr.push({x:(Math.random()-0.5)*1.4,y:(phase==='aq'?-0.15-Math.random()*0.6:0.15+Math.random()*0.6),vx:0,vy:0,ph:phase,a:0,ring:1});
+    while(arr.length>n) arr.pop();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(shAuto>0){ shAuto-=dt; sR.value=Math.min(100,+sR.value+dt*260); if(shAuto<=0.4) sR.value=Math.max(0,+sR.value-dt*500); } else if(shAuto<0){ shAuto=0; }
+    const aT=+aR.value, S=+sR.value/100;
+    $('#aV').textContent=fmt(aT,1)+' mL'; $('#sV').textContent=Math.round(S*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const feasible=HAL[ho].r>HAL[hx].r;
+    // ---- pipette adds drops that really fall and land ----
+    const dropping=aApp<aT-0.001&&S<0.05;
+    if(dropping){ aApp=Math.min(aT,aApp+dt*1.6); dropAcc+=dt*1.6/0.25; while(dropAcc>=1){ dropAcc--; drops.push({y:0,v:0}); } }
+    else if(aApp>aT){ aApp=aT; aLand=Math.min(aLand,aT); }
+    const ty=Math.max(h*0.2,112), tl=Math.min(h-ty-34,430), tw=Math.min(92,w*0.12), tx=w*0.24;
+    const lvlTop=tl*0.14, iface0=tl*0.62;
+    // physics of falling drops (tip → surface)
+    const tipY=ty-34, surf=ty+lvlTop;
+    drops=drops.filter(d=>{ d.v+=900*dt; d.y+=d.v*dt; if(tipY+d.y>=surf){ aLand=Math.min(aApp,aLand+0.25*(aT>0?1:0)*1); ripple.push({q:0}); return false; } return true; });
+    aLand=Math.min(aLand,aApp+0.0001); if(!dropping&&drops.length===0) aLand=Math.max(aLand,Math.min(aT,aApp));
+    rxn=approach(rxn,feasible?Math.min(aLand,HN/2):0,3,dt);
+    const nRx=rxn, remOx=Math.max(0,aLand-nRx);
+    // ---- shaking dynamics ----
+    emu=approach(emu,S,S>emu?7:1.5,dt);
+    ext=ext+(1-ext)*Math.min(1,dt*0.9*S*S*3.2); // extraction fraction (into CCl4)
+    const E=emu, wob=Math.sin(t*15)*E*0.34;
+    springTo(tilt,wob,200,14,dt);
+    // ---- draw tube (rotates about its mouth while shaken) ----
+    ctx.save(); ctx.translate(tx,ty); ctx.rotate(tilt.x); ctx.translate(Math.sin(t*15+1)*E*8,0);
+    const R0=tw/2;
+    const tube=()=>{ ctx.beginPath(); ctx.moveTo(-R0,0); ctx.lineTo(-R0,tl-R0); ctx.arc(0,tl-R0,R0,Math.PI,0,true); ctx.lineTo(R0,0); };
+    const waveY=(x,amp,k)=>Math.sin(x*0.09+t*15*k)*amp*E;
+    // colours
+    const prodCol=HAL[hx].oCol, oxW=HAL[ho].wCol, oxO=HAL[ho].oCol, prodW=HAL[hx].wCol;
+    const prodAmt=clamp(nRx/6,0,1), oxAmt=clamp(remOx/6,0,1);
+    ctx.save(); tube(); ctx.clip();
+    // aqueous layer
+    ctx.fillStyle='#f4f9fd'; ctx.fillRect(-R0,lvlTop,tw,iface0-lvlTop+10);
+    ctx.fillStyle=oxW; ctx.globalAlpha=clamp(oxAmt*(1-ext*0.8)*0.8,0,1); ctx.fillRect(-R0,lvlTop,tw,iface0-lvlTop+10);
+    ctx.fillStyle=prodW; ctx.globalAlpha=clamp(prodAmt*(1-ext*0.85)*0.9,0,1); ctx.fillRect(-R0,lvlTop,tw,iface0-lvlTop+10);
+    ctx.globalAlpha=1;
+    // CCl4 layer (bottom, denser)
+    ctx.beginPath(); ctx.moveTo(-R0,iface0+waveY(-R0,5,1));
+    for(let x=-R0;x<=R0;x+=3) ctx.lineTo(x,iface0+waveY(x,6,1)); ctx.lineTo(R0,tl); ctx.lineTo(-R0,tl); ctx.closePath();
+    ctx.fillStyle='#e9eef5'; ctx.fill();
+    ctx.globalAlpha=clamp(prodAmt*ext*1.0,0,1); ctx.fillStyle=prodCol; ctx.fill();
+    ctx.globalAlpha=clamp(oxAmt*ext*0.7,0,1); ctx.fillStyle=oxO; ctx.fill(); ctx.globalAlpha=1;
+    // emulsion droplets while shaking
+    if(E>0.04){ const Rr=rng(9); for(let i=0;i<46;i++){ const px=(Rr()-0.5)*(tw-10), py=lvlTop+8+Rr()*(tl-lvlTop-R0-10); const jx=Math.sin(t*(9+i%5)+i)*6*E, jy=Math.cos(t*(8+i%4)+i*2)*8*E;
+      ctx.globalAlpha=0.55*E; circ(ctx,px+jx,py+jy,2+Rr()*3,py>iface0?COL.mid:'#9fc3df',null,1.2); } ctx.globalAlpha=1; }
+    // ripples from landed drops
+    ripple=ripple.filter(r=>{ r.q+=dt*2.2; if(r.q>=1) return false; ctx.save(); ctx.globalAlpha=1-r.q; ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.beginPath(); ctx.ellipse(0,lvlTop+2,6+r.q*(R0-8),2+r.q*3,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); return true; });
+    // surface line
+    ctx.strokeStyle='rgba(19,42,68,0.4)'; ctx.lineWidth=1.6; ctx.beginPath(); for(let x=-R0;x<=R0;x+=3){ const yy=lvlTop+waveY(x,4,1.3); x===-R0?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke();
+    // interface line
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=1.4; ctx.beginPath(); for(let x=-R0;x<=R0;x+=3){ const yy=iface0+waveY(x,6,1); x===-R0?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke();
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineCap='round'; tube(); ctx.stroke();
+    ctx.lineWidth=3.6; ctx.beginPath(); ctx.moveTo(-R0-4,0); ctx.lineTo(R0+4,0); ctx.stroke(); ctx.restore();
+    if(E>0.04){ ctx.save(); ctx.globalAlpha=Math.min(1,E*3); rrect(ctx,-R0*0.8,-26,R0*1.6,26,4); ctx.fillStyle='#e8d3a8'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore(); }
+    ctx.restore();
+    // pipette + drops (only while still)
+    if(S<0.2||drops.length){ ctx.save(); ctx.globalAlpha=1-Math.min(1,S*5);
+      const px=tx, py=ty-80; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.ellipse(px,py,13,17,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px-5,py+16); ctx.lineTo(px-3,tipY-4); ctx.lineTo(px+3,tipY-4); ctx.lineTo(px+5,py+16); ctx.stroke();
+      ctx.fillStyle=oxW; ctx.globalAlpha*=0.9; ctx.fillRect(px-3,py+26,6,Math.max(0,tipY-4-py-26)); ctx.restore();
+      drops.forEach(d=>circ(ctx,tx,tipY+d.y,3.6,COL.blue,oxW,1.4)); }
+    // layer tags
+    const tagY1=ty+lvlTop+(iface0-lvlTop)*0.5, tagY2=ty+iface0+(tl-iface0-R0)*0.5;
+    line(ctx,tx+R0+4,tagY1,tx+R0+36,tagY1,COL.mid,1.4); textAt(ctx,'water layer',tx+R0+42,tagY1+4,{size:12,weight:700,color:COL.muted});
+    line(ctx,tx+R0+4,tagY2,tx+R0+36,tagY2,COL.mid,1.4); textAt(ctx,'CCl₄ layer (denser)',tx+R0+42,tagY2+4,{size:12,weight:700,color:COL.muted});
+    // ---- zoom: molecules at the interface ----
+    const cx2=w*0.68, cy2=h*0.4, RZ=Math.min(w*0.2,h*0.3);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx2,cy2,RZ,0,Math.PI*2); ctx.fillStyle='#f6faff'; ctx.fill(); ctx.clip();
+    ctx.fillStyle='#e9eef5'; ctx.fillRect(cx2-RZ,cy2,2*RZ,RZ);
+    ctx.globalAlpha=clamp(prodAmt*ext,0,1)*0.7; ctx.fillStyle=prodCol; ctx.fillRect(cx2-RZ,cy2,2*RZ,RZ); ctx.globalAlpha=1;
+    line(ctx,cx2-RZ,cy2,cx2+RZ,cy2,COL.ink,1.6,[6,5]);
+    const pr=11;
+    adjust('hal',HN-2*nRx,'aq'); adjust('ox',remOx,'aq'); adjust('cl',2*nRx,'aq'); adjust('x2',nRx,'aq');
+    parts.x2.forEach((q,i)=>{ q.ph=i<Math.round(nRx*ext)?'org':'aq'; });
+    Object.keys(parts).forEach(cat=>parts[cat].forEach((q,i)=>{
+      const home=q.ph==='org'?0.5:-0.5, spd=cat==='ox'?0.5:0.4;
+      q.vx+=gauss()*0.9*Math.sqrt(dt); q.vy+=gauss()*0.9*Math.sqrt(dt)+(home-q.y)*(Math.abs(q.y-home)>0.4?2.6:0.35)*dt;
+      q.vx*=Math.exp(-2.2*dt); q.vy*=Math.exp(-2.2*dt); q.x+=q.vx*dt*spd*2; q.y+=q.vy*dt*spd*2;
+      const rr=Math.hypot(q.x,q.y); if(rr>0.86){ q.x*=0.86/rr; q.y*=0.86/rr; q.vx*=-0.5; q.vy*=-0.5; }
+      if(q.ph==='aq'&&q.y>-0.06&&cat!=='x2'){ q.y=-0.06; q.vy=-Math.abs(q.vy); } if(q.ph==='org'&&q.y<0.06&&cat!=='x2'){ q.y=0.06; q.vy=Math.abs(q.vy); }
+      q.a=Math.min(1,q.a+dt*3); const X=cx2+q.x*RZ, Y=cy2+q.y*RZ;
+      ctx.save(); ctx.globalAlpha=q.a;
+      if(cat==='hal'){ circ(ctx,X,Y,pr,COL.red,'#fff',2.2); textAt(ctx,HAL[hx].s,X,Y+3.5,{align:'center',size:9,weight:700,color:COL.red}); textAt(ctx,'−',X+pr*0.9,Y-pr*0.7,{size:11,weight:800,color:COL.red}); }
+      else if(cat==='cl'){ circ(ctx,X,Y,pr,COL.blue,'#fff',2.2); textAt(ctx,HAL[ho].s,X,Y+3.5,{align:'center',size:9,weight:700,color:COL.blue}); textAt(ctx,'−',X+pr*0.9,Y-pr*0.7,{size:11,weight:800,color:COL.blue}); }
+      else { const col=cat==='ox'?COL.blue:COL.red, sy=cat==='ox'?HAL[ho].s:HAL[hx].s, ang=t*0.9+i; const dx=Math.cos(ang)*pr*0.95, dy=Math.sin(ang)*pr*0.95;
+        line(ctx,X-dx,Y-dy,X+dx,Y+dy,col,3); circ(ctx,X-dx,Y-dy,pr*0.9,col,'#fff',2.2); circ(ctx,X+dx,Y+dy,pr*0.9,col,'#fff',2.2);
+        textAt(ctx,sy,X-dx,Y-dy+3,{align:'center',size:8,weight:700,color:col}); textAt(ctx,sy,X+dx,Y+dy+3,{align:'center',size:8,weight:700,color:col}); }
+      ctx.restore();
+    }));
+    ctx.restore();
+    circ(ctx,cx2,cy2,RZ+4,COL.ink,null,5);
+    textAt(ctx,'water',cx2-RZ*0.78,cy2-RZ*0.78,{size:11,weight:700,color:COL.muted}); textAt(ctx,'CCl₄',cx2-RZ*0.78,cy2+RZ*0.9,{size:11,weight:700,color:COL.muted});
+    line(ctx,tx+R0+4,ty+iface0,cx2-RZ-6,cy2,COL.mid,1.4,[5,4]);
+    // legend + equation
+    const eqn=feasible?(HAL[ho].s+'_2 + 2'+HAL[hx].s+'^- → 2'+HAL[ho].s+'^- + '+HAL[hx].s+'_2'):(HAL[ho].s+'_2 + '+HAL[hx].s+'^-  ⇏  no displacement');
+    chemAt(ctx,eqn,cx2,cy2+RZ+46,{size:Math.min(20,w/36),weight:700,align:'center',color:feasible?COL.ink:COL.red});
+    let lx=cx2-RZ; const ly=cy2+RZ+76;
+    [['hal',HAL[hx].s+'^-',COL.red],['ox',HAL[ho].s+'_2',COL.blue]].forEach(([k,txt,c])=>{ lx+=chemPill(ctx,txt,lx+20,ly,c,12)+14; });
+    textAt(ctx,'red = oxidised · blue = oxidising agent',cx2-RZ,ly+28,{size:11,weight:600,color:COL.muted});
+    // readouts
+    $('#rxV').innerHTML=feasible?(aLand>0.2?chemHTML(eqn):'ready — add halogen water'):chemHTML(HAL[ho].s+'_2 cannot oxidise '+HAL[hx].s+'^-');
+    const orgTxt=prodAmt*ext>0.12?(HAL[hx].s==='Br'?'orange':HAL[hx].s==='I'?'violet':'pale yellow'):(oxAmt*ext>0.15?(HAL[ho].s==='Br'?'orange':HAL[ho].s==='I'?'violet':'pale yellow'):'colourless');
+    $('#bV').textContent=orgTxt; $('#fV').textContent=Math.round(ext*100)+'%';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.8 BALANCING BY THE HALF-REACTION METHOD (Section 7.3.2, eqs 7.50–7.58)
+   Each step adds real tokens (H₂O, H⁺, OH⁻, e⁻) that fly in from their bins.
+   Atom and charge counts are computed from the formulas themselves, and a
+   beam balance tilts with the largest remaining mismatch.
+   ===================================================================== */
+function spCount(sp){
+  const m=/\^(\d*)([+\-])$/.exec(sp); let q=0, f=sp;
+  if(m){ q=(m[1]===''?1:+m[1])*(m[2]==='+'?1:-1); f=sp.slice(0,m.index); }
+  const el={}; const re=/([A-Z][a-z]?)(?:_(\d+))?/g; let x;
+  while((x=re.exec(f))) el[x[1]]=(el[x[1]]||0)+(x[2]?+x[2]:1);
+  return {el,q};
+}
+function sideCount(list){ const el={}; let q=0; list.forEach(([n,sp])=>{ const c=spCount(sp); Object.keys(c.el).forEach(k=>el[k]=(el[k]||0)+n*c.el[k]); q+=n*c.q; }); return {el,q}; }
+const SUPPLY={'H_2O':0,'H^+':1,'e^-':2,'OH^-':3};
+const BIN_LAB=['H_2O','H^+','e^-','OH^-'];
+const BAL=[
+  { chip:'Fe^2+ + Cr_2O_7^2-', medium:'in acidic medium', steps:[
+    ['Write the skeleton ionic equation',[['ov',[[1,'Fe^2+'],[1,'Cr_2O_7^2-']],[[1,'Fe^3+'],[1,'Cr^3+']]]]],
+    ['Assign oxidation numbers · split into two half-reactions',[['ox',[[1,'Fe^2+']],[[1,'Fe^3+']],'Fe: +2 → +3'],['rd',[[1,'Cr_2O_7^2-']],[[1,'Cr^3+']],'Cr: +6 → +3']]],
+    ['Balance the atoms other than O and H',[['ox',[[1,'Fe^2+']],[[1,'Fe^3+']]],['rd',[[1,'Cr_2O_7^2-']],[[2,'Cr^3+']]]]],
+    ['Balance O by adding H₂O',[['ox',[[1,'Fe^2+']],[[1,'Fe^3+']]],['rd',[[1,'Cr_2O_7^2-']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Balance H by adding H⁺',[['ox',[[1,'Fe^2+']],[[1,'Fe^3+']]],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Balance the charge by adding e⁻',[['ox',[[1,'Fe^2+']],[[1,'Fe^3+'],[1,'e^-']]],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+'],[6,'e^-']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Make the electrons equal — multiply the oxidation half by 6',[['ox',[[6,'Fe^2+']],[[6,'Fe^3+'],[6,'e^-']],'× 6'],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+'],[6,'e^-']],[[2,'Cr^3+'],[7,'H_2O']],'× 1']]],
+    ['Add the half-reactions — the electrons cancel',[['ov',[[6,'Fe^2+'],[1,'Cr_2O_7^2-'],[14,'H^+']],[[6,'Fe^3+'],[2,'Cr^3+'],[7,'H_2O']]]]]
+  ]},
+  { chip:'MnO_4^- + I^-', medium:'in basic medium', steps:[
+    ['Write the skeleton ionic equation',[['ov',[[1,'MnO_4^-'],[1,'I^-']],[[1,'MnO_2'],[1,'I_2']]]]],
+    ['Assign oxidation numbers · split into two half-reactions',[['ox',[[1,'I^-']],[[1,'I_2']],'I: −1 → 0'],['rd',[[1,'MnO_4^-']],[[1,'MnO_2']],'Mn: +7 → +4']]],
+    ['Balance the atoms other than O and H',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-']],[[1,'MnO_2']]]]],
+    ['Balance O by adding H₂O',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-']],[[1,'MnO_2'],[2,'H_2O']]]]],
+    ['Balance H by adding H⁺',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-'],[4,'H^+']],[[1,'MnO_2'],[2,'H_2O']]]]],
+    ['Basic medium — add 4 OH⁻ to both sides',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-'],[4,'H^+'],[4,'OH^-']],[[1,'MnO_2'],[2,'H_2O'],[4,'OH^-']]]]],
+    ['H⁺ + OH⁻ combine to give H₂O',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-'],[4,'H_2O']],[[1,'MnO_2'],[2,'H_2O'],[4,'OH^-']]]]],
+    ['Cancel the H₂O that appears on both sides',[['ox',[[2,'I^-']],[[1,'I_2']]],['rd',[[1,'MnO_4^-'],[2,'H_2O']],[[1,'MnO_2'],[4,'OH^-']]]]],
+    ['Balance the charge by adding e⁻',[['ox',[[2,'I^-']],[[1,'I_2'],[2,'e^-']]],['rd',[[1,'MnO_4^-'],[2,'H_2O'],[3,'e^-']],[[1,'MnO_2'],[4,'OH^-']]]]],
+    ['Make the electrons equal — × 3 and × 2',[['ox',[[6,'I^-']],[[3,'I_2'],[6,'e^-']],'× 3'],['rd',[[2,'MnO_4^-'],[4,'H_2O'],[6,'e^-']],[[2,'MnO_2'],[8,'OH^-']],'× 2']]],
+    ['Add the half-reactions — the electrons cancel',[['ov',[[6,'I^-'],[2,'MnO_4^-'],[4,'H_2O']],[[3,'I_2'],[2,'MnO_2'],[8,'OH^-']]]]]
+  ]},
+  { chip:'SO_3^2- + Cr_2O_7^2-', medium:'in acidic medium', steps:[
+    ['Write the skeleton ionic equation',[['ov',[[1,'Cr_2O_7^2-'],[1,'SO_3^2-']],[[1,'Cr^3+'],[1,'SO_4^2-']]]]],
+    ['Assign oxidation numbers · split into two half-reactions',[['ox',[[1,'SO_3^2-']],[[1,'SO_4^2-']],'S: +4 → +6'],['rd',[[1,'Cr_2O_7^2-']],[[1,'Cr^3+']],'Cr: +6 → +3']]],
+    ['Balance the atoms other than O and H',[['ox',[[1,'SO_3^2-']],[[1,'SO_4^2-']]],['rd',[[1,'Cr_2O_7^2-']],[[2,'Cr^3+']]]]],
+    ['Balance O by adding H₂O',[['ox',[[1,'SO_3^2-'],[1,'H_2O']],[[1,'SO_4^2-']]],['rd',[[1,'Cr_2O_7^2-']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Balance H by adding H⁺',[['ox',[[1,'SO_3^2-'],[1,'H_2O']],[[1,'SO_4^2-'],[2,'H^+']]],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Balance the charge by adding e⁻',[['ox',[[1,'SO_3^2-'],[1,'H_2O']],[[1,'SO_4^2-'],[2,'H^+'],[2,'e^-']]],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+'],[6,'e^-']],[[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Make the electrons equal — multiply the oxidation half by 3',[['ox',[[3,'SO_3^2-'],[3,'H_2O']],[[3,'SO_4^2-'],[6,'H^+'],[6,'e^-']],'× 3'],['rd',[[1,'Cr_2O_7^2-'],[14,'H^+'],[6,'e^-']],[[2,'Cr^3+'],[7,'H_2O']],'× 1']]],
+    ['Add the half-reactions — the electrons cancel',[['ov',[[3,'SO_3^2-'],[3,'H_2O'],[1,'Cr_2O_7^2-'],[14,'H^+']],[[3,'SO_4^2-'],[6,'H^+'],[2,'Cr^3+'],[7,'H_2O']]]]],
+    ['Cancel the H₂O and H⁺ common to both sides',[['ov',[[3,'SO_3^2-'],[1,'Cr_2O_7^2-'],[8,'H^+']],[[3,'SO_4^2-'],[2,'Cr^3+'],[4,'H_2O']]]]]
+  ]}
+];
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Redox pair</label>${chipsHTML('baC',BAL.map(r=>r.chip))}</div>
+    <div class="control-group"><label>Step <span class="val" id="sV">1</span></label><input type="range" id="sR" min="0" max="7" step="1" value="0">
+      <div class="toggle-group"><button class="toggle-btn" id="bk">◀ Back</button><button class="toggle-btn" id="nx">Next ▶</button></div>
+      <button class="toggle-btn navy" id="ap">▶ Play all steps</button></div>
+    <div class="control-group"><div class="result-cards three">${rcard('Atoms','aV',COL.green)}${rcard('Charge','cV',COL.green)}${rcard('e⁻ lost = gained','eV',COL.yellow)}</div>
+      <p class="hint" id="hH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sR=$('#sR');
+  let layoutS=1, B=BAL[0], step=0, t=0, chips=[], dying=[], prevPos={}, built=-1, builtB=null, autoT=0, beams={}, pulse=[0,0,0,0];
+  function go(n){ step=clamp(n,0,B.steps.length-1); sR.value=step; }
+  wireChips(wrap,'#baC',i=>{ B=BAL[i]; sR.max=B.steps.length-1; go(0); autoT=0; $('#ap').textContent='▶ Play all steps'; });
+  sR.oninput=()=>{ step=+sR.value; autoT=0; $('#ap').textContent='▶ Play all steps'; };
+  $('#bk').onclick=()=>{ go(step-1); autoT=0; }; $('#nx').onclick=()=>{ go(step+1); autoT=0; };
+  $('#ap').onclick=()=>{ if(autoT>0){ autoT=0; $('#ap').textContent='▶ Play all steps'; return; } if(step>=B.steps.length-1) go(0); autoT=2.4; $('#ap').textContent='⏸ Pause'; };
+  function chipW(ctx,sp){ return sp==='e^-'?34:chemW(ctx,sp,15,700)+22; }
+  function rebuild(ctx,w,h){
+    // layout targets for the current step; chips persist by key and glide to their new places
+    const rows=B.steps[step][1], bandTop=96, bandBot=h-104, bandH=(bandBot-bandTop)/rows.length, cxR=(w-130)/2+20;
+    const old=new Map(chips.map(c=>[c.key,c])); const nextChips=[], seenKeys=new Set();
+    prevPos={}; chips.forEach(c=>{ prevPos[c.sp+c.side]=[c.sx.x,c.sy.x]; });
+    const GAP=34, ARR=76, mk=(side,list)=>list.map(([n,sp])=>({n,sp,side,w0:chipW(ctx,sp)+(n>1?24:0)}));
+    const rd=rows.map(r=>({Ls:mk('L',r[1]),Rs:mk('R',r[2])}));
+    const tot0=rd.map(r=>r.Ls.reduce((a,c)=>a+c.w0,0)+GAP*(r.Ls.length-1)+ARR+r.Rs.reduce((a,c)=>a+c.w0,0)+GAP*(r.Rs.length-1));
+    const S=Math.min(1,(w-190)/Math.max(...tot0)); layoutS=S;
+    rows.forEach((row,ri)=>{
+      const k=row[0], cy=bandTop+bandH*ri+bandH*0.42, {Ls,Rs}=rd[ri], tot=tot0[ri]*S;
+      let x=cxR-tot/2;
+      const place=(arr)=>arr.forEach(c=>{ c.w=c.w0*S; c.tx=x+c.w/2; c.ty=cy; x+=c.w+GAP*S; });
+      place(Ls); row.arrowX=x-GAP*S+ARR*S/2; x=x-GAP*S+ARR*S; place(Rs);
+      row.cy=cy; row.Lc=Ls; row.Rc=Rs; row.S=S;
+      [...Ls,...Rs].forEach(c=>{
+        c.key=k+'|'+c.side+'|'+c.sp; seenKeys.add(c.key);
+        const o=old.get(c.key);
+        if(o){ o.n=c.n; o.w0=c.w0; o.w=c.w; o.S=S; o.tx=c.tx; o.ty=c.ty; o.row=k; if(o.cn!==c.n){ o.pop=1; o.cn=c.n; } o.dead=false; nextChips.push(o); }
+        else {
+          const sp0=prevPos[c.sp+c.side], bin=SUPPLY[c.sp];
+          let sx0,sy0; if(bin!==undefined){ sx0=w*(0.2+0.15*bin)+20; sy0=h-52; pulse[bin]=1; } else if(sp0){ sx0=sp0[0]; sy0=sp0[1]; } else { sx0=c.tx; sy0=c.ty-30; }
+          nextChips.push({key:c.key,sp:c.sp,side:c.side,n:c.n,cn:c.n,w0:c.w0,w:c.w,S,tx:c.tx,ty:c.ty,row:k,sx:spr(sx0,0),sy:spr(sy0,0),pop:1,a:0,dead:false});
+        }
+      });
+    });
+    chips.forEach(c=>{ if(!seenKeys.has(c.key)){ c.dead=true; const bin=SUPPLY[c.sp]; if(bin!==undefined){ c.tx=w*(0.2+0.15*bin)+20; c.ty=h-52; } dying.push(c); } });
+    chips=nextChips; built=step; builtB=B;
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(autoT>0){ autoT-=dt; if(autoT<=0){ if(step<B.steps.length-1){ go(step+1); autoT=2.4; } else { autoT=0; $('#ap').textContent='↺ Play again'; } } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(built!==step||builtB!==B||canvas._wB!==w||canvas._hB!==h){ canvas._wB=w; canvas._hB=h; rebuild(ctx,w,h); }
+    const rows=B.steps[step][1], N=B.steps.length;
+    $('#sV').textContent=(step+1)+' / '+N;
+    // header
+    textAt(ctx,'Step '+(step+1)+' of '+N,w/2,32,{align:'center',size:12,weight:700,color:COL.mid});
+    chemAt(ctx,B.steps[step][0].replace(/H₂O/g,'H_2O').replace(/H⁺/g,'H^+').replace(/OH⁻/g,'OH^-').replace(/e⁻/g,'e^-').replace(/OH\^-/g,'OH^-'),w/2,62,{size:Math.min(21,w/38),weight:700,align:'center'});
+    textAt(ctx,B.medium,w/2,82,{align:'center',size:12,weight:600,color:COL.muted});
+    // supply bins
+    BIN_LAB.forEach((lab,i)=>{
+      const bx=w*(0.2+0.15*i), by=h-70; pulse[i]=Math.max(0,pulse[i]-dt*2);
+      const col=i===2?COL.yellow:COL.green;
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.4+pulse[i]*2; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx-14,by); ctx.lineTo(bx-8,by+36); ctx.lineTo(bx+48,by+36); ctx.lineTo(bx+54,by); ctx.stroke(); ctx.restore();
+      chemAt(ctx,lab,bx+20,by+56,{size:13,weight:700,color:i===2?'#a9780a':COL.green,align:'center'});
+    });
+    // rows
+    let allAtoms=true, allCharge=true, eL=0, eR=0;
+    rows.forEach((row,ri)=>{
+      const [k,L,R,note]=row, col=k==='ox'?COL.red:k==='rd'?COL.blue:COL.green, cy=row.cy;
+      // band label
+      const lab=k==='ox'?'OXIDATION · loses e^-':k==='rd'?'REDUCTION · gains e^-':'OVERALL';
+      const lw=chemW(ctx,lab,11,700)+18; rrect(ctx,22,cy-bandHFor(rows,h)*0.42+6,lw,22,11); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.8; ctx.stroke();
+      chemAt(ctx,lab,22+9,cy-bandHFor(rows,h)*0.42+21,{size:11,weight:700,color:col});
+      if(note) chemAt(ctx,note,22+9,cy-bandHFor(rows,h)*0.42+46,{size:13,weight:700,color:col});
+      // arrow
+      vec(ctx,row.arrowX-26,cy,row.arrowX+26,cy,COL.ink,2.6);
+      // counts
+      const cl=sideCount(L), cr=sideCount(R), keys=[...new Set([...Object.keys(cl.el),...Object.keys(cr.el)])].sort((a,b)=>(a==='O'||a==='H'?1:0)-(b==='O'||b==='H'?1:0)||(a==='H'?1:0)-(b==='H'?1:0)||a.localeCompare(b));
+      const tokens=keys.map(e=>({lab:e,a:cl.el[e]||0,b:cr.el[e]||0})); tokens.push({lab:'charge',a:cl.q,b:cr.q,q:true});
+      let tx=row.arrowX-tokens.length*40-6; const ty=cy+46;
+      let mism=0, dom=0;
+      tokens.forEach(tk=>{
+        const ok=tk.a===tk.b, d=tk.a-tk.b; if(!ok&&Math.abs(d)>Math.abs(dom)) dom=d;
+        if(!ok){ if(tk.q) allCharge=false; else allAtoms=false; }
+        const cw=tk.q?96:70; rrect(ctx,tx,ty-14,cw-6,26,7); ctx.fillStyle=ok?'#e4f7ec':'#fdece7'; ctx.fill(); ctx.strokeStyle=ok?COL.green:COL.red; ctx.lineWidth=1.6; ctx.stroke();
+        textAt(ctx,(tk.q?'charge ':tk.lab+' ')+(tk.q?sgn(tk.a).replace('+','+'):tk.a)+' | '+(tk.q?sgn(tk.b):tk.b),tx+(cw-6)/2,ty+4,{align:'center',size:11,weight:700,color:ok?'#1f6b3d':'#a4331c'});
+        tx+=cw;
+      });
+      // e- tally
+      eL+=L.filter(([n,s])=>s==='e^-').reduce((a,[n])=>a+n,0); eR+=R.filter(([n,s])=>s==='e^-').reduce((a,[n])=>a+n,0);
+      // beam balance: tilts with the largest mismatch, wobbles to rest
+      const bs=beams[k]||(beams[k]=spr(0,0)); springTo(bs,clamp(dom/6,-1,1)*-0.32,60,5,dt);
+      const bx=w-86, by=cy+8;
+      ctx.save(); ctx.translate(bx,by);
+      line(ctx,0,0,0,34,COL.ink,3); line(ctx,-16,34,16,34,COL.ink,3);
+      ctx.rotate(bs.x); line(ctx,-46,0,46,0,COL.ink,3.4);
+      [-46,46].forEach(px=>{ line(ctx,px,0,px-9,18,COL.mid,1.4); line(ctx,px,0,px+9,18,COL.mid,1.4); ctx.save(); ctx.translate(px,18); ctx.rotate(-bs.x); ctx.beginPath(); ctx.arc(0,0,11,0,Math.PI); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore(); });
+      circ(ctx,0,0,4.5,COL.ink,'#fff',2);
+      ctx.restore();
+      textAt(ctx,dom===0?'balanced ✓':'not balanced',bx,by+62,{align:'center',size:11,weight:700,color:dom===0?COL.green:COL.red});
+    });
+    // chips glide
+    const drawChip=(c,al)=>{
+      springTo(c.sx,c.tx,70,10,dt); springTo(c.sy,c.ty,70,10,dt); c.a=approach(c.a,c.dead?0:1,5,dt); c.pop=Math.max(0,c.pop-dt*2.2);
+      const k=c.row, isE=c.sp==='e^-', isSup=SUPPLY[c.sp]!==undefined, col=isE?COL.yellow:isSup?COL.green:(k==='ox'?COL.red:k==='rd'?COL.blue:COL.ink);
+      const sc=(1+0.22*Math.sin(Math.PI*Math.min(1,c.pop)))*c.S, x=c.sx.x, y=c.sy.x, W=c.w0-(c.n>1?24:0);
+      ctx.save(); ctx.globalAlpha=c.a; ctx.translate(x,y); ctx.scale(sc,sc);
+            const bx=(c.n>1?12:0);
+      if(c.n>1) textAt(ctx,String(c.n),-W/2-2+bx-4,6,{align:'right',size:18,weight:800,color:COL.ink});
+      if(isE){ circ(ctx,bx,0,15,'#a9780a',COL.yellow,2); chemAt(ctx,'e^-',bx,5,{size:13,weight:800,color:'#fff',align:'center'}); }
+      else { rrect(ctx,bx-W/2,-17,W,34,17); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.stroke(); chemAt(ctx,c.sp,bx,5.5,{size:15,weight:700,color:col,align:'center'}); }
+      ctx.restore();
+    };
+    chips.forEach(c=>drawChip(c)); dying=dying.filter(c=>{ drawChip(c); return c.a>0.03; });
+    // plus signs between chips of the same side
+    rows.forEach(row=>{ [row.Lc,row.Rc].forEach(arr=>{ for(let i=0;i<arr.length-1;i++){ const a=chips.find(c=>c.key===row.k+'|'+arr[i].side+'|'+arr[i].sp), b=chips.find(c=>c.key===row.k+'|'+arr[i+1].side+'|'+arr[i+1].sp); if(a&&b){ const xa=a.sx.x+a.w/2+(arr[i].n>1?0:0), xb=b.sx.x-b.w/2; textAt(ctx,'+',(xa+xb)/2,row.cy+7,{align:'center',size:22,weight:700,color:COL.mid}); } } }); });
+    const done=allAtoms&&allCharge;
+    $('#aV').textContent=allAtoms?'✓ equal':'✗ no'; $('#cV').textContent=allCharge?'✓ equal':'✗ no'; $('#eV').textContent=rows[0][0]==='ov'?'cancelled':(eL===eR&&eL>0?'✓ '+eL:(eL+eR>0?'✗':'—'));
+    $('#hH').textContent=rows.length===2&&step>=B.steps.length-3?'Electrons gained by the oxidant must equal electrons lost by the reductant.':'Balance each half separately, then add.';
+  });
+  function bandHFor(rows,h){ return (h-104-96)/rows.length; }
+  return wrap;
+}
+
+/* =====================================================================
+   1.9 REDOX TITRATION (Section 7.3.3, eqs 7.59–7.60)
+   Ve = f · c(analyte) · 20.0 / (ratio · c(titrant))
+   MnO₄⁻/Fe²⁺: 5:1, 0.0200 M — own indicator · Cr₂O₇²⁻/Fe²⁺: 6:1, 0.01667 M — diphenylamine
+   S₂O₃²⁻/I₂: 2:1, 0.100 M — starch.  Worked example: Ve = 20.0 mL for Sample B.
+   ===================================================================== */
+const TI=[
+  { chip:'KMnO_4 · self-indicator', titr:'MnO_4^-', tname:'KMnO_4', cT:0.0200, ratio:5, cA0:0.100, tCol:'#8e2a9e', analyte:'Fe^2+', aName:'Fe^2+ (20.0 mL)',
+    eq:'5Fe^2+ + MnO_4^- + 8H^+ → 5Fe^3+ + Mn^2+ + 4H_2O', end:'first lasting pink tinge', calc:(V)=>5*0.0200*V/20 },
+  { chip:'K_2Cr_2O_7 + indicator', titr:'Cr_2O_7^2-', tname:'K_2Cr_2O_7', cT:1/60, ratio:6, cA0:0.100, tCol:'#ee9a2b', analyte:'Fe^2+', aName:'Fe^2+ + diphenylamine',
+    eq:'6Fe^2+ + Cr_2O_7^2- + 14H^+ → 6Fe^3+ + 2Cr^3+ + 7H_2O', end:'sudden intense blue', calc:(V)=>6*(1/60)*V/20 },
+  { chip:'Na_2S_2O_3 + starch', titr:'S_2O_3^2-', tname:'Na_2S_2O_3', cT:0.100, ratio:0.5, cA0:0.050, tCol:'#bcd6ee', analyte:'I_2', aName:'I_2 + starch',
+    eq:'I_2 + 2S_2O_3^2- → 2I^- + S_4O_6^2-', end:'blue colour just vanishes', calc:(V)=>0.100*V/(2*20) }
+];
+const SAMPLES=[0.8,1.0,1.25];
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Titration</label>${chipsHTML('tiC',TI.map(r=>r.chip))}</div>
+    <div class="control-group"><label style="margin-bottom:4px;">Unknown sample (20.0 mL)</label>${chipsHTML('saC',['A','B','C'],1)}</div>
+    <div class="control-group"><label>Titrant delivered <span class="val" id="vV">0.0 mL</span></label><input type="range" id="vR" min="0" max="30" step="0.1" value="0">
+      <div class="toggle-group"><button class="toggle-btn" id="swB">🌀 Swirl</button><button class="toggle-btn" id="rcB">📝 Note reading</button></div></div>
+    <div class="control-group"><div class="result-cards"><div class="rcard wide"><div class="rlabel">Flask colour</div><div class="rval" id="cV" style="font-size:var(--fs-sm)">—</div></div>${rcard('Reading noted','nV',COL.green)}${rcard('Calculated c','kV',COL.green)}</div>
+      <p class="hint" id="hH">Add titrant until the colour change just appears — go slowly near the end.</p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), vR=$('#vR');
+  let M=TI[0], f=1.0, t=0, Vemit=0, Vland=0, drops=[], plumes=[], acc=0, swirl=spr(0,0), swirlOn=false, noted=null, flow=0, Ccur={a:0}, col={pink:0, blue:0, green:0, yel:0, ind:0, dark:0}, tilt=spr(0,0);
+  function reset(){ Vemit=0; Vland=0; drops=[]; plumes=[]; vR.value=0; noted=null; acc=0; col.pink=col.blue=col.green=col.yel=0; col.dark=0; $('#nV').textContent='—'; $('#kV').textContent='—'; }
+  wireChips(wrap,'#tiC',i=>{ M=TI[i]; reset(); }); wireChips(wrap,'#saC',i=>{ f=SAMPLES[i]; reset(); });
+  $('#swB').onclick=()=>{ swirlOn=!swirlOn; $('#swB').classList.toggle('active',swirlOn); };
+  $('#rcB').onclick=()=>{ noted=Vland; $('#nV').textContent=fmt(noted,1)+' mL'; const c=M.calc(noted), ct=M.calc(f*20); $('#kV').textContent=fmt(c,4)+' M'; const err=Math.abs(c-ct)/ct*100;
+    $('#hH').innerHTML=err<1.5?'✓ Within 1.5 % of the true value — a good titration.':(noted<f*20?'✗ Stopped too early — the colour change had not appeared.':'✗ Overshot the end-point by '+fmt(noted-f*20,1)+' mL.'); };
+  animLoop(dt=>{
+    t+=dt;
+    const Ve=f*M.cA0*20/(M.ratio*M.cT); // mL at the true end-point
+    // ---- burette valve: opens while the reading is below the slider ----
+    const tgt=Math.max(+vR.value,Vemit); if(+vR.value<Vemit) vR.value=Vemit;
+    const want=tgt-Vemit; flow=want>0.0005?Math.min(3,0.15+want*3):0;
+    if(SNAP&&want>0){ flow=want/dt; }
+    const dv=Math.min(want,flow*dt); Vemit+=dv; acc+=dv/0.1; while(acc>=1){ acc-=1; drops.push({y:0,v:0}); }
+    $('#vV').textContent=fmt(Vemit,1)+' mL';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // geometry
+    const Fh=Math.min(h*0.26,170), by=40, Bh=Math.min(h*0.44,h-by-70-Fh-48), bx=Math.min(w*0.2,190), fTop=by+Bh+74, fw=Math.min(w*0.2,176), nw=32;
+    const sy0=by+16, sy1=by+Bh-8, vy=v=>sy0+(sy1-sy0)*(v/30);
+    // ---- burette ----
+    const bw=26;
+    ctx.save(); ctx.beginPath(); ctx.rect(bx-bw/2+2,vy(Vemit),bw-4,sy1+8-vy(Vemit)); ctx.fillStyle=M.tCol; ctx.globalAlpha=M.tCol==='#bcd6ee'?0.7:0.85; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx-bw/2,by); ctx.lineTo(bx-bw/2,by+Bh); ctx.lineTo(bx-3,by+Bh+8); ctx.lineTo(bx-3,by+Bh+26); ctx.moveTo(bx+bw/2,by); ctx.lineTo(bx+bw/2,by+Bh); ctx.lineTo(bx+3,by+Bh+8); ctx.lineTo(bx+3,by+Bh+26); ctx.stroke();
+    for(let v=0;v<=30;v++){ const yy=vy(v), L=v%5===0?14:v%1===0?7:0; line(ctx,bx+bw/2,yy,bx+bw/2-L,yy,COL.mid,1.1); if(v%5===0) textAt(ctx,String(v),bx+bw/2+6,yy+4,{size:10.5,weight:600,color:COL.muted}); }
+    // meniscus
+    ctx.beginPath(); ctx.ellipse(bx,vy(Vemit),bw/2-2,3,0,0,Math.PI*2); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.stroke();
+    // stopcock handle turns as the valve opens
+    springTo(tilt,flow>0?1.35:0,120,12,dt);
+    ctx.save(); ctx.translate(bx,by+Bh+16); ctx.rotate(tilt.x); line(ctx,-16,0,16,0,COL.yellow,4.6); ctx.restore(); circ(ctx,bx,by+Bh+16,5,COL.ink,'#fff',2);
+    ctx.restore();
+    chemPill(ctx,M.tname,bx,by-14,COL.blue,12);
+    textAt(ctx,'reading '+fmt(Vemit,1)+' mL',bx+bw/2+36,by+Bh+34,{size:11.5,weight:700,color:COL.yellow,align:'left'});
+    // ---- falling drops (real gravity) land in the flask ----
+    const tipY=by+Bh+28, lvl=fTop+Fh*0.36;
+    drops=drops.filter(d=>{ d.v+=1100*dt; d.y+=d.v*dt; if(tipY+d.y>=lvl){ Vland+=0.1; plumes.push({q:0}); return false; } circ(ctx,bx,tipY+d.y,4,COL.blue,M.tCol,1.6); return true; });
+    // ---- colours of the flask (approach their targets) ----
+    const n0=f*M.cA0*20, nT=0;
+    const done=clamp(Vland/Ve,0,1), exc=Math.max(0,Vland-Ve);
+    let tg={pink:0,blue:0,green:0,yel:0,dark:0}, state='';
+    if(M===TI[0]){ tg.yel=0.5*done; tg.pink=exc>0.0001?1-Math.exp(-exc*M.cT/0.01):0; state=exc>0.04?'pink — permanent':(Vland>0.05?'pale yellow (Fe³⁺)':'pale green (Fe²⁺)'); }
+    else if(M===TI[1]){ tg.green=0.7*done; tg.yel=0.3*done; tg.blue=exc>0.0001?1-Math.exp(-exc*M.cT/0.004):0; state=exc>0.03?'intense blue — end-point':(Vland>0.05?'green (Cr³⁺)':'pale green (Fe²⁺)'); }
+    else { const rem=Math.max(0,1-Vland/Ve); tg.dark=0.96*Math.pow(rem,0.7); state=rem<0.02?'colourless — end-point':'blue-black (starch–I₂)'; }
+    ['pink','blue','green','yel','dark'].forEach(k=>col[k]=SNAP?tg[k]:approach(col[k],tg[k],3.2,dt));
+    // ---- flask ----
+    springTo(swirl,swirlOn?1:0,25,7,dt); const sw=swirl.x*Math.sin(t*9)*10, tl=swirl.x*Math.sin(t*9+1.2)*0.06;
+    const fcx=bx+sw*0.2, bodyW=fw, Wb=bodyW/2;
+    const flask=()=>{ ctx.beginPath(); ctx.moveTo(-nw/2,0); ctx.lineTo(-nw/2,Fh*0.22); ctx.lineTo(-Wb,Fh-12); ctx.quadraticCurveTo(-Wb,Fh,-Wb+12,Fh); ctx.lineTo(Wb-12,Fh); ctx.quadraticCurveTo(Wb,Fh,Wb,Fh-12); ctx.lineTo(nw/2,Fh*0.22); ctx.lineTo(nw/2,0); };
+    ctx.save(); ctx.translate(fcx,fTop); ctx.rotate(tl*0.5);
+    ctx.save(); flask(); ctx.clip();
+    const base=M===TI[2]?'#f4f9fd':'#f1f8f2';
+    ctx.fillStyle=base; ctx.fillRect(-Wb,Fh*0.36-8,bodyW,Fh);
+    const lay=(c,a)=>{ if(a<0.003) return; ctx.globalAlpha=clamp(a,0,1); ctx.fillStyle=c; ctx.fillRect(-Wb,Fh*0.36-8,bodyW,Fh); ctx.globalAlpha=1; };
+    lay('#f2d66c',col.yel*0.55); lay('#5fb877',col.green*0.85); lay('#e24aa6',col.pink*0.9); lay('#2639a8',col.blue*0.95); lay('#18246a',col.dark);
+    // local titrant plumes before they mix (a purple/orange streak under the drop)
+    plumes=plumes.filter(p=>{ p.q+=dt/(0.7+ (swirlOn?-0.25:0.9)*(M===TI[2]?0:1)); if(p.q>=1) return false; const vis=(M===TI[2])?0:1; ctx.save(); ctx.globalAlpha=(1-p.q)*0.8*vis; ctx.fillStyle=(M===TI[0]&&exc>0.02)?'#e24aa6':M.tCol; ctx.beginPath(); ctx.ellipse(0,Fh*0.36+p.q*26,5+p.q*18,3+p.q*14,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.globalAlpha=(1-p.q); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.3; ctx.beginPath(); ctx.ellipse(0,Fh*0.36,6+p.q*bodyW*0.3,2+p.q*4,0,0,Math.PI*2); ctx.stroke(); ctx.restore(); return true; });
+    // swirling surface
+    ctx.strokeStyle='rgba(19,42,68,0.45)'; ctx.lineWidth=1.8; ctx.beginPath(); for(let x=-Wb;x<=Wb;x+=3){ const yy=Fh*0.36-8+Math.sin(x*0.07+t*(3+swirl.x*10))*(1.2+swirl.x*4); x===-Wb?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.lineCap='round'; flask(); ctx.stroke(); line(ctx,-nw/2-5,0,nw/2+5,0,COL.ink,3.4);
+    ctx.restore();
+    chemPill(ctx,M.aName,fcx,fTop+Fh+26,COL.red,12);
+    // ---- right: live measurement (only what has been delivered so far) ----
+    const cx0=Math.max(bx+fw*0.9+60,w*0.5), cw=w-cx0-24, ch=Math.min(h*0.4,230), cy0=64;
+    rrect(ctx,cx0,cy0,cw,ch,12); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle='#dbe4f0'; ctx.lineWidth=1.6; ctx.stroke();
+    const px0=cx0+44, px1=cx0+cw-16, py0=cy0+26, py1=cy0+ch-34, X=v=>px0+(px1-px0)*v/30, Y=u=>py1-(py1-py0)*u;
+    line(ctx,px0,py1,px1,py1,COL.mid,1.6); line(ctx,px0,py0,px0,py1,COL.mid,1.6);
+    for(let v=0;v<=30;v+=10){ line(ctx,X(v),py1,X(v),py1+5,COL.mid,1.4); textAt(ctx,String(v),X(v),py1+19,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    textAt(ctx,'titrant added (mL)',(px0+px1)/2,py1+32,{align:'center',size:11,weight:600,color:COL.muted});
+    textAt(ctx,'amount in flask',cx0+12,cy0+16,{size:11.5,weight:700,color:COL.ink});
+    // plotted up to the current volume
+    const steps=Math.max(2,Math.round(Vland*8)); const remF=v=>Math.max(0,1-v/Ve), excF=v=>Math.min(1.2,Math.max(0,(v-Ve)/12));
+    ctx.save(); ctx.lineWidth=2.8; ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.beginPath(); for(let i=0;i<=steps;i++){ const v=Vland*i/steps; i?ctx.lineTo(X(v),Y(remF(v)*0.85)):ctx.moveTo(X(v),Y(remF(v)*0.85)); } ctx.stroke();
+    ctx.strokeStyle=COL.blue; ctx.beginPath(); for(let i=0;i<=steps;i++){ const v=Vland*i/steps; i?ctx.lineTo(X(v),Y(excF(v)*0.85)):ctx.moveTo(X(v),Y(excF(v)*0.85)); } ctx.stroke(); ctx.restore();
+    line(ctx,X(Vland),py0,X(Vland),py1,COL.yellow,1.6,[4,4]); circ(ctx,X(Vland),Y(remF(Vland)*0.85),4.5,COL.red,'#fff',2);
+    if(Vland>=Ve-0.001) { circ(ctx,X(Ve),Y(0),6,COL.green,'#fff',2.6); textAt(ctx,'end-point '+fmt(Ve,1)+' mL',X(Ve),py1-12,{align:'center',size:11,weight:700,color:COL.green}); }
+    chemAt(ctx,(M===TI[2]?'I_2':'Fe^2+')+' left',px1-4,py0+14,{align:'right',size:11.5,weight:700,color:COL.red}); chemAt(ctx,'excess '+M.titr,px1-4,py0+30,{align:'right',size:11.5,weight:700,color:COL.blue});
+    chemAt(ctx,M.eq,cx0+cw/2,cy0+ch+28,{size:Math.min(14,w/60),weight:600,align:'center',color:COL.muted});
+    // live readouts
+    $('#cV').textContent=state;
+    if(noted===null&&Vland>Ve+1.5) $('#hH').textContent='You are well past the end-point — the extra titrant is wasted.';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.10 THE DANIELL CELL (Section 7.4, Fig 7.3, Table 7.1)
+   E°cell = E°(cathode) − E°(anode).   Nernst: E = E° − (0.0592/n)·log Q.
+   Electrons run from the more negative couple through the wire; ions
+   cross the salt bridge to keep each beaker neutral.
+   ===================================================================== */
+const EL10=[
+  {m:'Mg',E:-2.36,n:2,col:'#dfe5ec',tint:'#f7fafd'},{m:'Zn',E:-0.76,n:2,col:'#c8d1dc',tint:'#f7fafd'},{m:'Fe',E:-0.44,n:2,col:'#97a3b2',tint:'#c6e9cf'},
+  {m:'Ni',E:-0.25,n:2,col:'#a9bdb6',tint:'#bfe8cc'},{m:'Pb',E:-0.13,n:2,col:'#8d94a3',tint:'#f7fafd'},{m:'Cu',E:0.34,n:2,col:'#e3a47c',tint:'#86c5f2'},{m:'Ag',E:0.80,n:1,col:'#eef2f6',tint:'#f7fafd'}
+];
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+function buildA10(){
+  const wrap=labShell();
+  const opts=EL10.map((e,i)=>`<option value="${i}">${e.m}²⁺/${e.m}  (${e.E>0?'+':''}${e.E.toFixed(2)} V)</option>`.replace('Ag²⁺','Ag⁺')).join('');
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:2px;">Electrodes (Table 7.1)</label>
+      <div class="role-row"><span class="rname">Left</span><select id="eL">${opts}</select></div>
+      <div class="role-row"><span class="rname">Right</span><select id="eR">${opts}</select></div></div>
+    <div class="control-group"><label>Left ion  <span class="val" id="cLv"></span></label><input type="range" id="cL" min="-2" max="0.3" step="0.05" value="0">
+      <label style="margin-top:8px;">Right ion <span class="val" id="cRv"></span></label><input type="range" id="cR" min="-2" max="0.3" step="0.05" value="0"></div>
+    <div class="control-group"><label>Load resistor <span class="val" id="rV"></span></label><input type="range" id="rR" min="5" max="100" step="1" value="20">
+      <div class="toggle-group"><button class="toggle-btn" id="swB">⏻ Switch: OFF</button><button class="toggle-btn" id="rsB">↺ Fresh cell</button></div></div>
+    <div class="control-group"><div class="result-cards three">${rcard('E° cell','e0',COL.blue)}${rcard('E now','eN',COL.green)}${rcard('Current','iV',COL.yellow)}</div>
+      <p class="hint" id="aH"></p></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), eL=$('#eL'), eR=$('#eR');
+  eL.value=1; eR.value=5;
+  let eo=0, t=0, closed=false, cons=0, needle=spr(0,0), ionsL=[], ionsR=[], deps=[], eph=0, bph=0, liveL=1, liveR=1, lastKey='', flashes=[];
+  const N0=(c)=>clamp(Math.round(3+9*(Math.log10(c)+2)/2.3),2,14);
+  function fresh(){ cons=0; deps=[]; ionsL=[]; ionsR=[]; liveL=Math.pow(10,+$('#cL').value); liveR=Math.pow(10,+$('#cR').value); }
+  fresh();
+  $('#swB').onclick=()=>{ closed=!closed; $('#swB').textContent='⏻ Switch: '+(closed?'ON':'OFF'); $('#swB').classList.toggle('active',closed); };
+  $('#rsB').onclick=fresh; ['cL','cR'].forEach(id=>$('#'+id).oninput=fresh); eL.onchange=eR.onchange=fresh;
+  function mkIon(side,x,y,fl){ return {fx:x,fy:y,vx:0,vy:0,k:'f',a:fl?0.2:1,fl:fl?1:0}; }
+  animLoop(dt=>{
+    t+=dt;
+    const L=EL10[+eL.value], R=EL10[+eR.value], rLoad=+$('#rR').value;
+    $('#cLv').textContent=fmt(liveL,2)+' M'; $('#cRv').textContent=fmt(liveR,2)+' M'; $('#rV').textContent=rLoad+' Ω';
+    // which half-cell is the anode?  (more negative E°)
+    const same=L.E===R.E; const leftAnode=L.E<R.E;
+    const A=leftAnode?L:R, C=leftAnode?R:L, cA=leftAnode?liveL:liveR, cC=leftAnode?liveR:liveL;
+    const E0=same?0:C.E-A.E, n=A.n*C.n/gcd(A.n,C.n), Q=Math.pow(cA,n/A.n)/Math.pow(cC,n/C.n);
+    const E=same?0:Math.max(0,E0-(0.0592/n)*Math.log10(Q)), I=closed&&!same?E/(rLoad+3)*1000:0; // mA, r_internal = 3 Ω
+    // consumption + concentration drift while current flows
+    const dc=I*dt*0.00011; if(closed&&!same){ cons+=dc*4; if(leftAnode){ liveL+=dc; liveR=Math.max(0.005,liveR-dc*(L.n/R.n)); } else { liveR+=dc; liveL=Math.max(0.005,liveL-dc*(R.n/L.n)); } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const wy=Math.max(104,h*0.22), by=wy+104, bw=Math.min(w*0.26,230), bh=Math.min(h-by-96,h*0.34,230), cxL=w*0.27, cxR=w*0.73;
+    const lvl=0.7, xL=cxL-bw*0.2, xR=cxR+bw*0.2, eTop=by-60, eBot=by+bh*0.82;
+    // notation
+    const ion=(e)=>e.m+'^'+(e.n===1?'+':e.n+'+')+'(aq)', labA=(e)=>e.m+'(s) | '+ion(e), labC=(e)=>ion(e)+' | '+e.m+'(s)';
+    chemAt(ctx,labA(same?L:A)+'  ||  '+labC(same?R:C),w/2,34,{size:Math.min(19,w/34),weight:700,align:'center'});
+    if(!same) textAt(ctx,(leftAnode?'left':'right')+' half-cell is the anode',w/2,56,{align:'center',size:12,weight:600,color:COL.muted});
+    // beakers + liquids
+    const liq=(e,c)=>mixCol('#f7fafd',e.tint,clamp(0.25+0.75*Math.sqrt(c),0,1));
+    const gL=beaker(ctx,cxL,by,bw,bh,lvl,liq(L,liveL),t,{wave:1,noTicks:true}), gR=beaker(ctx,cxR,by,bw,bh,lvl,liq(R,liveR),t,{wave:1,noTicks:true});
+    // ---- ions in the beakers: spawn at the anode, leave at the cathode ----
+    const build=(arr,g,e,c,isAnode,sx)=>{
+      const want=N0(c), W=g.R-g.L, H=g.bot-g.ly;
+      let cnt=arr.filter(o=>o.k==='f').length;
+      while(cnt<want){ const nx=isAnode&&closed?(sx-g.L)/W+(Math.random()-0.5)*0.12:Math.random(); arr.push(mkIon(0,clamp(nx,0.06,0.94),isAnode&&closed?0.3+Math.random()*0.5:0.15+Math.random()*0.8,true)); cnt++; }
+      while(cnt>want){ if(!isAnode||!closed){ const idx=arr.findIndex(o=>o.k==='f'); if(idx<0) break; const o=arr[idx]; if(!isAnode&&closed){ o.k='go'; } else { arr.splice(idx,1); } cnt--; } else break; }
+      arr.forEach(o=>{
+        const px0=g.L+W*o.fx, py0=g.ly+H*o.fy;
+        if(o.k==='go'){ const dx=sx-px0, dy=clamp(py0,g.ly+16,eBot-14)-py0, dl=Math.hypot(dx,dy)||1, sp=Math.min(220,dl*3); o.fx+=dx/dl*sp*dt/W; o.fy+=dy/dl*sp*dt/H; if(dl<9){ o.dead=true; deps.push({x:sx,y:py0,s:isAnode?0:(sx<w/2?1:-1)}); } return; }
+        o.vx+=gauss()*32*Math.sqrt(dt)/W; o.vy+=gauss()*32*Math.sqrt(dt)/H; o.vx*=Math.exp(-0.7*dt); o.vy*=Math.exp(-0.7*dt); o.fx+=o.vx*dt; o.fy+=o.vy*dt;
+        if(o.fx<0.05){o.fx=0.05;o.vx=Math.abs(o.vx);} if(o.fx>0.95){o.fx=0.95;o.vx=-Math.abs(o.vx);} if(o.fy<0.06){o.fy=0.06;o.vy=Math.abs(o.vy);} if(o.fy>0.94){o.fy=0.94;o.vy=-Math.abs(o.vy);}
+        const px=g.L+W*o.fx; if(Math.abs(px-sx)<14){ o.fx=(sx+(px<sx?-14:14)-g.L)/W; o.vx*=-1; } o.a=Math.min(1,o.a+dt*1.5); o.fl=Math.max(0,o.fl-dt*2);
+      });
+      for(let i=arr.length-1;i>=0;i--) if(arr[i].dead) arr.splice(i,1);
+    };
+    build(ionsL,gL,L,liveL,leftAnode,xL); build(ionsR,gR,R,liveR,!leftAnode,xR);
+    // ---- salt bridge (U-tube) ----
+    const b1=cxL+bw*0.22, b2=cxR-bw*0.22, bTop=by-34, bLow=by+bh*0.5, arch=[[b1,bLow],[b1,bTop],[b2,bTop],[b2,bLow]];
+    const segs=[[b1,bLow,b1,bTop],[b1,bTop,b2,bTop],[b2,bTop,b2,bLow]], lens=segs.map(s=>Math.hypot(s[2]-s[0],s[3]-s[1])), totL=lens.reduce((a,b)=>a+b,0);
+    ctx.save(); ctx.lineCap='butt'; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(b1,bLow); ctx.lineTo(b1,bTop); ctx.lineTo(b2,bTop); ctx.lineTo(b2,bLow);
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=19; ctx.stroke(); ctx.strokeStyle='#fffdf3'; ctx.lineWidth=14.5; ctx.stroke(); ctx.restore();
+    const posAt=(s)=>{ s=((s%totL)+totL)%totL; for(let i=0;i<3;i++){ if(s<=lens[i]){ const u=s/lens[i]; return [lerp(segs[i][0],segs[i][2],u),lerp(segs[i][1],segs[i][3],u)]; } s-=lens[i]; } return [b2,bLow]; };
+    bph+=dt*(closed&&!same?18+I*0.55:0); // ions creep along when current flows (K⁺ → cathode, Cl⁻ ← anode)
+    const dirK=leftAnode?1:-1; // K⁺ travels toward the cathode compartment
+    for(let i=0;i<7;i++){ const sK=(i/7)*totL*0.92+totL*0.04+dirK*bph, sC=(i/7)*totL*0.92+totL*0.04+totL*0.0357-dirK*bph;
+      [[sK,COL.blue,'+'],[sC,COL.red,'−']].forEach(([s,c,sg])=>{ let ss=s; const span=totL*0.92; ss=((ss-totL*0.04)%span+span)%span+totL*0.04; const p=posAt(ss+Math.sin(t*5+i)*1.2*(closed?0:1)); circ(ctx,p[0],p[1]+(sg==='+'?-2.5:2.5),4.3,c,'#fff',1.6); textAt(ctx,sg,p[0],p[1]+(sg==='+'?-2.5:2.5)+3,{align:'center',size:8,weight:800,color:c}); }); }
+    rect(ctx,b1-9,bLow-2,18,5,COL.mid,'#e8e0c4',1.2); rect(ctx,b2-9,bLow-2,18,5,COL.mid,'#e8e0c4',1.2);
+    // ---- electrodes ----
+    const thin=1-0.35*Math.min(1,cons), strip=(sx,e,isAnode,gx)=>{
+      const hw=7*(isAnode?thin:1);
+      ctx.save(); rrect(ctx,sx-hw,eTop,hw*2,eBot-eTop,3); ctx.fillStyle=e.col; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+      return hw; };
+    const hwL=strip(xL,L,leftAnode), hwR=strip(xR,R,!leftAnode);
+    deps.forEach((d,i)=>{ const hw=d.x===xL?hwL:hwR, sd=d.x<w/2?1:-1; circ(ctx,d.x+(d.x<w/2?-1:1)*(hw+2.6+(i%3)*2.6),d.y+((i*37)%11-5),3+(i%3)*0.6,COL.blue,R.col,1.2); });
+    chemPill(ctx,L.m+'(s)',xL-46,eTop+14,leftAnode?COL.red:COL.blue,12); chemPill(ctx,R.m+'(s)',xR+46,eTop+14,leftAnode?COL.blue:COL.red,12);
+    // ions
+    const drawIons=(arr,g,e,isAnode)=>arr.forEach(o=>{ const px=g.L+(g.R-g.L)*o.fx, py=g.ly+(g.bot-g.ly)*o.fy, col=isAnode?COL.red:COL.blue; ctx.save(); ctx.globalAlpha=o.a; circ(ctx,px,py,7.5+o.fl*5,col,'#fff',2); textAt(ctx,e.n===1?'+':'2+',px,py+3,{align:'center',size:8.5,weight:800,color:col}); ctx.restore(); });
+    drawIons(ionsL,gL,L,leftAnode); drawIons(ionsR,gR,R,!leftAnode);
+    // ---- wire, switch, ammeter ----
+    const ax=leftAnode?xL:xR, cx_=leftAnode?xR:xL, mx=w/2, sgn_=leftAnode?1:-1;
+    const pts=[[ax,eTop],[ax,wy],[cx_,wy],[cx_,eTop]];
+    const wl=[Math.abs(pts[1][1]-pts[0][1]),Math.abs(pts[2][0]-pts[1][0]),Math.abs(pts[3][1]-pts[2][1])], wt=wl[0]+wl[1]+wl[2];
+    const swX=ax+sgn_*(Math.abs(cx_-ax)*0.2), swGap=26;
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); ctx.lineTo(pts[1][0],pts[1][1]); ctx.lineTo(swX,wy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(swX+sgn_*swGap,wy); ctx.lineTo(mx-sgn_*38,wy); ctx.stroke(); ctx.beginPath(); ctx.moveTo(mx+sgn_*38,wy); ctx.lineTo(pts[2][0],pts[2][1]); ctx.lineTo(pts[3][0],pts[3][1]); ctx.stroke(); ctx.restore();
+    // knife switch: blade swings closed / open
+    circ(ctx,swX,wy,4.5,COL.ink,'#fff',2); circ(ctx,swX+sgn_*swGap,wy,4.5,COL.ink,'#fff',2);
+    eph=approach(eph,closed?0:1,10,dt); ctx.save(); ctx.translate(swX,wy); ctx.rotate(-sgn_*eph*0.7); line(ctx,0,0,sgn_*swGap,0,COL.yellow,4.4); ctx.restore();
+    // electrons conveying along the wire
+    const wp=(s)=>{ s=((s%wt)+wt)%wt; if(s<wl[0]) return [pts[0][0],pts[0][1]-s]; s-=wl[0]; if(s<wl[1]) return [pts[1][0]+sgn_*s,wy]; s-=wl[1]; return [pts[2][0],wy+s]; };
+    eo+=closed&&!same?dt*(30+I*1.8):0;
+    for(let i=0;i<Math.floor(wt/28);i++){ const s=i*28+(eo%28), p=wp(s); if(Math.abs(p[1]-wy)<1&&(Math.abs(p[0]-mx)<42||Math.abs(p[0]-(swX+sgn_*swGap/2))<swGap/2+4)) continue; if(closed&&!same) electron(ctx,p[0],p[1],3.8); else if(!closed) { ctx.save(); ctx.globalAlpha=0.35; electron(ctx,p[0],p[1],3.2); ctx.restore(); } }
+    // direction labels
+    if(closed&&!same){
+      const ex=lerp(ax,mx,0.5)+0*sgn_, cx2=lerp(mx,cx_,0.5);
+      vec(ctx,ex-sgn_*24,wy-16,ex+sgn_*24,wy-16,COL.yellow,2.4); textAt(ctx,'e⁻ flow',ex,wy-24,{align:'center',size:11,weight:700,color:'#a9780a'});
+      vec(ctx,cx2+sgn_*24,wy+18,cx2-sgn_*24,wy+18,COL.ink,2); textAt(ctx,'current I (opposite)',cx2,wy+36,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    // ammeter dial with a spring-damped needle
+    const R_=34; circ(ctx,mx,wy,R_,COL.ink,'#fff',3);
+    for(let k=-5;k<=5;k++){ const a=-Math.PI/2+k*0.17; line(ctx,mx+Math.cos(a)*(R_-4),wy+Math.sin(a)*(R_-4),mx+Math.cos(a)*(R_-(k%5===0?10:7)),wy+Math.sin(a)*(R_-(k%5===0?10:7)),COL.mid,1.3); }
+    springTo(needle,(I/150)*0.85,90,7,dt);
+    const na=-Math.PI/2+clamp(needle.x,-0.9,1.1); line(ctx,mx,wy+6,mx+Math.cos(na)*(R_-7),wy+6+Math.sin(na)*(R_-7)+0,COL.red,2.6); circ(ctx,mx,wy+6,3,COL.ink,COL.ink,1);
+    textAt(ctx,'A',mx,wy+R_-9,{align:'center',size:11,weight:800,color:COL.ink});
+    // labels under beakers
+    const roleL=leftAnode?['ANODE  (−)  oxidation',COL.red]:['CATHODE  (+)  reduction',COL.blue], roleR=leftAnode?['CATHODE  (+)  reduction',COL.blue]:['ANODE  (−)  oxidation',COL.red];
+    if(!same){ textAt(ctx,roleL[0],cxL,by+bh+24,{align:'center',size:12,weight:700,color:roleL[1]}); textAt(ctx,roleR[0],cxR,by+bh+24,{align:'center',size:12,weight:700,color:roleR[1]});
+      chemAt(ctx,leftAnode?L.m+' → '+L.m+'^'+(L.n===1?'+':L.n+'+')+' + '+L.n+'e^-':L.m+'^'+(L.n===1?'+':L.n+'+')+' + '+L.n+'e^- → '+L.m,cxL,by+bh+46,{align:'center',size:12.5,weight:600,color:roleL[1]});
+      chemAt(ctx,leftAnode?R.m+'^'+(R.n===1?'+':R.n+'+')+' + '+R.n+'e^- → '+R.m:R.m+' → '+R.m+'^'+(R.n===1?'+':R.n+'+')+' + '+R.n+'e^-',cxR,by+bh+46,{align:'center',size:12.5,weight:600,color:roleR[1]}); }
+    textAt(ctx,'salt bridge  (KCl)',(b1+b2)/2,bTop+34,{align:'center',size:11,weight:600,color:COL.muted});
+    // readouts
+    $('#e0').textContent=same?'0.00 V':fmt(E0,2)+' V'; $('#eN').textContent=fmt(E,3)+' V'; $('#iV').textContent=closed&&!same?fmt(I,0)+' mA':'0 mA';
+    $('#aH').textContent=same?'Same couple on both sides — no potential difference, no current.':(closed?'The anode metal dissolves into ions; ions in the other beaker deposit as metal on the cathode.':'Switch off: the voltage exists but no electrons can flow. Close the circuit.');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'1.1', title:'Classical Redox',        desc:'Oxygen & hydrogen · Sec 7.1',          build: typeof buildA1==='function'?buildA1:null },
+  { num:'1.2', title:'Electron Transfer',      desc:'Na gives · Cl takes · Sec 7.2',        build: typeof buildA2==='function'?buildA2:null },
+  { num:'1.3', title:'Metals Compete',         desc:'Zn / Cu / Ag / Co / Ni · Fig 7.1–7.2', build: typeof buildA3==='function'?buildA3:null },
+  { num:'1.4', title:'Oxidation Number',       desc:'Electron-pair book-keeping · Sec 7.3', build: typeof buildA4==='function'?buildA4:null },
+  { num:'1.5', title:'Four Types of Redox',    desc:'Combine · split · displace · disproportionate', build: typeof buildA5==='function'?buildA5:null },
+  { num:'1.6', title:'Metals in Acid',         desc:'Activity series · Eq 7.37–7.39',       build: typeof buildA6==='function'?buildA6:null },
+  { num:'1.7', title:'Halogen Layer Test',     desc:'Cl₂ · Br₂ · I₂ displace · Eq 7.41–7.43', build: typeof buildA7==='function'?buildA7:null },
+  { num:'1.8', title:'Balancing Half-Reactions', desc:'Fe²⁺ + Cr₂O₇²⁻ · Sec 7.3.2',        build: typeof buildA8==='function'?buildA8:null },
+  { num:'1.9', title:'Redox Titration',        desc:'Burette · flask · end-point · Sec 7.3.3', build: typeof buildA9==='function'?buildA9:null },
+  { num:'1.10', title:'Daniell Cell',          desc:'Salt bridge · electrode potentials · Fig 7.3', build: typeof buildA10==='function'?buildA10:null },
+].filter(a=>a.build);
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+const _q=new URLSearchParams(location.search); if(_q.get('a')) currentIndex=Math.max(0,Math.min(activities.length-1,(+_q.get('a'))-1));
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

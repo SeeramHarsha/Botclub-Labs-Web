@@ -10,14 +10,17 @@ function load() {
   if (cache) return cache;
   let titles = {};
   try { titles = JSON.parse(fs.readFileSync(path.join(CONTENT, 'titles.json'), 'utf8')); } catch (e) { /* no content yet */ }
+  let extra = {}, groups = {};      // Class 11 and 12: chapter names, and "Physics · Part 1" style groups
+  try { extra = JSON.parse(fs.readFileSync(path.join(CONTENT, 'titles-extra.json'), 'utf8')); } catch (e) { /* none */ }
+  try { groups = JSON.parse(fs.readFileSync(path.join(CONTENT, 'groups.json'), 'utf8')); } catch (e) { /* none */ }
   let acts = {};
   try { acts = JSON.parse(fs.readFileSync(path.join(CONTENT, 'activities.json'), 'utf8')); } catch (e) { /* counts not built yet */ }
   const classes = {};
-  for (const c of [6, 7, 8, 9, 10]) {
+  for (const c of [6, 7, 8, 9, 10, 11, 12]) {
     const dir = path.join(CONTENT, `Class - ${c}`);
     let chapters = [];
     try { chapters = fs.readdirSync(dir).map((d) => /^Chapter - (\d+)$/.exec(d)).filter(Boolean).map((m) => Number(m[1])).filter((n) => fs.existsSync(path.join(dir, `Chapter - ${n}`, 'index.html'))).sort((a, b) => a - b); } catch (e) { /* none */ }
-    classes[c] = chapters.map((n) => ({ chapter: n, title: (titles[c] && titles[c][n]) || `Chapter ${n}`, activities: (acts[c] && acts[c][n]) || 0 }));
+    classes[c] = chapters.map((n) => ({ chapter: n, title: (titles[c] && titles[c][n]) || (extra[c] && extra[c][n]) || `Chapter ${n}`, group: (groups[c] && groups[c][n]) || '', activities: (acts[c] && acts[c][n]) || 0 }));
   }
   cache = { classes, dir: CONTENT };
   return cache;

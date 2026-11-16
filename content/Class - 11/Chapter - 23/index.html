@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 1 — Sets | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">∪</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 1</div>
+      <h1>Sets</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Set A</span>
+      <span><i style="background:var(--f-red)"></i>Set B · ∉</span>
+      <span><i style="background:var(--f-green)"></i>Result · ∈</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1.2a</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 1: SETS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn objects fly (true parabolic arcs), spring, bounce or
+   ease toward it every frame — nothing ever jumps. Idle objects breathe,
+   scanners sweep, belts roll: never a single static frame.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimH(ctx,x1,x2,y,color){ line(ctx,x1,y,x2,y,color,1.6); arrowHead(ctx,x1,y,Math.PI,color,6); arrowHead(ctx,x2,y,0,color,6); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.max(0,Math.min(r,w/2,h/2)); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function isPrime(n){ if(n<2) return false; for(let i=2;i*i<=n;i++) if(n%i===0) return false; return true; }
+function isSquare(n){ const r=Math.round(Math.sqrt(n)); return r*r===n; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+let activeTicks = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; activeTicks=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  activeTicks.push(tick);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Fast-forward hook (used for automated checks): runs every live loop for <sec> seconds of simulated time. */
+window.__sim={ advance(sec){ const n=Math.round(sec*60); for(let i=0;i<n;i++) activeTicks.slice().forEach(f=>f(1/60)); } };
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+/** Chip row builder: items = [{id,label}], returns the buttons */
+function chips(container,items,activeId,cb,cls){
+  container.innerHTML='';
+  const btns=items.map(it=>{
+    const b=document.createElement('button'); b.className=(cls||'chip-btn')+(it.id===activeId?' active':''); b.textContent=it.label; b.dataset.id=it.id;
+    container.appendChild(b); return b;
+  });
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b.dataset.id,b); });
+  return btns;
+}
+
+/* ---------------------------------------------------------------------
+   0c. SET-THEORY DRAWING HELPERS
+   --------------------------------------------------------------------- */
+/** A set element: round token, or a pill when the label is long.
+    o: r, fill, stroke, stroke2 (inner ring), text, alpha, sx, sy, rot, lw, size */
+function tok(ctx,x,y,label,o){
+  o=o||{}; const r=o.r||15; label=String(label);
+  ctx.save(); ctx.translate(x,y);
+  if(o.sx||o.sy) ctx.scale(o.sx||1,o.sy||1);
+  if(o.alpha!==undefined) ctx.globalAlpha=clamp(o.alpha,0,1);
+  const fs=o.size||Math.max(9,Math.round(r*0.9));
+  ctx.font='700 '+fs+'px Poppins, sans-serif';
+  const tw=ctx.measureText(label).width, W=Math.max(r*2, tw+r*0.9);
+  const path=(ins)=>{ if(W>r*2+1) rrect(ctx,-W/2+ins,-r+ins,W-2*ins,2*(r-ins),r-ins); else { ctx.beginPath(); ctx.arc(0,0,r-ins,0,Math.PI*2); } };
+  path(0); ctx.fillStyle=o.fill||'#fff'; ctx.fill(); ctx.lineWidth=o.lw||2.2; ctx.strokeStyle=o.stroke||COL.ink; ctx.stroke();
+  if(o.stroke2){ path(3.4); ctx.lineWidth=(o.lw||2.2)*0.8; ctx.strokeStyle=o.stroke2; ctx.stroke(); }
+  ctx.fillStyle=o.text||COL.ink; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,0,1);
+  if(o.rot!==undefined && W<=r*2+1){ ctx.beginPath(); ctx.arc(Math.cos(o.rot)*r*0.76,Math.sin(o.rot)*r*0.76,2.3,0,Math.PI*2); ctx.fillStyle=COL.mid; ctx.fill(); }
+  ctx.restore();
+  return W;
+}
+/** Parabolic flight: x moves uniformly, y follows a true parabola of apex height h. */
+function startFlight(b,x1,y1,T,h,d){ b.fl={t:0,T:T,x0:b.x,y0:b.y,x1:x1,y1:y1,h:h,d:d||0}; }
+function stepFlight(b,dt){
+  const f=b.fl; if(!f) return false;
+  if(f.d>0){ f.d-=dt; return false; }
+  f.t+=dt; const s=clamp(f.t/f.T,0,1);
+  b.x=lerp(f.x0,f.x1,s); b.y=lerp(f.y0,f.y1,s)-f.h*4*s*(1-s);
+  if(s>=1){ b.fl=null; if(b.sq) b.sq.v=-7; return true; }
+  return false;
+}
+/** squash-and-stretch from a landing spring */
+function squash(b){ const q=b.sq?clamp(b.sq.x,-0.6,0.6):0; return {sx:1+0.28*q, sy:1-0.34*q}; }
+function mkSq(){ return {x:0,v:0}; }
+function stepSq(b,dt){ if(b.sq) springTo(b.sq,0,220,10,dt); }
+
+/** Diagonal hatch of a region (a line-diagram "shading"). P: {ox,oy,s} maps world→px; test(x,y)→bool.
+    World is 1.5 wide × 1 tall. Lines drift slowly so the region is alive. */
+function hatchRegion(ctx,P,test,color,t,gap){
+  gap=gap||0.042; const step=0.012, off=(t*0.018)%gap;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.globalAlpha=0.9; ctx.beginPath();
+  for(let c=-1.0-gap+off; c<1.5; c+=gap){
+    let on=false, sx=0, sy=0;
+    for(let y=0; y<=1.0001; y+=step){
+      const x=c+y, inside = x>0 && x<1.5 && test(x,y);
+      if(inside && !on){ on=true; sx=x; sy=y; }
+      else if(on && !inside){ const yy=y-step; ctx.moveTo(P.ox+sx*P.s,P.oy+sy*P.s); ctx.lineTo(P.ox+(c+yy)*P.s,P.oy+yy*P.s); on=false; }
+    }
+    if(on){ const yy=Math.min(1,Math.floor(1.0001/step)*step); ctx.moveTo(P.ox+sx*P.s,P.oy+sy*P.s); ctx.lineTo(P.ox+(c+yy)*P.s,P.oy+yy*P.s); }
+  }
+  ctx.stroke(); ctx.restore();
+}
+/** Braces drawn as line art (for roster trays). */
+function brace(ctx,x,y1,y2,dir,color,lw){
+  const m=(y1+y2)/2, k=dir, w=12;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.lineCap='round'; ctx.beginPath();
+  ctx.moveTo(x+k*w,y1); ctx.quadraticCurveTo(x,y1,x,y1+w); ctx.lineTo(x,m-w); ctx.quadraticCurveTo(x,m,x-k*w,m);
+  ctx.quadraticCurveTo(x,m,x,m+w); ctx.lineTo(x,y2-w); ctx.quadraticCurveTo(x,y2,x+k*w,y2); ctx.stroke(); ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   1.2a BELONGS OR NOT  (§1.2 — well-defined collections, a ∈ A, b ∉ A)
+   Elements ride a belt to a scanner gate. A member is thrown in a real
+   parabola into the set and lands with a squash; a non-member is kicked
+   off, bounces under gravity (e = 0.42) and rolls to rest. A collection
+   that is not well-defined cannot be decided — the element stalls, shakes
+   and is sent back.
+   ===================================================================== */
+const COLL1=[
+  {id:'v', short:'Vowels', name:'Vowels in the English alphabet', sym:'V', wd:true, cands:['a','b','e','i','k','o','u','r'], inS:['a','e','i','o','u']},
+  {id:'p', short:'Prime factors of 30', name:'Prime factors of 30', sym:'P', wd:true, cands:['2','3','5','15','6','10','1'], inS:['2','3','5']},
+  {id:'o', short:'Odd numbers < 10', name:'Odd natural numbers < 10', sym:'O', wd:true, cands:['1','3','5','7','9','2','10','11'], inS:['1','3','5','7','9']},
+  {id:'r', short:'Rivers of India', name:'Rivers of India', sym:'R', wd:true, wide:true, cands:['Ganga','Nile','Yamuna','Amazon','Kaveri','Thames'], inS:['Ganga','Yamuna','Kaveri']},
+  {id:'j', short:'Months starting J', name:'Months beginning with J', sym:'J', wd:true, wide:true, cands:['Jan','Mar','Jun','Jul','Aug','Dec'], inS:['Jan','Jun','Jul']},
+  {id:'w', short:'Most talented writers', name:'Ten most talented writers', sym:'W', wd:false, wide:true, cands:['Writer 1','Writer 2','Writer 3','Writer 4','Writer 5']},
+  {id:'d', short:'Most dangerous animals', name:'Most dangerous animals', sym:'D', wd:false, wide:true, cands:['Lion','Snake','Shark','Mosquito','Bear']},
+];
+
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Collection</label><div class="chip-wrap" id="colB"></div></div>
+    <div class="control-group"><label>Belt speed <span class="val" id="spV"></span></label><input type="range" id="spR" min="0.5" max="2.5" step="0.1" value="1"></div>
+    <div class="control-group"><label style="margin-bottom:2px;">Send an element</label><div class="chip-wrap" id="sendB"></div>
+      <div class="toggle-group"><button class="toggle-btn play" id="autoB">Auto stream · ON</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">∈ Belongs</div><div class="rval" id="cI" style="color:var(--f-green)">0</div></div>
+      <div class="rcard"><div class="rlabel">∉ Not</div><div class="rval" id="cO" style="color:var(--f-red)">0</div></div>
+      <div class="rcard"><div class="rlabel">Undecided</div><div class="rval" id="cU" style="color:var(--f-yellow)">0</div></div></div>
+      <div class="fb" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let coll=COLL1[0], auto=true, spd=1, t=0, spawnT=0.4, autoIdx=0, order=[];
+  let toks=[], queue=[], members=[], cnt={i:0,o:0,u:0}, msg=null, flash=null;
+  const R=rng(11);
+
+  function reshuffle(){ order=coll.cands.map((c,i)=>[R(),c]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); autoIdx=0; }
+  function reset(){ toks=[]; queue=[]; members=[]; cnt={i:0,o:0,u:0}; msg=null; flash=null; spawnT=0.3; reshuffle();
+    const sb=$('#sendB'); sb.innerHTML=''; coll.cands.forEach(c=>{ const b=document.createElement('button'); b.className='chip-btn'; b.textContent=c; b.onclick=()=>queue.push(c); sb.appendChild(b); });
+    const vd=$('#vd'); vd.className='fb '+(coll.wd?'ok':'bad'); vd.textContent=coll.wd?'Well-defined ✓ — every element can be decided':'Not well-defined ✗ — no fixed rule decides membership'; }
+  chips($('#colB'),COLL1.map(c=>({id:c.id,label:c.short})),coll.id,id=>{ coll=COLL1.find(c=>c.id===id); reset(); });
+  $('#spR').oninput=e=>{ spd=+e.target.value; };
+  $('#autoB').onclick=()=>{ auto=!auto; $('#autoB').textContent='Auto stream · '+(auto?'ON':'OFF'); $('#autoB').classList.toggle('play',auto); $('#autoB').classList.toggle('navy',!auto); };
+  reset();
+
+  function L(w,h){
+    return {x0:w*0.05, gx:w*0.47, beltY:h*0.7, gy:h*0.94, v:150*spd, ex:w*0.76, ey:h*0.33, rx:w*0.2, ry:h*0.27, binL:w*0.56, binR:w*0.97};
+  }
+  function slotPos(i,l){
+    const cols=coll.wide?2:3, dx=coll.wide?132:78, dy=64, col=i%cols, row=Math.floor(i/cols);
+    return {x:l.ex+(col-(cols-1)/2)*dx, y:l.ey-l.ry*0.32+row*dy};
+  }
+  function spawn(label){
+    const wideTok=label.length>2, r=22;
+    toks.push({label, x:-40, y:0, vx:0, vy:0, state:'belt', rot:0, sq:mkSq(), r, w: wideTok? 28+label.length*10 : 46, alpha:1, tm:0, spawned:false});
+  }
+
+  animLoop(dt=>{
+    t+=dt;
+    $('#spV').textContent='×'+fmt(spd,1);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const l=L(w,h), r=22;
+    // ---------- spawn ----------
+    spawnT-=dt;
+    const beltToks=toks.filter(b=>b.state==='belt'||b.state==='unsure');
+    const lastX=beltToks.length?Math.min(...beltToks.map(b=>b.x)):1e9;
+    if(spawnT<=0 && lastX>l.x0+70 && beltToks.length<7){
+      if(queue.length){ spawn(queue.shift()); spawnT=0.5/spd; }
+      else if(auto){ spawn(order[autoIdx%order.length]); autoIdx++; spawnT=1.6/spd; }
+    }
+    toks.forEach(b=>{ if(!b.spawned){ b.x=l.x0; b.spawned=true; } });
+    // ---------- queue spacing on the belt ----------
+    const bt=toks.filter(b=>b.state==='belt'||b.state==='unsure').sort((a,b)=>b.x-a.x);
+    for(let i=1;i<bt.length;i++){ const lim=bt[i-1].x-(bt[i-1].w+bt[i].w)/2-8; if(bt[i].x>lim) bt[i].x=lim; }
+    // ---------- token physics ----------
+    toks.forEach(b=>{
+      stepSq(b,dt);
+      if(b.state==='belt'){
+        b.x+=l.v*dt; b.rot+=l.v*dt/b.r; b.y=l.beltY-b.r;
+        if(!coll.wd && b.x>=l.gx-78){ b.state='unsure'; b.tm=0; cnt.u++; msg={txt:b.label+' ∈ '+coll.sym+' ?', col:COL.yellow, t:2}; flash={t:0.5,col:COL.yellow}; }
+        else if(coll.wd && b.x>=l.gx){
+          const inn=coll.inS.includes(b.label);
+          flash={t:0.5,col:inn?COL.green:COL.red};
+          if(inn){
+            cnt.i++; msg={txt:b.label+' ∈ '+coll.sym, col:COL.green, t:1.6};
+            let k=members.indexOf(b.label);
+            if(k<0){ members.push(b.label); k=members.length-1; } else b.dup=true;
+            b.slot=k; b.state='arc'; const sp=slotPos(k,l); startFlight(b,sp.x,sp.y,0.85,110);
+          } else {
+            cnt.o++; msg={txt:b.label+' ∉ '+coll.sym, col:COL.red, t:1.6};
+            b.state='kick'; b.vx=l.v*0.8+90; b.vy=-300; b.tm=0;
+          }
+        }
+      } else if(b.state==='unsure'){
+        b.tm+=dt; b.x=approach(b.x,l.gx-78,6,dt); b.y=l.beltY-b.r; b.rot+=0;
+        if(b.tm>1.9){ b.state='back'; b.tm=0; }
+      } else if(b.state==='back'){
+        b.tm+=dt; b.x-=110*dt; b.alpha=Math.max(0,1-b.tm/1.1); b.rot-=110*dt/b.r; b.y=l.beltY-b.r; if(b.alpha<=0) b.dead=true;
+      } else if(b.state==='arc'){
+        const sp=slotPos(b.slot,l); if(b.fl){ b.fl.x1=sp.x; b.fl.y1=sp.y; }
+        if(stepFlight(b,dt)){ b.state=b.dup?'merge':'in'; b.tm=0; }
+      } else if(b.state==='in'){
+        const sp=slotPos(b.slot,l); b.x=approach(b.x,sp.x,10,dt); b.y=sp.y+Math.sin(t*2+b.slot*1.3)*2.5;
+      } else if(b.state==='merge'){
+        b.tm+=dt; b.alpha=Math.max(0,1-b.tm/0.5); if(b.alpha<=0) b.dead=true;
+      } else if(b.state==='kick'){
+        b.vy+=1300*dt; b.x+=b.vx*dt; b.y+=b.vy*dt; b.rot+=b.vx*dt/b.r;
+        if(b.y>l.gy-b.r){ b.y=l.gy-b.r; if(Math.abs(b.vy)>70){ b.vy*=-0.42; b.vx*=0.82; b.sq.v=-5; } else { b.vy=0; } }
+        if(b.vy===0){ b.vx=approach(b.vx,0,2.4,dt); b.tm+=dt; if(b.tm>3.2) b.alpha=Math.max(0,1-(b.tm-3.2)/0.8); if(b.alpha<=0) b.dead=true; }
+        if(b.x>l.binR){ b.x=l.binR; b.vx*=-0.4; }
+      }
+    });
+    toks=toks.filter(b=>!b.dead);
+    if(msg){ msg.t-=dt; if(msg.t<=0) msg=null; }
+    if(flash){ flash.t-=dt; if(flash.t<=0) flash=null; }
+
+    // ---------- belt ----------
+    const bx2=l.gx+44, bh=14;
+    ctx.save(); rrect(ctx,l.x0-26,l.beltY,bx2-l.x0+52,bh,7); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+    const pitch=26, off=(t*l.v)%pitch;
+    ctx.save(); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.5; ctx.beginPath();
+    for(let x=l.x0-20+off; x<bx2+20; x+=pitch){ ctx.moveTo(x,l.beltY+3); ctx.lineTo(x,l.beltY+bh-3); } ctx.stroke(); ctx.restore();
+    [l.x0-26+7, bx2+26-7].forEach((cx,i)=>{ const cy=l.beltY+bh/2; circ(ctx,cx,cy,12,COL.ink,'#fff',2.2);
+      for(let k=0;k<3;k++){ const a=t*l.v/12+k*Math.PI*2/3+i; line(ctx,cx,cy,cx+Math.cos(a)*10,cy+Math.sin(a)*10,COL.mid,1.4); } });
+    [l.x0+30, l.gx-10].forEach(x=>{ line(ctx,x,l.beltY+bh,x-8,l.gy,COL.mid,2); line(ctx,x,l.beltY+bh,x+8,l.gy,COL.mid,2); });
+    line(ctx,0,l.gy,w,l.gy,COL.mid,1.6);
+    // bin zone
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.strokeRect(l.binL,l.gy-96,l.binR-l.binL+14,96); ctx.restore();
+    textAt(ctx,'∉ '+coll.sym,l.binL+8,l.gy-100,{size:13,weight:700,color:COL.red});
+
+    // ---------- gate ----------
+    const barY=l.beltY-160, gl=l.gx-44, gr2=l.gx+44;
+    line(ctx,gl,l.beltY,gl,barY,COL.ink,3.2); line(ctx,gr2,l.beltY,gr2,barY,COL.ink,3.2); line(ctx,gl-8,barY,gr2+8,barY,COL.ink,4.2);
+    const gc=flash?flash.col:COL.yellow;
+    const sw=Math.sin(t*3.2)*26;
+    line(ctx,l.gx,barY+2,l.gx+sw,l.beltY-1,gc,flash?3.2:1.8,flash?null:[7,5]);
+    circ(ctx,l.gx,barY+2,5,gc,gc,1);
+    if(flash){ const q=1-flash.t/0.5; ctx.save(); ctx.globalAlpha=1-q; circ(ctx,l.gx,l.beltY-r,20+q*50,flash.col,null,2.6); ctx.restore(); }
+    if(msg){ const a=Math.min(1,msg.t*2); ctx.save(); ctx.font='700 15px Poppins, sans-serif'; const tw=ctx.measureText(msg.txt).width; ctx.globalAlpha=a;
+      rrect(ctx,l.gx-tw/2-12,barY-46,tw+24,28,9); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=msg.col; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      textAt(ctx,msg.txt,l.gx,barY-26,{align:'center',size:15,weight:700,color:msg.col,alpha:a}); }
+
+    // ---------- the set ----------
+    ctx.save(); ctx.beginPath(); ctx.ellipse(l.ex,l.ey,l.rx,l.ry,0,0,Math.PI*2);
+    ctx.fillStyle=coll.wd?'rgba(47,143,224,0.06)':'rgba(217,67,43,0.05)'; ctx.fill();
+    ctx.strokeStyle=coll.wd?COL.blue:COL.red; ctx.lineWidth=3; if(!coll.wd) ctx.setLineDash([9,7]); ctx.lineDashOffset=-t*20; ctx.stroke(); ctx.restore();
+    textAt(ctx,coll.sym+' = { }',l.ex-l.rx+14,l.ey-l.ry-10,{size:15,weight:700,color:coll.wd?COL.blue:COL.red});
+    if(!coll.wd) textAt(ctx,'?',l.ex,l.ey+l.ry*0.35,{align:'center',size:70,weight:700,color:'rgba(217,67,43,0.14)'});
+
+    // ---------- tokens ----------
+    toks.forEach(b=>{
+      const sq=squash(b); let x=b.x, y=b.y, st=COL.ink, fl='#fff';
+      if(b.state==='in'||b.state==='arc'||b.state==='merge'){ st=COL.green; fl='#e4f7ec'; }
+      if(b.state==='kick'){ st=COL.red; fl='#fdece7'; }
+      if(b.state==='unsure'||b.state==='back'){ st=COL.yellow; fl='#fff8e6'; x+=Math.sin(t*46)*(b.state==='unsure'?3:0); }
+      tok(ctx,x,y,b.label,{r:b.r,stroke:st,fill:fl,alpha:b.alpha,sx:sq.sx,sy:sq.sy,rot:(b.state==='belt'||b.state==='kick')&&b.label.length<=2?b.rot:undefined});
+      if(b.state==='unsure') textAt(ctx,'?',x,y-b.r-8-Math.abs(Math.sin(t*5))*5,{align:'center',size:18,weight:700,color:COL.yellow});
+      if(b.state==='kick'&&b.vy===0) textAt(ctx,'✗',x,y-b.r-6,{align:'center',size:14,weight:700,color:COL.red,alpha:b.alpha});
+    });
+    $('#cI').textContent=cnt.i; $('#cO').textContent=cnt.o; $('#cU').textContent=cnt.u;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.2b ROSTER ↔ SET-BUILDER  (§1.2 — {1,2,3,6,7,14,21,42} = {x : x∈N, x | 42})
+   Pick the rule; every number that satisfies it is thrown from the shelf
+   into the tray (and thrown back the instant it stops satisfying it).
+   Shuffle the tray: the order changes, the set does not.
+   ===================================================================== */
+const RULES2=[
+  {id:'div',  label:'Divisors of N',  f:(x,N)=>N%x===0, sb:N=>'x ∈ N, x divides '+N, usesN:true, N:42},
+  {id:'prime',label:'Primes',         f:x=>isPrime(x),  sb:()=>'x is a prime number'},
+  {id:'odd',  label:'Odd',            f:x=>x%2===1,     sb:()=>'x is an odd natural number'},
+  {id:'even', label:'Even',           f:x=>x%2===0,     sb:()=>'x is an even natural number'},
+  {id:'sq',   label:'Squares',        f:x=>isSquare(x), sb:()=>'x = n², n ∈ N'},
+  {id:'lt',   label:'x² < N',         f:(x,N)=>x*x<N,   sb:N=>'x ∈ N, x² < '+N, usesN:true, N:40},
+];
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Property</label><div class="chip-wrap" id="ruB"></div></div>
+    <div class="control-group" id="nG"><label><span id="nL">N</span> <span class="val" id="nV"></span></label><input type="range" id="nR" min="2" max="42" step="1" value="42"></div>
+    <div class="control-group"><label>From <span class="val" id="loV"></span></label><input type="range" id="loR" min="1" max="42" step="1" value="1">
+      <label style="margin-top:8px;">To <span class="val" id="hiV"></span></label><input type="range" id="hiR" min="1" max="42" step="1" value="42"></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn navy" id="shB" style="margin-top:0;">⇄ Shuffle tray</button><button class="toggle-btn" id="soB">Sort</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">Roster form</div><div class="rval" id="rost" style="font-size:var(--fs-sm);color:var(--f-green);word-break:break-word"></div></div>
+      <div class="rcard wide"><div class="rlabel">Set-builder form</div><div class="rval" id="sbf" style="font-size:var(--fs-sm);color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">n(A)</div><div class="rval" id="nA"></div></div>
+      <div class="rcard"><div class="rlabel">Order</div><div class="rval" id="ordV" style="font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let rule=RULES2[0], N=42, lo=1, hi=42, shuffled=false, t=0;
+  const balls=[]; for(let n=1;n<=42;n++) balls.push({n, x:-100, y:-100, hx:0, hy:0, in:false, fl:null, sq:mkSq(), rk:Math.random(), alpha:1, init:false});
+  chips($('#ruB'),RULES2.map(r=>({id:r.id,label:r.label})),rule.id,id=>{ rule=RULES2.find(r=>r.id===id); if(rule.usesN){ N=rule.N; $('#nR').value=N; } syncUi(); });
+  function syncUi(){ $('#nG').style.opacity=rule.usesN?1:0.35; $('#nG').style.pointerEvents=rule.usesN?'auto':'none'; $('#nL').textContent=rule.id==='lt'?'x² < N → N =':'N ='; }
+  $('#nR').oninput=e=>{ N=+e.target.value; };
+  $('#loR').oninput=e=>{ lo=+e.target.value; if(lo>hi){ hi=lo; $('#hiR').value=hi; } };
+  $('#hiR').oninput=e=>{ hi=+e.target.value; if(hi<lo){ lo=hi; $('#loR').value=lo; } };
+  $('#shB').onclick=()=>{ shuffled=true; balls.forEach(b=>b.rk=Math.random()); };
+  $('#soB').onclick=()=>{ shuffled=false; };
+  syncUi();
+
+  animLoop(dt=>{
+    t+=dt;
+    $('#nV').textContent=N; $('#loV').textContent=lo; $('#hiV').textContent=hi;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cols=14, dx=(w*0.9)/cols, rr=Math.min(21,dx*0.4), sx0=w*0.05+dx/2, sy0=h*0.085, dy=Math.min(52,h*0.085);
+    const trayL=w*0.07, trayR=w*0.93, trayT=h*0.52, trayB=h*0.92;
+    balls.forEach(b=>{ const i=b.n-1; b.hx=sx0+(i%cols)*dx; b.hy=sy0+Math.floor(i/cols)*dy; if(!b.init){ b.x=b.hx; b.y=b.hy; b.init=true; } });
+    // membership + order
+    const mem=balls.filter(b=>b.n>=lo&&b.n<=hi&&rule.f(b.n,N));
+    const ordered=mem.slice().sort((a,b)=>shuffled?a.rk-b.rk:a.n-b.n);
+    const sp=rr*2+18, scols=Math.max(4,Math.floor((trayR-trayL-70)/sp));
+    const nrows=Math.max(1,Math.ceil(ordered.length/scols)), rowH=rr*2+18, y0=trayT+(trayB-trayT-nrows*rowH)/2+rowH/2;
+    const slot=k=>({x:(trayL+trayR)/2+((k%scols)-(Math.min(ordered.length-Math.floor(k/scols)*scols,scols)-1)/2)*sp, y:y0+Math.floor(k/scols)*rowH});
+    let out=0,inn=0;
+    balls.forEach(b=>{
+      const want=mem.includes(b);
+      if(want!==b.in){ b.in=want; const d=(want?inn++:out++)*0.045; const tg=want?slot(ordered.indexOf(b)):{x:b.hx,y:b.hy}; startFlight(b,tg.x,tg.y,want?0.85:0.7,want?90+Math.random()*50:50,d); }
+      const tg=b.in?slot(ordered.indexOf(b)):{x:b.hx,y:b.hy};
+      stepSq(b,dt);
+      if(b.fl){ b.fl.x1=tg.x; b.fl.y1=tg.y; stepFlight(b,dt); }
+      else { b.x=approach(b.x,tg.x,9,dt); b.y=approach(b.y,tg.y+(b.in?Math.sin(t*2+b.n)*2:0),9,dt); }
+    });
+    // shelf
+    line(ctx,w*0.04,sy0-rr-8,w*0.96,sy0-rr-8,COL.mid,1.4);
+    for(let i=0;i<3;i++) line(ctx,w*0.04,sy0+i*dy+rr+7,w*0.96,sy0+i*dy+rr+7,COL.mid,1.4);
+    textAt(ctx,'N',w*0.04,sy0-rr-14,{size:12,weight:700,color:COL.mid});
+    // tray
+    ctx.save(); rrect(ctx,trayL,trayT,trayR-trayL,trayB-trayT,16); ctx.fillStyle='rgba(31,157,85,0.04)'; ctx.fill(); ctx.setLineDash([8,6]); ctx.strokeStyle=COL.green; ctx.lineWidth=1.6; ctx.lineDashOffset=-t*14; ctx.stroke(); ctx.restore();
+    brace(ctx,trayL-12,trayT,trayB,1,COL.green,3.2); brace(ctx,trayR+12,trayT,trayB,-1,COL.green,3.2);
+    const sbTxt='A = { x : '+rule.sb(N)+((lo>1||hi<42)?',  '+lo+' ≤ x ≤ '+hi:'')+' }';
+    textAt(ctx,sbTxt,trayL,trayT-12,{size:Math.max(12,Math.min(15,w*0.016)),weight:700,color:COL.blue});
+    // balls: members first (under), then others
+    balls.slice().sort((a,b)=>(a.in?1:0)-(b.in?1:0)).forEach(b=>{
+      const inRange=b.n>=lo&&b.n<=hi, sq=squash(b);
+      const col=b.in?COL.green:COL.ink;
+      tok(ctx,b.x,b.y,b.n,{r:rr,stroke:col,fill:b.in?'#e4f7ec':'#fff',alpha:b.in?1:(inRange?0.95:0.28),sx:sq.sx,sy:sq.sy,lw:b.in?2.6:1.8});
+    });
+    // readouts
+    const roster='{ '+ordered.map(b=>b.n).join(', ')+' }';
+    $('#rost').textContent=ordered.length?roster:'{ }  =  ∅';
+    $('#sbf').textContent=sbTxt.replace('A = ','');
+    $('#nA').textContent=ordered.length; $('#ordV').textContent=shuffled?'shuffled · same set ✓':'ascending';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.3–1.4 EMPTY · FINITE · INFINITE  (§1.3, §1.4)
+   A yellow scanner sweeps the number line; every n that satisfies the
+   rule pops up as a ball (spring overshoot). A finite or empty set meets
+   a wall that drops under gravity and bounces; an infinite set never
+   does — the scanner accelerates and the line keeps zooming out.
+   ===================================================================== */
+const SETS3=[
+  {id:'e1', label:'1 < x < 2',        def:'x ∈ N, 1 < x < 2',          f:n=>n>1&&n<2,                      wall:11.5, kind:'empty'},
+  {id:'e2', label:'x² = 4, x odd',    def:'x ∈ N, x² = 4, x is odd',   f:n=>n*n===4&&n%2===1,              wall:11.5, kind:'empty'},
+  {id:'e3', label:'Even prime > 2',   def:'x is an even prime, x > 2', f:n=>n>2&&n%2===0&&isPrime(n),      wall:13.5, kind:'empty'},
+  {id:'f1', label:'x² < 40',          def:'x ∈ N, x² < 40',            f:n=>n*n<40,                        wall:6.5,  kind:'finite'},
+  {id:'f2', label:'(x−1)(x−2) = 0',   def:'x ∈ N, (x−1)(x−2) = 0',     f:n=>(n-1)*(n-2)===0,               wall:2.5,  kind:'finite'},
+  {id:'f3', label:'x² − 16 = 0',      def:'x ∈ N, x² − 16 = 0',        f:n=>n*n===16,                      wall:4.5,  kind:'finite'},
+  {id:'f4', label:'Divisors of 12',   def:'x ∈ N, x divides 12',       f:n=>12%n===0,                      wall:12.5, kind:'finite'},
+  {id:'i1', label:'Odd numbers',      def:'x is an odd natural number',f:n=>n%2===1,                       wall:null, kind:'infinite'},
+  {id:'i2', label:'Primes',           def:'x is a prime number',       f:n=>isPrime(n),                    wall:null, kind:'infinite'},
+  {id:'i3', label:'Multiples of 5',   def:'x is a multiple of 5',      f:n=>n%5===0,                       wall:null, kind:'infinite'},
+];
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Set S</label><div class="chip-wrap" id="stB"></div></div>
+    <div class="control-group"><label>Scan speed <span class="val" id="spV"></span></label><input type="range" id="spR" min="1" max="12" step="0.5" value="3">
+      <div class="toggle-group"><button class="toggle-btn navy" id="rsB">↻ Restart scan</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">n(S)</div><div class="rval" id="nS" style="color:var(--f-blue)">0</div></div>
+      <div class="rcard"><div class="rlabel">Type</div><div class="rval" id="tyV">Scanning…</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let S=SETS3[3], base=3, t=0;
+  let sc, balls, wall, ppu, done, doneT, pop;
+  function restart(){ sc=0; balls=[]; wall={y:-420,v:0,on:false,landed:false,bounces:0}; done=false; doneT=0; pop={x:0,v:0}; ppu=ppu||50; }
+  chips($('#stB'),SETS3.map(s=>({id:s.id,label:s.label})),S.id,id=>{ S=SETS3.find(s=>s.id===id); restart(); });
+  $('#spR').oninput=e=>{ base=+e.target.value; };
+  $('#rsB').onclick=restart;
+  restart();
+
+  animLoop(dt=>{
+    t+=dt;
+    $('#spV').textContent=fmt(base,1)+' n/s';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const x0=w*0.05, lineY=h*0.66;
+    // ----- scanner motion -----
+    const inf=S.wall===null;
+    if(!done){
+      let v=base*(inf?1+sc*0.045:1);
+      if(!inf){ const stopAt=S.wall-0.12; v*=clamp((stopAt-sc)/1.2,0.12,1); sc=Math.min(stopAt,sc+v*dt); }
+      else if(sc<4000) sc+=v*dt;
+      if(!inf){
+        if(sc>=S.wall-1.6 && !wall.on){ wall.on=true; wall.y=-300; }
+        if(wall.landed && sc>=S.wall-0.13){ done=true; doneT=0; pop.v=9; }
+      }
+    } else { doneT+=dt; springTo(pop,1,170,9,dt); if(doneT>5.5) restart(); }
+    // scanning must also continue to test integers when balls array is empty
+    if(!balls.last) balls.last=0;
+    while(balls.last<Math.floor(sc)){ balls.last++; const k=balls.last; if(S.f(k)) balls.push({n:k,p:{x:0,v:0}}); }
+    const wantP=clamp(w*0.9/Math.max(sc+3,14),inf?1.0:3,60);
+    ppu=approach(ppu,wantP,3.5,dt);
+    const X=n=>x0+n*ppu;
+    // ----- wall physics (gravity + bounce) -----
+    if(wall.on && !wall.landed){
+      wall.v+=2600*dt; wall.y+=wall.v*dt;
+      if(wall.y>=lineY){ wall.y=lineY; if(wall.v>180){ wall.v*=-0.34; wall.bounces++; } else { wall.v=0; wall.landed=true; } }
+    }
+    // ----- number line -----
+    line(ctx,x0-14,lineY,w*0.985,lineY,COL.ink,2.6); arrowHead(ctx,w*0.985,lineY,0,COL.ink,9);
+    const steps=[1,2,5,10,20,50,100,200,500,1000,2000]; let st=1; for(const s of steps){ st=s; if(s*ppu>=34) break; }
+    for(let n=0;n*ppu<w*0.95;n+=st){ if(n%st!==0) continue; const x=X(n); line(ctx,x,lineY-5,x,lineY+5,COL.ink,1.6); textAt(ctx,n,x,lineY+22,{align:'center',size:11,weight:600,color:COL.muted}); }
+    if(ppu>12) for(let n=0;n*ppu<w*0.95;n++){ const x=X(n); line(ctx,x,lineY-3,x,lineY+3,COL.mid,1); }
+    // ----- balls -----
+    const br=clamp(ppu*0.42,2.2,23);
+    balls.forEach(b=>{ springTo(b.p,1,130,9,dt); const y=lineY-br-4-80*b.p.x; line(ctx,X(b.n),lineY,X(b.n),y+br,COL.green,Math.max(1,br*0.12));
+      circ(ctx,X(b.n),y,br,COL.green,'#e4f7ec',Math.max(1.2,br*0.17));
+      if(br>7) textAt(ctx,b.n,X(b.n),y+br*0.36,{align:'center',size:Math.round(br*0.9),weight:700,color:COL.green}); });
+    // ----- scanner (yellow) -----
+    const sx=X(sc);
+    for(let i=1;i<=8;i++) line(ctx,sx-i*5,lineY-70,sx-i*5,lineY+10,COL.yellow,1.2*(1-i/9));
+    line(ctx,sx,lineY-96,sx,lineY+14,COL.yellow,3.2); arrowHead(ctx,sx,lineY+16,Math.PI/2,COL.yellow,10);
+    circ(ctx,sx,lineY-100,5+Math.sin(t*8)*1.5,COL.yellow,'#fff8e6',2.2);
+    // ----- wall -----
+    if(wall.on){ const wx=X(S.wall), wh=150, wy=wall.y; ctx.save(); rrect(ctx,wx-8,wy-wh,16,wh,4); ctx.fillStyle='#fdece7'; ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=2.6; ctx.stroke(); ctx.clip();
+      for(let k=-wh;k<wh;k+=10) line(ctx,wx-10,wy-wh+k,wx+10,wy-wh+k+10,COL.red,1.1); ctx.restore();
+      if(wall.landed) textAt(ctx,'none beyond',wx+14,lineY-wh+16,{size:11,weight:700,color:COL.red}); }
+    // ----- text -----
+    textAt(ctx,'S = { '+S.def+' }',x0,h*0.1,{size:Math.max(13,Math.min(17,w*0.018)),weight:700,color:COL.blue});
+    const shown=balls.slice(0,10).map(b=>b.n).join(', ');
+    const ros=balls.length===0?(done?'{ }  =  ∅':'{ …scanning }'):'{ '+shown+((balls.length>10||inf||!done)?', …':'')+' }';
+    textAt(ctx,ros,x0,h*0.1+26,{size:Math.max(13,Math.min(16,w*0.017)),weight:600,color:COL.green});
+    if(done){
+      const kind=S.kind, col=kind==='empty'?COL.yellow:COL.green, word=kind==='empty'?'EMPTY SET':'FINITE';
+      ctx.save(); ctx.translate(w*0.5,h*0.3); ctx.scale(clamp(pop.x,0,1.25),clamp(pop.x,0,1.25));
+      textAt(ctx,kind==='empty'?'∅':'n(S) = '+balls.length,0,0,{align:'center',size:kind==='empty'?64:40,weight:700,color:col});
+      textAt(ctx,word,0,34,{align:'center',size:15,weight:700,color:col}); ctx.restore();
+    }
+    if(inf && sc>20){ textAt(ctx,'… ∞',w*0.93,lineY-130,{align:'right',size:34,weight:700,color:COL.blue,alpha:clamp((sc-20)/40,0,1)});
+      vec(ctx,w*0.86,lineY-104,w*0.965,lineY-104,COL.blue,3); }
+    $('#nS').textContent=balls.length+((inf&&sc>30)?' …':'');
+    $('#tyV').textContent=done?(S.kind==='empty'?'Empty ∅':'Finite'):(inf&&sc>30?'Infinite':'Scanning…');
+    $('#tyV').style.color=done?(S.kind==='empty'?'var(--f-yellow)':'var(--f-green)'):(inf&&sc>30?'var(--f-blue)':'var(--text-3)');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.5 EQUAL SETS  (§1.5, Examples 7–8, Ex 1.2)
+   Two rows of tokens. "Merge repeats" slides duplicates into one (a set
+   does not change when elements repeat). "Shuffle" re-orders (order is
+   immaterial). "Match" lowers every B token under its partner in A:
+   a pair that finds a partner turns green; a stranger shakes and is
+   marked ✗.
+   ===================================================================== */
+const PAIRS4=[
+  {id:'p1', label:'ALLOY · LOYAL',          an:'X', bn:'B', a:['A','L','L','O','Y'],       b:['L','O','Y','A','L']},
+  {id:'p2', label:'{1,2,3,4} · {3,1,4,2}',  an:'A', bn:'B', a:['1','2','3','4'],           b:['3','1','4','2']},
+  {id:'p3', label:'FOLLOW · WOLF',          an:'A', bn:'B', a:['F','O','L','L','O','W'],   b:['W','O','L','F']},
+  {id:'p4', label:'{2,4,6,8,10} · even ≤ 10',an:'A',bn:'B', a:['2','4','6','8','10'],      b:['6','2','10','4','8']},
+  {id:'p5', label:'{4,8,12,16} · {8,4,16,18}',an:'A',bn:'B',a:['4','8','12','16'],         b:['8','4','16','18']},
+  {id:'p6', label:'{2,3} · x²+5x+6=0',      an:'A', bn:'B', a:['2','3'],                   b:['−2','−3']},
+  {id:'p7', label:'{−2…2} · {1,2}',         an:'A', bn:'B', a:['−2','−1','0','1','2'],     b:['1','2']},
+];
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Pair of sets</label><div class="chip-wrap" id="pB"></div></div>
+    <div class="control-group"><label>Merge repeats <span class="val" id="mgV"></span></label><input type="range" id="mgR" min="0" max="1" step="0.01" value="0">
+      <div class="toggle-group"><button class="toggle-btn navy" id="shB" style="margin-top:0;">⇄ Shuffle order</button><button class="toggle-btn" id="mtB">Match</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">A ⊆ B</div><div class="rval" id="v1"></div></div>
+      <div class="rcard"><div class="rlabel">B ⊆ A</div><div class="rval" id="v2"></div></div>
+      <div class="rcard wide"><div class="rlabel">Verdict</div><div class="rval" id="v3"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let P=PAIRS4[0], mTarget=0, m=0, matchOn=false, al=0, lp=0, t=0;
+  let A=[],B=[];
+  function mk(list){ const seen={}; return list.map((lab,i)=>{ const first=!(lab in seen); if(first) seen[lab]=i; return {lab, first, rk:i, x:0, y:0, init:false, sh:0, alpha:1, pop:{x:0,v:0}}; }); }
+  function load(){ A=mk(P.a); B=mk(P.b); m=0; mTarget=0; $('#mgR').value=0; matchOn=false; al=0; lp=0; $('#mtB').classList.remove('active'); $('#mgR').disabled=false; }
+  chips($('#pB'),PAIRS4.map(p=>({id:p.id,label:p.label})),P.id,id=>{ P=PAIRS4.find(p=>p.id===id); load(); });
+  $('#mgR').oninput=e=>{ mTarget=+e.target.value; };
+  $('#shB').onclick=()=>{ [A,B].forEach(r=>r.forEach(k=>k.rk=Math.random())); };
+  $('#mtB').onclick=()=>{ matchOn=!matchOn; $('#mtB').classList.toggle('active',matchOn); $('#mgR').disabled=matchOn; if(matchOn){ mTarget=1; $('#mgR').value=1; } };
+  load();
+
+  function uniqOrder(row){ const u=[]; row.slice().sort((a,b)=>a.rk-b.rk).forEach(k=>{ if(!u.includes(k.lab)) u.push(k.lab); }); return u; }
+
+  animLoop(dt=>{
+    t+=dt;
+    m=approach(m,mTarget,5,dt); al=approach(al,matchOn?1:0,4,dt); lp=approach(lp,matchOn?1:0,2.6,dt);
+    $('#mgV').textContent=Math.round(m*100)+'%';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ya=h*0.26, yb=h*0.7;
+    const ua=uniqOrder(A), ub=uniqOrder(B);
+    const matchedB=ub.filter(l=>ua.includes(l)), strangersB=ub.filter(l=>!ua.includes(l));
+    const cols=Math.max(A.length,B.length,ua.length+strangersB.length);
+    const sp=Math.min(76,(w*0.86)/Math.max(cols,6)), cx=w/2, rr=Math.min(24,sp*0.36);
+    const colX=(i,n)=>cx+(i-(n-1)/2)*sp;
+    const alignCols=ua.length+strangersB.length;
+    // positions for one token
+    function pos(row,k,isA){
+      const sorted=row.slice().sort((a,b)=>a.rk-b.rk), own=colX(sorted.indexOf(k),row.length);
+      const u=isA?ua:ub, firstIdx=u.indexOf(k.lab), merged=colX(firstIdx,u.length);
+      let al2;
+      if(isA) al2=colX(ua.indexOf(k.lab),alignCols);
+      else { const ai=ua.indexOf(k.lab); al2=ai>=0?colX(ai,alignCols):colX(ua.length+strangersB.indexOf(k.lab),alignCols); }
+      const mm=lerp(own,merged,m), mergedAl=isA?colX(ua.indexOf(k.lab),alignCols):al2;
+      return lerp(mm,mergedAl,al);
+    }
+    const partner=(lab,isA)=> (isA?ub:ua).includes(lab);
+    function step(row,isA,y){
+      row.forEach(k=>{
+        const tx=pos(row,k,isA); if(!k.init){ k.x=tx; k.y=y; k.init=true; k.pop.v=6; }
+        k.x=approach(k.x,tx,10,dt); k.y=approach(k.y,y,10,dt); springTo(k.pop,0,200,10,dt);
+        k.alpha=k.first?1:1-m;
+        const ok=partner(k.lab,isA); k.stranger=matchOn&&!ok&&al>0.8;
+        k.sh=k.stranger?Math.sin(t*40+k.x)*2.2:0;
+      });
+    }
+    step(A,true,ya); step(B,false,yb);
+    // ---- shelves / row labels ----
+    [ya,yb].forEach((y,i)=>{ line(ctx,w*0.06,y+rr+10,w*0.94,y+rr+10,COL.mid,1.4); });
+    const lab=(row,y,name,col,isA)=>{ const sh=uniqOrder(row); const txt=name+' = { '+(m>0.5?sh:row.slice().sort((a,b)=>a.rk-b.rk).map(k=>k.lab)).join(', ')+' }';
+      textAt(ctx,txt,w*0.06,y-rr-26,{size:Math.max(13,Math.min(16,w*0.017)),weight:700,color:col}); };
+    lab(A,ya,P.an,COL.blue,true); lab(B,yb,P.bn,COL.red,false);
+    // ---- match lines ----
+    if(lp>0.02) ua.forEach(l=>{ if(!ub.includes(l)) return; const ka=A.find(k=>k.lab===l&&k.first), kb=B.find(k=>k.lab===l&&k.first);
+      const y1=ka.y+rr+2, y2=lerp(y1,kb.y-rr-2,lp); line(ctx,ka.x,y1,kb.x,y2,COL.green,2.6); if(lp>0.95) arrowHead(ctx,kb.x,kb.y-rr-2,Math.PI/2,COL.green,8); });
+    // ---- empty slots under unmatched A tokens ----
+    if(al>0.5) ua.forEach(l=>{ if(ub.includes(l)) return; const ka=A.find(k=>k.lab===l&&k.first); ctx.save(); ctx.globalAlpha=al; ctx.setLineDash([5,5]); circ(ctx,ka.x,yb,rr,COL.mid,null,1.6); ctx.restore(); textAt(ctx,'?',ka.x,yb+6,{align:'center',size:16,weight:700,color:COL.mid,alpha:al}); });
+    // ---- tokens ----
+    const draw=(row,isA)=>row.forEach(k=>{
+      if(k.alpha<0.02) return;
+      const ok=partner(k.lab,isA), good=matchOn&&ok&&al>0.8;
+      const sc=1+0.35*k.pop.x;
+      tok(ctx,k.x+k.sh,k.y,k.lab,{r:rr,stroke:good?COL.green:(isA?COL.blue:COL.red),fill:good?'#e4f7ec':(k.stranger?'#fdece7':'#fff'),alpha:k.alpha,sx:sc,sy:sc,lw:2.6});
+      if(k.stranger&&k.first) textAt(ctx,'✗ '+(isA?'∉ '+P.bn:'∉ '+P.an),k.x,k.y+(isA?rr+30:-rr-12),{align:'center',size:12,weight:700,color:COL.red});
+    });
+    draw(A,true); draw(B,false);
+    if(m>0.05&&m<0.98) textAt(ctx,'repeats merge',w*0.94,ya-rr-26,{align:'right',size:12,weight:700,color:COL.yellow,alpha:Math.sin(m*Math.PI)});
+    // ---- verdict ----
+    const aSubB=ua.every(l=>ub.includes(l)), bSubA=ub.every(l=>ua.includes(l));
+    $('#v1').innerHTML=aSubB?'<span style="color:var(--f-green)">✓ Yes</span>':'<span style="color:var(--f-red)">✗ No</span>';
+    $('#v2').innerHTML=bSubA?'<span style="color:var(--f-green)">✓ Yes</span>':'<span style="color:var(--f-red)">✗ No</span>';
+    $('#v3').innerHTML=(aSubB&&bSubA)?'<span style="color:var(--f-green)">'+P.an+' = '+P.bn+'  (equal)</span>':'<span style="color:var(--f-red)">'+P.an+' ≠ '+P.bn+'</span>';
+    if(!matchOn) textAt(ctx,'press Match to pair every element',w/2,h*0.485,{align:'center',size:12,weight:600,color:COL.mid,alpha:0.8+0.2*Math.sin(t*3)});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   VENN ENGINE  (shared by 1.6a Subsets, 1.9 Operations, 1.10 Complement)
+   World = a rectangle U of 1.5 × 1. Elements sit at fixed spots in U; the
+   circles A and B are moved by springs toward the slider targets, and an
+   element belongs to a circle exactly when it lies inside it. Region
+   shading is a line hatch evaluated point by point, so it always follows
+   the circles. When an element's status changes it hops and lands.
+   ===================================================================== */
+const VW=1.5, VH=1;
+const GEO={
+  overlap :{A:{x:.60,y:.5,r:.31},B:{x:.90,y:.5,r:.31}},
+  nestBA  :{A:{x:.72,y:.5,r:.42},B:{x:.84,y:.5,r:.20}},
+  nestAB  :{A:{x:.84,y:.5,r:.20},B:{x:.72,y:.5,r:.42}},
+  disjoint:{A:{x:.42,y:.5,r:.27},B:{x:1.08,y:.5,r:.27}},
+  equal   :{A:{x:.75,y:.5,r:.36},B:{x:.75,y:.5,r:.36}},
+};
+function vennGeo(ex){
+  const g=typeof ex.geo==='string'?GEO[ex.geo]:ex.geo;
+  const o={A:Object.assign({},g.A),B:Object.assign({},g.B)};
+  if(!ex.A.length) o.A.r=0;
+  if(!ex.B.length) o.B.r=0;
+  return o;
+}
+function vennNew(){
+  const mk=()=>({x:{x:.75,v:0},y:{x:.5,v:0},r:{x:0,v:0}});
+  return {ex:null, c:{A:mk(),B:mk()}, tg:{A:{x:.6,y:.5,r:.3},B:{x:.9,y:.5,r:.3}}, tokens:[], sets:{A:[],B:[]}, t:0};
+}
+function vennIn(c,x,y){ const r=c.r.x; return r>0.018 && Math.hypot(x-c.x.x,y-c.y.x)<r; }
+function vennPlace(ex,geo){
+  const wrOf=l=>{ const n=String(l).length; return n<=2?0.047:Math.min(0.14,0.047+0.013*(n-2)); };
+  const cand=[]; for(let x=0.04;x<1.46;x+=0.02) for(let y=0.04;y<0.96;y+=0.02) cand.push([x,y]);
+  const keyOf=l=>(ex.A.includes(l)?'1':'0')+(ex.B.includes(l)?'1':'0');
+  const stat=(c,x,y,m)=>{ if(c.r<=0) return 0; const d=Math.hypot(x-c.x,y-c.y); return d<c.r-m?1:(d>c.r+m?0:-1); };
+  const placed=[], out=[];
+  ['11','10','01','00'].forEach(key=>{
+    const labs=ex.U.filter(l=>keyOf(l)===key); if(!labs.length) return;
+    const ia=key[0]==='1'?1:0, ib=key[1]==='1'?1:0;
+    const grpPts=[];
+    labs.forEach(l=>{
+      const wr=wrOf(l);
+      let valid=[];
+      for(const mf of [1,0.4,0]){
+        const m=wr*mf+0.012;
+        valid=cand.filter(([x,y])=>x>wr+0.02&&x<VW-wr-0.02&&y>wr+0.02&&y<VH-wr-0.02&&stat(geo.A,x,y,m)===ia&&stat(geo.B,x,y,m)===ib);
+        if(valid.length) break;
+      }
+      if(!valid.length) valid=cand.filter(([x,y])=>x>wr+0.02&&x<VW-wr-0.02&&y>wr+0.02&&y<VH-wr-0.02);
+      const cx=valid.reduce((s,p)=>s+p[0],0)/valid.length, cy=valid.reduce((s,p)=>s+p[1],0)/valid.length;
+      let best=null,bs=-1e9;
+      valid.forEach(p=>{
+        let gap=1e9; placed.forEach(q=>{ gap=Math.min(gap,Math.hypot(p[0]-q.x,p[1]-q.y)-wr-q.wr-0.014); });
+        const sc=(gap<0?gap*4:Math.min(gap,0.16))-0.22*Math.hypot(p[0]-cx,p[1]-cy);
+        if(sc>bs){ bs=sc; best=p; }
+      });
+      const q={lab:l,wr,x:best[0],y:best[1]}; placed.push(q); out.push(q);
+    });
+  });
+  return ex.U.map(l=>out.find(q=>q.lab===l));
+}
+function vennLoad(V,ex){
+  V.ex=ex; const g=vennGeo(ex);
+  V.tg.A=Object.assign({},g.A); V.tg.B=Object.assign({},g.B);
+  const pl=vennPlace(ex,g);
+  V.tokens=pl.map(q=>({lab:q.lab,wr:q.wr,hx:q.x,hy:q.y,ph:Math.random()*6.28,a:false,b:false,sc:{x:0,v:7},pl:[]}));
+}
+function vennStep(V,dt){
+  V.t+=dt;
+  ['A','B'].forEach(k=>{ const c=V.c[k], g=V.tg[k]; springTo(c.x,g.x,95,14,dt); springTo(c.y,g.y,95,14,dt); springTo(c.r,g.r,95,13,dt); });
+  V.tokens.forEach(tk=>{ tk.a=vennIn(V.c.A,tk.hx,tk.hy); tk.b=vennIn(V.c.B,tk.hx,tk.hy); springTo(tk.sc,1,170,11,dt); });
+  V.sets.A=V.tokens.filter(k=>k.a).map(k=>k.lab); V.sets.B=V.tokens.filter(k=>k.b).map(k=>k.lab);
+}
+function vennSel(V,expr){ return V.tokens.filter(k=>expr(k.a,k.b)).map(k=>k.lab); }
+function vennFit(rx,ry,rw,rh){ const s=Math.min(rw/VW,rh/VH); return {ox:rx+(rw-VW*s)/2, oy:ry+(rh-VH*s)/2, s}; }
+function setStr(arr){ return arr.length?'{ '+arr.join(', ')+' }':'∅'; }
+
+/** Draw one panel. o: {pi, expr (token highlight), hatch:[{expr,color}], dt, title, titleCol, after(ctx,V,P)} */
+function vennPanel(ctx,V,P,o){
+  const {ox,oy,s}=P, t=V.t, dt=o.dt||0.016, pi=o.pi||0;
+  ctx.save(); rrect(ctx,ox,oy,VW*s,VH*s,10); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,'U',ox+10,oy+20,{size:15,weight:700,color:COL.ink});
+  (o.hatch||[]).forEach(hz=>hatchRegion(ctx,P,(x,y)=>hz.expr(vennIn(V.c.A,x,y),vennIn(V.c.B,x,y)),hz.color,t));
+  // circles
+  [['A',COL.blue,'rgba(47,143,224,0.06)'],['B',COL.red,'rgba(217,67,43,0.06)']].forEach(([k,col,fill])=>{
+    const c=V.c[k]; const r=c.r.x; const cx=ox+c.x.x*s, cy=oy+c.y.x*s;
+    if(r>0.018){ ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r*s,0,Math.PI*2); ctx.fillStyle=fill; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+      const a=k==='A'?-2.35:-0.8; textAt(ctx,k,cx+Math.cos(a)*(r*s+14),cy+Math.sin(a)*(r*s+14)+5,{align:'center',size:16,weight:700,color:col}); }
+    else textAt(ctx,k+' = ∅',ox+(k==='A'?0.1:1.1)*s,oy+VH*s-12,{size:13,weight:700,color:col});
+  });
+  // tokens
+  V.tokens.forEach(tk=>{
+    const st=tk.pl[pi]||(tk.pl[pi]={lift:0,hop:{x:0,v:0},prev:null});
+    const res=o.expr?o.expr(tk.a,tk.b):false;
+    if(st.prev!==null && st.prev!==res) st.hop.v=-1.15;
+    st.prev=res; st.lift=approach(st.lift,res?1:0,9,dt); springTo(st.hop,0,320,13,dt);
+    const jx=Math.sin(t*1.3+tk.ph)*0.005, jy=Math.cos(t*1.1+tk.ph*1.7)*0.005;
+    const x=ox+(tk.hx+jx)*s, y=oy+(tk.hy+jy+st.hop.x-st.lift*0.018)*s;
+    const r=Math.max(9,tk.wr*s*clamp(tk.sc.x,0,1.3));
+    if(res){ ctx.save(); ctx.globalAlpha=0.35+0.2*Math.sin(t*3+tk.ph); circ(ctx,x,y,r+4,COL.green,null,2); ctx.restore(); }
+    let stroke=COL.mid, stroke2;
+    if(tk.a&&tk.b){ stroke=COL.blue; stroke2=COL.red; } else if(tk.a) stroke=COL.blue; else if(tk.b) stroke=COL.red;
+    tok(ctx,x,y,tk.lab,{r,stroke,stroke2,fill:res?'#e4f7ec':'#fff',lw:2.4,alpha:o.expr&&!res?0.7:1});
+  });
+  if(o.after) o.after(ctx,V,P);
+  if(o.title) textAt(ctx,o.title,ox+VW*s/2,oy-10,{align:'center',size:Math.max(12,Math.min(16,s*0.06)),weight:700,color:o.titleCol||COL.ink});
+}
+
+/** controls shared by every Venn activity; returns {sync()} */
+function vennControls(wrap,V,examples,defId,onLoad){
+  const side=wrap.querySelector('.lab-side');
+  const html=`
+    <div class="control-group"><label style="margin-bottom:4px;">Example</label><div class="chip-wrap" id="exB"></div></div>
+    <div class="control-group">
+      <label><span style="color:var(--f-blue)">● A</span> move <span class="val" id="axV"></span></label><input type="range" id="axR" min="0.15" max="1.35" step="0.01" value="0.6">
+      <label style="margin-top:7px;"><span style="color:var(--f-blue)">● A</span> size <span class="val" id="arV"></span></label><input type="range" id="arR" min="0" max="0.5" step="0.01" value="0.3">
+      <label style="margin-top:7px;"><span style="color:var(--f-red)">● B</span> move <span class="val" id="bxV"></span></label><input type="range" id="bxR" min="0.15" max="1.35" step="0.01" value="0.9">
+      <label style="margin-top:7px;"><span style="color:var(--f-red)">● B</span> size <span class="val" id="brV"></span></label><input type="range" id="brR" min="0" max="0.5" step="0.01" value="0.3">
+      <div class="toggle-group"><button class="toggle-btn" id="rsB">↺ Reset circles</button></div></div>
+    <div id="vOut"></div>`;
+  side.innerHTML=html;
+  const $=s=>wrap.querySelector(s);
+  const map=[['axR','A','x'],['arR','A','r'],['bxR','B','x'],['brR','B','r']];
+  map.forEach(([id,k,p])=>{ $('#'+id).oninput=e=>{ V.tg[k][p]=+e.target.value; }; });
+  function sync(){ map.forEach(([id,k,p])=>{ $('#'+id).value=V.tg[k][p]; }); }
+  function load(id){ const ex=examples.find(e=>e.id===id); vennLoad(V,ex); sync(); if(onLoad) onLoad(ex); }
+  chips($('#exB'),examples.map(e=>({id:e.id,label:e.label})),defId,load);
+  $('#rsB').onclick=()=>{ const g=vennGeo(V.ex); V.tg.A=Object.assign({},g.A); V.tg.B=Object.assign({},g.B); sync(); };
+  load(defId);
+  return {sync, readouts:()=>{ $('#axV').textContent=fmt(V.tg.A.x,2); $('#arV').textContent=fmt(V.tg.A.r,2); $('#bxV').textContent=fmt(V.tg.B.x,2); $('#brV').textContent=fmt(V.tg.B.r,2); }, out:$('#vOut'), $};
+}
+const N1=(a,b)=>Array.from({length:b-a+1},(_,i)=>String(a+i));
+
+/* =====================================================================
+   1.6a SUBSETS  (§1.6 — A ⊆ B when every element of A is in B)
+   Move and resize the circles. Any element of A that is not in B shakes
+   and is tagged ∉ B — the single witness that destroys A ⊆ B.
+   ===================================================================== */
+const EX5=[
+  {id:'s1', label:'{1,2,3} ⊂ {1,2,3,4}', U:N1(1,6), A:['1','2','3'], B:['1','2','3','4'], geo:'nestAB'},
+  {id:'s2', label:'{1,3} · {1,5,9}', U:['1','3','5','7','9'], A:['1','3'], B:['1','5','9'], geo:'overlap'},
+  {id:'s3', label:'{1,5,9} ⊂ {1,3,5,7,9}', U:['1','3','5','7','9','2','4'], A:['1','5','9'], B:['1','3','5','7','9'], geo:'nestAB'},
+  {id:'s4', label:'vowels · {a,b,c,d}', U:['a','e','i','o','u','b','c','d'], A:['a','e','i','o','u'], B:['a','b','c','d'], geo:'overlap'},
+  {id:'s5', label:'A = B', U:['1','3','5','2','4'], A:['1','3','5'], B:['1','3','5'], geo:'equal'},
+  {id:'s6', label:'∅ ⊆ B', U:['1','2','3','4'], A:[], B:['1','2','3'], geo:{A:{x:.55,y:.5,r:.3},B:{x:.85,y:.5,r:.34}}},
+];
+function buildA5(){
+  const wrap=labShell(); const V=vennNew();
+  const ctl=vennControls(wrap,V,EX5,'s1');
+  ctl.out.innerHTML=`<div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">A ⊆ B</div><div class="rval" id="r1"></div></div>
+      <div class="rcard"><div class="rlabel">B ⊆ A</div><div class="rval" id="r2"></div></div>
+      <div class="rcard wide"><div class="rlabel">Relation</div><div class="rval" id="r3" style="font-size:var(--fs-sm)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Witness</div><div class="rval" id="r4" style="font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=ctl.$, canvas=$('canvas'); let t=0;
+  const yes='<span style="color:var(--f-green)">✓ Yes</span>', no='<span style="color:var(--f-red)">✗ No</span>';
+  animLoop(dt=>{
+    t+=dt; vennStep(V,dt); ctl.readouts();
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const P=vennFit(w*0.04,h*0.12,w*0.92,h*0.84);
+    const A=V.sets.A, B=V.sets.B;
+    const offA=V.tokens.filter(k=>k.a&&!k.b), offB=V.tokens.filter(k=>k.b&&!k.a);
+    vennPanel(ctx,V,P,{dt,expr:(a,b)=>a&&b,hatch:[],title:'',after:(c,Vv,PP)=>{
+      offA.forEach(k=>{ const x=PP.ox+k.hx*PP.s+Math.sin(t*38+k.ph)*2.2, y=PP.oy+k.hy*PP.s; const r=Math.max(9,k.wr*PP.s);
+        c.save(); c.globalAlpha=0.55+0.4*Math.sin(t*7); circ(c,x,y,r+5,COL.red,null,2.6); c.restore();
+        textAt(c,'∉ B',x,y-r-9,{align:'center',size:12,weight:700,color:COL.red}); });
+    }});
+    textAt(ctx,'A = '+setStr(A),w*0.04,h*0.06,{size:Math.max(13,Math.min(16,w*0.017)),weight:700,color:COL.blue});
+    textAt(ctx,'B = '+setStr(B),w*0.04,h*0.06+22,{size:Math.max(13,Math.min(16,w*0.017)),weight:700,color:COL.red});
+    const aSubB=offA.length===0, bSubA=offB.length===0, eq=aSubB&&bSubA;
+    $('#r1').innerHTML=aSubB?yes:no; $('#r2').innerHTML=bSubA?yes:no;
+    let rel;
+    if(!A.length&&!B.length) rel='A = B = ∅';
+    else if(!A.length) rel='∅ ⊂ B — ∅ is a subset of every set';
+    else if(eq) rel='A ⊆ B and B ⊆ A  ⇒  A = B';
+    else if(aSubB) rel='A ⊂ B  (proper subset)';
+    else if(bSubA) rel='B ⊂ A  (proper subset)';
+    else if(!A.some(l=>B.includes(l))) rel='Disjoint — neither is a subset';
+    else rel='Neither is a subset of the other';
+    $('#r3').textContent=rel;
+    $('#r4').innerHTML=offA.length?'<span style="color:var(--f-red)">'+offA[0].lab+' ∈ A but '+offA[0].lab+' ∉ B</span>':(A.length?'<span style="color:var(--f-green)">none — every a ∈ A is in B</span>':'—');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.9 UNION · INTERSECTION · DIFFERENCE  (§1.9)
+   The chosen operation is hatched live on the circles; elements in the
+   result lift and glow. Drag the circles apart: A ∩ B empties, A and B
+   become disjoint.
+   ===================================================================== */
+const EX9=[
+  {id:'u1', label:'Ex 12 · {2,4,6,8}, {6,8,10,12}', U:N1(1,12), A:['2','4','6','8'], B:['6','8','10','12'], geo:'overlap'},
+  {id:'u2', label:'Ex 13 · vowels', U:['a','e','i','o','u','b','c','d'], A:['a','e','i','o','u'], B:['a','i','u'], geo:'nestBA'},
+  {id:'u3', label:'Ex 14 · teams', U:['Ram','Geeta','Akbar','David','Ashok'], A:['Ram','Geeta','Akbar'], B:['Geeta','David','Ashok'], geo:'overlap'},
+  {id:'u4', label:'Ex 18 · A−B', U:N1(1,9), A:N1(1,6), B:['2','4','6','8'], geo:'overlap'},
+  {id:'u5', label:'Disjoint sets', U:N1(1,9), A:['2','4','6','8'], B:['1','3','5','7'], geo:'disjoint'},
+];
+const OPS9=[
+  {id:'un', label:'A ∪ B', name:'A ∪ B', expr:(a,b)=>a||b},
+  {id:'in', label:'A ∩ B', name:'A ∩ B', expr:(a,b)=>a&&b},
+  {id:'ab', label:'A − B', name:'A − B', expr:(a,b)=>a&&!b},
+  {id:'ba', label:'B − A', name:'B − A', expr:(a,b)=>b&&!a},
+  {id:'all',label:'All 3 parts', name:'A−B · A∩B · B−A', expr:(a,b)=>a||b},
+];
+function buildA9(){
+  const wrap=labShell(); const V=vennNew();
+  const ctl=vennControls(wrap,V,EX9,'u1');
+  ctl.out.innerHTML=`<div class="control-group"><label style="margin-bottom:4px;">Operation</label><div class="chip-wrap" id="opB"></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel" id="rl">Result</div><div class="rval" id="rv" style="font-size:var(--fs-sm);color:var(--f-green);word-break:break-word"></div></div>
+      <div class="rcard"><div class="rlabel">Elements</div><div class="rval" id="rn"></div></div>
+      <div class="rcard"><div class="rlabel">A ∩ B = ∅ ?</div><div class="rval" id="rd"></div></div>
+      <div class="rcard wide"><div class="rlabel">Notice</div><div class="rval" id="rt" style="font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=ctl.$, canvas=$('canvas'); let op=OPS9[0], t=0;
+  chips($('#opB'),OPS9.map(o=>({id:o.id,label:o.label})),op.id,id=>{ op=OPS9.find(o=>o.id===id); });
+  animLoop(dt=>{
+    t+=dt; vennStep(V,dt); ctl.readouts();
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const P=vennFit(w*0.04,h*0.14,w*0.92,h*0.82);
+    const hatch = op.id==='all'
+      ? [{expr:(a,b)=>a&&!b,color:COL.blue},{expr:(a,b)=>a&&b,color:COL.green},{expr:(a,b)=>b&&!a,color:COL.red}]
+      : [{expr:op.expr,color:COL.green}];
+    vennPanel(ctx,V,P,{dt,expr:op.expr,hatch});
+    const res=vennSel(V,op.expr), A=V.sets.A, B=V.sets.B, inter=vennSel(V,(a,b)=>a&&b);
+    textAt(ctx,op.name+' = '+setStr(res),w*0.04,h*0.075,{size:Math.max(14,Math.min(18,w*0.019)),weight:700,color:COL.green});
+    $('#rl').textContent=op.name; $('#rv').textContent=setStr(res); $('#rn').textContent=res.length;
+    $('#rd').innerHTML=inter.length?'<span style="color:var(--f-red)">No — shares '+inter.length+'</span>':'<span style="color:var(--f-green)">Yes · disjoint</span>';
+    const aSubB=A.length&&A.every(l=>B.includes(l)), bSubA=B.length&&B.every(l=>A.includes(l));
+    let note='—';
+    if(!inter.length&&A.length&&B.length) note='A ∩ B = ∅  ⇒  A and B are disjoint';
+    else if(bSubA&&op.id==='un') note='B ⊆ A  ⇒  A ∪ B = A';
+    else if(aSubB&&op.id==='un') note='A ⊆ B  ⇒  A ∪ B = B';
+    else if(bSubA&&op.id==='in') note='B ⊆ A  ⇒  A ∩ B = B';
+    else if(aSubB&&op.id==='in') note='A ⊆ B  ⇒  A ∩ B = A';
+    else if(op.id==='ab'&&res.length) note='A − B ≠ B − A in general';
+    else if(op.id==='all') note='the three parts never overlap';
+    $('#rt').textContent=note;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.10 COMPLEMENT & DE MORGAN'S LAWS  (§1.10)
+   Two panels share the same circles and elements. The left hatch is the
+   left-hand side of the law, the right hatch the right-hand side. Move
+   the circles anywhere: the two shaded regions stay identical.
+   ===================================================================== */
+const EX10=[
+  {id:'c1', label:'Ex 22 · U={1..6}', U:N1(1,6), A:['2','3'], B:['3','4','5'], geo:'overlap'},
+  {id:'c2', label:'Ex 1.5 · U={1..9}', U:N1(1,9), A:['2','4','6','8'], B:['2','3','5','7'], geo:'overlap'},
+  {id:'c3', label:'Ex 20 · odd, U={1..10}', U:N1(1,10), A:['1','3','5','7','9'], B:[], geo:{A:{x:.75,y:.5,r:.34},B:{x:.75,y:.5,r:.2}}},
+];
+const MODES10=[
+  {id:'m1', label:'(A∪B)′ = A′∩B′', L:{t:'(A ∪ B)′',e:(a,b)=>!(a||b)}, R:{t:'A′ ∩ B′',e:(a,b)=>!a&&!b}},
+  {id:'m2', label:'(A∩B)′ = A′∪B′', L:{t:'(A ∩ B)′',e:(a,b)=>!(a&&b)}, R:{t:'A′ ∪ B′',e:(a,b)=>!a||!b}},
+  {id:'m3', label:'(A′)′ = A',       L:{t:'(A′)′',e:(a,b)=>!(!a)},       R:{t:'A',e:(a,b)=>a}},
+];
+function buildA10(){
+  const wrap=labShell(); const V=vennNew();
+  const ctl=vennControls(wrap,V,EX10,'c2');
+  ctl.out.innerHTML=`<div class="control-group"><label style="margin-bottom:4px;">Law</label><div class="chip-wrap" id="mdB"></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel" id="lL">Left side</div><div class="rval" id="lv" style="font-size:var(--fs-sm);color:var(--f-green);word-break:break-word"></div></div>
+      <div class="rcard wide"><div class="rlabel" id="rL">Right side</div><div class="rval" id="rv" style="font-size:var(--fs-sm);color:var(--f-green);word-break:break-word"></div></div>
+      <div class="rcard wide"><div class="rlabel">Check</div><div class="rval" id="ck"></div></div></div></div>`;
+  const $=ctl.$, canvas=$('canvas'); let md=MODES10[0], t=0, eqPop={x:0,v:0};
+  chips($('#mdB'),MODES10.map(o=>({id:o.id,label:o.label})),md.id,id=>{ md=MODES10.find(o=>o.id===id); });
+  animLoop(dt=>{
+    t+=dt; vennStep(V,dt); ctl.readouts();
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pad=w*0.025, pw=(w-pad*3)/2, top=h*0.16, ph=h*0.78;
+    const P0=vennFit(pad,top,pw,ph), P1=vennFit(pad*2+pw,top,pw,ph);
+    vennPanel(ctx,V,P0,{pi:0,dt,expr:md.L.e,hatch:[{expr:md.L.e,color:COL.green}],title:md.L.t,titleCol:COL.green});
+    vennPanel(ctx,V,P1,{pi:1,dt,expr:md.R.e,hatch:[{expr:md.R.e,color:COL.green}],title:md.R.t,titleCol:COL.green});
+    const L=vennSel(V,md.L.e), Rr=vennSel(V,md.R.e);
+    const same=L.length===Rr.length&&L.every(l=>Rr.includes(l));
+    springTo(eqPop,1,160,9,dt);
+    const mx=w/2, my=P0.oy+P0.s*0.5;
+    ctx.save(); ctx.translate(mx,my); const sc=clamp(eqPop.x,0.2,1.3); ctx.scale(sc,sc);
+    textAt(ctx,same?'=':'≠',0,16,{align:'center',size:44,weight:700,color:same?COL.green:COL.red}); ctx.restore();
+    textAt(ctx,'U = '+setStr(V.ex.U),w*0.03,h*0.07,{size:Math.max(12,Math.min(15,w*0.016)),weight:700,color:COL.ink});
+    textAt(ctx,'A = '+setStr(V.sets.A)+'     B = '+setStr(V.sets.B),w*0.03,h*0.07+22,{size:Math.max(12,Math.min(15,w*0.016)),weight:700,color:COL.blue});
+    $('#lL').textContent=md.L.t; $('#rL').textContent=md.R.t; $('#lv').textContent=setStr(L); $('#rv').textContent=setStr(Rr);
+    $('#ck').innerHTML=same?'<span style="color:var(--f-green)">✓ equal for these circles</span>':'<span style="color:var(--f-red)">✗ not equal</span>';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.6b ALL SUBSETS  (§1.6, Ex 1.3 Q4, Example 24 — a set of n elements has 2ⁿ subsets)
+   A binary counter runs: each pattern of bits lifts those elements of the
+   parent set; copies are thrown in parabolas into a new card. 2ⁿ cards
+   fill up one by one.
+   ===================================================================== */
+const SETS6=[
+  {id:'z', label:'∅',            els:[]},
+  {id:'a', label:'{a}',          els:['a']},
+  {id:'ab',label:'{a, b}',       els:['a','b']},
+  {id:'n3',label:'{1, 2, 3}',    els:['1','2','3']},
+  {id:'m1',label:'{−1, 0, 1}',   els:['−1','0','1']},
+  {id:'a4',label:'{a, b, c, d}', els:['a','b','c','d']},
+];
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Parent set A</label><div class="chip-wrap" id="sB"></div></div>
+    <div class="control-group"><label>Counter speed <span class="val" id="spV"></span></label><input type="range" id="spR" min="0.5" max="8" step="0.5" value="2.5">
+      <div class="toggle-group"><button class="toggle-btn navy" id="rpB">↻ Replay</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">n(A)</div><div class="rval" id="n1" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">Subsets</div><div class="rval" id="n2" style="color:var(--f-green)"></div></div>
+      <div class="rcard"><div class="rlabel">Proper</div><div class="rval" id="n3"></div></div></div>
+      <p class="hint">Subsets = 2ⁿ · proper = 2ⁿ − 1</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let S=SETS6[3], rate=2.5, t=0, g, acc, cards, par, curMask, done, doneT, pop;
+  const SZC=[COL.mid,COL.blue,COL.green,COL.yellow,COL.red];
+  function restart(){ const n=S.els.length; g=0; acc=0.6; cards=[]; curMask=-1; done=false; doneT=0; pop={x:0,v:0};
+    par=S.els.map(l=>({lab:l,lift:0,x:0,y:0})); }
+  chips($('#sB'),SETS6.map(s=>({id:s.id,label:s.label})),S.id,id=>{ S=SETS6.find(s=>s.id===id); restart(); });
+  $('#spR').oninput=e=>{ rate=+e.target.value; };
+  $('#rpB').onclick=restart;
+  restart();
+
+  animLoop(dt=>{
+    t+=dt; $('#spV').textContent=fmt(rate,1)+'/s';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const n=S.els.length, N=1<<n;
+    // ---- layout ----
+    const pr=Math.min(22,w*0.03), psp=pr*2+22, py=h*0.14;
+    par.forEach((p,i)=>{ p.x=w/2+(i-(n-1)/2)*psp; p.y=py; });
+    const cols=N<=4?N:4, rows=Math.ceil(N/cols);
+    const gx0=w*0.04, gx1=w*0.96, gy0=h*0.3, gy1=h*0.97;
+    const cw=Math.min(210,(gx1-gx0)/cols-12), ch=Math.min(116,(gy1-gy0)/rows-18);
+    const cardPos=i=>({x:gx0+((gx1-gx0)/cols)*((i%cols)+0.5), y:gy0+((gy1-gy0)/rows)*(Math.floor(i/cols)+0.5)});
+    const tr=Math.max(8,Math.min(17,ch*0.2,cw/(Math.max(n,1)*2.5)));
+    const slot=(ci,j,sz)=>{ const c=cardPos(ci); return {x:c.x+(j-(sz-1)/2)*(tr*2+8), y:c.y+ch*0.1}; };
+    // ---- generator ----
+    if(!done){
+      acc+=dt*rate;
+      while(acc>=1 && g<N){
+        acc-=1; const mask=g, bits=[]; for(let i=0;i<n;i++) if(mask>>i&1) bits.push(i);
+        curMask=mask; const card={mask,sz:bits.length,pop:{x:0,v:5},clones:[]};
+        bits.forEach((bi,j)=>{ const p=par[bi]; const cl={x:p.x,y:p.y,sq:mkSq(),j,landed:false};
+          const tg=slot(cards.length,j,bits.length); startFlight(cl,tg.x,tg.y,0.75,50+Math.random()*40,j*0.07); card.clones.push(cl); });
+        cards.push(card); g++;
+      }
+      if(g>=N && acc>=1){ done=true; doneT=0; pop.v=9; }
+    } else { doneT+=dt; springTo(pop,1,170,9,dt); if(doneT>7) restart(); }
+    // ---- parent set ----
+    ctx.save(); rrect(ctx,w/2-(n*psp)/2-14,py-pr-12,n*psp+28,pr*2+24,14); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.setLineDash([8,6]); ctx.lineDashOffset=-t*14; ctx.stroke(); ctx.restore();
+    if(n>0){ brace(ctx,w/2-(n*psp)/2-24,py-pr-8,py+pr+8,1,COL.blue,3); brace(ctx,w/2+(n*psp)/2+24,py-pr-8,py+pr+8,-1,COL.blue,3); }
+    else textAt(ctx,'∅',w/2,py+14,{align:'center',size:40,weight:700,color:COL.blue});
+    textAt(ctx,'A',w*0.04,py+6,{size:22,weight:700,color:COL.blue});
+    par.forEach((p,i)=>{ const on=curMask>=0&&(curMask>>i&1); p.lift=approach(p.lift,on?1:0,14,dt);
+      tok(ctx,p.x,p.y-p.lift*13,p.lab,{r:pr,stroke:on?COL.green:COL.blue,fill:on?'#e4f7ec':'#fff',lw:2.6});
+      if(n<=4){ const bit=(curMask>=0?(curMask>>i&1):0); textAt(ctx,bit,p.x,py+pr+28,{align:'center',size:13,weight:700,color:on?COL.green:COL.mid}); } });
+    if(n>0 && n<=4) textAt(ctx,'bits',w/2-(n*psp)/2-30,py+pr+28,{align:'right',size:11,weight:600,color:COL.mid});
+    // ---- cards ----
+    cards.forEach((c,ci)=>{
+      springTo(c.pop,1,150,10,dt);
+      const cp=cardPos(ci), sc=clamp(c.pop.x,0.2,1.15), col=SZC[Math.min(c.sz,4)];
+      ctx.save(); ctx.translate(cp.x,cp.y); ctx.scale(sc,sc);
+      rrect(ctx,-cw/2,-ch/2,cw,ch,12); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.stroke();
+      const lab=c.sz===0?'∅':'{ '+S.els.filter((_,i)=>c.mask>>i&1).join(', ')+' }';
+      ctx.restore();
+      textAt(ctx,lab,cp.x,cp.y-ch/2*sc+16*sc,{align:'center',size:Math.max(10,Math.round(12*sc)),weight:700,color:col});
+      if(c.sz===0) textAt(ctx,'∅',cp.x,cp.y+ch*0.16,{align:'center',size:Math.round(ch*0.42*sc),weight:700,color:COL.mid,alpha:clamp(c.pop.x,0,1)});
+      c.clones.forEach(cl=>{ const tg=slot(ci,cl.j,c.sz); if(cl.fl){ cl.fl.x1=tg.x; cl.fl.y1=tg.y; if(stepFlight(cl,dt)) cl.landed=true; } else { cl.x=tg.x; cl.y=tg.y; } stepSq(cl,dt);
+        const q=squash(cl); tok(ctx,cl.x,cl.y,S.els[bitIndex(c.mask,cl.j)],{r:tr,stroke:col,fill:'#fff',sx:q.sx,sy:q.sy,lw:2}); });
+    });
+    // ---- banner ----
+    if(done){ ctx.save(); ctx.translate(w*0.86,py+2); const sc=clamp(pop.x,0,1.2); ctx.scale(sc,sc);
+      textAt(ctx,'2'+['⁰','¹','²','³','⁴'][n]+' = '+N,0,0,{align:'center',size:Math.min(34,w*0.04),weight:700,color:COL.green}); ctx.restore(); }
+    $('#n1').textContent=n; $('#n2').textContent=cards.length+' / '+N; $('#n3').textContent=Math.max(0,cards.length-(done?1:0));
+  });
+  function bitIndex(mask,j){ let k=-1,c=-1; for(let i=0;i<8;i++){ if(mask>>i&1){ c++; if(c===j) return i; } } return 0; }
+  return wrap;
+}
+
+/* =====================================================================
+   1.6c INTERVALS AS SUBSETS OF R  (§1.6.2, Fig 1.1)
+   Endpoints slide on springs; closed ⇄ open end-dots fill and empty with
+   a pop; a probe point glides along the line (or sweeps back and forth)
+   and the interval decides ∈ / ∉ — including exactly at an endpoint.
+   ===================================================================== */
+const PRE7=[
+  {id:'i1', label:'(−3, 5)',  a:-3, b:5,  lt:'open',   rt:'open'},
+  {id:'i2', label:'[−7, 9]',  a:-7, b:9,  lt:'closed', rt:'closed'},
+  {id:'i3', label:'(−5, 7]',  a:-5, b:7,  lt:'open',   rt:'closed'},
+  {id:'i4', label:'[−3, 5)',  a:-3, b:5,  lt:'closed', rt:'open'},
+  {id:'i5', label:'[0, ∞)',   a:0,  b:5,  lt:'closed', rt:'inf'},
+  {id:'i6', label:'(−∞, 0)',  a:-5, b:0,  lt:'inf',    rt:'open'},
+];
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Interval</label><div class="chip-wrap" id="pB"></div></div>
+    <div class="control-group">
+      <label><span style="color:var(--f-blue)">● a</span> (left end) <span class="val" id="aV"></span></label><input type="range" id="aR" min="-10" max="10" step="0.5" value="-3">
+      <div class="toggle-group" id="ltB"><button class="toggle-btn small" data-m="closed">[ closed</button><button class="toggle-btn small active" data-m="open">( open</button><button class="toggle-btn small" data-m="inf">−∞</button></div>
+      <label style="margin-top:9px;"><span style="color:var(--f-blue)">● b</span> (right end) <span class="val" id="bV"></span></label><input type="range" id="bR" min="-10" max="10" step="0.5" value="5">
+      <div class="toggle-group" id="rtB"><button class="toggle-btn small" data-m="closed">] closed</button><button class="toggle-btn small active" data-m="open">) open</button><button class="toggle-btn small" data-m="inf">+∞</button></div></div>
+    <div class="control-group"><label>Probe x <span class="val" id="xV"></span></label><input type="range" id="xR" min="-11" max="11" step="0.5" value="1">
+      <div class="toggle-group"><button class="toggle-btn" id="swB">Sweep</button><button class="toggle-btn" id="paB">x = a</button><button class="toggle-btn" id="pbB">x = b</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Interval</div><div class="rval" id="inV" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">Length b − a</div><div class="rval" id="lnV"></div></div>
+      <div class="rcard wide"><div class="rlabel">Set-builder</div><div class="rval" id="sbV" style="font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let a=-3,b=5,lt='open',rt='open',t=0,sweep=false,xT=1;
+  const pa={x:-3,v:0}, pb={x:5,v:0}, fl={x:0,v:0}, fr={x:0,v:0}, ppL={x:0,v:0}, ppR={x:0,v:0}, px={x:1,v:0};
+  function syncBtns(){ [['#ltB',lt],['#rtB',rt]].forEach(([id,m])=>$(id).querySelectorAll('button').forEach(bt=>bt.classList.toggle('active',bt.dataset.m===m))); $('#aR').value=a; $('#bR').value=b; }
+  chips($('#pB'),PRE7.map(p=>({id:p.id,label:p.label})),'i1',id=>{ const p=PRE7.find(q=>q.id===id); a=p.a; b=p.b; if(lt!==p.lt) ppL.v=-6; if(rt!==p.rt) ppR.v=-6; lt=p.lt; rt=p.rt; syncBtns(); });
+  $('#ltB').querySelectorAll('button').forEach(bt=>bt.onclick=()=>{ if(lt!==bt.dataset.m) ppL.v=-6; lt=bt.dataset.m; syncBtns(); });
+  $('#rtB').querySelectorAll('button').forEach(bt=>bt.onclick=()=>{ if(rt!==bt.dataset.m) ppR.v=-6; rt=bt.dataset.m; syncBtns(); });
+  $('#aR').oninput=e=>{ a=+e.target.value; if(a>=b){ b=a+0.5; $('#bR').value=b; } };
+  $('#bR').oninput=e=>{ b=+e.target.value; if(b<=a){ a=b-0.5; $('#aR').value=a; } };
+  $('#xR').oninput=e=>{ xT=+e.target.value; sweep=false; $('#swB').classList.remove('active'); };
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').classList.toggle('active',sweep); };
+  $('#paB').onclick=()=>{ sweep=false; $('#swB').classList.remove('active'); xT=a; $('#xR').value=clamp(a,-11,11); };
+  $('#pbB').onclick=()=>{ sweep=false; $('#swB').classList.remove('active'); xT=b; $('#xR').value=clamp(b,-11,11); };
+  const lbr=()=>lt==='closed'?'[':'(', rbr=()=>rt==='closed'?']':')';
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const lineY=h*0.56, gx0=w*0.04, gw=w*0.92, X=v=>gx0+(v+12)/24*gw;
+    // springs
+    springTo(pa,lt==='inf'?-12.8:a,70,12,dt); springTo(pb,rt==='inf'?12.8:b,70,12,dt);
+    fl.x=approach(fl.x,lt==='closed'?1:0,10,dt); fr.x=approach(fr.x,rt==='closed'?1:0,10,dt);
+    springTo(ppL,0,200,9,dt); springTo(ppR,0,200,9,dt);
+    if(sweep){ xT=9.8*Math.sin(t*0.5); $('#xR').value=fmt(xT,1); }
+    springTo(px,xT,sweep?400:60,sweep?40:12,dt);
+    $('#aV').textContent=lt==='inf'?'−∞':fmt(a,1); $('#bV').textContent=rt==='inf'?'+∞':fmt(b,1); $('#xV').textContent=fmt(xT,1);
+    // axis
+    line(ctx,gx0-10,lineY,w*0.985,lineY,COL.ink,2.6); arrowHead(ctx,w*0.985,lineY,0,COL.ink,10); arrowHead(ctx,gx0-10,lineY,Math.PI,COL.ink,10);
+    for(let v=-12;v<=12;v++){ const x=X(v), big=v%2===0; line(ctx,x,lineY-(big?7:4),x,lineY+(big?7:4),COL.ink,big?1.8:1.1); if(big||gw/24>30) textAt(ctx,v,x,lineY+26,{align:'center',size:11,weight:600,color:COL.muted}); }
+    textAt(ctx,'R',w*0.975,lineY-12,{size:14,weight:700,color:COL.muted});
+    // interval band + bar
+    const xa=X(pa.x), xb=X(pb.x);
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.08)'; ctx.fillRect(xa,lineY-40,xb-xa,40); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.2; ctx.beginPath(); for(let x=xa+((t*12)%10);x<xb;x+=10){ ctx.moveTo(x,lineY-38); ctx.lineTo(x-14>xa?x-14:xa,lineY-38+Math.min(38,x-xa)); } ctx.stroke(); ctx.restore();
+    line(ctx,xa,lineY,xb,lineY,COL.blue,8);
+    if(lt==='inf') arrowHead(ctx,gx0-6,lineY,Math.PI,COL.blue,16);
+    if(rt==='inf') arrowHead(ctx,w*0.98,lineY,0,COL.blue,16);
+    const ends=[[xa,fl.x,lt,ppL,'a'],[xb,fr.x,rt,ppR,'b']];
+    ends.forEach(([x,f,m,pp,nm])=>{ if(m==='inf') return; const r=10*clamp(1+pp.x*0.045,0.6,1.6);
+      circ(ctx,x,lineY,r,COL.blue,mixCol('#ffffff',COL.blue,f),3.2);
+      textAt(ctx,nm,x,lineY+50,{align:'center',size:15,weight:700,color:COL.blue}); });
+    // length dimension (yellow)
+    const fin=lt!=='inf'&&rt!=='inf', dy=lineY+78;
+    dimH(ctx,Math.max(xa,gx0),Math.min(xb,w*0.97),dy,COL.yellow);
+    textAt(ctx,fin?'b − a = '+fmt(b-a,1):'length = ∞',(Math.max(xa,gx0)+Math.min(xb,w*0.97))/2,dy-8,{align:'center',size:13,weight:700,color:COL.yellow});
+    // membership of the probe
+    const xe=sweep?px.x:xT;
+    const okL=lt==='inf'||(lt==='closed'?xe>=a:xe>a), okR=rt==='inf'||(rt==='closed'?xe<=b:xe<b), inside=okL&&okR;
+    const bx=X(px.x), by=lineY-78+Math.sin(t*3)*3, bc=inside?COL.green:COL.red;
+    line(ctx,bx,by+14,bx,lineY,bc,2,[5,4]);
+    circ(ctx,bx,lineY,4,bc,bc,1);
+    circ(ctx,bx,by,13,COL.yellow,'#fff8e6',3);
+    textAt(ctx,'x',bx,by+5,{align:'center',size:13,weight:700,color:COL.ink});
+    textAt(ctx,'x = '+fmt(px.x,1)+(inside?'  ∈  ':'  ∉  ')+'I',bx,by-24,{align:'center',size:14,weight:700,color:bc});
+    // notation
+    const nota=lbr()+(lt==='inf'?'−∞':fmt(a,1))+', '+(rt==='inf'?'∞':fmt(b,1))+rbr();
+    const notaFix=(lt==='inf'?'(':lbr())+(lt==='inf'?'−∞':fmt(a,1))+', '+(rt==='inf'?'∞':fmt(b,1))+(rt==='inf'?')':rbr());
+    textAt(ctx,'I = '+notaFix,w*0.04,h*0.1,{size:Math.max(20,Math.min(30,w*0.032)),weight:700,color:COL.blue});
+    const lo=lt==='inf'?'':fmt(a,1)+(lt==='closed'?' ≤ ':' < '), hi=rt==='inf'?'':(rt==='closed'?' ≤ ':' < ')+fmt(b,1);
+    const sb='{ x : '+(lt==='inf'&&rt==='inf'?'x ∈ R':lo+'x'+hi)+' }';
+    textAt(ctx,sb,w*0.04,h*0.1+30,{size:Math.max(13,Math.min(17,w*0.018)),weight:600,color:COL.muted});
+    $('#inV').textContent=notaFix; $('#lnV').textContent=fin?fmt(b-a,1):'∞'; $('#sbV').textContent=sb;
+  });
+  return wrap;
+}
+function mixCol(a,b,t){ const h=s=>[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)]; const A=h(a),B=h(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+
+/* =====================================================================
+   1.7–1.8 UNIVERSAL SET  (§1.7, §1.8, Ex 1.3 Q8)
+   A = {1,3,5}, B = {2,4,6}, C = {0,2,4,6,8}. Slide the yellow frame U over
+   the number strip: every element inside is thrown (parabola) into its
+   place in the Venn diagram; anything left outside the frame stays behind,
+   shakes and flags the set that sticks out of U.
+   ===================================================================== */
+const SET_A8={A:['1','3','5'],B:['2','4','6'],C:['0','2','4','6','8']};
+const HOME8={ '1':[.24,.46],'3':[.40,.50],'5':[.30,.68], '2':[.93,.47],'4':[1.06,.50],'6':[1.0,.60], '0':[.78,.40],'8':[1.22,.66], '7':[.12,.15],'9':[.65,.90],'10':[1.40,.14] };
+const OPT8=[
+  {id:'o1', label:'(i) {0…6}',  lo:0, hi:6,  empty:false},
+  {id:'o2', label:'(ii) ∅',     lo:0, hi:0,  empty:true},
+  {id:'o3', label:'(iii) {0…10}', lo:0, hi:10, empty:false},
+  {id:'o4', label:'(iv) {1…8}', lo:1, hi:8,  empty:false},
+];
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:4px;">Try this U</label><div class="chip-wrap" id="oB"></div></div>
+    <div class="control-group"><label>U from <span class="val" id="loV"></span></label><input type="range" id="loR" min="0" max="10" step="1" value="0">
+      <label style="margin-top:8px;">U to <span class="val" id="hiV"></span></label><input type="range" id="hiR" min="0" max="10" step="1" value="6"></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">A ⊆ U</div><div class="rval" id="v1"></div></div>
+      <div class="rcard"><div class="rlabel">B ⊆ U</div><div class="rval" id="v2"></div></div>
+      <div class="rcard"><div class="rlabel">C ⊆ U</div><div class="rval" id="v3"></div></div>
+      <div class="rcard"><div class="rlabel">Universal?</div><div class="rval" id="v4"></div></div>
+      <div class="rcard wide"><div class="rlabel">Missing from U</div><div class="rval" id="v5" style="font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let lo=0, hi=6, empty=false, t=0;
+  const FL={x:0,v:0}, FR={x:0,v:0}, FA={x:1,v:0};
+  const toks=[]; for(let n=0;n<=10;n++) toks.push({lab:String(n), n, x:0, y:0, in:null, fl:null, sq:mkSq(), init:false});
+  function syncSl(){ $('#loR').value=lo; $('#hiR').value=hi; }
+  chips($('#oB'),OPT8.map(o=>({id:o.id,label:o.label})),'o1',id=>{ const o=OPT8.find(q=>q.id===id); lo=o.lo; hi=o.hi; empty=o.empty; syncSl(); });
+  $('#loR').oninput=e=>{ lo=+e.target.value; empty=false; if(lo>hi){ hi=lo; syncSl(); } };
+  $('#hiR').oninput=e=>{ hi=+e.target.value; empty=false; if(hi<lo){ lo=hi; syncSl(); } };
+  const memOf=l=>['A','B','C'].filter(k=>SET_A8[k].includes(l));
+
+  animLoop(dt=>{
+    t+=dt;
+    $('#loV').textContent=empty?'—':lo; $('#hiV').textContent=empty?'—':hi;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const dx=(w*0.9)/11, sx0=w*0.05+dx/2, sy=h*0.13, tr=Math.min(18,dx*0.38);
+    const SX=n=>sx0+n*dx;
+    const P=vennFit(w*0.06,h*0.36,w*0.88,h*0.58);
+    // ---- U frame on the strip ----
+    const tl=empty?SX(0)-dx*0.45:SX(lo)-dx*0.5, tr2=empty?SX(0)-dx*0.45:SX(hi)+dx*0.5;
+    springTo(FL,tl,80,13,dt); springTo(FR,tr2,80,13,dt); FA.x=approach(FA.x,empty?0:1,8,dt);
+    const inU=n=>!empty&&n>=lo&&n<=hi;
+    // strip
+    line(ctx,w*0.03,sy+tr+30,w*0.97,sy+tr+30,COL.mid,1.4);
+    ctx.save(); ctx.globalAlpha=FA.x; rrect(ctx,FL.x+2,sy-tr-10,FR.x-FL.x-4,tr*2+48,10); ctx.fillStyle='rgba(217,160,23,0.09)'; ctx.fill(); ctx.setLineDash([9,6]); ctx.lineDashOffset=-t*18; ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    if(empty) textAt(ctx,'U = ∅',SX(5),sy-tr-36,{align:'center',size:16,weight:700,color:COL.yellow});
+    else textAt(ctx,'U',(FL.x+FR.x)/2,sy-tr-14,{align:'center',size:16,weight:700,color:COL.yellow});
+    // ---- Venn diagram ----
+    const pxy=(hx,hy)=>({x:P.ox+hx*P.s, y:P.oy+hy*P.s});
+    const missing=[]; ['A','B','C'].forEach(k=>SET_A8[k].forEach(l=>{ if(!inU(+l) && !missing.includes(l)) missing.push(l); }));
+    const bad=k=>SET_A8[k].some(l=>!inU(+l));
+    ctx.save(); rrect(ctx,P.ox,P.oy,VW*P.s,VH*P.s,10); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.globalAlpha=0.25+0.75*FA.x; ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.setLineDash(empty?[8,6]:[]); ctx.stroke(); ctx.restore();
+    textAt(ctx,'U',P.ox+10,P.oy+22,{size:16,weight:700,color:COL.yellow});
+    [['A',COL.blue,.32,.56,.22],['C',COL.green,1.0,.52,.36],['B',COL.red,1.0,.52,.16]].forEach(([k,col,cx,cy,r])=>{
+      const c=pxy(cx,cy), b=bad(k);
+      ctx.save(); ctx.beginPath(); ctx.arc(c.x,c.y,r*P.s,0,Math.PI*2); ctx.fillStyle=b?'rgba(217,67,43,0.04)':'rgba(255,255,255,0)'; ctx.fill();
+      ctx.strokeStyle=b?COL.red:col; ctx.lineWidth=2.8; if(b) ctx.setLineDash([8,6]); ctx.lineDashOffset=-t*18; ctx.stroke(); ctx.restore();
+      const a=k==='A'?-2.4:(k==='C'?-0.7:2.3); textAt(ctx,k,c.x+Math.cos(a)*(r*P.s+13),c.y+Math.sin(a)*(r*P.s+13)+5,{align:'center',size:16,weight:700,color:b?COL.red:col});
+    });
+    // ---- tokens: strip home or venn home ----
+    toks.forEach((k,i)=>{
+      const home={x:SX(k.n),y:sy}, vh=HOME8[k.lab], vp=pxy(vh[0],vh[1]);
+      const want=inU(k.n);
+      if(!k.init){ k.x=home.x; k.y=home.y; k.init=true; k.in=false; }
+      if(want!==k.in){ k.in=want; startFlight(k,want?vp.x:home.x,want?vp.y:home.y,0.8,want?110:70,(i%4)*0.06); }
+      const tg=k.in?vp:home;
+      stepSq(k,dt);
+      if(k.fl){ k.fl.x1=tg.x; k.fl.y1=tg.y; stepFlight(k,dt); } else { k.x=approach(k.x,tg.x,10,dt); k.y=approach(k.y,tg.y+(k.in?Math.sin(t*2+i)*2:0),10,dt); }
+    });
+    toks.forEach(k=>{
+      const ms=memOf(k.lab), q=squash(k), stranger=!k.in&&ms.length>0;
+      const r=k.in?Math.max(10,.047*P.s):tr;
+      let st=COL.mid, st2;
+      if(ms.length===1) st=ms[0]==='A'?COL.blue:(ms[0]==='B'?COL.red:COL.green);
+      else if(ms.length>1){ st=COL.green; st2=COL.red; }
+      if(stranger) st=COL.red;
+      const x=k.x+(stranger&&!k.fl?Math.sin(t*40+k.n)*2.2:0);
+      tok(ctx,x,k.y,k.lab,{r,stroke:st,stroke2:k.in?st2:undefined,fill:k.in?'#fff':(stranger?'#fdece7':'#fff'),alpha:(!k.in&&ms.length===0)?0.55:1,sx:q.sx,sy:q.sy,lw:2.4});
+      if(!k.in){ // membership dots under strip tokens
+        ms.forEach((m,j)=>circ(ctx,x+(j-(ms.length-1)/2)*9,k.y+tr+13,3.4,m==='A'?COL.blue:(m==='B'?COL.red:COL.green),m==='A'?COL.blue:(m==='B'?COL.red:COL.green),1));
+        if(stranger) textAt(ctx,'∉ U',x,k.y-tr-8,{align:'center',size:11,weight:700,color:COL.red});
+      }
+    });
+    textAt(ctx,'A = {1, 3, 5}     B = {2, 4, 6}     C = {0, 2, 4, 6, 8}',w*0.03,sy+tr+56,{size:Math.max(12,Math.min(15,w*0.016)),weight:700,color:COL.ink});
+    // ---- verdict ----
+    const yes='<span style="color:var(--f-green)">✓</span>', no='<span style="color:var(--f-red)">✗</span>';
+    $('#v1').innerHTML=bad('A')?no:yes; $('#v2').innerHTML=bad('B')?no:yes; $('#v3').innerHTML=bad('C')?no:yes;
+    const ok=!missing.length;
+    $('#v4').innerHTML=ok?'<span style="color:var(--f-green)">Yes</span>':'<span style="color:var(--f-red)">No</span>';
+    $('#v5').textContent=ok?'nothing — U ⊇ A ∪ B ∪ C':missing.sort((a,b)=>a-b).join(', ');
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY LIST + BOOT
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'1.2a',    title:'Belongs or Not',            desc:'Set a rule · the gate decides ∈ or ∉',          build: buildA1 },
+  { num:'1.2b',    title:'Roster & Set-Builder',      desc:'One rule · two ways to write the set',          build: buildA2 },
+  { num:'1.3–1.4', title:'Empty · Finite · Infinite', desc:'Scan the number line · does it ever stop?',     build: buildA3 },
+  { num:'1.5',     title:'Equal Sets',                desc:'Order and repeats never change a set',          build: buildA4 },
+  { num:'1.6a',    title:'Subsets',                   desc:'Move the circles · is every a ∈ A also in B?',  build: buildA5 },
+  { num:'1.6b',    title:'All Subsets',               desc:'Count in binary · 2ⁿ subsets appear',          build: buildA6 },
+  { num:'1.6c',    title:'Intervals',                 desc:'Open and closed ends on the real line',         build: buildA7 },
+  { num:'1.7–1.8', title:'Universal Set',             desc:'U must hold every element of every set',        build: buildA8 },
+  { num:'1.9',     title:'Union · Intersection · Difference', desc:'Hatch the operation on the circles', build: buildA9 },
+  { num:'1.10',    title:'Complement & De Morgan',    desc:'Two shaded regions that always agree',          build: buildA10 },
+];
+(function(){ const i=parseInt(new URLSearchParams(location.search).get('a'),10); if(i>=0&&i<activities.length) currentIndex=i; })();
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

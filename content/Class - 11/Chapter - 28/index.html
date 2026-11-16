@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 6 — Permutations and Combinations | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.play.on{background:var(--f-red); border-color:var(--f-red);}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn:hover{border-color:var(--navy-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.fb{font-size:var(--fs-xs); font-weight:600; padding:5px 8px; border-radius:7px; background:#fdf4dc; color:#8a6410;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">!</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 6</div>
+      <h1>Permutations and Combinations</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>Item being picked</span>
+      <span><i style="background:var(--f-red)"></i>Fixed · not allowed</span>
+      <span><i style="background:var(--f-blue)"></i>Choices available</span>
+      <span><i style="background:var(--f-green)"></i>Count · valid result</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">6.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* GRADE 11 — CHAPTER 6: PERMUTATIONS AND COMBINATIONS
+   Every activity runs a continuous animation loop. Sliders and buttons only set a TARGET; the drawn objects follow it on
+   spring-dampers, real friction (lock wheels), real projectile arcs (balls, hopping people) or adjacent-swap permutation walks.
+   Colour code: yellow = item being picked · red = fixed / not allowed · blue = choices available · green = count / valid result. */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width,head){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<1.5) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.8);
+  if(L>(head||9)*1.2) arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,head||9);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  if(o.halo){ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.92)'; ctx.strokeText(txt,x,y); }
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function lab(ctx,txt,x,y,color,o){ o=o||{}; o.halo=true; o.color=color; o.weight=o.weight||700; o.size=o.size||13; textAt(ctx,txt,x,y,o); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,TAU); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function dot(ctx,x,y,r,col){ circ(ctx,x,y,r,'#fff',col,1.8); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,stroke,fill,lw,dash){ ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.setLineDash(dash||[]); ctx.lineJoin='round'; ctx.stroke();} ctx.restore(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sg(v,d){ if(!isFinite(v)) return 'not defined'; d=d===undefined?2:d; const s=Number(v.toFixed(d)); return (Object.is(s,-0)||s===0?'0':String(s)).replace('-','−'); }
+function fmt(x,d){ return sg(x,d); }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')'; }
+function normAng(a){ return ((a%TAU)+TAU)%TAU; }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+
+/* angle (radians) as a multiple of π, e.g. 7π/3 */
+function piStr(x){
+  if(Math.abs(x)<1e-9) return '0';
+  const r=x/PI;
+  for(const d of [1,2,3,4,6,8,12]){
+    const n=Math.round(r*d);
+    if(n!==0 && Math.abs(r*d-n)<0.004){
+      const num=Math.abs(n)===1?'π':Math.abs(n)+'π';
+      return (n<0?'−':'')+num+(d>1?'/'+d:'');
+    }
+  }
+  return sg(x,2);
+}
+/* exact fraction if one exists with a small denominator, else a decimal */
+function frac(v){
+  if(!isFinite(v)) return 'not defined';
+  if(Math.abs(v)<1e-9) return '0';
+  for(let q=1;q<=100;q++){ const p=Math.round(v*q);
+    if(Math.abs(v-p/q)<1e-6) return (p<0?'−':'')+Math.abs(p)+(q>1?'/'+q:''); }
+  return sg(v,3);
+}
+/* point on a circle: maths angle a (anticlockwise), canvas y runs down */
+function pt(cx,cy,R,a){ return [cx+R*Math.cos(a), cy-R*Math.sin(a)]; }
+/* arc between two maths angles */
+function arcA(ctx,cx,cy,r,a0,a1,col,lw,dash){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2.4; ctx.lineCap='round'; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.stroke(); ctx.restore();
+}
+function sector(ctx,cx,cy,r,a0,a1,fill){
+  if(Math.abs(a1-a0)<1e-4) return;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,-a0,-a1,a1>a0); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.restore();
+}
+/* the unit circle with axes and radian ticks */
+function unitFrame(ctx,cx,cy,R,o){
+  o=o||{};
+  const E=R*(o.ext||1.3);
+  line(ctx,cx-E,cy,cx+E,cy,COL.mid,1.4); line(ctx,cx,cy-E,cx,cy+E,COL.mid,1.4);
+  arrowHead(ctx,cx+E,cy,0,COL.mid,6); arrowHead(ctx,cx,cy-E,-PI/2,COL.mid,6);
+  if(o.fill) circ(ctx,cx,cy,R,null,o.fill,1);
+  circ(ctx,cx,cy,R,COL.ink,null,2.4);
+  if(o.ticks!==false){
+    [[0,'0'],[PI/2,'π/2'],[PI,'π'],[1.5*PI,'3π/2']].forEach(([a,s])=>{
+      const [x,y]=pt(cx,cy,R,a), [lx,ly]=pt(cx,cy,R+17,a);
+      circ(ctx,x,y,3,COL.ink,'#fff',1.4);
+      textAt(ctx,s,lx,ly+4,{align:'center',size:10.5,weight:600,color:COL.muted});
+    });
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(); let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — natural overshoot and settle. */
+function springTo(st,target,k,damping,dt){
+  const acc = (target-st.x)*k - st.v*damping;
+  st.v += acc*dt; st.x += st.v*dt; return st.x;
+}
+const SK=70, SD=12;                         // the house spring: ω≈8.4 rad/s, ζ≈0.72
+function follow(st,target,dt){ return springTo(st,target,SK,SD,dt); }
+function S(v){ return {x:v,v:0}; }
+
+/* ---------------------------------------------------------------------
+   0c. UI BUILDERS
+   --------------------------------------------------------------------- */
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function chipRow(id,label,items){
+  return `<div class="control-group"><label>${label}</label><div class="chip-wrap" id="${id}">${items.map((it,i)=>`<button class="chip-btn" data-i="${i}">${it}</button>`).join('')}</div></div>`;
+}
+function cards(list,cls){
+  return `<div class="control-group"><div class="result-cards ${cls||''}">${list.map(([id,l,c,wide])=>`<div class="rcard${wide?' wide':''}"><div class="rlabel">${l}</div><div class="rval" id="${id}"${c?` style="color:var(${c})"`:''}>—</div></div>`).join('')}</div></div>`;
+}
+function wireChips(wrap,id,fn){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach(b=>b.onclick=()=>fn(+b.dataset.i,b)); }
+function setActive(wrap,id,i){ wrap.querySelectorAll('#'+id+' .chip-btn').forEach((b,k)=>b.classList.toggle('active',k===i)); }
+function playBtn(id,txt){ return `<button class="toggle-btn play" id="${id}" style="padding:10px;">${txt||'▶ Spin'}</button>`; }
+function setPlay(btn,on,txtOn,txtOff){ btn.textContent=on?(txtOn||'❚❚ Pause'):(txtOff||'▶ Spin'); btn.classList.toggle('on',on); }
+const ease=u=>u<=0?0:u>=1?1:u*u*(3-2*u);
+function val(wrap,id,txt){ wrap.querySelector('#'+id+'V').textContent=txt; }
+function showGroup(wrap,id,on){ wrap.querySelector('#'+id).closest('.control-group').classList.toggle('hidden',!on); }
+function lbl(wrap,id,txt){ wrap.querySelector('#'+id).closest('.control-group').querySelector('label').firstChild.nodeValue=txt; }
+function bounceSpring(st,target,dt){ return springTo(st,target,55,7,dt); }   // livelier: ζ≈0.47
+
+/* coloured text runs on one baseline */
+function runs(ctx,x,y,arr,size,align){
+  ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif'; ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+  const ws=arr.map(a=>ctx.measureText(a[0]).width), tot=ws.reduce((p,c)=>p+c,0);
+  let cx = align==='center'?x-tot/2 : align==='right'?x-tot : x;
+  arr.forEach((a,i)=>{ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.strokeText(a[0],cx,y); ctx.fillStyle=a[1]; ctx.fillText(a[0],cx,y); cx+=ws[i]; });
+  ctx.restore();
+}
+function pill(ctx,txt,x,y,col,size){
+  size=size||12; ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif';
+  const w=ctx.measureText(txt).width+20, h=size+13; rrect(ctx,x-w/2,y-h/2,w,h,h/2);
+  ctx.fillStyle=rgba(col,.13); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.fillStyle=col; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,x,y+1); ctx.restore();
+}
+
+/* ---------------------------------------------------------------------
+   COUNTING TOOLKIT
+   --------------------------------------------------------------------- */
+const PAL=[COL.red,COL.blue,COL.green,COL.yellow,'#7b52c9','#e0702b'];
+const GOLD='#8a6410';
+const fact=n=>{let r=1;for(let i=2;i<=n;i++)r*=i;return r;};
+const nPr=(n,r)=>{ if(r<0||r>n) return 0; let x=1; for(let i=0;i<r;i++) x*=n-i; return x; };
+const nCr=(n,r)=>{ if(r<0||r>n) return 0; r=Math.min(r,n-r); let x=1; for(let i=1;i<=r;i++) x=x*(n-r+i)/i; return Math.round(x); };
+const N=v=>Number(v).toLocaleString('en-IN');
+const rnd=n=>Math.floor(Math.random()*n);
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+function btnRow(list){ return `<div class="control-group"><div class="toggle-group">${list.map(([id,txt,cls])=>`<button class="toggle-btn ${cls||'navy'}" id="${id}">${txt}</button>`).join('')}</div></div>`; }
+function stepper(){ return {acc:0, run(dt,rate,fn){ this.acc+=dt*rate; let g=0; while(this.acc>=1 && g++<300){ this.acc-=1; if(fn()===false){ this.acc=0; break; } } }}; }
+
+/* Steinhaus–Johnson–Trotter: every permutation of n items, one ADJACENT swap at a time */
+function SJT(n){
+  const p=[...Array(n).keys()], d=Array(n).fill(-1);
+  return {p, n, count:1, done:false,
+    next(){
+      let mi=-1, mv=-1;
+      for(let i=0;i<n;i++){ const v=p[i], j=i+d[v]; if(j>=0&&j<n&&p[j]<v&&v>mv){ mv=v; mi=i; } }
+      if(mi<0){ this.done=true; return -1; }
+      const j=mi+d[mv]; [p[mi],p[j]]=[p[j],p[mi]];
+      for(let v=mv+1;v<n;v++) d[v]=-d[v];
+      this.count++; return Math.min(mi,j);
+    }};
+}
+
+/* a rounded tile with a letter */
+function tile(ctx,x,y,w,h,ch,col,o){
+  o=o||{}; ctx.save(); ctx.globalAlpha=o.alpha===undefined?1:o.alpha;
+  rrect(ctx,x-w/2,y-h/2,w,h,Math.min(11,w*.22)); ctx.fillStyle=o.fill||rgba(col,.15); ctx.fill();
+  ctx.strokeStyle=col; ctx.lineWidth=o.lw||2.6; ctx.setLineDash(o.dash||[]); ctx.stroke(); ctx.setLineDash([]);
+  textAt(ctx,ch,x,y+h*.2,{align:'center',size:o.size||h*.56,weight:700,color:o.tcol||col});
+  ctx.restore();
+}
+/* a line-drawn person; feet at (x,y), height s */
+function person(ctx,x,y,s,col,o){
+  o=o||{}; const lw=Math.max(2.2,s*.05), sw=o.swing||0, up=o.arms||0;
+  const hipY=y-s*.40, neckY=y-s*.72, headR=s*.115, headY=y-s*.84;
+  ctx.save(); ctx.globalAlpha=o.alpha===undefined?1:o.alpha;
+  line(ctx,x,hipY,x-s*.11-sw*s*.10,y,COL.ink,lw); line(ctx,x,hipY,x+s*.11+sw*s*.10,y,COL.ink,lw);
+  line(ctx,x,neckY,x,hipY,col,lw*3.2);
+  const ay=neckY+s*.05, lh=lerp(y-s*.38+sw*s*.04, y-s*1.02, up), rh=lerp(y-s*.38-sw*s*.04, y-s*1.02, up);
+  line(ctx,x,ay,x-s*.19-up*s*.03,lh,col,lw*1.5); line(ctx,x,ay,x+s*.19+up*s*.03,rh,col,lw*1.5);
+  circ(ctx,x,headY,headR,COL.ink,'#fff',lw*.9);
+  if(o.face!==false){ circ(ctx,x-headR*.35,headY-headR*.1,s*.012,null,COL.ink,1); circ(ctx,x+headR*.35,headY-headR*.1,s*.012,null,COL.ink,1);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(x,headY+headR*.15,headR*.42,0.15*PI,0.85*PI); ctx.stroke(); ctx.restore(); }
+  if(o.label) textAt(ctx,o.label,x,y+s*.2,{align:'center',size:Math.max(11,s*.2),weight:700,color:o.lcol||col,halo:true});
+  ctx.restore();
+}
+function pantsIcon(ctx,x,y,s,col){ ctx.save(); rrect(ctx,x-s*.5,y-s*.5,s,s*.2,3); ctx.fillStyle=rgba(col,.3); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+  line(ctx,x-s*.25,y-s*.3,x-s*.28,y+s*.5,col,s*.34); line(ctx,x+s*.25,y-s*.3,x+s*.28,y+s*.5,col,s*.34); }
+function shirtIcon(ctx,x,y,s,col){ poly(ctx,[[x-s*.2,y-s*.5],[x+s*.2,y-s*.5],[x+s*.55,y-s*.2],[x+s*.38,y+s*.02],[x+s*.28,y-s*.1],[x+s*.28,y+s*.5],[x-s*.28,y+s*.5],[x-s*.28,y-s*.1],[x-s*.38,y+s*.02],[x-s*.55,y-s*.2]],col,rgba(col,.28),2.2); }
+function capIcon(ctx,x,y,s,col){ ctx.save(); ctx.beginPath(); ctx.arc(x,y+s*.15,s*.42,PI,TAU); ctx.closePath(); ctx.fillStyle=rgba(col,.3); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+  line(ctx,x-s*.1,y+s*.15,x+s*.62,y+s*.15,col,3); }
+
+/* =====================================================================
+   6.1 MOHAN'S WARDROBE   multiplication principle   m × n (× p)
+   The figure really changes clothes: the new garment drops onto him and settles
+   on a spring. Every outfit lights up in the table as it is worn.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('m','Pants',1,5,1,3)+slider('n','Shirts',1,5,1,2)+slider('l','Caps  (0 = none)',0,4,1,0)+slider('sp','Speed',1,4,1,2)+
+    btnRow([['auto','❚❚ Pause','play on'],['nxt','Next outfit ▶','navy']])+
+    cards([['r1','Choices at each stage'],['r2','Total outfits','--f-green'],['r3','Outfit now','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ms=$('#m'), ns=$('#n'), ls=$('#l'), sp=$('#sp'), auto=$('#auto'), nxt=$('#nxt');
+  let on=true, k=0, acc=0, key='', vis=[], cur=[0,0,0], T=0;
+  const dP=S(0), dS=S(0), dC=S(0);
+  function dec(){ const m=+ms.value,n=+ns.value,L=Math.max(1,+ls.value),tot=m*n*L, kk=((k%tot)+tot)%tot; return [Math.floor(kk/(n*L))%m, Math.floor(kk/L)%n, kk%L, tot, kk]; }
+  function advance(){ k++; show(); }
+  function show(){ const c=dec(); if(c[0]!==cur[0]){ dP.x=-.7; dP.v=0; } if(c[1]!==cur[1]){ dS.x=-.7; dS.v=0; } if(c[2]!==cur[2]){ dC.x=-.7; dC.v=0; } cur=c.slice(0,3); vis[c[4]]=true; }
+  auto.onclick=()=>{ on=!on; setPlay(auto,on,'❚❚ Pause','▶ Play'); };
+  nxt.onclick=()=>{ advance(); acc=0; };
+  animLoop(dt=>{
+    const m=+ms.value, n=+ns.value, L=+ls.value, Lq=Math.max(1,L), tot=m*n*Lq;
+    val(wrap,'m',m); val(wrap,'n',n); val(wrap,'l',L||'none'); val(wrap,'sp',+sp.value);
+    const kk=m+'-'+n+'-'+L; if(kk!==key){ key=kk; k=0; vis=[]; cur=[-1,-1,-1]; show(); acc=0; }
+    if(on){ acc+=dt*(.25+.28*(+sp.value)); if(acc>=1){ acc=0; advance(); } }
+    bounceSpring(dP,0,dt); bounceSpring(dS,0,dt); bounceSpring(dC,0,dt); T+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const H=Math.min(h*.62,w*.46), fx=w*.34, fy=h*.86;
+    // total statement
+    const parts=[[String(m),COL.blue],[' × ',COL.muted],[String(n),COL.blue]]; if(L) parts.push([' × ',COL.muted],[String(L),COL.blue]); parts.push([' = ',COL.muted],[String(tot),COL.green]);
+    runs(ctx,w*.04,h*.1,parts,Math.min(34,w*.05));
+    textAt(ctx,'pants × shirts'+(L?' × caps':'')+'  — one stage after another',w*.04,h*.155,{size:12,weight:600,color:COL.mid});
+    // wardrobe columns
+    const cs=Math.min(h*.075,w*.05);
+    function column(x,count,icon,idx,label){
+      textAt(ctx,label,x,h*.235,{align:'center',size:11,weight:700,color:COL.mid});
+      for(let i=0;i<count;i++){ const y=h*.31+i*cs*1.35, sel=i===idx;
+        if(sel) circ(ctx,x,y,cs*.78,COL.yellow,rgba(COL.yellow,.16),3);
+        icon(ctx,x+(sel?cs*.0:0),y,cs,PAL[i]); }
+    }
+    column(w*.075,m,pantsIcon,cur[0],'PANTS');
+    column(w*.63-w*.12,n,shirtIcon,cur[1],'SHIRTS');
+    if(L) column(w*.63-w*.04,L,capIcon,cur[2],'CAPS');
+    // the figure
+    line(ctx,fx-H*.4,fy,fx+H*.4,fy,COL.grid,3);
+    const pc=PAL[cur[0]], sc=PAL[cur[1]], cc=PAL[cur[2]];
+    const hipY=fy-H*.42, neckY=fy-H*.74, headY=fy-H*.86, hr=H*.095;
+    ctx.save(); ctx.globalAlpha=clamp(1+dP.x*.6,.2,1);
+    [-1,1].forEach(sd=>line(ctx,fx+sd*H*.05,hipY+dP.x*H,fx+sd*H*.075,fy-H*.02+dP.x*H,pc,H*.072)); ctx.restore();
+    [-1,1].forEach(sd=>line(ctx,fx+sd*H*.08-H*.03,fy,fx+sd*H*.08+H*.06,fy,COL.ink,H*.03));
+    ctx.save(); ctx.globalAlpha=clamp(1+dS.x*.6,.2,1); const so=dS.x*H;
+    poly(ctx,[[fx-H*.12,neckY+so],[fx+H*.12,neckY+so],[fx+H*.1,hipY+H*.02+so],[fx-H*.1,hipY+H*.02+so]],sc,rgba(sc,.3),Math.max(2,H*.012));
+    [-1,1].forEach(sd=>line(ctx,fx+sd*H*.12,neckY+H*.03+so,fx+sd*H*.19,fy-H*.45+so+Math.sin(T*3+sd)*H*.006,sc,H*.048));
+    ctx.restore();
+    circ(ctx,fx,headY,hr,COL.ink,'#fff',Math.max(2,H*.012));
+    circ(ctx,fx-hr*.35,headY-hr*.1,H*.008,null,COL.ink,1); circ(ctx,fx+hr*.35,headY-hr*.1,H*.008,null,COL.ink,1);
+    if(L){ ctx.save(); ctx.globalAlpha=clamp(1+dC.x*.6,.2,1); const co=dC.x*H;
+      ctx.beginPath(); ctx.arc(fx,headY-hr*.15+co,hr*1.08,PI,TAU); ctx.closePath(); ctx.fillStyle=rgba(cc,.35); ctx.fill(); ctx.strokeStyle=cc; ctx.lineWidth=Math.max(2,H*.012); ctx.stroke();
+      line(ctx,fx,headY-hr*.15+co,fx+hr*1.9,headY-hr*.15+co,cc,Math.max(3,H*.02)); ctx.restore(); }
+    // table (Fig 6.1): pants rows × shirt columns, caps as dots inside each cell
+    const gx=w*.665, gw=w*.31, gy=h*.3, gh=h*.58;
+    const cw=Math.min(gw/n,70), chh=Math.min(gh/m,70), ox=gx+(gw-cw*n)/2, oy=gy;
+    textAt(ctx,'every outfit',gx+gw/2,h*.235,{align:'center',size:11,weight:700,color:COL.mid});
+    for(let i=0;i<m;i++) for(let j=0;j<n;j++){
+      const x=ox+j*cw, y=oy+i*chh;
+      rrect(ctx,x+2,y+2,cw-4,chh-4,6); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.5; ctx.stroke();
+      for(let q=0;q<Lq;q++){ const idx=(i*n+j)*Lq+q, dx=Lq>1?((q+.5)/Lq-.5)*(cw-18):0, isCur=(i===cur[0]&&j===cur[1]&&q===cur[2]);
+        if(isCur) circ(ctx,x+cw/2+dx,y+chh/2,Math.min(cw,chh)*.27,COL.yellow,rgba(COL.yellow,.5),3);
+        else circ(ctx,x+cw/2+dx,y+chh/2,Math.min(cw,chh)*(Lq>1?.1:.14),vis[idx]?COL.green:COL.grid,vis[idx]?COL.green:'#fff',1.6); }
+    }
+    for(let i=0;i<m;i++) circ(ctx,ox-12,oy+i*chh+chh/2,6,'#fff',PAL[i],1.6);
+    for(let j=0;j<n;j++) circ(ctx,ox+j*cw+cw/2,oy-12,6,'#fff',PAL[j],1.6);
+    $('#r1').textContent=m+' · '+n+(L?' · '+L:'');
+    $('#r2').textContent=tot+' = '+m+' × '+n+(L?' × '+L:'');
+    $('#r3').textContent='pants '+(cur[0]+1)+', shirt '+(cur[1]+1)+(L?', cap '+(cur[2]+1):'');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.2 NUMBER LOCK   (Section 6.1 and Exercise 6.1)
+   Digit wheels are rolling cylinders: each trial gives them a real turn and friction
+   brings them to rest. The shackle springs open on the secret code.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('w','Wheels on the lock',2,5,1,4)+slider('g','Digits you remember',0,4,1,1)+slider('sp','Tries per second',1,20,1,6)+
+    chipRow('rep','Repetition of digits',['Not allowed','Allowed'])+
+    btnRow([['go','▶ Try codes','play'],['one','One try ▶','navy'],['nw','New secret','navy']])+
+    cards([['r1','Choices on each wheel'],['r2','Codes to check','--f-green'],['r3','Try number','--f-blue'],['r4','Lock','--f-red']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ws=$('#w'), gs=$('#g'), sp=$('#sp'), go=$('#go'), one=$('#one'), nw=$('#nw');
+  const FIX=[7,3,5,1,9]; let rep=0, on=false, t=0, secret=0, key='', open=S(0), pos=[S(0),S(0),S(0),S(0),S(0)], st=stepper(), solved=false, flash=0;
+  wireChips(wrap,'rep',i=>{ rep=i; setActive(wrap,'rep',i); }); setActive(wrap,'rep',0);
+  function cfg(){ const w=+ws.value, g=Math.min(+gs.value,w-1), f=w-g, fixed=FIX.slice(0,g);
+    const avail=rep?[0,1,2,3,4,5,6,7,8,9]:[0,1,2,3,4,5,6,7,8,9].filter(d=>!fixed.includes(d));
+    const total=rep?Math.pow(10,f):nPr(avail.length,f); return {w,g,f,fixed,avail,total}; }
+  function nth(c,k){ const out=[]; if(rep){ for(let i=c.f-1;i>=0;i--){ out[i]=k%10; k=Math.floor(k/10); } return out; }
+    const pool=c.avail.slice(); for(let i=0;i<c.f;i++){ const rest=c.f-1-i, blk=nPr(pool.length-1,rest), q=Math.floor(k/blk); out.push(pool[q]); pool.splice(q,1); k%=blk; } return out; }
+  function turn(c,k){ const d=nth(c,k); c.fixed.forEach((v,i)=>{ pos[i].x=v; pos[i].v=0; pos[i].tgt=v; });
+    d.forEach((v,i)=>{ const s=pos[c.g+i], base=Math.round(s.x), delta=((v-base)%10+10)%10; s.tgt=base+delta+(delta===0?0:0); if(delta===0) s.v+=14; }); }
+  function newSecret(c){ secret=rnd(c.total); t=0; solved=false; open.x=0; open.v=0; turn(c,0); }
+  function tryNext(c){ if(solved) return false; t++; if(t>=c.total) t=c.total-1; turn(c,t); if(t===secret){ solved=true; on=false; setPlay(go,false,'','▶ Try codes'); open.v=9; flash=1; } return true; }
+  go.onclick=()=>{ if(solved){ newSecret(cfg()); } on=!on; setPlay(go,on,'❚❚ Pause','▶ Try codes'); };
+  one.onclick=()=>{ const c=cfg(); if(solved) newSecret(c); tryNext(c); };
+  nw.onclick=()=>{ newSecret(cfg()); };
+  animLoop(dt=>{
+    const c=cfg(); val(wrap,'w',c.w); val(wrap,'g',c.g); val(wrap,'sp',+sp.value);
+    const kk=c.w+'-'+c.g+'-'+rep; if(kk!==key){ key=kk; on=false; setPlay(go,false,'','▶ Try codes'); newSecret(c); }
+    if(on) st.run(dt,+sp.value,()=>tryNext(c));
+    c.fixed.forEach((v,i)=>{ pos[i].x=v; });
+    for(let i=c.g;i<c.w;i++){ const s=pos[i]; springTo(s,s.tgt===undefined?0:s.tgt,46,12.5,dt); }
+    springTo(open,solved?1:0,60,6,dt); flash=Math.max(0,flash-dt*.8);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cw=Math.min(w*.13,92), gap=cw*.18, bw=c.w*cw+(c.w+1)*gap, bh=Math.min(h*.4,cw*3.1), bx=w/2-bw/2, by=h*.28;
+    // shackle
+    ctx.save(); const px=bx+bw*.5-Math.min(bw*.3,h*.1), py=by; ctx.translate(px,py); ctx.rotate(-open.x*.55); ctx.translate(-px,-py);
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=Math.max(9,cw*.14); ctx.lineCap='round'; ctx.beginPath();
+    const sr=Math.min(bw*.3,h*.1), lg=h*.035; ctx.moveTo(px,py+2); ctx.lineTo(px,py-lg-open.x*h*.03); ctx.arc(px+sr,py-lg-open.x*h*.03,sr,PI,0); ctx.lineTo(px+2*sr,py-lg+h*.03*(1-open.x)); ctx.stroke(); ctx.restore();
+    // body
+    rrect(ctx,bx,by,bw,bh,16); ctx.fillStyle='#eef2f8'; ctx.fill(); ctx.strokeStyle=solved?COL.green:COL.ink; ctx.lineWidth=4; ctx.stroke();
+    if(flash>0){ ctx.save(); ctx.globalAlpha=flash*.5; rrect(ctx,bx-6,by-6,bw+12,bh+12,20); ctx.strokeStyle=COL.green; ctx.lineWidth=8; ctx.stroke(); ctx.restore(); }
+    // wheels
+    const Rr=bh*.42, cy=by+bh/2, shown=nth(c,Math.min(t,c.total-1));
+    for(let i=0;i<c.w;i++){
+      const x=bx+gap+i*(cw+gap), fixedW=i<c.g, p=pos[i].x;
+      ctx.save(); rrect(ctx,x,by+bh*.12,cw,bh*.76,10); ctx.fillStyle='#fff'; ctx.fill(); ctx.clip();
+      for(let m=Math.floor(p)-3;m<=Math.ceil(p)+3;m++){
+        const th=(m-p)*.62; if(Math.abs(th)>1.45) continue; const y=cy+Rr*Math.sin(th)*1.1, sc=Math.cos(th);
+        const dgt=((m%10)+10)%10, mid=Math.abs(m-p)<.5;
+        textAt(ctx,String(dgt),x+cw/2,y+cw*.22*sc,{align:'center',size:cw*.72*sc,weight:700,color:fixedW?COL.red:(mid?COL.ink:COL.mid),alpha:Math.max(.15,sc*sc)});
+      }
+      const gr=ctx.createLinearGradient(0,by+bh*.12,0,by+bh*.88); gr.addColorStop(0,'rgba(15,38,64,.28)'); gr.addColorStop(.28,'rgba(15,38,64,0)'); gr.addColorStop(.72,'rgba(15,38,64,0)'); gr.addColorStop(1,'rgba(15,38,64,.28)');
+      ctx.fillStyle=gr; ctx.fillRect(x,by+bh*.12,cw,bh*.76); ctx.restore();
+      rrect(ctx,x,by+bh*.12,cw,bh*.76,10); ctx.strokeStyle=fixedW?COL.red:COL.yellow; ctx.lineWidth=fixedW?3.4:3.4; ctx.stroke();
+      // choices under the wheel
+      const ch=fixedW?1:(rep?10:c.avail.length-(i-c.g));
+      pill(ctx,String(ch),x+cw/2,by+bh+24,fixedW?COL.red:COL.blue,Math.min(18,cw*.26));
+      if(fixedW) textAt(ctx,'known',x+cw/2,by-6+bh*.12-2,{align:'center',size:10,weight:700,color:COL.red});
+    }
+    // statement
+    const parts=[]; for(let i=0;i<c.w;i++){ const fixedW=i<c.g, ch=fixedW?1:(rep?10:c.avail.length-(i-c.g)); if(i) parts.push([' × ',COL.muted]); parts.push([String(ch),fixedW?COL.red:COL.blue]); }
+    parts.push([' = ',COL.muted],[N(c.total),COL.green]);
+    runs(ctx,w/2,by+bh+70,parts,Math.min(28,w*.04),'center');
+    textAt(ctx,'codes to check'+(c.g?'  (the first '+c.g+' digit'+(c.g>1?'s':'')+' known)':''),w/2,by+bh+92,{align:'center',size:12,weight:600,color:COL.mid});
+    textAt(ctx,solved?'OPENED on try '+N(t+1):'try  '+N(t+1)+'  of  '+N(c.total),w/2,h*.07,{align:'center',size:Math.min(22,w*.03),weight:700,color:solved?COL.green:COL.ink});
+    $('#r1').textContent=Array.from({length:c.w},(_,i)=>i<c.g?'1':(rep?10:c.avail.length-(i-c.g))).join(' · ');
+    $('#r2').textContent=N(c.total);
+    $('#r3').textContent=N(t+1)+' / '+N(c.total);
+    $('#r4').textContent=solved?'open':'locked'; $('#r4').style.color=solved?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.3 FLAG SIGNALS   (Examples 2 and 4)
+   Flags are hoisted up a mast one after another; each flag waves in the wind.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','Flags available',2,5,1,5)+slider('r','Flags in one signal',1,5,1,2)+slider('sp','Signals per second',1,10,1,2)+
+    chipRow('md','Count',['Exactly r flags','At least 2 flags (Example 4)'])+
+    btnRow([['go','❚❚ Pause','play on'],['one','Next signal ▶','navy']])+
+    cards([['r1','Signals with this many flags'],['r2','Total','--f-green'],['r3','Signal now','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), rs=$('#r'), sp=$('#sp'), go=$('#go'), one=$('#one');
+  let md=0, on=true, t=0, key='', T=0, st=stepper(); setActive(wrap,'md',0);
+  const hoist=Array.from({length:5},()=>S(0)), ids=[-1,-1,-1,-1,-1], last=[0,0,0,0,0];
+  wireChips(wrap,'md',i=>{ md=i; setActive(wrap,'md',i); });
+  const letters='ABCDE';
+  function plan(n,r){ const rows=[]; for(let q=1;q<=n;q++) rows.push({q,cnt:nPr(n,q),inc:md?q>=2:q===r}); return rows; }
+  function locate(rows,k){ let acc=0; for(const rw of rows){ if(!rw.inc) continue; if(k<acc+rw.cnt) return [rw.q,k-acc]; acc+=rw.cnt; } return [rows.find(x=>x.inc).q,0]; }
+  function nthPerm(n,q,k){ const pool=[...Array(n).keys()], out=[]; for(let i=0;i<q;i++){ const blk=nPr(pool.length-1,q-1-i), z=Math.floor(k/blk); out.push(pool[z]); pool.splice(z,1); k%=blk; } return out; }
+  function apply(n,r){ const rows=plan(n,r), tot=rows.filter(x=>x.inc).reduce((a,b)=>a+b.cnt,0); t=((t%tot)+tot)%tot; const [q,k]=locate(rows,t), sig=nthPerm(n,q,k);
+    for(let j=0;j<5;j++){ const id=j<q?sig[j]:-1; if(id!==ids[j]){ if(id>=0){ hoist[j].x=0; hoist[j].v=0; } ids[j]=id; if(id>=0) last[j]=id; } } return {rows,tot,q,sig}; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); };
+  one.onclick=()=>{ t++; };
+  animLoop(dt=>{
+    const n=+ns.value; rs.max=n; if(+rs.value>n) rs.value=n; const r=+rs.value; val(wrap,'n',n); val(wrap,'r',r); val(wrap,'sp',+sp.value);
+    const kk=n+'-'+r+'-'+md; if(kk!==key){ key=kk; t=0; ids.fill(-1); }
+    if(on) st.run(dt,+sp.value*.9,()=>{ t++; });
+    T+=dt; const {rows,tot,q,sig}=apply(n,r);
+    for(let j=0;j<5;j++) bounceSpring(hoist[j],ids[j]>=0?1:0,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const fh=Math.min(h*.115,w*.07), fw=fh*2.1, px=w*.2, top=h*.08, bot=h*.95;
+    // mast + halyard
+    line(ctx,px,top-8,px,bot,COL.ink,6); circ(ctx,px,top-10,7,COL.ink,'#fff',3); line(ctx,px-18,bot,px+18,bot,COL.ink,6);
+    for(let j=0;j<5;j++){
+      const hv=clamp(hoist[j].x,0,1.15), id=ids[j]; if(id<0&&hv<.02) continue;
+      const home=top+8+j*fh*1.3, y=home+(1-hv)*(bot-home-fh), col=PAL[id>=0?id:last[j]];
+      ctx.save(); ctx.globalAlpha=id>=0?1:clamp(hv*2,0,1);
+      const top2=[], bt=[]; for(let s=0;s<=14;s++){ const u=s/14, off=Math.sin(5.5*u-T*5+j*.9)*fh*.16*u; top2.push([px+u*fw,y+off]); bt.push([px+u*fw,y+fh+off]); }
+      poly(ctx,top2.concat(bt.reverse()),col,rgba(col,.2),3);
+      const my=[]; for(let s=0;s<=14;s++){ const u=s/14; my.push([px+u*fw,y+fh*.5+Math.sin(5.5*u-T*5+j*.9)*fh*.16*u]); }
+      ctx.beginPath(); my.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.strokeStyle=rgba(col,.5); ctx.lineWidth=2; ctx.stroke();
+      textAt(ctx,letters[id>=0?id:last[j]],px+fw*.5,y+fh*.68+Math.sin(5.5*.5-T*5+j*.9)*fh*.08,{align:'center',size:fh*.55,weight:700,color:col});
+      ctx.restore();
+      textAt(ctx,String(j+1),px-16,y+fh*.7,{align:'right',size:12,weight:700,color:COL.blue});
+    }
+    // rack
+    const rx0=w*.43, rw=w*.5, ry=h*.17;
+    textAt(ctx,'flags in the box',rx0,ry-14,{size:11,weight:700,color:COL.mid});
+    for(let i=0;i<n;i++){ const used=sig.indexOf(i)>=0, x=rx0+i*Math.min(rw/n,86)+8;
+      poly(ctx,[[x,ry],[x+36,ry+3],[x+36,ry+26],[x,ry+23]],used?COL.mid:PAL[i],used?'#f3f6fa':rgba(PAL[i],.25),2.2);
+      line(ctx,x,ry-4,x,ry+36,used?COL.mid:COL.ink,2.4); textAt(ctx,letters[i],x+20,ry+20,{align:'center',size:13,weight:700,color:used?COL.mid:PAL[i]}); }
+    // rows: nPr for each signal length
+    const bx=w*.43, by=h*.36, bw=w*.34, rh=Math.min(h*.075,38), mx=Math.max(...rows.map(x=>x.cnt));
+    textAt(ctx,'signals by number of flags',bx,by-12,{size:11,weight:700,color:COL.mid});
+    rows.forEach((rw,i)=>{ const y=by+i*rh*1.25, cur=rw.q===q&&rw.inc;
+      textAt(ctx,rw.q+' flag'+(rw.q>1?'s':''),bx,y+rh*.62,{size:12,weight:600,color:rw.inc?COL.ink:COL.mid});
+      const L=Math.max(3,rw.cnt/mx*bw);
+      rrect(ctx,bx+68,y+3,L,rh-6,6); ctx.fillStyle=rw.inc?rgba(COL.blue,.22):'#f3f6fa'; ctx.fill(); ctx.strokeStyle=rw.inc?COL.blue:COL.grid; ctx.lineWidth=2; ctx.stroke();
+      if(cur){ const prog=(locate(rows,t)[1]+1)/rw.cnt; rrect(ctx,bx+68,y+3,Math.max(6,L*prog),rh-6,6); ctx.fillStyle=rgba(COL.yellow,.55); ctx.fill(); }
+      textAt(ctx,n+'P'+rw.q+' = '+rw.cnt,bx+68+L+8,y+rh*.62,{size:12,weight:700,color:rw.inc?COL.blue:COL.mid});
+    });
+    const incs=rows.filter(x=>x.inc);
+    runs(ctx,bx,by+rows.length*rh*1.25+22,[['total  ',COL.muted],[incs.map(x=>x.cnt).join(' + '),COL.blue],[' = ',COL.muted],[String(tot),COL.green]],Math.min(24,w*.032));
+    textAt(ctx,'signal '+(locate(rows,t)[1]+1+rows.filter(x=>x.inc&&x.q<q).reduce((a,b)=>a+b.cnt,0))+' of '+tot,w*.43,h*.07,{size:Math.min(20,w*.026),weight:700,color:COL.ink});
+    const cur=rows.find(x=>x.q===q);
+    $('#r1').textContent=n+'P'+q+' = '+cur.cnt; $('#r2').textContent=tot;
+    $('#r3').textContent=sig.map(i=>letters[i]).join(' ↓ ')+'  (top to bottom)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.4 FACTORIAL LINE-UP   n!  and  0! = 1
+   People swap places two at a time (adjacent swaps) until every arrangement has been seen.
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','People in the line, n',0,6,1,4)+slider('sp','Swaps per second',1,14,1,3)+
+    btnRow([['go','❚❚ Pause','play on'],['one','One swap ▶','navy'],['rs','Restart','navy']])+
+    cards([['r1','n! = n × (n − 1)!'],['r2','Arrangements seen','--f-blue'],['r3','Total n!','--f-green'],['r4','Who stood first, most often','--f-yellow',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), sp=$('#sp'), go=$('#go'), one=$('#one'), rs=$('#rs');
+  let on=true, g=null, key='', st=stepper(), tx=[], hop=[], tally=[], T=0;
+  const names='ABCDEF';
+  function reset(){ const n=+ns.value; g=SJT(n); tx=Array.from({length:n},()=>S(0)); hop=Array.from({length:n},()=>0); tally=Array(n).fill(0); if(n) tally[g.p[0]]++; tx.forEach((s,i)=>{ s.x=-1e9; }); }
+  function step(){ if(!g||g.done) return false; const s=g.next(); if(s<0) return false; tally[g.p[0]]++; return true; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); };
+  one.onclick=()=>{ step(); }; rs.onclick=()=>reset();
+  animLoop(dt=>{
+    const n=+ns.value; val(wrap,'n',n); val(wrap,'sp',+sp.value);
+    if(key!==String(n)){ key=String(n); reset(); }
+    if(on) st.run(dt,+sp.value,step);
+    T+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sp0=Math.min(w*.8/Math.max(n,1),w*.13), ps=Math.min(h*.36,sp0*1.7), x0=w*.46-(n-1)*sp0/2, fy=h*.6;
+    line(ctx,w*.06,fy+4,w*.86,fy+4,COL.grid,4);
+    if(n===0){ textAt(ctx,'nobody in the line — there is exactly ONE way to arrange nobody',w*.46,fy-ps*.4,{align:'center',size:Math.min(17,w*.022),weight:600,color:COL.mid});
+      pill(ctx,'0!  =  1',w*.46,fy-ps*.75,COL.green,20); }
+    const posOf=[]; if(g) g.p.forEach((id,i)=>posOf[id]=i);
+    for(let id=0;id<n;id++){
+      const s=tx[id], tgt=x0+posOf[id]*sp0; if(s.x<-1e8){ s.x=tgt; s.v=0; }
+      const before=s.x; springTo(s,tgt,70,11,dt);
+      const lift=clamp((tgt-s.x)*.55,-ps*.35,ps*.35);
+      person(ctx,s.x,fy-Math.max(0,lift),ps,PAL[id],{label:names[id],swing:Math.sin(T*14+id)*Math.min(1,Math.abs(tgt-s.x)/sp0*3),arms:Math.min(1,Math.abs(tgt-s.x)/sp0*2)});
+      // tally bar above each home slot of this person
+      const tb=tally[id]/Math.max(1,g.count)*ps*.7; rrect(ctx,s.x-8,fy-ps*1.12-tb,16,Math.max(2,tb),3); ctx.fillStyle=rgba(COL.yellow,.55); ctx.fill();
+    }
+    if(n>0) textAt(ctx,'bars: times each person stood FIRST',w*.04,fy-ps*1.45,{size:11,weight:700,color:COL.mid});
+    // statement
+    const fac=[]; for(let i=n;i>=1;i--){ if(fac.length) fac.push([' × ',COL.muted]); fac.push([String(i),COL.blue]); }
+    if(!fac.length) fac.push(['1',COL.blue]);
+    runs(ctx,w*.04,h*.1,[[n+'!  =  ',COL.ink]].concat(fac,[['  =  ',COL.muted],[N(fact(n)),COL.green]]),Math.min(30,w*.042));
+    textAt(ctx,'arrangement '+N(g.count)+' of '+N(fact(n)),w*.04,h*.16,{size:13,weight:600,color:COL.mid});
+    // log-height bars of 0!..6!
+    const bx=w*.62, by=h*.93, bw=Math.min(w*.05,40);
+    for(let i=0;i<=6;i++){ const bh=(Math.log10(fact(i)+1)/Math.log10(721))*h*.2, x=w*.5+i*bw*1.25+ (w*.04), cur=i===n;
+      rrect(ctx,x,by-bh,bw,Math.max(3,bh),4); ctx.fillStyle=cur?rgba(COL.green,.4):'#eef2f8'; ctx.fill(); ctx.strokeStyle=cur?COL.green:COL.border; ctx.lineWidth=2; ctx.stroke();
+      textAt(ctx,i+'!',x+bw/2,by+14,{align:'center',size:11,weight:700,color:cur?COL.green:COL.mid}); textAt(ctx,String(fact(i)),x+bw/2,by-bh-5,{align:'center',size:10.5,weight:700,color:cur?COL.green:COL.mid}); }
+    const top=n?tally.indexOf(Math.max(...tally)):-1;
+    $('#r1').textContent=n? n+' × '+(n-1)+'! = '+n+' × '+N(fact(n-1)):'0! = 1';
+    $('#r2').textContent=N(g.count); $('#r3').textContent=N(fact(n));
+    $('#r4').textContent=n?names[top]+' — '+tally[top]+' times (each person gets (n−1)! = '+N(fact(n-1))+')':'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.5 nPr = n! / (n − r)!   (Theorem 1, Section 6.3.3)
+   All n! line-ups are walked through. Only the first r places count, so every seating
+   of r people shows up (n − r)! times — that is exactly the division.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','Objects, n',2,7,1,5)+slider('r','Places to fill, r',1,7,1,3)+slider('sp','Line-ups per second',1,30,1,5)+
+    btnRow([['go','❚❚ Pause','play on'],['one','One swap ▶','navy'],['fin','Finish all ⏭','navy']])+
+    cards([['r1','n!  (every line-up)'],['r2','(n − r)!  (hidden copies)'],['r3','nPr = n! ÷ (n − r)!','--f-green'],['r4','Repetition allowed:  nʳ','--f-blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), rs=$('#r'), sp=$('#sp'), go=$('#go'), one=$('#one'), fin=$('#fin');
+  let on=true, g=null, key='', st=stepper(), tx=[], seen=new Set(), newFlash=0, lastNew=false, T=0, doneFlag=false;
+  const L='ABCDEFG';
+  function pref(r){ return g.p.slice(0,r).join(''); }
+  function reset(){ const n=+ns.value, r=Math.min(+rs.value,n); g=SJT(n); tx=Array.from({length:n},()=>S(-1e9)); seen=new Set([pref(r)]); lastNew=true; newFlash=1; }
+  function step(){ const r=Math.min(+rs.value,+ns.value); if(!g||g.done) return false; if(g.next()<0) return false; const k=pref(r); lastNew=!seen.has(k); seen.add(k); if(lastNew) newFlash=1; return true; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); };
+  one.onclick=()=>{ step(); }; fin.onclick=()=>{ let q=0; while(step()&&q++<6e6); };
+  animLoop(dt=>{
+    const n=+ns.value; rs.max=n; if(+rs.value>n) rs.value=n; const r=+rs.value; val(wrap,'n',n); val(wrap,'r',r); val(wrap,'sp',+sp.value);
+    const kk=n+'-'+r; if(kk!==key){ key=kk; reset(); }
+    if(on) st.run(dt,+sp.value,step); T+=dt; newFlash=Math.max(0,newFlash-dt*2.2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=Math.min(w*.8/n,w*.12), th=tw*.95, x0=w*.5-(n-1)*tw*1.08/2, step_=tw*1.08, fy=h*.5;
+    const posOf=[]; g.p.forEach((id,i)=>posOf[id]=i);
+    // seats and waiting area
+    const seatsX0=x0-step_/2, seatsX1=x0+(r-1)*step_+step_/2, restX1=x0+(n-1)*step_+step_/2;
+    rrect(ctx,seatsX0,fy-th*.75,seatsX1-seatsX0,th*1.5,14); ctx.fillStyle=rgba(COL.yellow,.1); ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.setLineDash([]); ctx.stroke();
+    if(r<n){ rrect(ctx,seatsX1+4,fy-th*.75,restX1-seatsX1-4,th*1.5,14); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.setLineDash([6,5]); ctx.stroke(); ctx.setLineDash([]); }
+    textAt(ctx,'r = '+r+' places  (order matters)',(seatsX0+seatsX1)/2,fy-th*.75-12,{align:'center',size:12,weight:700,color:GOLD});
+    if(r<n) textAt(ctx,'n − r = '+(n-r)+' left out',(seatsX1+restX1)/2+2,fy-th*.75-12,{align:'center',size:12,weight:700,color:COL.mid});
+    for(let id=0;id<n;id++){
+      const s=tx[id], tgt=x0+posOf[id]*step_; if(s.x<-1e8){ s.x=tgt; s.v=0; }
+      springTo(s,tgt,70,11,dt); const lift=Math.max(0,clamp((tgt-s.x)*.5,-th*.6,th*.6)), inSeat=posOf[id]<r;
+      tile(ctx,s.x,fy-lift,tw*.86,th*.86,L[id],inSeat?COL.yellow:COL.mid,{tcol:inSeat?GOLD:COL.mid,alpha:inSeat?1:.75,fill:inSeat?rgba(COL.yellow,.22):'#f3f6fa'});
+    }
+    // verdict for the current line-up
+    const expected=nPr(n,r), found=seen.size;
+    pill(ctx,lastNew?'NEW seating':'seen before',w*.5,fy+th*1.1,lastNew?COL.green:COL.red,14);
+    if(newFlash>0){ ctx.save(); ctx.globalAlpha=newFlash*.5; rrect(ctx,seatsX0-5,fy-th*.75-5,seatsX1-seatsX0+10,th*1.5+10,17); ctx.strokeStyle=COL.green; ctx.lineWidth=6; ctx.stroke(); ctx.restore(); }
+    // progress bars
+    const bx=w*.12, bw=w*.76, by=h*.86, bh=h*.04;
+    function bar(y,frac,col,lab,right){ rrect(ctx,bx,y,bw,bh,bh/2); ctx.fillStyle='#eef2f8'; ctx.fill(); if(frac>0){ rrect(ctx,bx,y,Math.max(bh,bw*frac),bh,bh/2); ctx.fillStyle=rgba(col,.45); ctx.fill(); }
+      ctx.strokeStyle=col; ctx.lineWidth=2; rrect(ctx,bx,y,bw,bh,bh/2); ctx.stroke();
+      textAt(ctx,lab,bx,y-6,{size:12,weight:700,color:col===COL.green?COL.green:COL.muted}); textAt(ctx,right,bx+bw,y-6,{align:'right',size:12,weight:700,color:col}); }
+    bar(by-h*.11,g.count/fact(n),COL.blue,'line-ups walked through',N(g.count)+' / '+N(fact(n)));
+    bar(by,found/expected,COL.green,'different ways to fill the '+r+' places',N(found)+' / '+N(expected));
+    runs(ctx,w*.5,h*.12,[[n+'P'+r+'  =  ',COL.ink],[n+'!',COL.blue],[' ÷ ',COL.muted],[(n-r)+'!',COL.red],['  =  ',COL.muted],[N(expected),COL.green]],Math.min(30,w*.04),'center');
+    textAt(ctx,'each seating of '+r+' appears '+N(fact(n-r))+' times among the '+N(fact(n))+' line-ups',w*.5,h*.18,{align:'center',size:13,weight:600,color:COL.mid});
+    $('#r1').textContent=N(fact(n)); $('#r2').textContent=N(fact(n-r)); $('#r3').textContent=N(expected); $('#r4').textContent=n+'^'+r+' = '+N(Math.pow(n,r));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.6 REPEATED LETTERS   (Section 6.3.4, Examples 9, 15, 16)
+   All n tiles are treated as different and walked through; whenever two look-alikes swap,
+   the word does not change. Distinct words = n! ÷ (p! q! …)
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  const WORDS=['ROOT','BANANA','LETTER','INSTITUTE'];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('wd','Word',WORDS)+slider('sp','Tiles walked per second',1,60,1,6)+
+    chipRow('sb','Treat look-alikes as',['the same letter','different (O₁, O₂ …)'])+
+    btnRow([['go','❚❚ Pause','play on'],['fin','Finish all ⏭','navy'],['rs','Restart','navy']])+
+    cards([['r1','Tiles walked'],['r2','Distinct words found','--f-green'],['r3','n! ÷ (p! q! …)','--f-blue'],['r4','Each word appears','--f-red',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sp=$('#sp'), go=$('#go'), fin=$('#fin'), rs=$('#rs');
+  let wi=0, sb=0, on=true, g=null, st=stepper(), tx=[], seen=new Set(), lastNew=true, flash=1, info=null, T=0;
+  wireChips(wrap,'wd',i=>{ wi=i; setActive(wrap,'wd',i); reset(); }); setActive(wrap,'wd',0);
+  wireChips(wrap,'sb',i=>{ sb=i; setActive(wrap,'sb',i); }); setActive(wrap,'sb',0);
+  function analyse(word){ const cnt={}; [...word].forEach(c=>cnt[c]=(cnt[c]||0)+1); const kinds=Object.keys(cnt).filter(c=>cnt[c]>1); const col={}; kinds.forEach((c,i)=>col[c]=PAL[[0,1,2,4][i%4]]);
+    let div=1; Object.values(cnt).forEach(v=>div*=fact(v)); const seq={}; const sub=[...word].map(c=>{ seq[c]=(seq[c]||0)+1; return seq[c]; });
+    return {word,n:word.length,cnt,col,div,total:fact(word.length)/div,sub}; }
+  function wordOf(){ return g.p.map(i=>info.word[i]).join(''); }
+  function reset(){ info=analyse(WORDS[wi]); g=SJT(info.n); tx=Array.from({length:info.n},()=>S(-1e9)); seen=new Set([wordOf()]); lastNew=true; flash=1; }
+  function step(){ if(g.done) return false; if(g.next()<0) return false; const k=wordOf(); lastNew=!seen.has(k); seen.add(k); if(lastNew) flash=1; return true; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; rs.onclick=()=>reset();
+  fin.onclick=()=>{ let q=0; while(step()&&q++<4e6); };
+  reset();
+  animLoop(dt=>{
+    val(wrap,'sp',+sp.value); if(on) st.run(dt,+sp.value,step); T+=dt; flash=Math.max(0,flash-dt*2.2);
+    const n=info.n, {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=Math.min(w*.84/n,w*.11), th=tw*1.05, stp=tw*1.08, x0=w*.5-(n-1)*stp/2, fy=h*.46;
+    line(ctx,w*.06,fy+th*.7,w*.94,fy+th*.7,COL.grid,3);
+    const posOf=[]; g.p.forEach((id,i)=>posOf[id]=i);
+    for(let id=0;id<n;id++){
+      const s=tx[id], tgt=x0+posOf[id]*stp; if(s.x<-1e8){ s.x=tgt; s.v=0; } springTo(s,tgt,70,11,dt);
+      const lift=Math.max(0,clamp((tgt-s.x)*.5,-th*.6,th*.6)), ch=info.word[id], col=info.col[ch]||COL.ink;
+      tile(ctx,s.x,fy-lift,tw*.88,th*.88,ch,col,{tcol:col});
+      if(sb&&info.col[ch]) textAt(ctx,String(info.sub[id]),s.x+tw*.3,fy-lift+th*.34,{size:Math.max(10,tw*.22),weight:700,color:col});
+    }
+    pill(ctx,lastNew?'NEW word':'a word we already had',w*.5,fy+th*1.1,lastNew?COL.green:COL.red,14);
+    if(flash>0){ ctx.save(); ctx.globalAlpha=flash*.45; rrect(ctx,x0-stp*.6,fy-th*.6,(n-1)*stp+stp*1.2,th*1.2,14); ctx.strokeStyle=lastNew?COL.green:COL.red; ctx.lineWidth=6; ctx.stroke(); ctx.restore(); }
+    // formula
+    const parts=[[info.n+'!',COL.blue]]; const dv=Object.entries(info.cnt).filter(e=>e[1]>1);
+    if(dv.length){ parts.push([' ÷ ',COL.muted]); dv.forEach(([c,v],i)=>{ if(i) parts.push([' · ',COL.muted]); parts.push([v+'!',info.col[c]]); }); }
+    parts.push([' = ',COL.muted],[N(info.total),COL.green]);
+    runs(ctx,w*.5,h*.12,parts,Math.min(32,w*.045),'center');
+    textAt(ctx,'look-alike tiles swap → the word does not change',w*.5,h*.18,{align:'center',size:13,weight:600,color:COL.mid});
+    const bx=w*.12, bw=w*.76, by=h*.86, bh=h*.04;
+    function bar(y,frac,col,lab,right){ rrect(ctx,bx,y,bw,bh,bh/2); ctx.fillStyle='#eef2f8'; ctx.fill(); if(frac>0){ rrect(ctx,bx,y,Math.max(bh,bw*clamp(frac,0,1)),bh,bh/2); ctx.fillStyle=rgba(col,.45); ctx.fill(); }
+      ctx.strokeStyle=col; ctx.lineWidth=2; rrect(ctx,bx,y,bw,bh,bh/2); ctx.stroke(); textAt(ctx,lab,bx,y-6,{size:12,weight:700,color:COL.muted}); textAt(ctx,right,bx+bw,y-6,{align:'right',size:12,weight:700,color:col}); }
+    bar(by-h*.11,g.count/info.total/info.div,COL.blue,'tiles walked through (all treated as different)',N(g.count)+' / '+N(info.total*info.div));
+    bar(by,seen.size/info.total,COL.green,'distinct words found',N(seen.size)+' / '+N(info.total));
+    $('#r1').textContent=N(g.count)+' of '+N(info.total*info.div); $('#r2').textContent=N(seen.size); $('#r3').textContent=N(info.total);
+    $('#r4').textContent=dv.length?info.div+' times  ('+dv.map(e=>e[1]+'!').join(' × ')+(dv.length>1?' = '+info.div:'')+')':'once — all letters differ';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.7 VOWELS TOGETHER   (Examples 14 and 16, Exercise 6.3)
+   Vowels are glued into one block that slides between the consonants.
+   Without the glue, random shuffles show how rarely they end up together.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  const WORDS=['DAUGHTER','MONDAY','EQUATION'];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('wd','Word (all letters different)',WORDS)+slider('pos','Where the vowel block sits',0,5,1,2)+
+    btnRow([['gl','🔗 Glue vowels','play'],['sh','Shuffle ⟳','navy'],['au','▶ Auto-shuffle','navy']])+
+    cards([['r1','Total  n!'],['r2','Vowels together  (c+1)! × v!','--f-green'],['r3','Never together','--f-red'],['r4','Random shuffles that kept the vowels together','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ps=$('#pos'), gl=$('#gl'), sh=$('#sh'), au=$('#au');
+  const VOW='AEIOU';
+  let wi=0, glued=true, auto=false, acc=0, cons=[], vows=[], arr=[], block=[0,0], tx={}, glue=S(0), trials=0, hits=0, T=0, word='';
+  wireChips(wrap,'wd',i=>{ wi=i; setActive(wrap,'wd',i); init(); }); setActive(wrap,'wd',0);
+  function init(){ word=WORDS[wi]; cons=[...word].filter(c=>!VOW.includes(c)); vows=[...word].filter(c=>VOW.includes(c)); ps.max=cons.length; ps.value=Math.min(+ps.value,cons.length); trials=0; hits=0;
+    tx={}; [...word].forEach(c=>tx[c]=S(-1e9)); if(glued) layoutGlued(+ps.value,cons,vows); else { layoutFromWord(); block=[0,0]; } }
+    function setGl(){ gl.textContent=glued?'🔗 Glue vowels':'✂ Glue is off'; gl.classList.toggle('on',!glued); }
+  function layoutFromWord(){ arr=[...word]; const idx=arr.map((c,i)=>VOW.includes(c)?i:-1).filter(i=>i>=0); block=[idx[0],idx[idx.length-1]+1]; }
+  function layoutGlued(pos,cOrder,vOrder){ arr=[...cOrder.slice(0,pos),...vOrder,...cOrder.slice(pos)]; block=[pos,pos+vOrder.length]; }
+  function together(a){ const ix=a.map((c,i)=>VOW.includes(c)?i:-1).filter(i=>i>=0); return ix[ix.length-1]-ix[0]===ix.length-1; }
+  function doShuffle(){ trials++; if(glued){ const p=rnd(cons.length+1); ps.value=p; layoutGlued(p,shuffle(cons),shuffle(vows)); hits++; }
+    else { arr=shuffle([...word]); if(together(arr)){ hits++; const ix=arr.map((c,i)=>VOW.includes(c)?i:-1).filter(i=>i>=0); block=[ix[0],ix[ix.length-1]+1]; } else block=[0,0]; } }
+  gl.onclick=()=>{ glued=!glued; setGl(); if(glued){ layoutGlued(+ps.value,cons,vows); } else { layoutFromWord(); block=[0,0]; } };
+  setGl();
+  sh.onclick=()=>{ doShuffle(); }; au.onclick=()=>{ auto=!auto; au.textContent=auto?'❚❚ Stop shuffling':'▶ Auto-shuffle'; au.classList.toggle('active',auto); };
+  ps.addEventListener('input',()=>{ if(!glued){ glued=true; setGl(); } layoutGlued(+ps.value,cons,vows); });
+  init();
+  animLoop(dt=>{
+    val(wrap,'pos',ps.value); T+=dt;
+    if(auto){ acc+=dt; if(acc>1.3){ acc=0; doShuffle(); } }
+    springTo(glue,(block[1]-block[0]>=2||(block[1]-block[0]===1&&glued))&&block[1]>block[0]?1:0,40,9,dt);
+    const n=word.length, c=cons.length, v=vows.length, {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=Math.min(w*.84/(n+.8),w*.1), th=tw*1.05, stp=tw*1.1, gap=tw*.14*glue.x, x0=w*.5-((n-1)*stp+2*gap)/2, fy=h*.46;
+    line(ctx,w*.06,fy+th*.75,w*.94,fy+th*.75,COL.grid,3);
+    const xOf=i=>x0+i*stp+(i>=block[0]?gap:0)+(i>=block[1]?gap:0);
+    // glue block
+    if(glue.x>.02&&block[1]>block[0]){ const bx0=xOf(block[0])-stp*.52, bx1=xOf(block[1]-1)+stp*.52; ctx.save(); ctx.globalAlpha=clamp(glue.x,0,1);
+      rrect(ctx,bx0,fy-th*.78,bx1-bx0,th*1.56,16); ctx.fillStyle=rgba(COL.green,.1); ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+      textAt(ctx,'one block  (v! = '+fact(v)+' inner orders)',(bx0+bx1)/2,fy-th*.78-10,{align:'center',size:12,weight:700,color:COL.green}); }
+    arr.forEach((ch,i)=>{ const s=tx[ch], tgt=xOf(i); if(s.x<-1e8){ s.x=tgt; s.v=0; } springTo(s,tgt,70,11,dt);
+      const lift=Math.max(0,clamp((tgt-s.x)*.5,-th*.7,th*.7)), vow=VOW.includes(ch);
+      tile(ctx,s.x,fy-lift,tw*.88,th*.88,ch,vow?COL.yellow:COL.ink,{tcol:vow?GOLD:COL.ink,fill:vow?rgba(COL.yellow,.25):'#f6f9fc'}); });
+    const tg=together(arr);
+    pill(ctx,tg?'vowels are TOGETHER':'vowels are apart',w*.5,fy+th*1.3,tg?COL.green:COL.red,14);
+    runs(ctx,w*.5,h*.12,[[(c+1)+'!',COL.blue],[' × ',COL.muted],[v+'!',COL.yellow],['  =  ',COL.muted],[N(fact(c+1)*fact(v)),COL.green]],Math.min(32,w*.045),'center');
+    textAt(ctx,'block + '+c+' consonants = '+(c+1)+' objects to arrange, then the vowels arrange inside the block',w*.5,h*.18,{align:'center',size:13,weight:600,color:COL.mid});
+    // empirical bar
+    const tot=fact(n), tog=fact(c+1)*fact(v), bx=w*.12, bw=w*.76, by=h*.8, bh=h*.05;
+    rrect(ctx,bx,by,bw,bh,bh/2); ctx.fillStyle=rgba(COL.red,.18); ctx.fill(); ctx.strokeStyle=COL.red; ctx.lineWidth=2; ctx.stroke();
+    rrect(ctx,bx,by,Math.max(bh,bw*tog/tot),bh,bh/2); ctx.fillStyle=rgba(COL.green,.55); ctx.fill();
+    textAt(ctx,'of all '+N(tot)+' words: together '+N(tog)+' ('+sg(tog/tot*100,1)+'%)  ·  never together '+N(tot-tog),bx,by-8,{size:12,weight:700,color:COL.muted});
+    if(!glued&&trials>0) textAt(ctx,'random shuffles: '+hits+' of '+trials+' had vowels together  ('+sg(hits/trials*100,0)+'%)',bx,by+bh+20,{size:12,weight:700,color:COL.blue});
+    $('#r1').textContent=N(tot)+'  ('+n+'!)'; $('#r2').textContent=N(tog); $('#r3').textContent=N(tot-tog);
+    $('#r4').textContent=glued?'(glue is on — all of them)':(trials?hits+' of '+trials+'  ≈  '+sg(hits/trials*100,0)+'%   (expected '+sg(tog/tot*100,1)+'%)':'press Shuffle');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.8 RESTRICTED PLACES   (Examples 3, 11 · Exercises 6.1 Q2, 6.3 Q3)
+   Digit tiles fly from the tray into the places. Tiles that are not allowed for the
+   place being filled turn red: fill the most restricted place first.
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  const PRE=[
+    {nm:'Ex 3 · 2-digit even, digits 1–5, repeat',   d:[1,2,3,4,5],   r:2, even:1, nz:0, rep:1},
+    {nm:'Q2 · 3-digit even, digits 1–6, repeat',      d:[1,2,3,4,5,6], r:3, even:1, nz:0, rep:1},
+    {nm:'Ex 11 · 100 < N < 1000, digits 0–5',         d:[0,1,2,3,4,5], r:3, even:0, nz:1, rep:0},
+    {nm:'Q3 · 3-digit even, 1 2 3 4 6 7, no repeat',  d:[1,2,3,4,6,7], r:3, even:1, nz:0, rep:0},
+    {nm:'Q1(ii) · 3-digit, digits 1–5, no repeat',    d:[1,2,3,4,5],   r:3, even:0, nz:0, rep:0}];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('pr','Problem',PRE.map(p=>p.nm))+chipRow('od','Fill the places',['Restricted place first','Left to right'])+
+    slider('sp','Speed',1,4,1,2)+btnRow([['go','❚❚ Pause','play on'],['one','Next number ▶','navy']])+
+    cards([['r1','Choices, in the order filled'],['r2','Product','--f-green'],['r3','Brute-force check','--f-blue'],['r4','Verdict','--f-red',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sp=$('#sp'), go=$('#go'), one=$('#one');
+  let pi=2, od=0, on=true, valid=[], P=null, stage=0, timer=0, num=null, placed=[], hold=0, T=0, ghosts=[];
+  wireChips(wrap,'pr',i=>{ pi=i; setActive(wrap,'pr',i); init(); }); setActive(wrap,'pr',2);
+  wireChips(wrap,'od',i=>{ od=i; setActive(wrap,'od',i); restart(); }); setActive(wrap,'od',0);
+  const allowedFor=(P,slot)=>P.d.filter(d=>(!(P.even&&slot===P.r-1)||d%2===0)&&(!(P.nz&&slot===0)||d!==0));
+  function brute(P){ const out=[]; (function rec(a){ if(a.length===P.r){ out.push(a.slice()); return; } const s=a.length; allowedFor(P,s).forEach(d=>{ if(!P.rep&&a.includes(d)) return; a.push(d); rec(a); a.pop(); }); })([]); return out; }
+  function order(){ const idx=[...Array(P.r).keys()]; if(od) return idx; const f=[]; if(P.even) f.push(P.r-1); if(P.nz&&!f.includes(0)) f.push(0); return f.concat(idx.filter(i=>!f.includes(i))); }
+  function init(){ P=PRE[pi]; valid=brute(P); restart(); }
+  function restart(){ ghosts=ghosts.concat((placed||[]).filter(Boolean).map(p=>({d:p.d,ti:p.ti,x:p.x,y:p.y,t:0}))); stage=0; timer=0; hold=0; placed=Array.from({length:P.r},()=>null); num=valid[rnd(valid.length)]; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; one.onclick=()=>{ if(stage>=P.r) restart(); else timer=9; };
+  init();
+  animLoop(dt=>{
+    val(wrap,'sp',+sp.value);
+    const ord=order(), {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const nD=P.d.length, tw=Math.min(w*.8/Math.max(nD,P.r),w*.1), th=tw*1.05;
+    const trayY=h*.84, trayX=i=>w*.5+(i-(nD-1)/2)*tw*1.25, slotW=tw*1.35, slotX=s=>w*.5+(s-(P.r-1)/2)*slotW*1.3, slotY=h*.4;
+    // timeline
+    if(on||timer>=9){ if(stage<P.r){ timer+=dt*(.6+.5*(+sp.value)); if(timer>=1.15){ timer=0;
+        const s=ord[stage], d=num[s], ti=P.d.indexOf(d); placed[s]={d,ti,x:S(trayX(ti)),y:S(trayY),a:1}; stage++; } }
+      else { hold+=dt*(.6+.4*(+sp.value)); if(hold>1.6){ restart(); } } }
+    // choices per place in fill order
+    const cnt=ord.map((s,k)=>od===1 ? allowedFor(P,s).length - (P.rep?0:k) : allowedFor(P,s).length-(P.rep?0:k));
+    const prod=cnt.reduce((a,b)=>a*b,1), tot=valid.length, ok=prod===tot;
+    // tray
+    const fillingSlot=stage<P.r?ord[stage]:-1, usedD=placed.filter(Boolean).map(p=>p.d);
+    P.d.forEach((d,i)=>{ const al=fillingSlot>=0?allowedFor(P,fillingSlot).includes(d):true, used=!P.rep&&usedD.includes(d)&&placed.some(p=>p&&p.d===d);
+      const col=used?COL.mid:(al?COL.blue:COL.red);
+      tile(ctx,trayX(i),trayY,tw*.88,th*.88,String(d),col,{dash:used?[5,4]:null,alpha:used?.5:1,fill:al&&!used?rgba(COL.blue,.14):(used?'#fff':rgba(COL.red,.1))});
+      if(!al&&!used){ line(ctx,trayX(i)-tw*.3,trayY-th*.3,trayX(i)+tw*.3,trayY+th*.3,COL.red,2.4); }
+    });
+    textAt(ctx,'digit tray',w*.5,trayY-th*.75,{align:'center',size:11,weight:700,color:COL.mid});
+    // slots
+    for(let s=0;s<P.r;s++){
+      const k=ord.indexOf(s), isNext=s===fillingSlot, restricted=(P.even&&s===P.r-1)||(P.nz&&s===0);
+      rrect(ctx,slotX(s)-slotW/2,slotY-th*.8,slotW,th*1.6,12); ctx.fillStyle=isNext?rgba(COL.yellow,.18):'#f6f9fc'; ctx.fill(); ctx.strokeStyle=isNext?COL.yellow:(restricted?COL.red:COL.blue); ctx.lineWidth=isNext?4:2.4; ctx.stroke();
+      pill(ctx,String(cnt[k]),slotX(s),slotY-th*.8-20,restricted?COL.red:COL.blue,15);
+      textAt(ctx,'filled '+(k+1)+(k===0?'st':k===1?'nd':k===2?'rd':'th'),slotX(s),slotY+th*.8+18,{align:'center',size:11,weight:700,color:COL.mid});
+      if(restricted) textAt(ctx,P.even&&s===P.r-1?'even only':'not 0',slotX(s),slotY+th*.8+34,{align:'center',size:11,weight:700,color:COL.red});
+    }
+    // flying tiles
+    placed.forEach((p,s)=>{ if(!p) return; springTo(p.x,slotX(s),60,10.5,dt); springTo(p.y,slotY,60,10.5,dt);
+      const lift=Math.min(60,Math.abs(slotY-p.y.x)*.25); tile(ctx,p.x.x,p.y.x-lift*0,tw*.88,th*.88,String(p.d),COL.yellow,{tcol:GOLD,fill:rgba(COL.yellow,.3),lw:3}); });
+    ghosts=ghosts.filter(gh=>gh.t<.6); ghosts.forEach(gh=>{ gh.t+=dt; springTo(gh.x,trayX(gh.ti),70,11,dt); springTo(gh.y,trayY,70,11,dt); tile(ctx,gh.x.x,gh.y.x,tw*.88,th*.88,String(gh.d),COL.yellow,{tcol:GOLD,fill:rgba(COL.yellow,.3),lw:3,alpha:clamp(1-gh.t/.6,0,1)}); });
+    // statement
+    const parts=[]; ord.forEach((s,k)=>{ if(k) parts.push([' × ',COL.muted]); parts.push([String(cnt[k]),P.even&&s===P.r-1||P.nz&&s===0?COL.red:COL.blue]); });
+    parts.push([' = ',COL.muted],[String(prod),ok?COL.green:COL.red]);
+    runs(ctx,w*.5,h*.12,parts,Math.min(34,w*.048),'center');
+    textAt(ctx,od===0?'restricted place first, then the rest':'places filled from the left',w*.5,h*.18,{align:'center',size:13,weight:600,color:COL.mid});
+    const bad=!ok; pill(ctx,ok?('✓ all '+tot+' numbers counted'):('✗ product '+prod+' ≠ true count '+tot+' — choices depend on earlier picks'),w*.5,h*.665,ok?COL.green:COL.red,13);
+    if(stage>=P.r){ runs(ctx,w*.5,h*.545+th*.9,[[num.join(''),COL.green]],Math.min(30,w*.04),'center'); }
+    $('#r1').textContent=cnt.join(' · '); $('#r2').textContent=String(prod); $('#r3').textContent=String(tot);
+    $('#r4').textContent=ok?'The product counts every number':'Product is wrong — fill the restricted place first'; $('#r4').style.color=ok?'var(--f-green)':'var(--f-red)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.9 ORDER DOES NOT MATTER   nCr   (Section 6.4, Theorem 5)
+   Each team of r hops up on the podium; its members then re-order themselves r! ways —
+   all the same team. So nCr = nPr ÷ r!
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','Players, n',3,7,1,4)+slider('r','Team size, r',1,7,1,2)+slider('sp','Speed',1,4,1,2)+
+    btnRow([['go','❚❚ Pause','play on'],['one','Next team ▶','navy']])+
+    cards([['r1','nPr  (order matters)'],['r2','r!  (re-orderings of one team)','--f-red'],['r3','nCr = nPr ÷ r!','--f-green'],['r4','nC(n − r)  (choosing who stays out)','--f-blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), rs=$('#r'), sp=$('#sp'), go=$('#go'), one=$('#one');
+  const NM='XYZABCD';
+  let on=true, key='', combos=[], ci=0, phase=0, timer=0, team=[], g=null, px=[], pt=[], swaps=0, T=0, ords=[];
+  function genCombos(n,r){ const out=[]; (function rec(s,a){ if(a.length===r){ out.push(a.slice()); return; } for(let i=s;i<n;i++){ a.push(i); rec(i+1,a); a.pop(); } })(0,[]); return out; }
+  function setTeam(){ team=combos[ci].slice(); g=SJT(team.length); swaps=0; phase=0; timer=0; ords=[team.map(i=>NM[i]).join('')]; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; one.onclick=()=>{ ci=(ci+1)%combos.length; setTeam(); };
+  animLoop(dt=>{
+    const n=+ns.value; rs.max=n; if(+rs.value>n) rs.value=n; const r=+rs.value; val(wrap,'n',n); val(wrap,'r',r); val(wrap,'sp',+sp.value);
+    const kk=n+'-'+r; if(kk!==key){ key=kk; combos=genCombos(n,r); ci=0; px=Array.from({length:n},()=>({x:S(-1e9),y:S(0)})); setTeam(); }
+    const maxSw=Math.min(fact(r)-1,5), spd=.6+.5*(+sp.value);
+    if(on){ timer+=dt*spd; if(phase===0&&timer>1.0){ phase=1; timer=0; }
+      else if(phase===1){ if(timer>.55){ timer=0; if(swaps<maxSw&&!g.done){ g.next(); swaps++; ords.push(g.p.map(i=>NM[team[i]]).join('')); } else { phase=2; timer=0; } } }
+      else if(phase===2&&timer>.9){ phase=0; timer=0; ci=(ci+1)%combos.length; setTeam(); } }
+    T+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ps=Math.min(h*.2,w*.09), benchY=h*.9, stp=Math.min(w*.8/n,ps*1.3), bx=i=>w*.5+(i-(n-1)/2)*stp;
+    const podY=h*.43, podW=Math.min(w*.7/r,ps*1.1), podX=j=>w*.5+(j-(r-1)/2)*podW*1.05;
+    // podium + bench
+    rrect(ctx,podX(0)-podW*.65,podY+4,podX(r-1)-podX(0)+podW*1.3,h*.035,6); ctx.fillStyle=rgba(COL.green,.2); ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=3; ctx.stroke();
+    textAt(ctx,'the team  (order does not matter)',w*.5,h*.205,{align:'center',size:12,weight:700,color:COL.green});
+    line(ctx,w*.5-n*stp/2-10,benchY+4,w*.5+n*stp/2+10,benchY+4,COL.grid,4);
+    const slotOf=[]; if(phase>=0) g.p.forEach((m,j)=>slotOf[team[m]]=j);
+    const up=phase!==2; // players on the podium during phases 0,1
+    for(let i=0;i<n;i++){
+      const inTeam=team.includes(i), onPod=inTeam&&(phase===0?timer>.12:phase===1), s=px[i];
+      const tx=onPod?podX(slotOf[i]):bx(i), ty=onPod?podY:benchY; if(s.x.x<-1e8){ s.x.x=tx; s.x.v=0; s.y.x=ty; s.y.v=0; }
+      springTo(s.x,tx,48,9.5,dt); springTo(s.y,ty,48,9.5,dt);
+      const dist=Math.hypot(tx-s.x.x,ty-s.y.x), lift=Math.min(ps*.5,dist*.3), mv=clamp(dist/ps,0,1);
+      person(ctx,s.x.x,s.y.x-lift,ps,inTeam?PAL[i%6]:COL.mid,{label:NM[i],swing:Math.sin(T*14+i)*mv,arms:onPod?.9:mv*.6,alpha:inTeam||!onPod?1:.6,lcol:inTeam?PAL[i%6]:COL.mid});
+    }
+    // orderings strip
+    const oy=h*.54, label=ords.length>1||fact(r)>1;
+    textAt(ctx,'same team, different order →  '+(fact(r))+' orderings  ('+r+'! )',w*.5,oy,{align:'center',size:12,weight:700,color:COL.red});
+    const strip=ords.slice(-6); strip.forEach((o,i)=>{ const cx=w*.5+(i-(strip.length-1)/2)*Math.min(70,w*.1); pill(ctx,o,cx,oy+24,i===strip.length-1?COL.yellow:COL.red,13); });
+    // statement
+    const a=nPr(n,r), b=fact(r), c=nCr(n,r);
+    runs(ctx,w*.5,h*.09,[[n+'C'+r+'  =  ',COL.ink],[N(a),COL.blue],[' ÷ ',COL.muted],[N(b),COL.red],['  =  ',COL.muted],[N(c),COL.green]],Math.min(32,w*.044),'center');
+    textAt(ctx,'team '+(ci+1)+' of '+c+'   ·   '+((ci+1)*b)+' of '+a+' ordered picks accounted for',w*.5,h*.145,{align:'center',size:13,weight:600,color:COL.mid});
+    $('#r1').textContent=n+'P'+r+' = '+N(a); $('#r2').textContent=r+'! = '+N(b); $('#r3').textContent=n+'C'+r+' = '+N(c); $('#r4').textContent=n+'C'+(n-r)+' = '+N(nCr(n,n-r))+'  (same!)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.10 HANDSHAKES AND CHORDS   (Section 6.4 · Exercise 6.4 Q3)
+   Pair after pair shakes hands (or a chord is struck between two points).
+   n people → n(n − 1) ordered pairs, but X–Y and Y–X are the same handshake: nC2.
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','People / points, n',2,21,1,7)+slider('sp','Speed',1,4,1,2)+
+    chipRow('vw',null?'':'Show',['People shaking hands','Chords on a circle'])+
+    btnRow([['go','❚❚ Pause','play on'],['rs','Restart','navy']])+
+    cards([['r1','Ordered pairs  n(n − 1)'],['r2','X–Y = Y–X, so ÷ 2','--f-red'],['r3','Handshakes  nC2','--f-green'],['r4','Drawn so far','--f-blue']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), sp=$('#sp'), go=$('#go'), rs=$('#rs');
+  let vw=0, on=true, key='', pairs=[], p=0, hold=0, T=0;
+  wireChips(wrap,'vw',i=>{ vw=i; setActive(wrap,'vw',i); }); setActive(wrap,'vw',0);
+  function gen(n){ const out=[]; for(let k=1;k<=Math.floor(n/2);k++) for(let i=0;i<n;i++){ if(2*k===n&&i>=n/2) continue; out.push([i,(i+k)%n,k]); } return out; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; rs.onclick=()=>{ p=0; hold=0; };
+  animLoop(dt=>{
+    const n=+ns.value; val(wrap,'n',n); val(wrap,'sp',+sp.value);
+    if(key!==String(n)){ key=String(n); pairs=gen(n); p=0; hold=0; }
+    const tot=pairs.length; T+=dt;
+    if(on){ if(p<tot) p=Math.min(tot,p+dt*clamp(tot/6,1.3,40)*(+sp.value)/2); else { hold+=dt; if(hold>2.2){ p=0; hold=0; } } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*.5, cy=h*.54, R=Math.min(w*.4,h*.37), ang=i=>-PI/2+TAU*i/n, P=i=>[cx+R*Math.cos(ang(i)), cy+R*Math.sin(ang(i))];
+    const done=Math.floor(p), frac=p-done, curI=Math.min(done,tot-1);
+    if(vw===1) circ(ctx,cx,cy,R,COL.ink,null,2.4); else circ(ctx,cx,cy,R,COL.grid,null,2);
+    const lw=n>14?1.4:n>9?2:2.8, CL=[COL.blue,COL.green,COL.red,COL.yellow];
+    for(let i=0;i<Math.min(done,tot);i++){ const [a,b,k]=pairs[i], A=P(a), B=P(b); line(ctx,A[0],A[1],B[0],B[1],CL[(k-1)%4],lw); }
+    let cur=null;
+    if(p<tot){ const [a,b]=pairs[curI], A=P(a), B=P(b), e=ease(frac); cur=[a,b];
+      line(ctx,A[0],A[1],A[0]+(B[0]-A[0])*e,A[1]+(B[1]-A[1])*e,COL.yellow,lw*2.2); }
+    const ps=Math.min(R*.4,TAU*R/n*1.5,h*.14);
+    for(let i=0;i<n;i++){ const [x,y]=P(i), isCur=cur&&(cur[0]===i||cur[1]===i);
+      if(vw===0){ if(isCur) circ(ctx,x,y,ps*.62,COL.yellow,rgba(COL.yellow,.2),3);
+        person(ctx,x,y+ps*.45,ps,isCur?COL.yellow:COL.blue,{arms:isCur?.9:0,swing:isCur?Math.sin(T*16):0,face:ps>26,label:n<=10?'ABCDEFGHIJ'[i]:null,lcol:COL.muted}); }
+      else { dot(ctx,x,y,isCur?9:n>14?4:6,isCur?COL.yellow:COL.ink); if(n<=12) textAt(ctx,'ABCDEFGHIJKL'[i],cx+(R+20)*Math.cos(ang(i)),cy+(R+20)*Math.sin(ang(i))+4,{align:'center',size:12,weight:700,color:COL.muted}); }
+    }
+    const nn=n*(n-1), c2=nn/2;
+    runs(ctx,w*.04,h*.1,[[n+'C2  =  ',COL.ink],[n+' × '+(n-1),COL.blue],[' ÷ 2',COL.red],['  =  ',COL.muted],[N(c2),COL.green]],Math.min(32,w*.044));
+    textAt(ctx,vw===0?'each pair shakes hands once':'each pair of points gives one chord',w*.04,h*.16,{size:13,weight:600,color:COL.mid});
+    pill(ctx,N(Math.min(done,tot))+' / '+N(tot),w*.9,h*.08,done>=tot?COL.green:COL.blue,18);
+    $('#r1').textContent=N(nn); $('#r2').textContent=N(c2)+'  (each counted twice)'; $('#r3').textContent=N(c2); $('#r4').textContent=Math.min(done,tot)+' of '+tot;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.11 PEGBOARD OF PATHS   Pascal's rule   nCr + nC(r−1) = (n+1)Cr
+   Balls fall on real arcs through the pegs. The number on each peg is the number of
+   paths that reach it — it is always the sum of the two pegs above.
+   ===================================================================== */
+function buildA11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('n','Rows of pegs, n',2,10,1,7)+slider('r','Highlight r',0,10,1,3)+slider('sp','Balls per second',1,30,1,8)+
+    chipRow('pn','Numbers on the pegs',['Path counts','Hidden'])+
+    btnRow([['go','▶ Rain balls','play'],['one','Drop one ▼','navy'],['cl','Clear','navy']])+
+    cards([['r1','nCr'],['r2','nC(n − r)','--f-blue'],['r3','Pascal:  (n−1)C(r−1) + (n−1)Cr','--f-green',true],['r4','Balls landed  (bar) vs theory (dashed)','--f-red',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), ns=$('#n'), rs=$('#r'), sp=$('#sp'), go=$('#go'), one=$('#one'), cl=$('#cl');
+  let pn=0, on=false, key='', balls=[], cnt=[], bar=[], acc=0;
+  wireChips(wrap,'pn',i=>{ pn=i; setActive(wrap,'pn',i); }); setActive(wrap,'pn',0);
+  function clear(){ balls=[]; cnt=Array(12).fill(0); bar=Array.from({length:12},()=>S(0)); }
+  function spawn(){ if(balls.length<160) balls.push({mode:'drop',vy:0,x:-1e9,y:-1e9,spawned:false}); }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Stop','▶ Rain balls'); }; one.onclick=()=>spawn(); cl.onclick=()=>clear(); clear();
+  animLoop(dt=>{
+    const n=+ns.value; rs.max=n; if(+rs.value>n) rs.value=n; const r=+rs.value; val(wrap,'n',n); val(wrap,'r',r); val(wrap,'sp',+sp.value);
+    if(key!==String(n)){ key=String(n); clear(); }
+    if(on){ acc+=dt*(+sp.value); while(acc>=1){ acc-=1; spawn(); } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const dx=Math.min(w*.8/(n+1.5),68), cx=w*.5, top=h*.15, dy=(h*.5)/n, rowY=i=>top+i*dy, pegX=(i,j)=>cx+(j-i/2)*dx, binX=k=>cx+(k-n/2)*dx;
+    const pr=Math.max(3.5,dx*.075), br=Math.max(4,dx*.15), floorY=h*.93, binTop=rowY(n)+dy*.25, T=Math.max(.2,Math.min(.3,dy/110));
+    const GR=5.4*dy/(T*T);
+    function hopParams(x0,y0,x1,y1,v0){ return {g:2*((y1-y0)+v0*T)/(T*T)}; }
+    function nextHop(b){ // ball rests on peg (b.i,b.j): pick left/right, then an exact projectile arc to the next row
+      const right=Math.random()<.5, j2=b.j+(right?1:0), i2=b.i+1; b.j2=j2;
+      b.x0=pegX(b.i,b.j); b.y0=rowY(b.i)-pr-br; b.x1=i2<n?pegX(i2,j2):binX(j2); b.y1=i2<n?rowY(i2)-pr-br:rowY(n)-br;
+      b.v0=dy*1.7/T; b.g=hopParams(b.x0,b.y0,b.x1,b.y1,b.v0).g; b.t=0; b.mode='hop'; b.x=b.x0; b.y=b.y0; }
+    function arrive(b){ b.i++; b.j=b.j2; b.x=b.x1; b.y=b.y1;
+      if(b.i>=n){ b.k=b.j; b.mode='fall'; b.vy=Math.max(80,-b.v0+b.g*T); } else nextHop(b); }
+    const total=cnt.reduce((a,b)=>a+b,0);
+    balls.forEach(b=>{
+      if(b.mode==='drop'){ if(!b.spawned){ b.spawned=true; b.x=cx; b.y=top-dy*1.3; } b.vy+=GR*dt; b.y+=b.vy*dt; const ly=rowY(0)-pr-br; if(b.y>=ly){ b.y=ly; b.i=0; b.j=0; nextHop(b); } }
+      else if(b.mode==='hop'){ b.t+=dt; const u=Math.min(b.t,T); b.x=b.x0+(b.x1-b.x0)*u/T; b.y=b.y0-b.v0*u+.5*b.g*u*u; if(b.t>=T) arrive(b); }
+      else if(b.mode==='fall'){ b.vy+=GR*dt; b.y+=b.vy*dt; const topY=floorY-bar[b.k].x; if(b.y+br>=topY){ b.y=topY-br; if(!b.counted){ b.counted=true; cnt[b.k]++; } b.vy=-Math.abs(b.vy)*.32; if(Math.abs(b.vy)<45) b.mode='dead'; } }
+    });
+    balls=balls.filter(b=>b.mode!=='dead');
+    // draw pegs
+    const sel=[[n-1,r-1],[n-1,r]].filter(([i,j])=>j>=0&&j<=i&&i>=0);
+    for(let i=0;i<n;i++) for(let j=0;j<=i;j++){ const x=pegX(i,j), y=rowY(i), hi=sel.some(s=>s[0]===i&&s[1]===j);
+      if(hi) circ(ctx,x,y,pr+8,COL.yellow,rgba(COL.yellow,.25),3);
+      circ(ctx,x,y,pr,COL.ink,COL.ink,1);
+      if(pn===0&&dx>22) textAt(ctx,String(nCr(i,j)),x,y-pr-5-(dx<30?0:2),{align:'center',size:Math.min(13,dx*.28),weight:700,color:hi?GOLD:COL.blue,halo:true}); }
+    // bins
+    const unit=((floorY-binTop)*.88)/Math.max(6,Math.max(...cnt.slice(0,n+1)));
+    for(let k=0;k<=n;k++){ const x=binX(k), hiK=(k===r||k===n-r);
+      line(ctx,x-dx/2,binTop,x-dx/2,floorY,COL.mid,2); if(k===n) line(ctx,x+dx/2,binTop,x+dx/2,floorY,COL.mid,2);
+      springTo(bar[k],cnt[k]*unit,50,9,dt);
+      if(bar[k].x>1){ rrect(ctx,x-dx/2+3,floorY-bar[k].x,dx-6,bar[k].x,4); ctx.fillStyle=hiK?rgba(COL.green,.55):rgba(COL.green,.28); ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=1.6; ctx.stroke(); }
+      const ex=total*nCr(n,k)/Math.pow(2,n)*unit; if(total>0){ ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.strokeRect(x-dx/2+3,floorY-ex,dx-6,ex); ctx.restore(); }
+      if(hiK){ ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3.5; ctx.strokeRect(x-dx/2+1,binTop,dx-2,floorY-binTop); ctx.restore(); }
+      textAt(ctx,String(k),x,floorY+17,{align:'center',size:12,weight:700,color:hiK?GOLD:COL.mid});
+      if(dx>22) textAt(ctx,String(cnt[k]),x,floorY-bar[k].x-5,{align:'center',size:11,weight:700,color:COL.green});
+    }
+    line(ctx,cx-(n/2+.5)*dx,floorY,cx+(n/2+.5)*dx,floorY,COL.ink,2.6);
+    textAt(ctx,'r = number of right turns',cx,floorY+34,{align:'center',size:11,weight:700,color:COL.mid});
+    // balls
+    balls.forEach(b=>{ if(b.x===undefined) return; circ(ctx,b.x,b.y,br,COL.yellow,rgba(COL.yellow,.55),2.2); });
+    const a=nCr(n,r), b2=nCr(n,n-r), p1=nCr(n-1,r-1), p2=nCr(n-1,r);
+    runs(ctx,w*.04,h*.07,[[n+'C'+r+'  =  ',COL.ink],[N(a),COL.green],['    =    ',COL.muted],[(n-1)+'C'+(r-1)+' = '+p1,GOLD],['  +  ',COL.muted],[(n-1)+'C'+r+' = '+p2,GOLD]],Math.min(24,w*.032));
+    textAt(ctx,'each peg = the sum of the two pegs above it',w*.04,h*.115,{size:12,weight:600,color:COL.mid});
+    $('#r1').textContent=n+'C'+r+' = '+N(a); $('#r2').textContent=n+'C'+(n-r)+' = '+N(b2)+'  (same)'; $('#r3').textContent=p1+' + '+p2+' = '+(p1+p2)+(p1+p2===a?'  ✓':'');
+    $('#r4').textContent=total+' balls · bin '+r+': '+cnt[r]+' vs '+sg(total*a/Math.pow(2,n),1);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.12 COMMITTEES   (Examples 18, 21 · Exercise 6.4 Q4, Q8)
+   Boys and girls hop onto the stage to make a team. The bars show how many teams
+   have 0, 1, 2 … girls: C(G, g) × C(B, t − g).
+   ===================================================================== */
+function buildA12(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    slider('b','Boys, B',1,8,1,7)+slider('g','Girls, G',1,6,1,4)+slider('t','Team size, t',1,8,1,5)+
+    chipRow('cd','Team must have',['No condition','No girl','At least 1 boy and 1 girl','At least 3 girls'])+
+    slider('sp','Speed',1,4,1,2)+btnRow([['go','❚❚ Pause','play on'],['one','Pick a team ▶','navy']])+
+    cards([['r1','All teams  (B+G)Ct'],['r2','Teams that qualify','--f-green'],['r3','This team','--f-blue',true]]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), bs=$('#b'), gs=$('#g'), ts=$('#t'), sp=$('#sp'), go=$('#go'), one=$('#one');
+  let cd=0, on=true, key='', team=[], timer=0, phase=0, px=[], T=0;
+  const okG=(g,b,t)=>cd===0?true:cd===1?g===0:cd===2?(g>=1&&t-g>=1):g>=3;
+  wireChips(wrap,'cd',i=>{ cd=i; setActive(wrap,'cd',i); key=''; }); setActive(wrap,'cd',0);
+  function pick(){ const B=+bs.value,G=+gs.value,t=Math.min(+ts.value,B+G); for(let tr=0;tr<4000;tr++){ const all=shuffle([...Array(B+G).keys()]).slice(0,t), g=all.filter(i=>i>=B).length; if(okG(g,t-g,t)){ team=all.sort((a,b)=>a-b); phase=0; timer=0; return; } } team=[]; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; one.onclick=()=>{ pick(); };
+  animLoop(dt=>{
+    const B=+bs.value, G=+gs.value; ts.max=B+G; if(+ts.value>B+G) ts.value=B+G; const t=+ts.value; val(wrap,'b',B); val(wrap,'g',G); val(wrap,'t',t); val(wrap,'sp',+sp.value);
+    const kk=B+'-'+G+'-'+t+'-'+cd; if(kk!==key){ key=kk; px=Array.from({length:B+G},()=>({x:S(-1e9),y:S(0)})); pick(); }
+    if(on&&team.length){ timer+=dt*(.5+.45*(+sp.value)); if(phase===0&&timer>2.3){ phase=1; timer=0; } else if(phase===1&&timer>.9){ pick(); } }
+    T+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ps=Math.min(h*.2,w*.075), benchY=h*.9, stageY=h*.55, sw=Math.min(w*.62/Math.max(t,1),ps*1.05);
+    const bxs=i=>w*.04+ps*.55+i*Math.min(ps*.92,(w*.55)/B), gxs=j=>w*.6-ps*.0+ps*.55+j*Math.min(ps*.92,(w*.34)/G);
+    line(ctx,w*.03,benchY+4,w*.97,benchY+4,COL.grid,4);
+    textAt(ctx,'BOYS · '+B,w*.04,benchY+24,{size:11,weight:700,color:COL.blue}); textAt(ctx,'GIRLS · '+G,w*.6,benchY+24,{size:11,weight:700,color:PAL[4]});
+    // stage
+    const sx0=w*.05+0, stX=j=>w*.33+(j-(t-1)/2)*sw;
+    rrect(ctx,stX(0)-sw*.62,stageY+4,stX(t-1)-stX(0)+sw*1.24,h*.03,6); ctx.fillStyle=rgba(COL.green,.2); ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=3; ctx.stroke();
+    textAt(ctx,'the team of '+t,w*.33,stageY-ps*1.05,{align:'center',size:12,weight:700,color:COL.green});
+    const inTeam=i=>team.includes(i);
+    for(let i=0;i<B+G;i++){
+      const isB=i<B, s=px[i], onS=inTeam(i)&&(phase===0&&timer>.15);
+      const tx=onS?stX(team.indexOf(i)):(isB?bxs(i):gxs(i-B)), ty=onS?stageY:benchY; if(s.x.x<-1e8){ s.x.x=tx; s.x.v=0; s.y.x=ty; s.y.v=0; }
+      springTo(s.x,tx,46,9.5,dt); springTo(s.y,ty,46,9.5,dt);
+      const dist=Math.hypot(tx-s.x.x,ty-s.y.x), lift=Math.min(ps*.55,dist*.3), mv=clamp(dist/ps,0,1);
+      person(ctx,s.x.x,s.y.x-lift,onS?ps:ps*.9,isB?COL.blue:PAL[4],{swing:Math.sin(T*14+i)*mv,arms:onS?.9:mv*.6,face:true});
+    }
+    // bars: teams by number of girls
+    const gx=w*.62, gw=w*.34, gy=h*.2, gh=h*.24, vals=[]; let tot=0, good=0;
+    for(let g=0;g<=Math.min(G,t);g++){ const v=(t-g<=B)?nCr(G,g)*nCr(B,t-g):0; vals.push(v); tot+=v; if(okG(g,t-g,t)) good+=v; }
+    const mx=Math.max(1,...vals), bw=gw/vals.length;
+    textAt(ctx,'teams, by number of girls g',gx,gy-28,{size:11,weight:700,color:COL.mid});
+    const gIn=team.filter(i=>i>=B).length;
+    vals.forEach((v,g)=>{ const bh=v/mx*gh, x=gx+g*bw, okk=okG(g,t-g,t), cur=g===gIn&&team.length;
+      rrect(ctx,x+4,gy+gh-bh,bw-8,Math.max(2,bh),4); ctx.fillStyle=rgba(okk?COL.green:COL.red,.28); ctx.fill(); ctx.strokeStyle=okk?COL.green:COL.red; ctx.lineWidth=cur?4:2; ctx.stroke();
+      if(cur){ rrect(ctx,x+1,gy+gh-bh-3,bw-2,Math.max(2,bh)+6,6); ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.stroke(); }
+      textAt(ctx,String(v),x+bw/2,gy+gh-bh-6,{align:'center',size:11,weight:700,color:okk?COL.green:COL.red}); textAt(ctx,g+'g',x+bw/2,gy+gh+15,{align:'center',size:11,weight:700,color:COL.mid}); });
+    line(ctx,gx,gy+gh,gx+gw,gy+gh,COL.ink,2);
+    runs(ctx,w*.04,h*.09,[[(B+G)+'C'+t+'  =  ',COL.ink],[N(tot),COL.blue],['     qualify:  ',COL.muted],[N(good),good?COL.green:COL.red]],Math.min(28,w*.038));
+    if(!team.length) pill(ctx,'no team can meet this condition',w*.33,h*.34,COL.red,15);
+    else textAt(ctx,'this team:  '+(t-gIn)+' boy'+((t-gIn)!==1?'s':'')+' + '+gIn+' girl'+(gIn!==1?'s':'')+'  →  '+nCr(B,t-gIn)+' × '+nCr(G,gIn)+' = '+N(nCr(B,t-gIn)*nCr(G,gIn))+' such teams',w*.3,h*.17,{align:'center',size:13,weight:700,color:COL.blue});
+    $('#r1').textContent=(B+G)+'C'+t+' = '+N(tot); $('#r2').textContent=N(good)+(good<tot?'  of '+N(tot):''); $('#r3').textContent=team.length?(t-gIn)+' boys · '+gIn+' girls  →  '+nCr(B,t-gIn)+' × '+nCr(G,gIn)+' = '+N(nCr(B,t-gIn)*nCr(G,gIn)):'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   6.13 CARD HANDS   (Example 19 · Exercise 6.4 Q6)
+   Cards are dealt from the pack, flip over and land on the table;
+   each hand is a random member of the chosen family.
+   ===================================================================== */
+function buildA13(){
+  const wrap=labShell();
+  const CATS=['Any 4 cards','4 of the same suit','One card of each suit','4 face cards','2 red and 2 black','4 of the same colour','5 cards, exactly one ace'];
+  wrap.querySelector('.lab-side').innerHTML =
+    chipRow('ct','Hand to count',CATS)+slider('sp','Speed',1,4,1,2)+btnRow([['go','❚❚ Pause','play on'],['one','Deal ▶','navy']])+
+    cards([['r1','Ways to choose'],['r2','Out of all hands','--f-blue'],['r3','Share of all hands','--f-green']]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), sp=$('#sp'), go=$('#go'), one=$('#one');
+  const SU='♠♥♣♦', RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const red=c=>{ const s=Math.floor(c/13); return s===1||s===3; };
+  const isFace=c=>c%13>=10, isAce=c=>c%13===0;
+  const picks=(arr,k)=>shuffle(arr).slice(0,k);
+  const range=(a,b)=>Array.from({length:b-a},(_,i)=>a+i);
+  const ALL=range(0,52);
+  function hand(ci){ switch(ci){
+    case 0: return picks(ALL,4);
+    case 1: { const s=rnd(4); return picks(range(s*13,s*13+13),4); }
+    case 2: return [0,1,2,3].map(s=>s*13+rnd(13));
+    case 3: return picks(ALL.filter(isFace),4);
+    case 4: return picks(ALL.filter(red),2).concat(picks(ALL.filter(c=>!red(c)),2));
+    case 5: { const rd=rnd(2); return picks(ALL.filter(c=>red(c)===!!rd),4); }
+    default: return picks(ALL.filter(isAce),1).concat(picks(ALL.filter(c=>!isAce(c)),4)); } }
+  const INFO=[
+    {k:4, ways:nCr(52,4), f:[['52C4',COL.blue]]},
+    {k:4, ways:4*nCr(13,4), f:[['4',COL.blue],[' × ',COL.muted],['13C4',COL.blue]]},
+    {k:4, ways:Math.pow(13,4), f:[['13',COL.blue],[' × ',COL.muted],['13',COL.blue],[' × ',COL.muted],['13',COL.blue],[' × ',COL.muted],['13',COL.blue]]},
+    {k:4, ways:nCr(12,4), f:[['12C4',COL.blue]]},
+    {k:4, ways:nCr(26,2)*nCr(26,2), f:[['26C2',COL.red],[' × ',COL.muted],['26C2',COL.ink]]},
+    {k:4, ways:2*nCr(26,4), f:[['2',COL.blue],[' × ',COL.muted],['26C4',COL.blue]]},
+    {k:5, ways:4*nCr(48,4), f:[['4C1',COL.blue],[' × ',COL.muted],['48C4',COL.blue]]}];
+  let ci=0, on=true, cards_=[], stage=0, timer=0, hold=0, hnd=[], T=0, ghosts=[];
+  wireChips(wrap,'ct',i=>{ ci=i; setActive(wrap,'ct',i); newHand(); }); setActive(wrap,'ct',0);
+  function newHand(){ ghosts=ghosts.concat(cards_.map(c=>({...c,t:0}))); hnd=hand(ci); cards_=[]; stage=0; timer=0; hold=0; }
+  go.onclick=()=>{ on=!on; setPlay(go,on,'❚❚ Pause','▶ Play'); }; one.onclick=()=>newHand(); newHand();
+  animLoop(dt=>{
+    val(wrap,'sp',+sp.value); const I=INFO[ci], k=I.k; T+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cw=Math.min(w*.13,100), ch=cw*1.42, deckX=w*.14, deckY=h*.3, slotX=i=>w*.5+(i-(k-1)/2)*cw*1.28, slotY=h*.6;
+    if(on){ if(stage<k){ timer+=dt*(.7+.6*(+sp.value)); if(timer>=.7){ timer=0; const c=hnd[stage]; const dk={c,x:S(deckX),y:S(deckY),f:0}; cards_.push(dk); stage++; } }
+      else { hold+=dt*(.5+.4*(+sp.value)); if(hold>1.8) newHand(); } }
+    // deck
+    for(let i=4;i>=0;i--){ rrect(ctx,deckX-cw/2+i*1.6,deckY-ch/2-i*1.6,cw,ch,8); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.stroke(); }
+    textAt(ctx,'the pack · 52',deckX,deckY+ch/2+20,{align:'center',size:11,weight:700,color:COL.mid});
+    function drawCard(c,x,y,f,al,hi){ ctx.save(); ctx.globalAlpha=al; ctx.translate(x,y); const sx=Math.abs(Math.cos(Math.min(1,f)*PI)); ctx.scale(Math.max(.04,sx),1);
+      rrect(ctx,-cw/2,-ch/2,cw,ch,8); ctx.fillStyle='#fff'; ctx.fill();
+      if(f<.5){ ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.stroke(); ctx.beginPath(); for(let q=-3;q<=3;q++){ ctx.moveTo(-cw/2+6,q*ch/8-ch/2+ch/2); ctx.lineTo(cw/2-6,q*ch/8+ch/2-ch/2+0); } ctx.strokeStyle=rgba(COL.blue,.35); ctx.lineWidth=1.4; ctx.stroke(); }
+      else { const sc=Math.floor(c/13), col=(sc===1||sc===3)?COL.red:COL.ink; ctx.strokeStyle=hi?COL.green:col; ctx.lineWidth=hi?4:2.4; ctx.stroke();
+        textAt(ctx,RK[c%13],-cw/2+9,-ch/2+22,{size:cw*.24,weight:700,color:col}); textAt(ctx,SU[sc],0,ch*.14,{align:'center',size:cw*.62,weight:600,color:col});
+        textAt(ctx,SU[sc],-cw/2+9,-ch/2+22+cw*.24,{size:cw*.2,weight:700,color:col}); }
+      ctx.restore(); }
+    ghosts=ghosts.filter(g=>g.t<.5); ghosts.forEach(g=>{ g.t+=dt; springTo(g.x,deckX,70,11,dt); springTo(g.y,deckY,70,11,dt); drawCard(g.c,g.x.x,g.y.x,Math.max(0,1-g.t*3),clamp(1-g.t/.5,0,1)); });
+    // dealt cards
+    cards_.forEach((d,i)=>{ springTo(d.x,slotX(i),44,9,dt); springTo(d.y,slotY,44,9,dt); d.f=Math.min(1,d.f+dt*1.6);
+      const dist=Math.hypot(slotX(i)-d.x.x,slotY-d.y.x); const lift=Math.min(ch*.4,dist*.25);
+      drawCard(d.c,d.x.x,d.y.x-lift,d.f,1,stage>=k&&hold>0); });
+    // statement
+    const total=nCr(52,k), parts=I.f.concat([['  =  ',COL.muted],[N(I.ways),COL.green]]);
+    runs(ctx,w*.5,h*.1,parts,Math.min(32,w*.045),'center');
+    textAt(ctx,CATS[ci]+(k===5?'  ·  Exercise 6.4 Q6':'  ·  Example 19'),w*.5,h*.16,{align:'center',size:13,weight:600,color:COL.mid});
+    const bx=w*.12, bw=w*.76, by=h*.86, bh=h*.04, fr=I.ways/total;
+    rrect(ctx,bx,by,bw,bh,bh/2); ctx.fillStyle='#eef2f8'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.stroke();
+    rrect(ctx,bx,by,Math.max(bh,bw*Math.sqrt(fr)),bh,bh/2); ctx.fillStyle=rgba(COL.green,.55); ctx.fill();
+    textAt(ctx,N(I.ways)+' of '+N(total)+' possible '+k+'-card hands   ('+sg(fr*100,fr<.01?2:1)+'%)   · bar drawn on a square-root scale',bx,by-8,{size:12,weight:700,color:COL.muted});
+    $('#r1').textContent=N(I.ways); $('#r2').textContent=N(total)+'  ('+(k===5?'52C5':'52C4')+')'; $('#r3').textContent=sg(fr*100,fr<.01?2:1)+' %';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'6.1',  title:'Mohan’s Wardrobe',    desc:'Multiplication principle · m × n × p', build: buildA1 },
+  { num:'6.2',  title:'Number Lock',         desc:'Section 6.1 · Exercise 6.1 · codes to check', build: buildA2 },
+  { num:'6.3',  title:'Flag Signals',        desc:'Examples 2 and 4 · flags up the mast', build: buildA3 },
+  { num:'6.4',  title:'Factorial Line-up',   desc:'n! · and why 0! = 1', build: buildA4 },
+  { num:'6.5',  title:'nPr from n!',         desc:'Theorem 1 · n! ÷ (n − r)!', build: buildA5 },
+  { num:'6.6',  title:'Repeated Letters',    desc:'Examples 9, 15, 16 · n! ÷ (p! q!)', build: buildA6 },
+  { num:'6.7',  title:'Vowels Together',     desc:'Examples 14, 16 · glue the block', build: buildA7 },
+  { num:'6.8',  title:'Restricted Places',   desc:'Examples 3, 11 · fill the strict place first', build: buildA8 },
+  { num:'6.9',  title:'Order Doesn’t Matter', desc:'Theorem 5 · nCr = nPr ÷ r!', build: buildA9 },
+  { num:'6.10', title:'Handshakes & Chords', desc:'nC2 · Exercise 6.4 Q3', build: buildA10 },
+  { num:'6.11', title:'Pegboard of Paths',   desc:'Theorem 6 · nCr + nC(r−1) = (n+1)Cr', build: buildA11 },
+  { num:'6.12', title:'Committees',          desc:'Examples 18, 21 · boys and girls', build: buildA12 },
+  { num:'6.13', title:'Card Hands',          desc:'Example 19 · 52 cards, 4 at a time', build: buildA13 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

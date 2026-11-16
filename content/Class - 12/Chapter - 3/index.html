@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Part 1 · Chapter 3 — Current Electricity | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.control-group label + .toggle-group{margin-top:7px;}
+.toggle-group:first-child{margin-top:0;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{background:var(--surface-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.go{background:var(--f-yellow); border-color:var(--f-yellow); color:#fff;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px; white-space:nowrap;}
+.rcard.wide{grid-column:1/-1;}
+.rcard.wide .rval{white-space:normal;}
+.fb{font-size:var(--fs-xs); font-weight:600; padding:5px 8px; border-radius:7px; min-height:26px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.fb.off{display:none;}
+.hidden{display:none !important;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:360px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚡</div>
+    <div>
+      <div class="chip">Grade 12 · Part 1 · Ch 3</div>
+      <h1>Current Electricity</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Electrons · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Field · Voltage · Result</span>
+      <span><i style="background:var(--f-red)"></i>Current · Heat</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">3.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   GRADE 12 · PART 1 · CHAPTER 3 — CURRENT ELECTRICITY
+   Every activity runs a continuous animation loop. Sliders/buttons only set
+   a TARGET; the drawn object eases, springs or integrates toward it every
+   frame. Formulas (I = nAe·vd, R = ρl/A, ρT = ρ0[1+α(T−T0)], P = V²/R, V = ε − Ir …)
+   drive the motion directly; textbook Examples 3.1, 3.3 and 3.7 are reproduced.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const KC = 9e9, EPS0 = 8.854e-12;
+
+/* ---------- canvas + drawing helpers ---------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(240, r.width), h = Math.max(200, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash,off){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  if(dash){ ctx.setLineDash(dash); ctx.lineDashOffset=off||0; } else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.45); ctx.lineTo(-size,-size*0.45); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  if(Math.hypot(x2-x1,y2-y1)<4) return;
+  const a=Math.atan2(y2-y1,x2-x1), hs=7+(width||2.6)*0.8;
+  line(ctx,x1,y1,x2-Math.cos(a)*hs*0.6,y2-Math.sin(a)*hs*0.6,color,width||2.6); arrowHead(ctx,x2,y2,a,color,hs);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=o.color||COL.ink; ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; const s=Number(x.toFixed(d)); return (Object.is(s,-0)?0:s).toString(); }
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function sci(x,d){ if(!isFinite(x)) return '—'; if(x===0) return '0'; d=d===undefined?1:d; let e=Math.floor(Math.log10(Math.abs(x))); let m=x/Math.pow(10,e); if(Math.abs(Number(m.toFixed(d)))>=10){m/=10;e++;} return fmt(m,d)+'×10'+String(e).split('').map(c=>SUP[c]).join(''); }
+function si(v,u,d){
+  d=d===undefined?2:d; const a=Math.abs(v); if(!isFinite(v)) return '—'; if(a<1e-15) return '0 '+u;
+  const P=[[1e-15,'f'],[1e-12,'p'],[1e-9,'n'],[1e-6,'µ'],[1e-3,'m'],[1,''],[1e3,'k'],[1e6,'M']];
+  let p=P[0]; for(const q of P){ if(a>=q[0]*0.9995) p=q; }
+  return fmt(v/p[0],d)+' '+p[1]+u;
+}
+function wrapAng(a){ while(a>Math.PI) a-=2*Math.PI; while(a<=-Math.PI) a+=2*Math.PI; return a; }
+
+/* ---------- animation engine ---------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf, t=0;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now; t+=dt;
+    tick(dt,t);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+function springTo(s,target,k,damping,dt){ // s={x,v}
+  const n=Math.max(1,Math.ceil(dt/0.008)), h=dt/n;
+  for(let i=0;i<n;i++){ s.v += ((target-s.x)*k - s.v*damping)*h; s.x += s.v*h; }
+  return s.x;
+}
+
+/* ---------- UI builders ---------- */
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function group(side){ const g=el('div','control-group'); side.appendChild(g); return g; }
+function slider(side,o){
+  const g=group(side), lab=el('label','','<span>'+o.label+'</span><span class="val"></span>'), inp=el('input');
+  inp.type='range'; inp.min=o.min; inp.max=o.max; inp.step=o.step||(o.max-o.min)/200; inp.value=o.value;
+  g.append(lab,inp); const vEl=lab.querySelector('.val');
+  const api={g,input:inp,get:()=>parseFloat(inp.value),set:(v)=>{ inp.value=v; show(); }};
+  function show(){ vEl.textContent=fmt(api.get(),o.dec===undefined?1:o.dec)+(o.unit?' '+o.unit:''); }
+  inp.addEventListener('input',()=>{ show(); if(o.on) o.on(api.get()); });
+  show(); return api;
+}
+function buttons(side,defs){
+  const g=group(side), row=el('div','toggle-group'); g.appendChild(row);
+  const bs=defs.map(d=>{ const b=el('button','toggle-btn '+(d.cls||''),d.t); b.onclick=()=>d.on(b,bs); row.appendChild(b); return b; });
+  return bs;
+}
+function toggle(side,label,opts,init,cb){
+  const g=group(side); if(label) g.appendChild(el('label','','<span>'+label+'</span>'));
+  const row=el('div','toggle-group'); g.appendChild(row);
+  const bs=opts.map(([k,t])=>{ const b=el('button','toggle-btn'+(k===init?' active':''),t); b.onclick=()=>{ api.set(k); cb(k); }; row.appendChild(b); return b; });
+  const api={g,set:(k)=>bs.forEach((b,i)=>b.classList.toggle('active',opts[i][0]===k))};
+  return api;
+}
+function cards(side,defs){
+  const g=el('div','result-cards'); side.appendChild(g); const m={};
+  defs.forEach(d=>{ const c=el('div','rcard'+(d.wide?' wide':''),'<div class="rlabel">'+d.l+'</div><div class="rval">—</div>'); g.appendChild(c); m[d.id]=c.querySelector('.rval'); if(d.color) m[d.id].style.color=d.color; });
+  return (id,txt)=>{ if(m[id].textContent!==txt) m[id].textContent=txt; };
+}
+function fbox(side){ const b=el('div','fb off'); side.appendChild(b); return (txt,cls)=>{ if(!txt){ b.className='fb off'; return; } b.className='fb '+(cls||'ok'); if(b.textContent!==txt) b.textContent=txt; }; }
+
+/* ---------- plot + geometry helpers ---------- */
+function graph(ctx,x,y,w,h,o){
+  ctx.save(); rrect(ctx,x,y,w,h,8); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+  const pl=o.pl===undefined?40:o.pl, pr=12, pt=22, pb=24;
+  const X=v=>x+pl+(v-o.x0)/(o.x1-o.x0)*(w-pl-pr), Y=v=>y+pt+(1-(v-o.y0)/(o.y1-o.y0))*(h-pt-pb);
+  const zy=Y(clamp(0,o.y0,o.y1)), zx=X(clamp(0,o.x0,o.x1));
+  line(ctx,X(o.x0),zy,X(o.x1),zy,COL.mid,1.3); line(ctx,zx,Y(o.y0),zx,Y(o.y1),COL.mid,1.3);
+  if(o.xt) o.xt.forEach(v=>{ line(ctx,X(v[0]),zy-3,X(v[0]),zy+3,COL.mid,1); textAt(ctx,v[1],X(v[0]),y+h-8,{size:10,color:COL.muted,align:'center'}); });
+  if(o.yt) o.yt.forEach(v=>{ textAt(ctx,v[1],x+pl-5,Y(v[0])+3.5,{size:10,color:COL.muted,align:'right'}); line(ctx,X(o.x0)-3,Y(v[0]),X(o.x0)+3,Y(v[0]),COL.mid,1); });
+  textAt(ctx,o.title||'',x+10,y+15,{size:11.5,weight:700,color:COL.ink});
+  if(o.xl) textAt(ctx,o.xl,x+w-12,y+15,{size:10.5,weight:600,color:COL.muted,align:'right'});
+  return {X,Y,x,y,w,h,begin(){ ctx.save(); ctx.beginPath(); ctx.rect(x+pl-2,y+pt-4,w-pl-pr+6,h-pt-pb+8); ctx.clip(); }, end(){ ctx.restore(); }};
+}
+function poly(ctx,pts,color,lw,dash){
+  if(pts.length<2) return; ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+}
+function dot(ctx,x,y,r,fill){ circ(ctx,x,y,r,COL.ink,fill,2); }
+function tagBox(ctx,txt,x,y,col,align){
+  ctx.save(); ctx.font='700 12px Poppins, sans-serif'; const tw=ctx.measureText(txt).width; ctx.restore();
+  const bx=align==='right'?x-tw-10:(align==='center'?x-tw/2-5:x);
+  ctx.save(); rrect(ctx,bx,y-11,tw+10,22,6); ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  textAt(ctx,txt,bx+5,y+4.5,{size:12,weight:700,color:col});
+}
+/* arrowheads travelling along a segment (field / current flow) */
+function flow(ctx,x1,y1,x2,y2,off,spacing,col,size,alpha){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<4) return; const a=Math.atan2(y2-y1,x2-x1), ux=Math.cos(a), uy=Math.sin(a);
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  let d=((off%spacing)+spacing)%spacing;
+  for(;d<L;d+=spacing){ const f=Math.min(1,d/12,(L-d)/12); ctx.globalAlpha=(alpha===undefined?1:alpha)*f; arrowHead(ctx,x1+ux*d,y1+uy*d,a,col,size||6); }
+  ctx.restore();
+}
+/* charge carriers drifting along a polyline */
+function carriers(ctx,pts,phase,n,col,r){
+  let tot=0; const seg=[]; for(let i=1;i<pts.length;i++){ const l=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); seg.push(l); tot+=l; }
+  if(tot<2) return;
+  for(let k=0;k<n;k++){
+    let d=(((k/n+phase)%1)+1)%1*tot, i=0; while(i<seg.length-1 && d>seg[i]){ d-=seg[i]; i++; }
+    const f=seg[i]?d/seg[i]:0, x=lerp(pts[i][0],pts[i+1][0],f), y=lerp(pts[i][1],pts[i+1][1],f);
+    circ(ctx,x,y,r||3.2,null,col,0);
+  }
+}
+function chargeBall(ctx,x,y,r,q,t,rings){
+  const col=q>=0?COL.red:COL.blue;
+  if(rings){ for(let i=0;i<3;i++){ const u=((t*0.55+i/3)%1), rr=r+(q>=0?u:(1-u))*r*3.4; ctx.save(); ctx.globalAlpha=(q>=0?(1-u):u)*0.5*rings; ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(x,y,rr,0,6.283); ctx.stroke(); ctx.restore(); } }
+  circ(ctx,x,y,r,col,'#fff',2.6);
+  line(ctx,x-r*0.5,y,x+r*0.5,y,col,2.4); if(q>=0) line(ctx,x,y-r*0.5,x,y+r*0.5,col,2.4);
+}
+/* parallel-plate symbol: o='h' wire horizontal (plates vertical) / 'v' wire vertical (plates horizontal).
+   f = signed charge fraction, first plate (left/top) gets sign(f). */
+function capSym(ctx,cx,cy,o,len,gap,f,t){
+  const n=Math.round(clamp(Math.abs(f),0,1)*7), pos=f>=0, charged=Math.abs(f)>0.02;
+  const c1=charged?(pos?COL.red:COL.blue):COL.ink, c2=charged?(pos?COL.blue:COL.red):COL.ink;
+  const s1=pos?1:-1;
+  for(let p=0;p<2;p++){
+    const off=(p?1:-1)*gap/2, col=p?c2:c1, sg=p?-s1:s1;
+    let ax,ay,bx,by; if(o==='h'){ ax=bx=cx+off; ay=cy-len/2; by=cy+len/2; } else { ay=by=cy+off; ax=cx-len/2; bx=cx+len/2; }
+    line(ctx,ax,ay,bx,by,col,4);
+    if(charged) for(let i=0;i<n;i++){
+      const u=(i+0.5)/Math.max(n,1), px=lerp(ax,bx,u), py=lerp(ay,by,u), out=(p?1:-1)*11;
+      const sx=o==='h'?px+out:px, sy=o==='h'?py:py+out;
+      line(ctx,sx-3.5,sy,sx+3.5,sy,col,1.8); if(sg>0) line(ctx,sx,sy-3.5,sx,sy+3.5,col,1.8);
+    }
+  }
+  if(charged && gap>10){ ctx.save(); ctx.globalAlpha=0.55*clamp(Math.abs(f)*2,0,1);
+    for(let i=0;i<3;i++){ const u=(i+1)/4; if(o==='h') flow(ctx,cx-gap/2+3,lerp(cy-len/2,cy+len/2,u),cx+gap/2-3,lerp(cy-len/2,cy+len/2,u),0,99,COL.green,4,1); else flow(ctx,lerp(cx-len/2,cx+len/2,u),cy-gap/2+3,lerp(cx-len/2,cx+len/2,u),cy+gap/2-3,0,99,COL.green,4,1); }
+    ctx.restore(); }
+}
+function battery(ctx,x,y,volts,label){ // vertical, + on top; occupies y-30 .. y+30
+  line(ctx,x-15,y-9,x+15,y-9,COL.red,3.4); line(ctx,x-8,y+9,x+8,y+9,COL.blue,3.4);
+  textAt(ctx,'+',x+20,y-12,{size:13,weight:700,color:COL.red}); textAt(ctx,'−',x+20,y+16,{size:15,weight:700,color:COL.blue});
+  if(label!==undefined) textAt(ctx,label,x-22,y+4,{size:12,weight:700,color:COL.ink,align:'right'});
+}
+/* marching-squares contour layer */
+function contours(ctx,x0,y0,w,h,step,f,levels,colorOf,lwOf){
+  const nx=Math.ceil(w/step), ny=Math.ceil(h/step), gx=nx+1, v=new Float32Array(gx*(ny+1));
+  for(let j=0;j<=ny;j++) for(let i=0;i<=nx;i++) v[j*gx+i]=f(x0+i*step,y0+j*step);
+  ctx.save(); ctx.beginPath(); ctx.rect(x0,y0,w,h); ctx.clip(); ctx.lineJoin='round'; ctx.lineCap='round';
+  levels.forEach(L=>{
+    ctx.strokeStyle=colorOf(L); ctx.lineWidth=lwOf?lwOf(L):1.7; ctx.beginPath();
+    for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){
+      const tl=v[j*gx+i], tr=v[j*gx+i+1], br=v[(j+1)*gx+i+1], bl=v[(j+1)*gx+i];
+      const idx=(tl>L?8:0)|(tr>L?4:0)|(br>L?2:0)|(bl>L?1:0); if(idx===0||idx===15) continue;
+      const x=x0+i*step, y=y0+j*step;
+      const T=[x+step*(L-tl)/(tr-tl),y], R=[x+step,y+step*(L-tr)/(br-tr)], B=[x+step*(L-bl)/(br-bl),y+step], Lf=[x,y+step*(L-tl)/(bl-tl)];
+      const sg=(a,b)=>{ ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); };
+      switch(idx){case 1:case 14:sg(Lf,B);break;case 2:case 13:sg(B,R);break;case 3:case 12:sg(Lf,R);break;case 4:case 11:sg(T,R);break;
+        case 5:sg(T,Lf);sg(B,R);break;case 6:case 9:sg(T,B);break;case 7:case 8:sg(T,Lf);break;case 10:sg(T,R);sg(Lf,B);}
+    }
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+const VLEV=[60,100,170,290,490,830,1400,2400,4000];
+function levelColor(L){ return L>0?COL.red:(L<0?COL.blue:COL.green); }
+
+/* ---------- activity shell ---------- */
+let ACTS=[];
+const panelBody=document.getElementById('panelBody');
+function mount(i){
+  stopAllLoops(); const a=ACTS[i];
+  document.querySelectorAll('.nav-item').forEach((n,k)=>n.classList.toggle('active',k===i));
+  document.getElementById('panelBadge').textContent=a.id;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc;
+  panelBody.innerHTML='';
+  const view=el('div','lab-view'), wrap=el('div','lab-canvas-wrap'), cv=el('canvas'), side=el('div','lab-side');
+  wrap.appendChild(cv); view.append(wrap,side); panelBody.appendChild(view);
+  a.init(cv,side);
+  try{ history.replaceState(null,'','#'+a.id); }catch(e){}
+}
+
+
+
+/* ---------- chapter-3 helpers ---------- */
+const E_CH = 1.6e-19;
+function zig(ctx,x1,y1,x2,y2,col,lw,amp,n,lead){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<2) return; const ux=(x2-x1)/L, uy=(y2-y1)/L, nx=-uy, ny=ux;
+  lead=Math.min(lead===undefined?12:lead,L*0.3); const bl=L-2*lead, pts=[[x1,y1],[x1+ux*lead,y1+uy*lead]];
+  for(let i=0;i<n;i++){ const f=(i+0.5)/n, s=(i%2?-1:1)*amp; pts.push([x1+ux*(lead+bl*f)+nx*s, y1+uy*(lead+bl*f)+ny*s]); }
+  pts.push([x2-ux*lead,y2-uy*lead],[x2,y2]); poly(ctx,pts,col,lw); return pts;
+}
+/* round meter. zero:true → centre-zero (frac −1..1), else 0..1 */
+function dial(ctx,cx,cy,r,frac,o){
+  o=o||{}; circ(ctx,cx,cy,r,COL.ink,'#fff',2.4);
+  const a0=-Math.PI/2, ang=o.zero?a0+clamp(frac,-1.1,1.1)*1.0:a0-0.95+clamp(frac,0,1.08)*1.9;
+  for(let i=0;i<=10;i++){ const f=i/10, a=o.zero?a0+(f*2-1):a0-0.95+f*1.9; line(ctx,cx+Math.cos(a)*r*0.78,cy+Math.sin(a)*r*0.78,cx+Math.cos(a)*r*0.92,cy+Math.sin(a)*r*0.92,COL.mid,i%5===0?2:1); }
+  line(ctx,cx,cy,cx+Math.cos(ang)*r*0.8,cy+Math.sin(ang)*r*0.8,o.col||COL.red,2.6); circ(ctx,cx,cy,3.5,COL.ink,COL.ink,1);
+  if(o.label) textAt(ctx,o.label,cx,cy+r*0.58,{size:Math.max(11,r*0.4),weight:700,color:o.col||COL.ink,align:'center'});
+  if(o.txt) textAt(ctx,o.txt,cx,cy+r+15,{size:11.5,weight:700,color:COL.ink,align:'center'});
+}
+function batteryH(ctx,x,y,len){ // horizontal cell, + on the right
+  ctx.save(); ctx.translate(x,y); ctx.rotate(Math.PI/2); battery(ctx,0,0); ctx.restore();
+}
+function heatColor(T){ // glowing metal: dark → red → orange → yellow-white
+  const f=clamp((T-150)/850,0,1); const r=Math.round(lerp(70,255,clamp(f*2.2,0,1))), g=Math.round(lerp(75,200,clamp((f-0.35)*1.9,0,1))), b=Math.round(lerp(85,120,clamp((f-0.7)*3,0,1)));
+  return 'rgb('+r+','+g+','+b+')';
+}
+function pathLen(p){ let L=0; for(let i=1;i<p.length;i++) L+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); return L; }
+function setSlider(api,v){ api.input.value=v; api.input.dispatchEvent(new Event('input')); }
+
+/* ---------- microscopic conductor: ions on a lattice, electrons with random collisions ---------- */
+function Micro(W,H,nMax,vth0){
+  const cols=Math.round(W/46), rows=Math.max(1,Math.round(H/46)), sx=W/cols, sy=H/rows;
+  const m={W,H,cols,rows,sx,sy,vth:vth0||240,ions:[],els:[],tau:0.4,vdx:0,trail:[],start:null,tag:0};
+  for(let j=0;j<rows;j++) for(let i=0;i<cols;i++) m.ions.push({x:(i+0.5)*sx,y:(j+0.5)*sy,p1:Math.random()*6.28,p2:Math.random()*6.28});
+  for(let k=0;k<nMax;k++){ const th=Math.random()*6.283; m.els.push({x:Math.random()*W,y:Math.random()*H,vx:m.vth*Math.cos(th),vy:m.vth*Math.sin(th),cool:0,since:Math.random()*0.3,a:1}); }
+  m.ionPos=function(i,j,t,amp){ const o=m.ions[j*cols+i]; return [o.x+amp*Math.cos(9*t+o.p1), o.y+amp*Math.sin(8*t+o.p2)]; };
+  m.step=function(dt,acc,amp,nAct,rc,t){
+    const n=Math.max(1,Math.ceil(dt/0.008)), h=dt/n; let sum=0, cnt=0;
+    m.els.forEach((e,k)=>{
+      e.a=approach(e.a,k<nAct?1:0,6,dt); if(k>=nAct) return;
+      for(let s=0;s<n;s++){
+        e.vx+=acc*h; e.x+=e.vx*h; e.y+=e.vy*h; e.since+=h; if(e.cool>0) e.cool-=h;
+        let wrapped=false;
+        if(e.x<0){e.x+=W; wrapped=true;} if(e.x>=W){e.x-=W; wrapped=true;} if(e.y<0){e.y+=H; wrapped=true;} if(e.y>=H){e.y-=H; wrapped=true;}
+        if(wrapped && k===m.tag) m.trail=[];
+        if(e.cool<=0){
+          const i0=Math.floor(e.x/sx), j0=Math.floor(e.y/sy); let hit=false;
+          for(let dj=-1;dj<=1&&!hit;dj++) for(let di=-1;di<=1&&!hit;di++){
+            const ii=(i0+di+cols)%cols, jj=(j0+dj+rows)%rows, p=m.ionPos(ii,jj,t,amp);
+            let dx=((e.x-p[0]+W/2)%W+W)%W-W/2, dy=((e.y-p[1]+H/2)%H+H)%H-H/2;
+            if(dx*dx+dy*dy<rc*rc){
+              const th=Math.random()*6.283; e.vx=m.vth*Math.cos(th); e.vy=m.vth*Math.sin(th);
+              e.x=p[0]+(rc+1.5)*Math.cos(th); e.y=p[1]+(rc+1.5)*Math.sin(th);
+              if(e.x<0)e.x+=W; if(e.x>=W)e.x-=W; if(e.y<0)e.y+=H; if(e.y>=H)e.y-=H;
+              e.cool=0.04; m.tau+=(e.since-m.tau)*0.03; e.since=0; hit=true;
+              if(k===m.tag) m.trail.push([e.x,e.y,1]);
+            }
+          }
+        }
+      }
+      sum+=e.vx; cnt++;
+      if(k===m.tag){ m.trail.push([e.x,e.y,0]); if(m.trail.length>420) m.trail.shift(); }
+    });
+    if(cnt) m.vdx=approach(m.vdx,sum/cnt,3,dt);
+  };
+  m.draw=function(ctx,t,amp,rc){
+    const ir=Math.max(3,rc-3.6);
+    m.ions.forEach((o,idx)=>{ const p=m.ionPos(idx%cols,Math.floor(idx/cols),t,amp); circ(ctx,p[0],p[1],ir,COL.red,'rgba(217,67,43,0.12)',1.6); line(ctx,p[0]-ir*0.45,p[1],p[0]+ir*0.45,p[1],COL.red,1.4); line(ctx,p[0],p[1]-ir*0.45,p[0],p[1]+ir*0.45,COL.red,1.4); });
+    const tr=m.trail; if(tr.length>2){ ctx.save(); ctx.strokeStyle='rgba(47,143,224,0.55)'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.beginPath(); tr.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+      tr.forEach(p=>{ if(p[2]) circ(ctx,p[0],p[1],2.6,null,COL.yellow,0); }); }
+    m.els.forEach((e,k)=>{ if(e.a<0.03) return; ctx.save(); ctx.globalAlpha=e.a; if(k===m.tag){ circ(ctx,e.x,e.y,9,COL.yellow,'rgba(217,160,23,0.16)',1.6); } circ(ctx,e.x,e.y,k===m.tag?4.6:3.6,null,COL.blue,0); ctx.restore(); });
+  };
+  return m;
+}
+
+/* =====================================================================
+   3.1  CURRENT AS A FLOW OF CHARGE  (Sections 3.2, 3.5 — I = q/t = n e A vd)
+   ===================================================================== */
+function actCurrent(cv,side){
+  const MATS=[['Copper',8.5e28],['Metal B',3.0e28],['Metal C',2.0e29]], MU=4.3e-3;
+  let Et=0.05, At=1.0, mi=0, dir=1, q=0, tt=0, counting=true, nextHist=0, hist=[[0,0]];
+  const sE={x:0.0,v:0}, sA={x:1,v:0}, els=[]; for(let i=0;i<170;i++) els.push({u:Math.random(),v:Math.random()*2-1,ph:Math.random()*6.28,a:0,flash:0});
+  const sl1=slider(side,{label:'Electric field E in wire',min:0,max:0.12,step:0.002,value:0.05,unit:'V/m',dec:3,on:v=>{Et=v;}});
+  slider(side,{label:'Cross-section A',min:0.2,max:2.5,step:0.05,value:1,unit:'mm²',dec:2,on:v=>{At=v;}});
+  toggle(side,'Free electrons per m³ (n)',MATS.map((m,i)=>[i,m[0]]),0,k=>{ mi=k; });
+  toggle(side,'Field direction',[[1,'→'],[-1,'←']],1,k=>{ dir=k; });
+  buttons(side,[{t:'Reset charge counter',cls:'go',on:()=>{ q=0; tt=0; hist=[[0,0]]; nextHist=0; }}]);
+  const setC=cards(side,[{id:'I',l:'I = n e A vd',color:COL.red},{id:'q',l:'q = ∫ I dt',color:COL.green},{id:'vd',l:'Drift speed vd',color:COL.blue},{id:'j',l:'j = I / A',color:COL.green}]);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    springTo(sE,Et,60,11,dt); springTo(sA,At,60,12,dt);
+    const n=MATS[mi][1], E=Math.max(sE.x,0), Aeff=Math.max(sA.x,0.05), vd=MU*E, I=n*E_CH*Aeff*1e-6*vd, nf=n/8.5e28;
+    tt+=dt; q+=I*dt*dir;
+    const sceneH=Math.round(h*0.62), cy=sceneH*0.5, x0=w*0.07, x1=w*0.93, L=x1-x0, hh=14+20*Math.sqrt(Aeff);
+    // wire body
+    ctx.save(); rrect(ctx,x0,cy-hh,L,hh*2,hh*0.5); ctx.fillStyle='#f6fafe'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.stroke(); ctx.clip();
+    for(let gx=x0+22;gx<x1;gx+=34) for(let gy=cy-hh+hh/ Math.max(1,Math.round(hh/17))*0.5; gy<cy+hh; gy+=hh/Math.max(1,Math.round(hh/17))) circ(ctx,gx,gy,2.6,null,'rgba(217,67,43,0.45)',0);
+    // electrons
+    const target=Math.round(clamp(nf*(L*hh*2)/1500,6,170)), spd=vd*6e5/L*dir, gate=0.5;
+    els.forEach((e,i)=>{
+      e.a=approach(e.a,i<target?1:0,5,dt); if(e.a<0.03) return;
+      const up=e.u; e.u-=spd*dt; if(e.u<0)e.u+=1; if(e.u>1)e.u-=1;
+      if((up>=gate&&e.u<gate)||(up<=gate&&e.u>gate)) e.flash=1;
+      e.flash=Math.max(0,e.flash-dt*3);
+      const px=x0+e.u*L+Math.cos(2.3*t+e.ph)*2.4, py=cy+e.v*(hh-7)+Math.sin(2.9*t+e.ph*1.3)*2.4;
+      ctx.save(); ctx.globalAlpha=e.a; circ(ctx,px,py,4,null,COL.blue,0); if(e.flash>0) circ(ctx,px,py,4+9*(1-e.flash),COL.yellow,null,2); ctx.restore();
+    });
+    ctx.restore();
+    // gate (imaginary cross-section)
+    const gx=x0+gate*L; line(ctx,gx,cy-hh-16,gx,cy+hh+16,COL.yellow,2.6,[7,5]); textAt(ctx,'cross-section A',gx,cy+hh+34,{size:12,weight:700,color:COL.yellow,align:'center'});
+    // arrows: field (green), conventional current (red)
+    const aL=30+E*900;
+    vec(ctx,w/2-aL/2*dir,cy+hh+58,w/2+aL/2*dir,cy+hh+58,COL.green,3); textAt(ctx,'E',w/2,cy+hh+80,{size:13,weight:700,color:COL.green,align:'center'});
+    const iL=24+Math.min(I,12)*7;
+    vec(ctx,w/2-iL/2*dir,cy-hh-30,w/2+iL/2*dir,cy-hh-30,COL.red,3.4); textAt(ctx,'I (conventional)',w/2,cy-hh-42,{size:12,weight:700,color:COL.red,align:'center'});
+    textAt(ctx,'electrons drift the other way',x0,cy-hh-12,{size:11.5,weight:600,color:COL.blue});
+    // q–t graph
+    if(tt>=nextHist){ hist.push([tt,Math.abs(q)]); nextHist=tt+0.15; if(hist.length>1500) hist.shift(); }
+    const gy=sceneH+8, gh=h-gy-8, gw=w-24, tmax=Math.max(10,tt*1.05), qmax=Math.max(1,Math.abs(q)*1.15, I*10*1.1);
+    const g=graph(ctx,12,gy,gw,gh,{pl:52,title:'Charge crossed against time — slope = I',xl:'t (s)',x0:0,x1:tmax,y0:0,y1:qmax,xt:[0,0.25,0.5,0.75,1].map(f=>[f*tmax,fmt(f*tmax,0)]),yt:[0,0.5,1].map(f=>[f*qmax,fmt(f*qmax,1)+' C'])});
+    g.begin(); poly(ctx,hist.map(p=>[g.X(p[0]),g.Y(p[1])]),COL.red,2.6); g.end(); dot(ctx,g.X(tt),g.Y(Math.abs(q)),6,COL.yellow);
+    setC('I',fmt(I,2)+' A'); setC('q',fmt(Math.abs(q),2)+' C  in '+fmt(tt,1)+' s'); setC('vd',fmt(vd*1000,3)+' mm/s'); setC('j',sci(I/(Aeff*1e-6),1)+' A/m²');
+  });
+}
+
+/* =====================================================================
+   3.2  COLLISIONS AND DRIFT  (Section 3.5 — vd = eEτ/m)
+   ===================================================================== */
+function actDrift(cv,side){
+  let Et=0.0, T=300, dir=1; const m=Micro(560,300,26,240), sE={x:0,v:0};
+  slider(side,{label:'Electric field E',min:0,max:1,step:0.02,value:0,unit:'',dec:2,on:v=>{Et=v;}});
+  slider(side,{label:'Temperature (ion vibration)',min:100,max:600,step:10,value:300,unit:'K',dec:0,on:v=>{T=v;}});
+  toggle(side,'Field direction',[[1,'→'],[-1,'←']],1,k=>{ dir=k; });
+  buttons(side,[{t:'Follow another electron',cls:'go',on:()=>{ m.tag=(m.tag+1+Math.floor(Math.random()*5))%26; m.trail=[]; }}]);
+  const setC=cards(side,[{id:'tau',l:'Mean time between collisions τ',color:COL.green,wide:true},{id:'vd',l:'vd = (eE/m)·τ',color:COL.green},{id:'vm',l:'Measured mean velocity',color:COL.blue}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    springTo(sE,Et,60,11,dt);
+    const amp=0.19*Math.sqrt(T), rc=7+0.35*amp*amp, acc=-dir*sE.x*200;
+    m.step(dt,acc,amp,26,rc,t);
+    const s=Math.min((w-130)/m.W,(h*0.74)/m.H), ox=(w-m.W*s)/2, oy=h*0.1;
+    // plates + field arrow
+    const bw=m.W*s, bh=m.H*s;
+    ctx.save(); ctx.globalAlpha=0.9; ctx.fillStyle=dir>0?'rgba(217,67,43,0.14)':'rgba(47,143,224,0.14)'; ctx.fillRect(ox-30,oy,24,bh); ctx.fillStyle=dir>0?'rgba(47,143,224,0.14)':'rgba(217,67,43,0.14)'; ctx.fillRect(ox+bw+6,oy,24,bh); ctx.restore();
+    textAt(ctx,dir>0?'+':'−',ox-18,oy+bh/2+7,{size:22,weight:700,color:dir>0?COL.red:COL.blue,align:'center'}); textAt(ctx,dir>0?'−':'+',ox+bw+18,oy+bh/2+7,{size:22,weight:700,color:dir>0?COL.blue:COL.red,align:'center'});
+    ctx.save(); rrect(ctx,ox,oy,bw,bh,10); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); ctx.clip();
+    ctx.translate(ox,oy); ctx.scale(s,s); m.draw(ctx,t,amp,rc);
+    // net displacement A → B of the tagged electron
+    const tr=m.trail; if(tr.length>12){ ctx.restore(); ctx.save(); ctx.beginPath(); ctx.rect(ox,oy,bw,bh); ctx.clip(); const a=tr[0], b=tr[tr.length-1]; vec(ctx,ox+a[0]*s,oy+a[1]*s,ox+b[0]*s,oy+b[1]*s,COL.green,2.4); textAt(ctx,'A',ox+a[0]*s-9,oy+a[1]*s-7,{size:12,weight:700,color:COL.green}); textAt(ctx,'B',ox+b[0]*s+8,oy+b[1]*s-7,{size:12,weight:700,color:COL.green}); }
+    ctx.restore();
+    if(sE.x>0.03){ const L=20+sE.x*130; vec(ctx,w/2-L/2*dir,oy-16,w/2+L/2*dir,oy-16,COL.green,3.4); textAt(ctx,'E',w/2+(L/2+10)*dir*(dir>0?1:1),oy-11,{size:13,weight:700,color:COL.green,align:'center'}); }
+    // speed bars
+    const by=oy+bh+22, bl=Math.min(w-200,bw)-10, vd=Math.abs(m.vdx);
+    textAt(ctx,'thermal speed',ox,by+12,{size:11.5,weight:600,color:COL.muted}); ctx.fillStyle=COL.red; ctx.globalAlpha=0.85; ctx.fillRect(ox+120,by,bl*0.8,16); ctx.globalAlpha=1;
+    textAt(ctx,'average drift',ox,by+40,{size:11.5,weight:600,color:COL.muted}); ctx.fillStyle=COL.blue; ctx.globalAlpha=0.9; ctx.fillRect(ox+120,by+28,Math.max(2,bl*0.8*vd/m.vth),16); ctx.globalAlpha=1;
+    textAt(ctx,'(drift shown exaggerated — in a real wire it is ~10⁻⁵ of the thermal speed)',ox,by+66,{size:11,weight:500,color:COL.mid});
+    const vdModel=Math.abs(acc)*m.tau;
+    setC('tau',fmt(m.tau*1000,0)+' ms  (model time)'); setC('vd',fmt(vdModel,0)+' px/s'); setC('vm',fmt(vd,0)+' px/s');
+    setF(sE.x<0.03?'E = 0 → paths are straight between collisions, average velocity ≈ 0, no current.':(T>400?'Hotter lattice → ions sweep a bigger target → τ falls → drift falls.':'E ≠ 0 → paths curve; electrons gain a net drift opposite to E.'),'ok');
+  });
+}
+
+/* =====================================================================
+   3.3  OHM'S LAW AND R = ρ l / A  (Sections 3.4, 3.7)
+   ===================================================================== */
+function actOhm(cv,side){
+  const MATS=[['Nichrome',1.1e-6],['Constantan',4.9e-7],['Manganin',4.4e-7],['Copper',1.7e-8]];
+  let V=6, l=4, A=0.5, mi=0, Vs=0, ph=0, rph=0; const sL={x:4,v:0}, sA={x:0.5,v:0}; let Iprev=0;
+  slider(side,{label:'Battery voltage V',min:0,max:12,step:0.25,value:6,unit:'V',dec:2,on:v=>{V=v;}});
+  slider(side,{label:'Length l',min:1,max:10,step:0.25,value:4,unit:'m',dec:2,on:v=>{l=v;}});
+  slider(side,{label:'Cross-section A',min:0.1,max:1,step:0.02,value:0.5,unit:'mm²',dec:2,on:v=>{A=v;}});
+  toggle(side,'Material (resistivity ρ)',MATS.map((m,i)=>[i,m[0]]),0,k=>{ mi=k; });
+  const setC=cards(side,[{id:'R',l:'R = ρ l / A',color:COL.green},{id:'I',l:'I = V / R',color:COL.red},{id:'E',l:'E = V / l',color:COL.green},{id:'j',l:'j = I / A',color:COL.green}]);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    springTo(sL,l,70,12,dt); springTo(sA,A,70,12,dt); Vs=approach(Vs,V,6,dt);
+    const rho=MATS[mi][1], Ls=Math.max(sL.x,0.5), As=Math.max(sA.x,0.05), R=rho*Ls/(As*1e-6), I=Vs/R, Rt=rho*l/(A*1e-6);
+    const sceneH=Math.round(h*0.62), cy=sceneH*0.5+14, bx=w*0.1, rx=w*0.9, ty=cy-sceneH*0.28, by=cy+sceneH*0.3;
+    const mid=(bx+rx)/2, rodL=lerp(90,rx-bx-170,(Ls-1)/9), rodH=lerp(16,64,(As-0.1)/0.9), rx0=mid-rodL/2, rx1=mid+rodL/2;
+    const loop=[[bx,by],[bx,ty],[rx0,ty],[rx1,ty],[rx,ty],[rx,by],[bx,by]];
+    poly(ctx,[[bx,by],[bx,ty],[rx0,ty]],COL.ink,2.4); poly(ctx,[[rx1,ty],[rx,ty],[rx,by-0],[bx,by]],COL.ink,2.4);
+    ph+=Math.tanh(I/6)*1.5*dt;
+    carriers(ctx,loop,-ph,20,COL.blue,3.4);
+    // battery on left wire
+    ctx.fillStyle='#fff'; ctx.fillRect(bx-26,(ty+by)/2-26,52,52); battery(ctx,bx,(ty+by)/2,V,fmt(Vs,1)+' V');
+    // ammeter on the bottom wire
+    const ax=(bx+rx)/2; ctx.fillStyle='#fff'; ctx.fillRect(ax-24,by-24,48,48); dial(ctx,ax,by,22,Math.tanh(I/4),{label:'A',col:COL.red}); textAt(ctx,si(I,'A',2),ax,by+40,{size:12,weight:700,color:COL.red,align:'center'});
+    // the wire (cylinder) under test
+    ctx.save(); rrect(ctx,rx0,ty-rodH/2,rodL,rodH,rodH*0.35); ctx.fillStyle='#eef4fb'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.clip();
+    const rows=Math.max(1,Math.round(rodH/13)), vdv=I/As; rph+=Math.tanh(vdv/8)*60*dt; // drift speed ∝ I/A
+    for(let r=0;r<rows;r++){ const yy=ty-rodH/2+(r+0.5)*rodH/rows; for(let k=0;k<Math.ceil(rodL/22);k++){ let xx=rx0+(((k*22 - rph)%(rodL+22))+(rodL+22))%(rodL+22); circ(ctx,xx,yy,3.2,null,COL.blue,0); } }
+    ctx.restore();
+    // dimension marks
+    line(ctx,rx0,ty-rodH/2-20,rx1,ty-rodH/2-20,COL.yellow,2); line(ctx,rx0,ty-rodH/2-26,rx0,ty-rodH/2-14,COL.yellow,2); line(ctx,rx1,ty-rodH/2-26,rx1,ty-rodH/2-14,COL.yellow,2);
+    textAt(ctx,'l = '+fmt(Ls,1)+' m',mid,ty-rodH/2-28,{size:12.5,weight:700,color:COL.yellow,align:'center'});
+    vec(ctx,rx1+16,ty,rx1+16,ty-rodH/2,COL.yellow,2); vec(ctx,rx1+16,ty,rx1+16,ty+rodH/2,COL.yellow,2);
+    // voltmeter across the wire
+    const vy=ty+Math.max(rodH/2+34,64); poly(ctx,[[rx0,ty+rodH/2],[rx0,vy],[mid-26,vy]],COL.green,1.8,[5,4]); poly(ctx,[[rx1,ty+rodH/2],[rx1,vy],[mid+26,vy]],COL.green,1.8,[5,4]);
+    dial(ctx,mid,vy,24,Vs/12,{label:'V',col:COL.green}); textAt(ctx,fmt(Vs,2)+' V',mid,vy+42,{size:12,weight:700,color:COL.green,align:'center'});
+    // graphs
+    const gy=sceneH+8, gh=h-gy-8, gw=(w-34)/2;
+    const Rm1=rho*10/(A*1e-6), g1=graph(ctx,12,gy,gw,gh,{pl:50,title:'R against l',xl:'l (m)',x0:0,x1:10,y0:0,y1:Rm1*1.08,xt:[[0,'0'],[2,'2'],[4,'4'],[6,'6'],[8,'8'],[10,'10']],yt:[[Rm1,fmt(Rm1,0)+' Ω']]});
+    g1.begin(); poly(ctx,[[g1.X(0),g1.Y(0)],[g1.X(10),g1.Y(Rm1)]],COL.green,2.6); g1.end(); dot(ctx,g1.X(Ls),g1.Y(R),6,COL.yellow);
+    const Rm2=rho*l/(0.1e-6), g2=graph(ctx,24+gw,gy,gw,gh,{pl:50,title:'R against A',xl:'A (mm²)',x0:0,x1:1,y0:0,y1:Rm2*1.08,xt:[[0,'0'],[0.25,'0.25'],[0.5,'0.5'],[0.75,'0.75'],[1,'1']],yt:[[Rm2,fmt(Rm2,0)+' Ω']]});
+    g2.begin(); const cc=[]; for(let x=0.1;x<=1.001;x+=0.02) cc.push([g2.X(x),g2.Y(rho*l/(x*1e-6))]); poly(ctx,cc,COL.green,2.6); g2.end(); dot(ctx,g2.X(As),g2.Y(R),6,COL.yellow);
+    setC('R',si(R,'Ω')); setC('I',si(I,'A')); setC('E',fmt(Vs/Ls,2)+' V/m'); setC('j',sci(I/(As*1e-6),1)+' A/m²');
+  });
+}
+
+/* =====================================================================
+   3.4  LIMITATIONS OF OHM'S LAW  (Section 3.6, Figs 3.5–3.7)
+   ===================================================================== */
+function actNonOhmic(cv,side){
+  const DEV=[
+    {k:'res',n:'Resistor',xr:6,y0:-3.4,y1:3.4,f:V=>V/2,ohm:2,msg:'V/I stays at 2 kΩ — a straight line through the origin: Ohm’s law holds.'},
+    {k:'cond',n:'Good conductor',xr:6,y0:-2.6,y1:2.6,f:V=>Math.sign(V)*(-2+Math.sqrt(4+2*Math.abs(V))),ohm:2,msg:'Type (a): V is no longer proportional to I — the curve bends away from the dashed Ohm line.'},
+    {k:'diode',n:'Diode',xr:0.9,y0:-1.5,y1:7,f:V=>0.003*(Math.exp(V/0.11)-1),msg:'Type (b): reversing V does not reverse I with the same size — the response depends on the sign of V.'},
+    {k:'gaas',n:'GaAs-like',xr:6,y0:-3.4,y1:3.4,f:V=>Math.sign(V)*(Math.abs(V)*Math.exp(-V*V/8)*1.6+0.012*Math.pow(Math.abs(V),3)),msg:'Type (c): the same I occurs for more than one V — V against I is not unique.'}
+  ];
+  let di=0, Vt=0, sweep=false, ph=0, flowPh=0; const sV={x:0,v:0}, trace=[]; let sl;
+  sl=slider(side,{label:'Applied voltage V',min:-6,max:6,step:0.02,value:0,unit:'V',dec:2,on:v=>{ Vt=v; sweep=false; sw.classList.remove('play'); sw.textContent='Auto-sweep V'; }});
+  toggle(side,'Device',DEV.map((d,i)=>[i,d.n]),0,k=>{ di=k; const d=DEV[k]; sl.input.min=-d.xr; sl.input.max=d.xr; setSlider(sl,0); Vt=0; sV.x=0; trace.length=0; });
+  const sw=buttons(side,[{t:'Auto-sweep V',cls:'',on:b=>{ sweep=!sweep; b.classList.toggle('play',sweep); b.textContent=sweep?'Stop sweep':'Auto-sweep V'; if(sweep) ph=Math.asin(clamp(Vt/DEV[di].xr,-1,1)); }}])[0];
+  const setC=cards(side,[{id:'V',l:'Voltage V',color:COL.green},{id:'I',l:'Current I',color:COL.red},{id:'R',l:'V / I',color:COL.green},{id:'rev',l:'Compare −V',color:COL.blue}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv); const d=DEV[di];
+    if(sweep){ ph+=dt*0.8; Vt=d.xr*Math.sin(ph); sl.input.value=Vt; sl.set(Vt); }
+    springTo(sV,Vt,90,14,dt); const V=sV.x, I=d.f(V), Im=I; // mA
+    const sceneH=Math.round(h*0.46), cy=sceneH*0.5+6, bx=w*0.12, rx=w*0.88, ty=cy-sceneH*0.3, by=cy+sceneH*0.3, mid=(bx+rx)/2;
+    // circuit
+    const loop=[[bx,by],[bx,ty],[rx,ty],[rx,by],[bx,by]];
+    poly(ctx,loop,COL.ink,2.4); flowPh+=Math.tanh(I/2.2)*1.3*dt;
+    carriers(ctx,loop,-flowPh,16,COL.blue,3.4);
+    ctx.fillStyle='#fff'; ctx.fillRect(bx-26,(ty+by)/2-26,52,52); battery(ctx,bx,(ty+by)/2,0,fmt(V,2)+' V');
+    // device on the top wire
+    const dw=150, dx0=mid-dw/2, dx1=mid+dw/2; ctx.fillStyle='#fff'; ctx.fillRect(dx0-4,ty-34,dw+8,68);
+    const glow=clamp(Math.abs(I*V)/6,0,1);
+    if(glow>0.02){ ctx.save(); ctx.shadowColor='rgba(217,67,43,0.8)'; ctx.shadowBlur=26*glow; ctx.fillStyle='rgba(217,67,43,0.01)'; ctx.fillRect(dx0,ty-12,dw,24); ctx.restore(); }
+    const dc=glow>0.05?`rgb(${Math.round(lerp(19,217,glow))},${Math.round(lerp(42,67,glow))},${Math.round(lerp(68,43,glow))})`:COL.ink;
+    if(d.k==='res'||d.k==='cond'){ zig(ctx,dx0,ty,dx1,ty,dc,d.k==='cond'?4.4:3,d.k==='cond'?13:11,9,18); }
+    else if(d.k==='diode'){ line(ctx,dx0,ty,mid-18,ty,COL.ink,2.6); line(ctx,mid+18,ty,dx1,ty,COL.ink,2.6); ctx.save(); ctx.fillStyle=dc; ctx.beginPath(); ctx.moveTo(mid-18,ty-20); ctx.lineTo(mid-18,ty+20); ctx.lineTo(mid+18,ty); ctx.closePath(); ctx.fill(); ctx.restore(); line(ctx,mid+18,ty-22,mid+18,ty+22,dc,4.4); }
+    else { line(ctx,dx0,ty,mid-34,ty,COL.ink,2.6); line(ctx,mid+34,ty,dx1,ty,COL.ink,2.6); ctx.save(); rrect(ctx,mid-34,ty-20,68,40,6); ctx.fillStyle='#eef4fb'; ctx.fill(); ctx.strokeStyle=dc; ctx.lineWidth=3; ctx.stroke(); ctx.restore(); textAt(ctx,'GaAs',mid,ty+5,{size:13,weight:700,color:dc,align:'center'}); }
+    textAt(ctx,d.n,mid,ty-30,{size:12.5,weight:700,color:COL.muted,align:'center'});
+    // ammeter
+    const ax=mid; ctx.fillStyle='#fff'; ctx.fillRect(ax-24,by-24,48,48); dial(ctx,ax,by,22,Math.tanh(I/3),{label:'mA',col:COL.red,zero:true}); textAt(ctx,fmt(I,2)+' mA',ax,by+40,{size:12,weight:700,color:COL.red,align:'center'});
+    // graph I against V
+    const gy=sceneH+10, gh=h-gy-8, g=graph(ctx,12,gy,w-24,gh,{pl:56,title:'Current I (mA) against voltage V (V)',xl:'V',x0:-d.xr,x1:d.xr,y0:d.y0,y1:d.y1,xt:[-1,-0.5,0,0.5,1].map(f=>[f*d.xr,fmt(f*d.xr,1)]),yt:[d.y0,0,d.y1].map(v=>[v,fmt(v,1)])});
+    g.begin();
+    if(d.ohm){ poly(ctx,[[g.X(-d.xr),g.Y(-d.xr/d.ohm)],[g.X(d.xr),g.Y(d.xr/d.ohm)]],COL.mid,1.8,[6,5]); }
+    const pts=[]; for(let i=0;i<=240;i++){ const v=-d.xr+2*d.xr*i/240; pts.push([g.X(v),g.Y(d.f(v))]); } poly(ctx,pts,COL.green,2.8);
+    trace.push([g.X(V),g.Y(I)]); if(trace.length>70) trace.shift(); poly(ctx,trace,'rgba(47,143,224,0.55)',2.2);
+    g.end(); dot(ctx,g.X(V),g.Y(clamp(I,d.y0,d.y1)),6.5,COL.yellow);
+    if(d.ohm) textAt(ctx,'dashed: Ohm’s law',g.X(d.xr)-8,g.Y(d.y1)+30,{size:10.5,weight:600,color:COL.mid,align:'right'});
+    setC('V',fmt(V,2)+' V'); setC('I',fmt(I,2)+' mA'); setC('R',Math.abs(I)<0.003?'∞':fmt(V/I,2)+' kΩ'); setC('rev',Math.abs(V)<0.05?'—':fmt(d.f(-V),2)+' mA at −V');
+    setF(d.msg,d.k==='res'?'ok':'warn');
+  });
+}
+
+/* =====================================================================
+   3.5  TEMPERATURE DEPENDENCE OF RESISTIVITY  (Section 3.8, Eq. 3.26)
+   ===================================================================== */
+function actTemp(cv,side){
+  const MAT=[
+    {n:'Copper',  rho:T=>1+0.0039*(T-20), col:COL.red,  rc:T=>{const a=0.19*Math.sqrt(T+273); return 7+0.35*a*a;}, ne:T=>18, txt:'Metal: n fixed, τ falls as T rises → ρ rises (α > 0).'},
+    {n:'Nichrome',rho:T=>1+0.00017*(T-20),col:COL.yellow,rc:T=>{const a=0.19*Math.sqrt(T+273); return 14+0.04*a*a;}, ne:T=>18, txt:'Alloy: disorder dominates collisions → ρ is almost flat (tiny α).'},
+    {n:'Silicon', rho:T=>Math.exp(3000*(1/(T+273)-1/293)), col:COL.green, rc:T=>{const a=0.19*Math.sqrt(T+273); return 7+0.35*a*a;}, ne:T=>1+Math.round(21*Math.pow(Math.exp(-3000*(1/(T+273)-1/873)),0.4)), txt:'Semiconductor: heat frees many more carriers (n↑ beats τ↓) → ρ falls.'}
+  ];
+  let mi=0, Tt=20; const sT={x:20,v:0}, m=Micro(560,138,22,240), fl=[]; for(let i=0;i<14;i++) fl.push(Math.random()*6.28);
+  toggle(side,'Material',MAT.map((a,i)=>[i,a.n]),0,k=>{ mi=k; });
+  slider(side,{label:'Temperature T',min:0,max:600,step:5,value:20,unit:'°C',dec:0,on:v=>{Tt=v;}});
+  const setC=cards(side,[{id:'rho',l:'ρT / ρ at 20 °C',color:COL.green},{id:'R',l:'Resistance (R₂₀ = 10 Ω)',color:COL.green},{id:'tau',l:'Mean time between collisions',color:COL.blue},{id:'n',l:'Free electrons shown',color:COL.blue}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv); const M=MAT[mi];
+    springTo(sT,Tt,40,10,dt); const T=sT.x, amp=0.19*Math.sqrt(T+273), rc=M.rc(T), nA=M.ne(T), rr=M.rho(T);
+    m.step(dt,-60,amp,nA,rc,t);
+    const sceneH=Math.round(h*0.64), s=Math.min((w*0.62)/m.W,(sceneH*0.5)/m.H), bw=m.W*s, bh=m.H*s, ox=w*0.1+14, oy=sceneH*0.16;
+    // flame under the strip
+    const fh=clamp((T-20)/580,0,1);
+    const baseY=oy+bh+84; line(ctx,ox,baseY+5,ox+bw,baseY+5,COL.ink,5);
+    if(fh>0.02) for(let i=0;i<14;i++){ const fx=ox+bw*(i+0.5)/14, hg=(10+fh*56)*(0.65+0.35*Math.sin(t*9+fl[i])), sw=Math.sin(t*7+fl[i])*3; ctx.save(); ctx.globalAlpha=0.25+0.7*fh; ctx.beginPath(); ctx.moveTo(fx-9,baseY); ctx.quadraticCurveTo(fx-4,baseY-hg*0.55,fx+sw,baseY-hg); ctx.quadraticCurveTo(fx+4,baseY-hg*0.55,fx+9,baseY); ctx.closePath(); ctx.fillStyle=fh>0.6?COL.yellow:(fh>0.25?'#e8872b':COL.red); ctx.fill(); ctx.restore(); }
+    ctx.save(); rrect(ctx,ox,oy,bw,bh,9); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle=heatColor(T*0.9+60); ctx.lineWidth=3.2; ctx.stroke(); ctx.clip();
+    ctx.translate(ox,oy); ctx.scale(s,s); m.draw(ctx,t,amp,rc); ctx.restore();
+    // ohmmeter
+    const ox2=ox+bw+60, oy2=oy+bh/2; dial(ctx,ox2,oy2,34,clamp(10*rr/36,0,1),{label:'Ω',col:COL.green}); textAt(ctx,fmt(10*rr,2)+' Ω',ox2,oy2+52,{size:12.5,weight:700,color:COL.green,align:'center'});
+    // thermometer
+    const tx=ox-26, tTop=oy-6, tBot=oy+bh+60; rrect(ctx,tx-5,tTop,10,tBot-tTop,5); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.stroke(); circ(ctx,tx,tBot+7,9,COL.ink,COL.red,2); ctx.fillStyle=COL.red; const fy=lerp(tBot,tTop+4,clamp(T/600,0,1)); ctx.fillRect(tx-2.5,fy,5,tBot-fy+2); textAt(ctx,fmt(T,0)+' °C',ox+bw/2,oy-16,{size:13,weight:700,color:COL.red,align:'center'});
+    // graph
+    const gy=sceneH+8, gh=h-gy-8, g=graph(ctx,12,gy,w-24,gh,{pl:50,title:'ρT / ρ(20 °C) against temperature',xl:'T (°C)',x0:0,x1:600,y0:0,y1:3.6,xt:[0,100,200,300,400,500,600].map(v=>[v,''+v]),yt:[[1,'1'],[2,'2'],[3,'3']]});
+    g.begin(); MAT.forEach((a,i)=>{ const pts=[]; for(let x=0;x<=600;x+=10) pts.push([g.X(x),g.Y(a.rho(x))]); poly(ctx,pts,i===mi?a.col:'#cfd9e6',i===mi?3.2:1.8); }); g.end();
+    MAT.forEach((a,i)=>textAt(ctx,a.n,g.X(600)-6,g.Y(clamp(a.rho(600),0.15,3.5))-6,{size:10.5,weight:700,color:i===mi?a.col:COL.mid,align:'right'}));
+    dot(ctx,g.X(T),g.Y(rr),6.5,COL.yellow);
+    setC('rho',fmt(rr,2)); setC('R',fmt(10*rr,2)+' Ω'); setC('tau',fmt(m.tau*1000,0)+' ms'); setC('n',''+nA); setF(M.txt,'ok');
+  });
+}
+
+/* =====================================================================
+   3.6  THE TOASTER  (Section 3.8, Example 3.3 — R rises as the element heats)
+   ===================================================================== */
+function actToaster(cv,side){
+  const R1=75.3, TR=27, HL=0.7517, CAP=3.0;
+  let V=230, alpha=1.7e-4, on=false, T=TR, toast=0, tl=0, nh=0, hist=[]; const sT={x:TR,v:0};
+  slider(side,{label:'Supply voltage',min:100,max:260,step:5,value:230,unit:'V',dec:0,on:v=>{V=v;}});
+  toggle(side,'Element metal',[[1.7e-4,'Nichrome'],[3.9e-3,'Copper-like']],1.7e-4,k=>{ alpha=k; });
+  const bt=buttons(side,[{t:'Switch ON',cls:'play',on:b=>{ on=!on; if(on&&T<TR+5){ hist=[]; tl=0; nh=0; toast=0; } b.textContent=on?'Switch OFF':'Switch ON'; b.classList.toggle('play',!on); }},
+                         {t:'Cool & reset',on:()=>{ on=false; T=TR; sT.x=TR; toast=0; hist=[]; tl=0; nh=0; bt[0].textContent='Switch ON'; bt[0].classList.add('play'); }}]);
+  const setC=cards(side,[{id:'T',l:'Element temperature',color:COL.red},{id:'R',l:'Resistance R(T)',color:COL.green},{id:'I',l:'Current I',color:COL.red},{id:'P',l:'Heat made I²R',color:COL.red}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    let R=R1*(1+alpha*(T-TR)), I=0, P=0;
+    const n=Math.ceil(dt/0.004), hs=dt/n;
+    for(let i=0;i<n;i++){ R=R1*(1+alpha*(T-TR)); I=on?V/R:0; P=I*I*R; T+=(P-HL*(T-TR))/CAP*hs; }
+    R=R1*(1+alpha*(T-TR)); I=on?V/R:0; P=I*I*R;
+    toast=clamp(toast+Math.max(0,T-140)/700*0.1*dt,0,1);
+    springTo(sT,T,60,11,dt);
+    // steady state: hR1α ΔT² + hR1 ΔT − V² = 0
+    const a=HL*R1*alpha, b=HL*R1, dTss=(-b+Math.sqrt(b*b+4*a*V*V))/(2*a), Tss=TR+dTss, Iss=V/(R1*(1+alpha*dTss));
+    const sceneH=Math.round(h*0.6), cx=w*0.4, cy=sceneH*0.52, k=Math.min(1,sceneH/360);
+    const bL=cx-150*k, bR=cx+150*k, bT=cy-120*k, bB=cy+120*k;
+    // toaster body + bread
+    ctx.save(); rrect(ctx,bL,bT,bR-bL,bB-bT,26); ctx.fillStyle='#f3f6fa'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    const br=Math.round(lerp(243,107,toast)), bg=Math.round(lerp(220,61,toast)), bb=Math.round(lerp(164,23,toast));
+    [-1,1].forEach(sg=>{ ctx.save(); rrect(ctx,cx+sg*70*k-22*k,cy-84*k,44*k,168*k,14); ctx.fillStyle=`rgb(${br},${bg},${bb})`; ctx.fill(); ctx.strokeStyle='#b88a4a'; ctx.lineWidth=1.8; ctx.stroke(); ctx.restore(); });
+    // element (coil)
+    const sx=bL-90*k, top=cy-96*k, bot=cy+96*k, ec=heatColor(sT.x), gl=clamp((sT.x-250)/600,0,1);
+    ctx.save(); if(gl>0.02){ ctx.shadowColor='rgba(255,120,30,0.95)'; ctx.shadowBlur=34*gl; }
+    const zp=zig(ctx,cx,top,cx,bot,ec,5,15*k,14,8); ctx.restore();
+    // supply circuit
+    poly(ctx,[[cx,top],[cx,cy-130*k-6],[sx,cy-130*k-6],[sx,cy-34]],COL.ink,2.4); poly(ctx,[[cx,bot],[cx,cy+130*k+6],[sx,cy+130*k+6],[sx,cy+34]],COL.ink,2.4);
+    ctx.fillStyle='#fff'; ctx.fillRect(sx-27,cy-31,54,62); circ(ctx,sx,cy,24,COL.ink,'#fff',2.4); textAt(ctx,'~',sx,cy+5,{size:24,weight:600,color:COL.ink,align:'center'}); textAt(ctx,fmt(V,0)+' V',sx,cy+46,{size:12,weight:700,color:COL.green,align:'center'});
+    const path=[[sx,cy-130*k-6],[cx,cy-130*k-6]].concat(zp.map(p=>[p[0],p[1]]),[[cx,cy+130*k+6],[sx,cy+130*k+6],[sx,cy-130*k-6]]);
+    if(on){ const ph=(t*Math.tanh(I/3)*0.35); carriers(ctx,path,-ph,22,COL.blue,3.2); }
+    // thermometer
+    const tx=w*0.72, tT=cy-128*k, tB=cy+118*k, ty=(x)=>lerp(tB,tT,clamp(x/1000,0,1));
+    rrect(ctx,tx-7,tT-6,14,tB-tT+10,7); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); circ(ctx,tx,tB+14,13,COL.ink,COL.red,2.2);
+    ctx.fillStyle=COL.red; ctx.fillRect(tx-3.5,ty(sT.x),7,tB-ty(sT.x)+8);
+    for(let v=0;v<=1000;v+=200){ line(ctx,tx+9,ty(v),tx+17,ty(v),COL.mid,1.4); textAt(ctx,''+v,tx+21,ty(v)+4,{size:10,color:COL.muted}); }
+    line(ctx,tx-14,ty(Tss),tx+16,ty(Tss),COL.green,2.2,[5,4]); textAt(ctx,'steady '+fmt(Tss,0)+' °C',tx-18,ty(Tss)-5,{size:11,weight:700,color:COL.green,align:'right'});
+    textAt(ctx,fmt(T,0)+' °C',tx,tT-16,{size:13,weight:700,color:COL.red,align:'center'});
+    // ammeter
+    const ax=w*0.9; dial(ctx,ax,cy,32,I/4.5,{label:'A',col:COL.red}); textAt(ctx,fmt(I,2)+' A',ax,cy+52,{size:12.5,weight:700,color:COL.red,align:'center'});
+    // histories
+    if(on||T>TR+1){ tl+=dt; if(tl>=nh){ hist.push([tl,T,I]); nh=tl+0.1; if(tl>25){ hist=[]; tl=0; nh=0; } } }
+    const gy=sceneH+8, gh=h-gy-8, gw=(w-34)/2, xt=[0,5,10,15,20,25].map(v=>[v,''+v]);
+    const g1=graph(ctx,12,gy,gw,gh,{pl:50,title:'Temperature against time',xl:'t (s)',x0:0,x1:25,y0:0,y1:1000,xt,yt:[[0,'0'],[500,'500'],[1000,'1000']]});
+    g1.begin(); line(ctx,g1.X(0),g1.Y(Tss),g1.X(25),g1.Y(Tss),COL.green,1.6,[6,4]); poly(ctx,hist.map(p=>[g1.X(p[0]),g1.Y(p[1])]),COL.red,2.6); g1.end(); if(hist.length) dot(ctx,g1.X(tl),g1.Y(T),5.5,COL.yellow);
+    const g2=graph(ctx,24+gw,gy,gw,gh,{pl:50,title:'Current against time',xl:'t (s)',x0:0,x1:25,y0:0,y1:Math.max(4,V/R1*1.15),xt,yt:[[0,'0'],[2,'2'],[4,'4']]});
+    g2.begin(); line(ctx,g2.X(0),g2.Y(Iss),g2.X(25),g2.Y(Iss),COL.green,1.6,[6,4]); poly(ctx,hist.map(p=>[g2.X(p[0]),g2.Y(p[2])]),COL.red,2.6); g2.end(); if(hist.length) dot(ctx,g2.X(tl),g2.Y(I),5.5,COL.yellow);
+    setC('T',fmt(T,0)+' °C'); setC('R',fmt(R,1)+' Ω'); setC('I',fmt(I,2)+' A'); setC('P',fmt(P,0)+' W');
+    const nich=alpha<1e-3, ex=Math.abs(V-230)<1&&nich;
+    if(!on&&T<TR+3) setF('Switch ON: R starts at 75.3 Ω and climbs as the coil heats — the current falls back.','warn');
+    else if(on&&Math.abs(Tss-T)<8) setF(ex?'Steady: 847 °C and 2.68 A — heat made = heat lost (Example 3.3).':'Steady: heat made = heat lost to the surroundings at '+fmt(Tss,0)+' °C, '+fmt(Iss,2)+' A.','ok');
+    else if(on) setF('Current is highest at the first instant (cold, low R), then drops as R(T) rises.','warn'); else setF('Cooling: no heat made, only lost.','warn');
+  });
+}
+
+/* =====================================================================
+   3.7  ELECTRICAL ENERGY AND POWER  (Section 3.9 — P = VI = I²R = V²/R)
+   ===================================================================== */
+function actJoule(cv,side){
+  const MW=0.25, CW=4186, SPEED=40;
+  let V=12, R=4, run=false, E=0, ts=0, nh=0, hist=[[0,20]], tw=20, ph=0; const sT={x:20,v:0}, bub=[];
+  slider(side,{label:'Battery voltage V',min:2,max:24,step:0.5,value:12,unit:'V',dec:1,on:v=>{V=v;}});
+  slider(side,{label:'Heater resistance R',min:1,max:20,step:0.5,value:4,unit:'Ω',dec:1,on:v=>{R=v;}});
+  const bt=buttons(side,[{t:'Start heating',cls:'play',on:b=>{ run=!run; b.textContent=run?'Pause':'Start heating'; b.classList.toggle('play',!run); }},
+                         {t:'Reset water',on:()=>{ run=false; E=0; ts=0; nh=0; hist=[[0,20]]; tw=20; bt[0].textContent='Start heating'; bt[0].classList.add('play'); }}]);
+  const setC=cards(side,[{id:'I',l:'I = V / R',color:COL.red},{id:'P',l:'P = VI = V² / R',color:COL.red},{id:'E',l:'Energy supplied V·I·t',color:COL.green},{id:'Q',l:'Heat gained m c ΔT',color:COL.green}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv); const I=V/R, P=V*I;
+    if(run&&tw<100){ const sd=dt*SPEED; E+=P*sd; ts+=sd; tw=Math.min(100,20+E/(MW*CW)); } else if(run&&tw>=100){ ts+=dt*SPEED; E+=P*dt*SPEED; }
+    if(run&&ts>=nh){ hist.push([ts,tw]); nh=ts+8; if(hist.length>800) hist.shift(); }
+    springTo(sT,tw,40,10,dt); ph+=Math.tanh(I/4)*1.6*dt*(run?1:0);
+    const sceneH=Math.round(h*0.64), k=Math.min(1,sceneH/380), cy=sceneH*0.5;
+    const lx=w*0.1, rx=w*0.9, ty=cy-150*k, by=cy+112*k, bw=Math.min(w*0.34,300), bL=w/2-bw/2, bR=w/2+bw/2, top=cy-110*k, wl=top+34*k;
+    // beaker + water
+    const wc=sT.x; const wr=Math.round(lerp(140,255,clamp((wc-20)/80,0,1))), wgr=Math.round(lerp(200,170,clamp((wc-20)/80,0,1))), wb=Math.round(lerp(245,170,clamp((wc-20)/80,0,1)));
+    ctx.save(); ctx.fillStyle=`rgba(${wr},${wgr},${wb},0.55)`; rrect(ctx,bL+2,wl,bw-4,by+24*k-wl,10); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bL-8,top-6); ctx.lineTo(bL,top); ctx.lineTo(bL,by+10*k); ctx.arcTo(bL,by+24*k,bL+14,by+24*k,14); ctx.lineTo(bR-14,by+24*k); ctx.arcTo(bR,by+24*k,bR,by+10*k,14); ctx.lineTo(bR,top); ctx.lineTo(bR+8,top-6); ctx.stroke(); ctx.restore();
+    textAt(ctx,'water  '+fmt(MW,2)+' kg',w/2,by+44*k,{size:12,weight:600,color:COL.muted,align:'center'});
+    // loop: bottom wire passes through the heater coil
+    const cL=bL+34, cR=bR-34, pf=clamp(P/250,0,1), coilC=heatColor(150+pf*620);
+    const loop=[[lx,by],[cL,by],[cR,by],[rx,by],[rx,ty],[lx,ty],[lx,by]];
+    poly(ctx,loop,COL.ink,2.4); carriers(ctx,loop,-ph,18,COL.blue,3.2);
+    ctx.fillStyle='#fff'; ctx.fillRect(lx-26,(ty+by)/2-26,52,52); battery(ctx,lx,(ty+by)/2,V,fmt(V,1)+' V');
+    ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(cL,by-18,cR-cL,36); if(pf>0.05&&run){ ctx.shadowColor='rgba(255,100,30,0.9)'; ctx.shadowBlur=26*pf; } zig(ctx,cL,by,cR,by,run?coilC:COL.ink,5,15,12,10); ctx.restore();
+    textAt(ctx,'R = '+fmt(R,1)+' Ω',w/2,by-24,{size:11.5,weight:700,color:COL.yellow,align:'center'});
+    ctx.fillStyle='#fff'; ctx.fillRect(w*0.26-24,ty-24,48,48); dial(ctx,w*0.26,ty,22,Math.tanh(I/6),{label:'A',col:COL.red}); textAt(ctx,fmt(I,2)+' A',w*0.26,ty-30,{size:12,weight:700,color:COL.red,align:'center'});
+    // bubbles + steam
+    if(run&&wc>45&&Math.random()<dt*(wc-40)*1.3) bub.push({x:cL+Math.random()*(cR-cL),y:by-8,v:30+Math.random()*40,p:Math.random()*6.28,r:2+Math.random()*3});
+    for(let i=bub.length-1;i>=0;i--){ const b=bub[i]; b.y-=b.v*dt; b.x+=Math.sin(t*5+b.p)*0.5; if(b.y<wl){ bub.splice(i,1); continue; } circ(ctx,b.x,b.y,b.r,'rgba(47,143,224,0.7)',null,1.4); }
+    if(wc>92){ for(let i=0;i<4;i++){ const sx=bL+bw*(0.22+0.18*i), u=((t*0.5+i*0.27)%1); ctx.save(); ctx.globalAlpha=(1-u)*0.5; ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(sx,top-4); ctx.bezierCurveTo(sx+10,top-20-u*30,sx-10,top-34-u*30,sx+4,top-48-u*40); ctx.stroke(); ctx.restore(); } }
+    // thermometer
+    const tx=bR+60, tT=top-20, tB=by-4, ty2=(x)=>lerp(tB,tT,clamp((x-0)/100,0,1));
+    rrect(ctx,tx-7,tT-6,14,tB-tT+10,7); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2; ctx.stroke(); circ(ctx,tx,tB+12,12,COL.ink,COL.red,2.2);
+    ctx.fillStyle=COL.red; ctx.fillRect(tx-3.5,ty2(sT.x),7,tB-ty2(sT.x)+6);
+    for(let v=0;v<=100;v+=20){ line(ctx,tx+9,ty2(v),tx+16,ty2(v),COL.mid,1.4); textAt(ctx,''+v,tx+20,ty2(v)+4,{size:10,color:COL.muted}); }
+    textAt(ctx,fmt(sT.x,1)+' °C',tx,tT-14,{size:13,weight:700,color:COL.red,align:'center'});
+    textAt(ctx,'time ×'+SPEED,12,ty-4,{size:11.5,weight:700,color:COL.mid});
+    // graph
+    const gy=sceneH+8, gh=h-gy-8, tmax=Math.max(600,ts*1.1), ideal=(x)=>Math.min(100,20+P*x/(MW*CW));
+    const g=graph(ctx,12,gy,w-24,gh,{pl:50,title:'Water temperature against time (dashed: T = 20 + P·t / mc)',xl:'t (min)',x0:0,x1:tmax,y0:0,y1:110,xt:[0,0.25,0.5,0.75,1].map(f=>[f*tmax,fmt(f*tmax/60,1)]),yt:[[20,'20'],[60,'60'],[100,'100']]});
+    g.begin(); { const p=[]; for(let x=0;x<=tmax;x+=tmax/60) p.push([g.X(x),g.Y(ideal(x))]); poly(ctx,p,COL.mid,1.8,[6,5]); } poly(ctx,hist.map(p=>[g.X(p[0]),g.Y(p[1])]),COL.red,2.8); g.end(); dot(ctx,g.X(ts),g.Y(tw),6,COL.yellow);
+    setC('I',fmt(I,2)+' A'); setC('P',fmt(P,1)+' W'); setC('E',si(E,'J',1)); setC('Q',si(MW*CW*(tw-20),'J',1));
+    setF(!run&&E===0?'Press Start: energy V·I·t flows into the coil and appears as heat in the water.':(tw>=100?'Boiling: extra energy now goes into turning water to steam.':'Doubling V multiplies P by 4; doubling R halves P (at fixed V).'),'ok');
+  });
+}
+
+/* =====================================================================
+   3.8  EMF AND INTERNAL RESISTANCE  (Section 3.10 — V = ε − Ir)
+   ===================================================================== */
+function actCell(cv,side){
+  let eps=10, r=3, R=20, Vs=20, chg=false, Is=0, ph=0, sc=15; const sR={x:20,v:0};
+  const s1=slider(side,{label:'Cell emf ε',min:1.5,max:12,step:0.5,value:10,unit:'V',dec:1,on:v=>{eps=v;}});
+  const s2=slider(side,{label:'Internal resistance r',min:0.1,max:5,step:0.1,value:3,unit:'Ω',dec:1,on:v=>{r=v;}});
+  const s3=slider(side,{label:'External resistance R',min:0.2,max:30,step:0.2,value:20,unit:'Ω',dec:1,on:v=>{R=v;}});
+  const s4=slider(side,{label:'Charger voltage',min:14,max:30,step:0.5,value:20,unit:'V',dec:1,on:v=>{Vs=v;}}); s4.g.classList.add('hidden');
+  toggle(side,'Mode',[[false,'Delivers current'],[true,'Being charged']],false,k=>{ chg=k; s4.g.classList.toggle('hidden',!k); });
+  buttons(side,[{t:'Example 3.2 · 10 V, 3 Ω, 20 Ω',on:()=>{ setSlider(s1,10); setSlider(s2,3); setSlider(s3,20); }},{t:'Short-circuit (R→0.2 Ω)',cls:'go',on:()=>{ setSlider(s3,0.2); }}]);
+  const setC=cards(side,[{id:'I',l:'Current I',color:COL.red},{id:'V',l:'Terminal voltage V',color:COL.green},{id:'L',l:'Volts lost in cell Ir',color:COL.blue},{id:'H',l:'Heat in cell I²r',color:COL.red}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    springTo(sR,R,70,12,dt);
+    const Rr=Math.max(sR.x,0.2), It=chg?Math.max(0,(Vs-eps)/(Rr+r)):eps/(Rr+r); Is=approach(Is,It,9,dt);
+    const Vt=chg?eps+Is*r:eps-Is*r; sc=approach(sc,chg?30:15,6,dt);
+    const sceneH=Math.round(h*0.62), k=Math.min(1,sceneH/380), cy=sceneH*0.5, lx=w*0.34, rx=w*0.84, ty=cy-128*k, by=cy+128*k;
+    // loop wires
+    const sgn=chg?-1:1; ph+=Math.tanh(Is/3)*1.4*dt*sgn;
+    const loop=[[lx,by],[lx,ty],[rx,ty],[rx,by],[lx,by]];
+    poly(ctx,loop,COL.ink,2.4); carriers(ctx,loop,-ph,22,COL.blue,3.2);
+    // cell box
+    const bt=cy-100*k, bb=cy+100*k, hot=clamp(Is*Is*r/60,0,1);
+    ctx.save(); rrect(ctx,lx-44,bt,88,bb-bt,12); ctx.fillStyle=hot>0.02?`rgba(217,67,43,${0.05+0.16*hot})`:'#fff'; ctx.fill(); ctx.strokeStyle=hot>0.3?COL.red:COL.mid; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.stroke(); ctx.restore();
+    ctx.fillStyle='#fff'; ctx.fillRect(lx-18,cy+22*k,36,80*k); battery(ctx,lx,cy+56*k); line(ctx,lx,cy+56*k-9,lx,cy+28*k,COL.ink,2.4);
+    ctx.fillStyle='#fff'; ctx.fillRect(lx-20,bt+12*k,40,cy+20*k-bt-12*k); zig(ctx,lx,cy+30*k,lx,bt+6*k,hot>0.1?COL.red:COL.ink,3,10,7,6);
+    textAt(ctx,'ε = '+fmt(eps,1)+' V',lx+52,cy+60*k,{size:12.5,weight:700,color:COL.green}); textAt(ctx,'r = '+fmt(r,1)+' Ω',lx+52,cy-20*k,{size:12.5,weight:700,color:COL.yellow});
+    circ(ctx,lx,bt,4.5,COL.red,'#fff',2); circ(ctx,lx,bb,4.5,COL.blue,'#fff',2); textAt(ctx,'P',lx+10,bt-6,{size:12,weight:700,color:COL.red}); textAt(ctx,'N',lx+10,bb+16,{size:12,weight:700,color:COL.blue});
+    // voltmeter across the terminals
+    const vx=lx-125*Math.min(1,w/800)-10; poly(ctx,[[lx,bt],[vx,bt],[vx,cy-30]],COL.green,1.8,[5,4]); poly(ctx,[[lx,bb],[vx,bb],[vx,cy+30]],COL.green,1.8,[5,4]);
+    dial(ctx,vx,cy,30,Vt/sc,{label:'V',col:COL.green}); textAt(ctx,fmt(Vt,2)+' V',vx,cy+52,{size:12.5,weight:700,color:COL.green,align:'center'});
+    // charger
+    const ca=chg?1:0; if(chg){ const mx=(lx+rx)/2; ctx.fillStyle='#fff'; ctx.fillRect(mx-30,ty-30,60,60); ctx.save(); ctx.translate(mx,ty); ctx.rotate(-Math.PI/2); battery(ctx,0,0); ctx.restore(); textAt(ctx,'charger '+fmt(Vs,0)+' V',mx,ty-34,{size:12,weight:700,color:COL.red,align:'center'}); }
+    else { const mx=(lx+rx)/2; ctx.fillStyle='#fff'; ctx.fillRect(mx-26,ty-26,52,52); dial(ctx,mx,ty,23,Math.tanh(Is/3),{label:'A',col:COL.red}); }
+    // rheostat
+    const ry0=ty+24*k, ry1=by-24*k; ctx.fillStyle='#fff'; ctx.fillRect(rx-20,ry0-4,40,ry1-ry0+8); zig(ctx,rx,ry0,rx,ry1,COL.ink,3,11,12,6);
+    const wy=lerp(ry1,ry0,(sR.x-0.2)/29.8); line(ctx,rx+30,wy,rx+8,wy,COL.yellow,3); arrowHead(ctx,rx+7,wy,Math.PI,COL.yellow,9); textAt(ctx,'R = '+fmt(sR.x,1)+' Ω',rx+36,wy+4,{size:12,weight:700,color:COL.yellow});
+    // V–I graph
+    const gy=sceneH+8, gh=h-gy-8, Ish=eps/r, x0=-0.5*Ish, x1=1.05*Ish, ymx=Math.max(eps*1.5,Vt*1.1);
+    const g=graph(ctx,12,gy,w-24,gh,{pl:54,title:'Terminal voltage against current (V = ε − Ir)',xl:'I (A) ← charging | delivering →',x0,x1,y0:0,y1:ymx,xt:[[0,'0'],[Ish,fmt(Ish,1)+' A']],yt:[[eps,fmt(eps,1)+' V']]});
+    g.begin(); poly(ctx,[[g.X(x0),g.Y(eps-x0*r)],[g.X(Ish),g.Y(0)]],COL.green,2.8); g.end();
+    dot(ctx,g.X(clamp(sgn*Is,x0,x1)),g.Y(Vt),6.5,COL.yellow);
+    textAt(ctx,'short-circuit current ε/r',g.X(Ish)-8,g.Y(0)-8,{size:10.5,weight:600,color:COL.muted,align:'right'});
+    setC('I',fmt(Is,2)+' A'); setC('V',fmt(Vt,2)+' V'); setC('L',fmt(Is*r,2)+' V'); setC('H',fmt(Is*Is*r,1)+' W');
+    if(chg) setF(Vs<=eps?'Charger below ε: no charging current flows.':'Being charged: V = ε + Ir — the terminal voltage is above the emf.','ok');
+    else if(Rr<r*0.25) setF('Near short-circuit: V → 0, I → ε/r, and the cell heats up.','warn');
+    else setF('Delivering current: V = ε − Ir — the terminal voltage sags below ε.','ok');
+  });
+}
+
+/* ---------- cell / resistor drawing used by 3.9 and 3.10 ---------- */
+function cellV(ctx,x,y,up,col){ // vertical cell centred at (x,y); up=true → + plate on top
+  ctx.fillStyle='#fff'; ctx.fillRect(x-24,y-24,48,48);
+  const yp=up?y-8:y+8, yn=up?y+8:y-8;
+  line(ctx,x-15,yp,x+15,yp,COL.red,3.6); line(ctx,x-8,yn,x+8,yn,COL.blue,3.6);
+  textAt(ctx,'+',x+19,yp+(up?-2:12),{size:13,weight:700,color:COL.red}); textAt(ctx,'−',x+19,yn+(up?14:0),{size:15,weight:700,color:COL.blue});
+}
+function resV(ctx,x,y1,y2,col,lw){ ctx.fillStyle='#fff'; ctx.fillRect(x-20,Math.min(y1,y2)-2,40,Math.abs(y2-y1)+4); zig(ctx,x,y1,x,y2,col||COL.ink,lw||3,11,10,8); }
+
+/* =====================================================================
+   3.9  CELLS IN SERIES AND IN PARALLEL  (Section 3.11)
+   ===================================================================== */
+function actCells(cv,side){
+  let e1=6, r1=1, e2=4, r2=2, R=4, mode='ser'; const ph=[0,0,0], sm={I:0,I1:0,I2:0};
+  slider(side,{label:'Cell 1 emf ε₁',min:1,max:9,step:0.5,value:6,unit:'V',dec:1,on:v=>{e1=v;}});
+  slider(side,{label:'Cell 1 resistance r₁',min:0.2,max:5,step:0.1,value:1,unit:'Ω',dec:1,on:v=>{r1=v;}});
+  slider(side,{label:'Cell 2 emf ε₂',min:1,max:9,step:0.5,value:4,unit:'V',dec:1,on:v=>{e2=v;}});
+  slider(side,{label:'Cell 2 resistance r₂',min:0.2,max:5,step:0.1,value:2,unit:'Ω',dec:1,on:v=>{r2=v;}});
+  slider(side,{label:'Load R',min:0.5,max:20,step:0.5,value:4,unit:'Ω',dec:1,on:v=>{R=v;}});
+  toggle(side,'Connection',[['ser','Series'],['opp','Opposed'],['par','Parallel']],'ser',k=>{ mode=k; });
+  const setC=cards(side,[{id:'e',l:'ε equivalent',color:COL.green},{id:'r',l:'r equivalent',color:COL.yellow},{id:'I',l:'Load current I',color:COL.red},{id:'V',l:'Load voltage',color:COL.green},{id:'I1',l:'Current in cell 1',color:COL.red},{id:'I2',l:'Current in cell 2',color:COL.red}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    let ee,re,I,I1,I2,V;
+    if(mode==='par'){ re=r1*r2/(r1+r2); ee=(e1*r2+e2*r1)/(r1+r2); V=(e1/r1+e2/r2)/(1/r1+1/r2+1/R); I=V/R; I1=(e1-V)/r1; I2=(e2-V)/r2; }
+    else { const s2=mode==='ser'?1:-1; ee=e1+s2*e2; re=r1+r2; I=ee/(R+re); I1=I; I2=s2*I; V=I*R; }
+    sm.I=approach(sm.I,I,9,dt); sm.I1=approach(sm.I1,I1,9,dt); sm.I2=approach(sm.I2,I2,9,dt);
+    const sceneH=Math.round(h*0.9), k=Math.min(1,sceneH/430), cy=sceneH*0.5, ty=cy-165*k, by=cy+165*k;
+    const sp=(c)=>Math.tanh(c/2.5)*1.4*dt;
+    const draw=(pts,cur,idx,n)=>{ poly(ctx,pts,COL.ink,2.4); ph[idx]+=sp(cur); carriers(ctx,pts,-ph[idx],n,COL.blue,3.2); };
+    if(mode!=='par'){
+      const lx=w*0.3, rx=w*0.7, loop=[[lx,by],[lx,ty],[rx,ty],[rx,by],[lx,by]];
+      draw(loop,sm.I,0,26);
+      const yA=cy+85*k, yB=cy-85*k, up2=mode==='ser';
+      cellV(ctx,lx,yA+10*k,true); resV(ctx,lx,yA-34*k,yA-84*k+20*k); cellV(ctx,lx,yB+10*k,up2); resV(ctx,lx,yB-34*k,yB-84*k+20*k);
+      textAt(ctx,'ε₁ '+fmt(e1,1)+' V · r₁ '+fmt(r1,1)+' Ω',lx-34,yA+12*k,{size:11.5,weight:700,color:COL.ink,align:'right'}); textAt(ctx,'ε₂ '+fmt(e2,1)+' V · r₂ '+fmt(r2,1)+' Ω',lx-34,yB+12*k,{size:11.5,weight:700,color:COL.ink,align:'right'});
+      resV(ctx,rx,cy-70*k,cy+70*k,COL.yellow,4); textAt(ctx,'R = '+fmt(R,1)+' Ω',rx+30,cy+4,{size:12.5,weight:700,color:COL.yellow});
+      const L=24+Math.min(Math.abs(sm.I),8)*8; vec(ctx,(lx+rx)/2-L/2*Math.sign(sm.I||1),ty-14,(lx+rx)/2+L/2*Math.sign(sm.I||1),ty-14,COL.red,3.2);
+    } else {
+      const xa=w*0.18, xb=w*0.4, xc=w*0.7, c1=sm.I1, c2=sm.I2, cr=sm.I;
+      draw([[xa,by],[xa,ty]],c1,0,8); draw([[xb,by],[xb,ty]],c2,1,8); draw([[xc,ty],[xc,by]],cr,2,8);
+      // buses
+      poly(ctx,[[xa,ty],[xb,ty],[xc,ty]],COL.ink,2.4); poly(ctx,[[xa,by],[xb,by],[xc,by]],COL.ink,2.4);
+      const busFlow=(x1,x2,y,cur,id)=>{ ph[id]=(ph[id]||0)+Math.tanh(cur/2.5)*0.9*dt; carriers(ctx,[[x1,y],[x2,y]],ph[id],4,COL.blue,3.2); };
+      // electrons run opposite to conventional current: top bus carries I1 (→) then I1+I2 (→) ; bottom bus the reverse
+      busFlow(xa,xb,ty,-c1,3); busFlow(xb,xc,ty,-(c1+c2),4); busFlow(xa,xb,by,c1,5); busFlow(xb,xc,by,c1+c2,6);
+      cellV(ctx,xa,cy+8*k,true); resV(ctx,xa,cy-34*k,cy-100*k+10*k); cellV(ctx,xb,cy+8*k,true); resV(ctx,xb,cy-34*k,cy-100*k+10*k);
+      textAt(ctx,'ε₁ '+fmt(e1,1)+' V',xa-30,cy+14*k,{size:11.5,weight:700,align:'right'}); textAt(ctx,'r₁ '+fmt(r1,1)+' Ω',xa-30,cy-70*k,{size:11.5,weight:700,align:'right',color:COL.yellow});
+      textAt(ctx,'ε₂ '+fmt(e2,1)+' V',xb-30,cy+14*k,{size:11.5,weight:700,align:'right'}); textAt(ctx,'r₂ '+fmt(r2,1)+' Ω',xb-30,cy-70*k,{size:11.5,weight:700,align:'right',color:COL.yellow});
+      resV(ctx,xc,cy-70*k,cy+70*k,COL.yellow,4); textAt(ctx,'R = '+fmt(R,1)+' Ω',xc+30,cy+4,{size:12.5,weight:700,color:COL.yellow});
+      [[xa,c1],[xb,c2]].forEach(([x,c])=>{ if(Math.abs(c)>0.03){ const L=Math.min(Math.abs(c),5)*9+14; vec(ctx,x+36,cy+L/2*Math.sign(c),x+36,cy-L/2*Math.sign(c),c>0?COL.red:COL.blue,3); } });
+    }
+    textAt(ctx,mode==='ser'?'Series: ε adds, r adds':(mode==='opp'?'Opposed: ε subtracts, r still adds':'Parallel: r falls, ε is a weighted mean'),w/2,sceneH+26,{size:13,weight:700,color:COL.muted,align:'center'});
+    setC('e',fmt(ee,2)+' V'); setC('r',fmt(re,2)+' Ω'); setC('I',fmt(I,2)+' A'); setC('V',fmt(V,2)+' V'); setC('I1',fmt(I1,2)+' A'); setC('I2',fmt(I2,2)+' A');
+    if(mode==='par'&&(I1<-0.01||I2<-0.01)) setF('A cell with a smaller emf is being charged by the other — current flows backwards through it.','warn');
+    else if(mode==='opp') setF(ee<0?'Cell 2 wins: net emf is reversed, so the current reverses.':'Opposed cells: the weaker emf cancels part of the stronger.','ok');
+    else setF(mode==='ser'?'Series: the same current through both cells; emf and resistance add.':'Parallel: ε_eq = (ε₁r₂+ε₂r₁)/(r₁+r₂), 1/r_eq = 1/r₁ + 1/r₂.','ok');
+  });
+}
+
+/* =====================================================================
+   3.10  KIRCHHOFF'S RULES  (Section 3.12 — junction rule, loop rule)
+   ===================================================================== */
+function actKirchhoff(cv,side){
+  let e1=10, e2=5, R1=2, R2=4, R3=3, loopSel=1; const ph=[0,0,0], sm={a:0,b:0,c:0};
+  slider(side,{label:'Emf ε₁',min:0,max:12,step:0.5,value:10,unit:'V',dec:1,on:v=>{e1=v;}});
+  slider(side,{label:'Emf ε₂ (negative = reversed)',min:-12,max:12,step:0.5,value:5,unit:'V',dec:1,on:v=>{e2=v;}});
+  slider(side,{label:'R₁',min:1,max:20,step:0.5,value:2,unit:'Ω',dec:1,on:v=>{R1=v;}});
+  slider(side,{label:'R₂',min:1,max:20,step:0.5,value:4,unit:'Ω',dec:1,on:v=>{R2=v;}});
+  slider(side,{label:'R₃',min:1,max:20,step:0.5,value:3,unit:'Ω',dec:1,on:v=>{R3=v;}});
+  toggle(side,'Walk around loop',[[1,'Left loop'],[2,'Right loop']],1,k=>{ loopSel=k; });
+  const setC=cards(side,[{id:'I1',l:'I₁ (up, left)',color:COL.red},{id:'I2',l:'I₂ (down, middle)',color:COL.red},{id:'I3',l:'I₃ (up, right)',color:COL.red},{id:'sum',l:'Junction: I₁ + I₃ − I₂',color:COL.green}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    const Va=(e1/R1+e2/R3)/(1/R1+1/R2+1/R3), I1=(e1-Va)/R1, I2=Va/R2, I3=(e2-Va)/R3;
+    sm.a=approach(sm.a,I1,9,dt); sm.b=approach(sm.b,I2,9,dt); sm.c=approach(sm.c,I3,9,dt);
+    const sceneH=Math.round(h*0.64), k=Math.min(1,sceneH/380), cy=sceneH*0.5, ty=cy-130*k, by=cy+130*k, xa=w*0.14, xb=w*0.42, xc=w*0.7;
+    // wires: branch currents (conventional): left up, middle down, right up. electrons opposite.
+    const flowB=(pts,cur,id,n)=>{ poly(ctx,pts,COL.ink,2.4); ph[id]+=Math.tanh(cur/2)*1.3*dt; carriers(ctx,pts,-ph[id],n,COL.blue,3.2); };
+    flowB([[xa,by],[xa,ty]],sm.a,0,9); flowB([[xb,ty],[xb,by]],sm.b,1,9); flowB([[xc,by],[xc,ty]],sm.c,2,9);
+    poly(ctx,[[xa,ty],[xb,ty],[xc,ty]],COL.ink,2.4); poly(ctx,[[xa,by],[xb,by],[xc,by]],COL.ink,2.4);
+    // bus carriers (top: electrons toward node where current leaves)
+    const bf=(x1,x2,y,cur,id)=>{ ph[id]=(ph[id]||0)+Math.tanh(cur/2)*1.0*dt; carriers(ctx,[[x1,y],[x2,y]],ph[id],5,COL.blue,3.2); };
+    bf(xa,xb,ty,-sm.a,3); bf(xb,xc,ty,sm.c,4); bf(xa,xb,by,sm.a,5); bf(xb,xc,by,-sm.c,6);
+    // components
+    cellV(ctx,xa,cy+70*k,true); resV(ctx,xa,cy+30*k,cy-90*k); cellV(ctx,xc,cy+70*k,e2>=0); resV(ctx,xc,cy+30*k,cy-90*k); resV(ctx,xb,cy-80*k,cy+80*k);
+    textAt(ctx,'ε₁ = '+fmt(e1,1)+' V',xa-34,cy+76*k,{size:12,weight:700,align:'right',color:COL.green}); textAt(ctx,'R₁ = '+fmt(R1,1)+' Ω',xa-30,cy-30*k,{size:12,weight:700,align:'right',color:COL.yellow});
+    textAt(ctx,'R₂ = '+fmt(R2,1)+' Ω',xb+30,cy+4,{size:12,weight:700,color:COL.yellow});
+    textAt(ctx,'ε₂ = '+fmt(e2,1)+' V',xc+34,cy+76*k,{size:12,weight:700,color:COL.green}); textAt(ctx,'R₃ = '+fmt(R3,1)+' Ω',xc+30,cy-30*k,{size:12,weight:700,color:COL.yellow});
+    circ(ctx,xb,ty,5,COL.ink,COL.ink,1); circ(ctx,xb,by,5,COL.ink,COL.ink,1); textAt(ctx,'a',xb+10,ty-8,{size:13,weight:700}); textAt(ctx,'b',xb+10,by+18,{size:13,weight:700});
+    // current arrows
+    [[xa,sm.a,true,-30],[xb,sm.b,false,-34],[xc,sm.c,true,34]].forEach(([x,c,up,off])=>{ const L=14+Math.min(Math.abs(c),6)*8, dy=(up?-1:1)*(c>=0?1:-1); vec(ctx,x+off,cy-dy*L/2+(x===xb?0:-30*k),x+off,cy+dy*L/2+(x===xb?0:-30*k),COL.red,3); textAt(ctx,'I'+(x===xa?'₁':(x===xb?'₂':'₃')),x+off+(off<0?-12:12),cy+(x===xb?0:-30*k)+4,{size:12.5,weight:700,color:COL.red,align:off<0?'right':'left'}); });
+    // loop-rule staircase
+    const gy=sceneH+8, gh=h-gy-8, gw=w-24;
+    const steps=loopSel===1?[['+ε₁',e1,COL.red],['−I₁R₁',-I1*R1,COL.blue],['−I₂R₂',-I2*R2,COL.blue]]:[['+ε₂',e2,COL.red],['−I₃R₃',-I3*R3,COL.blue],['+I₂R₂',I2*R2,COL.red]];
+    // loop 2 goes b→battery2→R3→a→down R2? (a→b through R2 drops I2R2) so use −I2R2
+    if(loopSel===2) steps[2]=['−I₂R₂',-I2*R2,COL.blue];
+    const levels=[0]; steps.forEach(s=>levels.push(levels[levels.length-1]+s[1]));
+    const vmax=Math.max(1,...levels.map(Math.abs))*1.2, ymin=Math.min(0,...levels)*1.2-1, ymax=Math.max(0,...levels)*1.2+1;
+    const g=graph(ctx,12,gy,gw,gh,{pl:50,title:'Loop rule: potential changes while walking once round the '+(loopSel===1?'left':'right')+' loop',xl:'start at b (0 V)',x0:0,x1:5,y0:ymin,y1:ymax,xt:[],yt:[[0,'0 V']]});
+    const bw=0.62;
+    steps.forEach((s,i)=>{ const x0=g.X(0.7+i*1.15), x1=g.X(0.7+i*1.15+bw), ya=g.Y(levels[i]), yb=g.Y(levels[i+1]); ctx.save(); ctx.globalAlpha=0.85; ctx.fillStyle=s[2]; ctx.fillRect(x0,Math.min(ya,yb),x1-x0,Math.max(2,Math.abs(yb-ya))); ctx.restore(); line(ctx,x0-12,yb,x1+16,yb,COL.mid,1,[3,3]); textAt(ctx,s[0]+' = '+(s[1]>=0?'+':'−')+fmt(Math.abs(s[1]),2),(x0+x1)/2,g.Y(ymax)+30+i*0,{size:11.5,weight:700,color:s[2],align:'center'}); });
+    const tot=levels[levels.length-1]; textAt(ctx,'Σ ΔV = '+fmt(Math.abs(tot)<0.005?0:tot,2)+' V',g.X(4.6),g.Y(0)-8,{size:13,weight:700,color:COL.green,align:'right'});
+    const sum=I1+I3-I2; setC('I1',fmt(I1,2)+' A'); setC('I2',fmt(I2,2)+' A'); setC('I3',fmt(I3,2)+' A'); setC('sum',fmt(Math.abs(sum)<0.005?0:sum,2)+' A');
+    setF('Junction rule: current in = current out at a. Loop rule: the potential changes add up to zero. Negative I means the current really flows the other way.','ok');
+  });
+}
+
+/* =====================================================================
+   3.11  WHEATSTONE BRIDGE  (Section 3.13, Example 3.7)
+   ===================================================================== */
+function bridgeSolve(P,Q,Rr,S,G,V0){ // A=V0, C=0, arms: AB=P, BC=Q, AD=Rr, DC=S, galvanometer B–D
+  const a11=1/P+1/Q+1/G, a12=-1/G, a21=-1/G, a22=1/Rr+1/S+1/G, b1=V0/P, b2=V0/Rr, det=a11*a22-a12*a21;
+  const B=(b1*a22-a12*b2)/det, D=(a11*b2-a21*b1)/det;
+  return {B,D,Ig:(B-D)/G,iAB:(V0-B)/P,iBC:B/Q,iAD:(V0-D)/Rr,iDC:D/S,Itot:(V0-B)/P+(V0-D)/Rr};
+}
+function actBridge(cv,side){
+  let P=100,Q=10,Rr=60,S=5,V0=10; const G=15, sNeedle={x:0,v:0}, ph=[0,0,0,0,0]; let ig=0, sm={};
+  const sp=slider(side,{label:'P  (arm AB)',min:1,max:200,step:1,value:100,unit:'Ω',dec:0,on:v=>{P=v;}});
+  const sq=slider(side,{label:'Q  (arm BC)',min:1,max:200,step:1,value:10,unit:'Ω',dec:0,on:v=>{Q=v;}});
+  const sr=slider(side,{label:'R  (arm AD)',min:1,max:200,step:1,value:60,unit:'Ω',dec:0,on:v=>{Rr=v;}});
+  const ss=slider(side,{label:'S  (arm DC)',min:1,max:200,step:1,value:5,unit:'Ω',dec:0,on:v=>{S=v;}});
+  slider(side,{label:'Battery voltage',min:2,max:20,step:1,value:10,unit:'V',dec:0,on:v=>{V0=v;}});
+  buttons(side,[{t:'Example 3.7',cls:'go',on:()=>{ setSlider(sp,100); setSlider(sq,10); setSlider(sr,60); setSlider(ss,5); }},{t:'Balance it',cls:'play',on:()=>{ setSlider(sp,40); setSlider(sq,20); setSlider(sr,60); setSlider(ss,30); }}]);
+  const setC=cards(side,[{id:'Ig',l:'Galvanometer current Ig',color:COL.red},{id:'p',l:'P / Q',color:COL.green},{id:'r',l:'R / S',color:COL.green},{id:'vd',l:'VB − VD',color:COL.blue}]);
+  const setF=fbox(side);
+  animLoop((dt,t)=>{
+    const {ctx,w,h}=fitCanvas(cv);
+    const s=bridgeSolve(P,Q,Rr,S,G,V0); ig=approach(ig,s.Ig,8,dt);
+    const tgt=Math.tanh(s.Ig/(0.1*s.Itot))*0.95; springTo(sNeedle,tgt,70,5,dt);
+    const sceneH=Math.round(h*0.86), k=Math.min(1,sceneH/430), cx=w*0.5, cy=sceneH*0.46, Wd=Math.min(w*0.3,250), Hd=Math.min(150*k,w*0.2);
+    const A=[cx-Wd,cy], B=[cx,cy-Hd], C=[cx+Wd,cy], D=[cx,cy+Hd], yb=cy+Hd+54*k;
+    const arm=(p,q,val,cur,id,lab,off)=>{
+      poly(ctx,[p,q],COL.ink,2.4); ph[id]=(ph[id]||0)+Math.tanh(cur/(0.4*s.Itot||1))*1.1*dt; carriers(ctx,[p,q],-ph[id],5,COL.blue,3.2);
+      const mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2, ux=(q[0]-p[0])/Math.hypot(q[0]-p[0],q[1]-p[1]), uy=(q[1]-p[1])/Math.hypot(q[0]-p[0],q[1]-p[1]), L=100;
+      const a=[mx-ux*L/2,my-uy*L/2], b=[mx+ux*L/2,my+uy*L/2]; ctx.save(); ctx.translate(mx,my); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,L/2+2,0,0); ctx.restore();
+      ctx.save(); ctx.strokeStyle='#fff'; ctx.lineWidth=18; ctx.lineCap='butt'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.restore();
+      zig(ctx,a[0],a[1],b[0],b[1],COL.ink,3,9,8,8);
+      textAt(ctx,lab+' = '+val+' Ω',mx+off[0],my+off[1],{size:12.5,weight:700,color:COL.yellow,align:off[0]<0?'right':'left'});
+    };
+    arm(A,B,P,s.iAB,0,'P',[-16,-10]); arm(B,C,Q,s.iBC,1,'Q',[16,-10]); arm(A,D,Rr,s.iAD,2,'R',[-16,22]); arm(D,C,S,s.iDC,3,'S',[16,22]);
+    // battery arm along the bottom
+    const bat=[[A[0],A[1]],[A[0]-46,A[1]],[A[0]-46,yb],[C[0]+46,yb],[C[0]+46,C[1]],[C[0],C[1]]];
+    poly(ctx,bat,COL.ink,2.4); ph[4]=(ph[4]||0)+Math.tanh(s.Itot/(s.Itot||1))*0.9*dt; carriers(ctx,bat,ph[4],14,COL.blue,3.2);
+    ctx.fillStyle='#fff'; ctx.fillRect(cx-26,yb-26,52,52); ctx.save(); ctx.translate(cx,yb); ctx.rotate(Math.PI/2); battery(ctx,0,0); ctx.restore(); textAt(ctx,fmt(V0,0)+' V',cx,yb+42,{size:12.5,weight:700,color:COL.green,align:'center'});
+    // galvanometer branch B–D
+    poly(ctx,[B,D],COL.ink,2.4); ph[4+1]=(ph[4+1]||0)+Math.tanh(s.Ig/(0.1*s.Itot||1))*1.0*dt; carriers(ctx,[B,[cx,cy-34]],-ph[5],2,COL.blue,3.2); carriers(ctx,[[cx,cy+34],D],-ph[5],2,COL.blue,3.2);
+    ctx.fillStyle='#fff'; circ(ctx,cx,cy,34,COL.ink,'#fff',2.6);
+    dial(ctx,cx,cy,34,sNeedle.x,{zero:true,label:'G',col:Math.abs(s.Ig)<1e-4*s.Itot?COL.green:COL.red});
+    [[A,'A'],[B,'B'],[C,'C'],[D,'D']].forEach(([p,l])=>{ circ(ctx,p[0],p[1],5,COL.ink,COL.ink,1); textAt(ctx,l,p[0]+(l==='A'?-16:(l==='C'?12:10)),p[1]+(l==='B'?-10:(l==='D'?20:-8)),{size:14,weight:700}); });
+    // potential bars
+    const by2=sceneH+10, bh=h-by2-8, bw2=w-24; ctx.save(); rrect(ctx,12,by2,bw2,bh,8); ctx.fillStyle='#fbfdff'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    textAt(ctx,'Potential (0 V at C, '+fmt(V0,0)+' V at A)',24,by2+16,{size:11.5,weight:700});
+    const bl=bw2-190;
+    [['B',s.B,COL.red],['D',s.D,COL.blue]].forEach(([n,v,c],i)=>{ const y=by2+26+i*Math.max(14,(bh-34)/2); textAt(ctx,'V'+n,24,y+11,{size:11.5,weight:700,color:c}); ctx.fillStyle=c; ctx.globalAlpha=0.85; ctx.fillRect(56,y,Math.max(1,bl*v/V0),Math.max(10,(bh-34)/2-6)); ctx.globalAlpha=1; textAt(ctx,fmt(v,2)+' V',56+bl*v/V0+8,y+11,{size:11.5,weight:700,color:c}); });
+    const bal=Math.abs(s.Ig)<1e-4*s.Itot;
+    setC('Ig',si(s.Ig,'A',2)); setC('p',fmt(P/Q,3)); setC('r',fmt(Rr/S,3)); setC('vd',fmt(s.B-s.D,3)+' V');
+    setF(bal?'Balanced: P/Q = R/S → B and D are at the same potential → null deflection.':(Math.abs(P-100)<.5&&Math.abs(Q-10)<.5&&Math.abs(Rr-60)<.5&&Math.abs(S-5)<.5&&V0===10?'Example 3.7: Ig = '+fmt(s.Ig*1000,2)+' mA (textbook 4.87 mA).':'Unbalanced: B and D differ in potential, so current flows through G.'),bal?'ok':'warn');
+  });
+}
+
+/* ---------- boot ---------- */
+ACTS=[
+ {id:'3.1',title:'Current as charge flow',desc:'I = q/t = n e A vd — count the charge crossing a section.',init:actCurrent},
+ {id:'3.2',title:'Collisions and drift',desc:'Random motion plus a field gives a slow net drift, vd = eEτ/m.',init:actDrift},
+ {id:'3.3',title:'Ohm’s law & R = ρl/A',desc:'Longer wire, thinner wire, different metal — watch I respond.',init:actOhm},
+ {id:'3.4',title:'When Ohm’s law fails',desc:'Resistor, conductor, diode and GaAs-like V–I curves.',init:actNonOhmic},
+ {id:'3.5',title:'Temperature & resistivity',desc:'ρ rises for metals, barely moves for alloys, falls for semiconductors.',init:actTemp},
+ {id:'3.6',title:'The toaster',desc:'Example 3.3 — R rises as the nichrome coil heats; I settles at 2.68 A.',init:actToaster},
+ {id:'3.7',title:'Electrical energy & power',desc:'P = VI = V²/R — all of it becomes heat in the water.',init:actJoule},
+ {id:'3.8',title:'EMF & internal resistance',desc:'The terminal voltage V = ε − Ir drops as the cell supplies more current.',init:actCell},
+ {id:'3.9',title:'Cells in series & parallel',desc:'Equivalent emf and internal resistance for each combination.',init:actCells},
+ {id:'3.10',title:'Kirchhoff’s rules',desc:'Currents at a junction add to zero; potential changes round a loop add to zero.',init:actKirchhoff},
+ {id:'3.11',title:'Wheatstone bridge',desc:'Balance P/Q = R/S and the galvanometer needle settles at zero.',init:actBridge}
+];
+(function(){
+  const nav=document.getElementById('sideNav');
+  ACTS.forEach((a,i)=>{ const b=el('button','nav-item','<span class="n-num">'+a.id+'</span><span class="n-title">'+a.title+'</span>'); b.onclick=()=>mount(i); nav.appendChild(b); });
+  const hash=(location.hash||'').slice(1), i0=Math.max(0,ACTS.findIndex(a=>a.id===hash));
+  mount(i0);
+})();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chemistry · Chapter 1 — Some Basic Concepts of Chemistry | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+.ctr{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.ctr .cn{flex:1; font-size:var(--fs-sm); font-weight:600; display:flex; align-items:center; gap:6px;}
+.ctr .cn i{width:18px; height:4px; border-radius:2px; display:inline-block;}
+.ctr button{width:30px; height:30px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:16px; font-weight:700; cursor:pointer; color:var(--navy-2);}
+.ctr button:hover{background:var(--navy-2); color:#fff;}
+.ctr .cv{min-width:26px; text-align:center; font-weight:700; color:var(--accent); font-size:var(--fs-md);}
+.rcard .rval.sm{font-size:var(--fs-sm);}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚗️</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 1</div>
+      <h1>Some Basic Concepts of Chemistry</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Hydrogen · Measured</span>
+      <span><i style="background:var(--f-green)"></i>Nitrogen · Chlorine · Product</span>
+      <span><i style="background:var(--f-red)"></i>Oxygen · Heat · Limit</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">2.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHEMISTRY — CHAPTER 1: SOME BASIC CONCEPTS OF CHEMISTRY
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Particles always jiggle, flasks always slosh — never a
+   static picture with a changed label.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimArrow(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.6); arrowHead(ctx,x,y1,-Math.PI/2,color,5); arrowHead(ctx,x,y2,Math.PI/2,color,5); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){ // stops: [[pos,hex],...]
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+function flame(ctx,cx,baseY,width,inten,t){
+  const n=5;
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*32)*(0.78+0.22*Math.sin(t*13+i*1.7));
+    const sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round';
+    ctx.strokeStyle=COL.red; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(fx-7,baseY); ctx.quadraticCurveTo(fx-7,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+7,baseY-hh*0.55,fx+7,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(fx-3.5,baseY); ctx.quadraticCurveTo(fx-3,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3,baseY-hh*0.35,fx+3.5,baseY); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function angDiff(a,b){ return Math.atan2(Math.sin(a-b),Math.cos(a-b)); }
+function lw(k,base){ return clamp(k*base,1,3); }
+
+
+/* ---------------------------------------------------------------------
+   CHEMISTRY HELPERS — elements, atoms, molecules, balance, gas boxes
+   --------------------------------------------------------------------- */
+const EL = {
+  H:{col:COL.blue,  r:7,  m:1.008,  name:'Hydrogen'},
+  C:{col:COL.ink,   r:11, m:12.011, name:'Carbon'},
+  O:{col:COL.red,   r:10, m:16.00,  name:'Oxygen'},
+  N:{col:COL.green, r:10, m:14.007, name:'Nitrogen'},
+  Cl:{col:COL.green,r:13, m:35.453, name:'Chlorine'},
+  Na:{col:COL.yellow,r:11,m:22.99,  name:'Sodium'},
+  Cu:{col:COL.yellow,r:12,m:63.55,  name:'Copper'},
+  P:{col:COL.yellow, r:12,m:30.974, name:'Phosphorus'},
+  Fe:{col:COL.mid,  r:12, m:55.845, name:'Iron'},
+  Mg:{col:COL.yellow,r:12,m:24.305, name:'Magnesium'}
+};
+/* molecule library: atoms [element, x, y] in bond-length units */
+const MOL = {
+  H2:{atoms:[['H',-.55,0],['H',.55,0]], bonds:[[0,1]]},
+  O2:{atoms:[['O',-.7,0],['O',.7,0]], bonds:[[0,1,2]]},
+  N2:{atoms:[['N',-.7,0],['N',.7,0]], bonds:[[0,1,3]]},
+  H2O:{atoms:[['O',0,-.25],['H',-.9,.45],['H',.9,.45]], bonds:[[0,1],[0,2]]},
+  H2O2:{atoms:[['H',-1.3,-.45],['O',-.55,.1],['O',.55,.1],['H',1.3,.65]], bonds:[[0,1],[1,2],[2,3]]},
+  CH4:{atoms:[['C',0,0],['H',-1,-.8],['H',1,-.8],['H',-1,.8],['H',1,.8]], bonds:[[0,1],[0,2],[0,3],[0,4]]},
+  CO2:{atoms:[['O',-1.5,0],['C',0,0],['O',1.5,0]], bonds:[[0,1,2],[1,2,2]]},
+  NH3:{atoms:[['N',0,-.3],['H',-1,.6],['H',0,.8],['H',1,.6]], bonds:[[0,1],[0,2],[0,3]]},
+  C3H8:{atoms:[['C',-1.4,.2],['C',0,-.2],['C',1.4,.2],['H',-1.4,-.8],['H',-2.2,.7],['H',-1,1],['H',0,-1.2],['H',0,.8],['H',1.4,-.8],['H',2.2,.7],['H',1,1]], bonds:[[0,1],[1,2],[0,3],[0,4],[0,5],[1,6],[1,7],[2,8],[2,9],[2,10]]}
+};
+/** atom: line-art circle in element colour. */
+function atom(ctx,el,x,y,s,alpha,label){
+  const E=EL[el], r=E.r*s;
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  circ(ctx,x,y,r,E.col,'#fff',2.2); circ(ctx,x,y,r*0.55,E.col,E.col,1);
+  if(label!==false && r>9) textAt(ctx,el,x,y+4,{align:'center',size:Math.max(9,r*0.9),weight:700,color:'#fff'});
+  ctx.restore();
+}
+/** molecule at (x,y); s = px per bond-length unit, a = rotation */
+function drawMol(ctx,name,x,y,s,a,alpha){
+  const M=MOL[name]; a=a||0; const ca=Math.cos(a), sa=Math.sin(a);
+  const P=M.atoms.map(q=>[x+(q[1]*ca-q[2]*sa)*s, y+(q[1]*sa+q[2]*ca)*s]);
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  M.bonds.forEach(b=>{ const p=P[b[0]], q=P[b[1]], n=b[2]||1;
+    const dx=q[0]-p[0], dy=q[1]-p[1], L=Math.hypot(dx,dy)||1, nx=-dy/L, ny=dx/L;
+    for(let i=0;i<n;i++){ const o=(i-(n-1)/2)*3.2; line(ctx,p[0]+nx*o,p[1]+ny*o,q[0]+nx*o,q[1]+ny*o,COL.ink,2); }
+  });
+  M.atoms.forEach((q,i)=>atom(ctx,q[0],P[i][0],P[i][1],s/22,undefined,s/22>0.62));
+  ctx.restore();
+}
+/** parse "C6H12O6" -> {C:6,H:12,O:6} */
+function parseFormula(f){ const o={}; (f.match(/[A-Z][a-z]?\d*/g)||[]).forEach(t=>{ const e=t.match(/[A-Z][a-z]?/)[0], n=+(t.slice(e.length)||1); o[e]=(o[e]||0)+n; }); return o; }
+function molMass(o){ let m=0; for(const e in o) m+=EL[e].m*o[e]; return m; }
+function subText(f){ const d='₀₁₂₃₄₅₆₇₈₉'; return String(f).replace(/\d/g,c=>d[+c]); }
+
+/** Equal-arm pan balance. ang>0 → right pan goes down. */
+function drawBalance(ctx,cx,baseY,W,ang,drawL,drawR,labelL,labelR,o){
+  o=o||{}; const H=W*(o.H||0.34), pivY=baseY-H, arm=W*0.42;
+  line(ctx,cx-W*0.14,baseY,cx+W*0.14,baseY,COL.ink,5);
+  line(ctx,cx,baseY,cx,pivY,COL.ink,5);
+  const lx=cx-Math.cos(ang)*arm, ly=pivY-Math.sin(ang)*arm, rx=cx+Math.cos(ang)*arm, ry=pivY+Math.sin(ang)*arm;
+  line(ctx,lx,ly,rx,ry,COL.ink,5);
+  const pw=W*0.19, drop=W*(o.drop||0.15);
+  [[lx,ly,drawL,labelL],[rx,ry,drawR,labelR]].forEach(([px,py,fn,lab])=>{
+    line(ctx,px,py,px-pw*0.8,py+drop,COL.mid,1.5); line(ctx,px,py,px+pw*0.8,py+drop,COL.mid,1.5);
+    line(ctx,px-pw,py+drop,px+pw,py+drop,COL.ink,4); circ(ctx,px,py,3.5,COL.ink,COL.ink,1);
+    if(fn){ ctx.save(); fn(px,py+drop,pw); ctx.restore(); }
+    if(lab) textAt(ctx,lab,px,py+drop+20,{align:'center',size:12,weight:700,color:COL.ink});
+  });
+  circ(ctx,cx,pivY,7,COL.ink,'#fff',3);
+  const L=H*0.62; line(ctx,cx,pivY,cx-Math.sin(ang)*L,pivY+Math.cos(ang)*L,COL.red,3);
+  line(ctx,cx-H*0.22,pivY+L,cx+H*0.22,pivY+L,COL.mid,1.4); line(ctx,cx,pivY+L-5,cx,pivY+L+5,COL.mid,1.4);
+}
+/** particles bouncing in a box */
+function newGas(n,x0,y0,x1,y1,speed,seed){
+  const R=rng(seed||11), a=[];
+  for(let i=0;i<n;i++){ const th=R()*6.283; a.push({x:lerp(x0,x1,R()),y:lerp(y0,y1,R()),vx:Math.cos(th)*speed*(0.5+R()),vy:Math.sin(th)*speed*(0.5+R()),a:R()*6.283,w:(R()-0.5)*3}); }
+  return a;
+}
+function stepGas(ps,box,dt,sc,r){
+  ps.forEach(p=>{
+    p.x+=p.vx*dt*sc; p.y+=p.vy*dt*sc; p.a+=p.w*dt*sc;
+    if(p.x<box.x0+r){p.x=box.x0+r;p.vx=Math.abs(p.vx);} if(p.x>box.x1-r){p.x=box.x1-r;p.vx=-Math.abs(p.vx);}
+    if(p.y<box.y0+r){p.y=box.y0+r;p.vy=Math.abs(p.vy);} if(p.y>box.y1-r){p.y=box.y1-r;p.vy=-Math.abs(p.vy);}
+  });
+}
+/** big "m × 10^e" */
+function sciText(ctx,m,e,x,y,size,color){
+  ctx.save(); ctx.font='700 '+size+'px Poppins, sans-serif'; ctx.textBaseline='alphabetic'; ctx.fillStyle=color||COL.ink; ctx.textAlign='left';
+  const a=m+' × 10', wA=ctx.measureText(a).width;
+  ctx.font='700 '+(size*0.6)+'px Poppins, sans-serif'; const wE=ctx.measureText(String(e)).width;
+  const x0=x-(wA+wE+2)/2;
+  ctx.font='700 '+size+'px Poppins, sans-serif'; ctx.fillText(a,x0,y);
+  ctx.font='700 '+(size*0.6)+'px Poppins, sans-serif'; ctx.fillText(String(e),x0+wA+2,y-size*0.42); ctx.restore();
+}
+/** open-top beaker with wavy liquid; frac = fill 0..1 of height */
+function liquidBeaker(ctx,cx,bot,w,h,frac,tint,t,sway){
+  const l=cx-w/2, r=cx+w/2, top=bot-h, fy=bot-h*clamp(frac,0,1); sway=sway||0;
+  ctx.save(); ctx.beginPath(); ctx.rect(l+1,top,w-2,h-1); ctx.clip();
+  ctx.fillStyle=tint; ctx.beginPath(); ctx.moveTo(l,fy);
+  for(let x=0;x<=w;x+=4) ctx.lineTo(l+x,fy+Math.sin(t*3+x*0.09)*1.4+sway*(x/w-0.5)*10);
+  ctx.lineTo(r,bot); ctx.lineTo(l,bot); ctx.closePath(); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath();
+  ctx.moveTo(l-5,top-2); ctx.lineTo(l,top); ctx.lineTo(l,bot-6); ctx.quadraticCurveTo(l,bot,l+6,bot); ctx.lineTo(r-6,bot); ctx.quadraticCurveTo(r,bot,r,bot-6); ctx.lineTo(r,top); ctx.lineTo(r+5,top-2); ctx.stroke(); ctx.restore();
+}
+/* shared side-panel snippets */
+function sliderHTML(id,label,min,max,step,val){ return `<div class="control-group"><label>${label} <span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`; }
+function togglesHTML(id,label,opts,active){ return `<div class="control-group">${label?`<label style="margin-bottom:6px;">${label}</label>`:''}<div class="toggle-group" id="${id}">${opts.map((o,i)=>`<button class="toggle-btn small${i===(active||0)?' active':''}" data-v="${o[0]}">${o[1]}</button>`).join('')}</div></div>`; }
+function rcardsHTML(items,three){ return `<div class="control-group"><div class="result-cards${three?' three':''}">${items.map(i=>`<div class="rcard${i.wide?' wide':''}"><div class="rlabel">${i.l}</div><div class="rval${i.sm?' sm':''}" id="${i.id}"${i.c?` style="color:${i.c}"`:''}>—</div></div>`).join('')}</div></div>`; }
+function btnHTML(id,txt,cls){ return `<div class="control-group"><button class="toggle-btn ${cls||'play'}" id="${id}" style="width:100%">${txt}</button></div>`; }
+/** Glides a range input toward a target with float precision (range steps would round tiny moves away). */
+function Glider(sl){ this.sl=sl; this.t=null; this.v=0; sl.addEventListener('input',()=>{ this.t=null; }); }
+Glider.prototype.go=function(t){ this.t=t; this.v=+this.sl.value; };
+Glider.prototype.step=function(rate,dt){
+  if(this.t!==null){ this.v=approach(this.v,this.t,rate,dt); this.sl.value=this.v; if(Math.abs(this.v-this.t)<0.05){ this.v=this.t; this.sl.value=this.t; this.t=null; } }
+  return this.t!==null?this.v:+this.sl.value;
+};
+
+
+/* =====================================================================
+   1.1  THREE STATES OF MATTER  (Fig 1.1)
+   Real 2-D Lennard-Jones molecular dynamics with a thermostat and gravity:
+   solid / liquid / gas are not scripted — they emerge from the motion.
+   ===================================================================== */
+function ljMap(Tc){
+  const pts=[[-50,0.07],[-5,0.19],[5,0.3],[95,0.43],[105,0.6],[150,1.1]];
+  if(Tc<=pts[0][0]) return pts[0][1];
+  for(let i=1;i<pts.length;i++) if(Tc<=pts[i][0]) return lerp(pts[i-1][1],pts[i][1],(Tc-pts[i-1][0])/(pts[i][0]-pts[i-1][0]));
+  return pts[pts.length-1][1];
+}
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sliderHTML('tR','Temperature',-50,150,1,20) +
+    `<div class="control-group"><label style="margin-bottom:6px;">Jump to</label><div class="toggle-group" id="qB">
+      <button class="toggle-btn small" data-v="-30">❄ Ice</button><button class="toggle-btn small" data-v="40">💧 Water</button><button class="toggle-btn small" data-v="135">♨ Steam</button></div></div>` +
+    rcardsHTML([{l:'State',id:'sV',c:COL.blue},{l:'Temperature',id:'tV'},{l:'Shape',id:'shV',sm:true},{l:'Volume',id:'vV',sm:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), tR=$('#tR');
+  const N=72, BW=16, BH=13.5, G=0.12;
+  const P=[]; for(let i=0;i<N;i++){ const c=i%12, r=Math.floor(i/12); P.push({x:1.1+c*1.15+(r%2)*0.575, y:BH-0.7-r*1.0, vx:0,vy:0,fx:0,fy:0}); }
+  let Tcur=20; const GL=new Glider(tR);
+  $('#qB').querySelectorAll('button').forEach(b=>b.onclick=()=>{ GL.go(+b.dataset.v); });
+  function forces(){
+    for(const p of P){ p.fx=0; p.fy=G; }
+    for(let i=0;i<N;i++){ const a=P[i]; for(let j=i+1;j<N;j++){ const b=P[j];
+      const dx=a.x-b.x, dy=a.y-b.y; let r2=dx*dx+dy*dy; if(r2>6.25) continue; if(r2<0.64) r2=0.64;
+      const i2=1/r2, s6=i2*i2*i2, f=24*(2*s6*s6-s6)*i2;
+      a.fx+=f*dx; a.fy+=f*dy; b.fx-=f*dx; b.fy-=f*dy; } }
+  }
+  forces();
+  function step(dt,Tt){
+    for(const p of P){ p.vx+=0.5*dt*p.fx; p.vy+=0.5*dt*p.fy; p.x+=p.vx*dt; p.y+=p.vy*dt;
+      if(p.x<0.5){p.x=0.5;p.vx=Math.abs(p.vx);} if(p.x>BW-0.5){p.x=BW-0.5;p.vx=-Math.abs(p.vx);}
+      if(p.y<0.5){p.y=0.5;p.vy=Math.abs(p.vy);} if(p.y>BH-0.5){p.y=BH-0.5;p.vy=-Math.abs(p.vy);} }
+    forces();
+    let k=0; for(const p of P){ p.vx+=0.5*dt*p.fx; p.vy+=0.5*dt*p.fy; k+=p.vx*p.vx+p.vy*p.vy; }
+    const T=k/(2*N)+1e-6, lam=clamp(Math.sqrt(1+0.03*(Tt/T-1)),0.97,1.03);
+    for(const p of P){ p.vx*=lam; p.vy*=lam; }
+  }
+  let t=0;
+  animLoop(dt=>{
+    t+=dt;
+    const Ts=GL.step(2.2,dt); Tcur=approach(Tcur,Ts,2.6,dt);
+    const Tt=ljMap(Tcur);
+    const sub=Math.round(clamp(dt/0.0167,0.5,2.4)*26);
+    for(let s=0;s<sub;s++) step(0.006,Tt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w*0.68/BW,(h-130)/BH), bx=w*0.5-BW*sc/2-w*0.05, by=h*0.5-BH*sc/2-24;
+    const X=x=>bx+x*sc, Y=y=>by+y*sc;
+    /* burner / ice */
+    const heat=clamp((Ts-20)/120,0,1), cold=clamp((5-Ts)/45,0,1);
+    const baseY=by+BH*sc+10;
+    if(heat>0.02) flame(ctx,bx+BW*sc/2,baseY+36,BW*sc*0.7,heat,t);
+    if(heat>0.02||true){ line(ctx,bx+BW*sc*0.18,baseY+38,bx+BW*sc*0.82,baseY+38,COL.ink,4); line(ctx,bx+BW*sc*0.3,baseY+38,bx+BW*sc*0.3,baseY+46,COL.ink,3); line(ctx,bx+BW*sc*0.7,baseY+38,bx+BW*sc*0.7,baseY+46,COL.ink,3); }
+    if(cold>0.02){ for(let i=0;i<9;i++){ const ix=bx+BW*sc*(0.1+i*0.1), bob=Math.sin(t*1.7+i)*1.5; ctx.save(); ctx.globalAlpha=cold; ctx.translate(ix,baseY+22+bob); ctx.rotate(0.2*Math.sin(i)); rect(ctx,-9,-9,18,18,COL.blue,'rgba(47,143,224,0.12)',1.8); line(ctx,-9,-3,9,-3,COL.blue,1); ctx.restore(); } }
+    /* container */
+    rect(ctx,bx,by,BW*sc,BH*sc,COL.ink,'rgba(47,143,224,0.04)',3.2);
+    /* bonds + particles */
+    const hot=clamp((Tt-0.1)/0.9,0,1);
+    ctx.save(); ctx.lineWidth=1.3; ctx.strokeStyle='rgba(47,143,224,0.55)'; ctx.beginPath();
+    for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){ const dx=P[i].x-P[j].x, dy=P[i].y-P[j].y; if(dx*dx+dy*dy<1.5){ ctx.moveTo(X(P[i].x),Y(P[i].y)); ctx.lineTo(X(P[j].x),Y(P[j].y)); } }
+    ctx.stroke(); ctx.restore();
+    for(const p of P){ const sp=clamp(Math.hypot(p.vx,p.vy)/1.8,0,1); circ(ctx,X(p.x),Y(p.y),0.48*sc,mixCol(COL.blue,COL.red,sp),'#fff',2.2); circ(ctx,X(p.x),Y(p.y),0.12*sc,mixCol(COL.blue,COL.red,sp),mixCol(COL.blue,COL.red,sp),1); }
+    /* thermometer */
+    const tx=bx+BW*sc+Math.min(70,w*0.07), top=by+10, bot=by+BH*sc-30;
+    thermo(ctx,tx,top,bot,(Tcur+50)/200,COL.ink,mixCol(COL.blue,COL.red,clamp((Tcur+50)/200,0,1)));
+    [[0,'0 °C  freezes'],[100,'100 °C  boils']].forEach(([v,l])=>{ const yy=bot-(bot-top-5)*(v+50)/200; line(ctx,tx-14,yy,tx+14,yy,COL.yellow,1.8,[4,3]); textAt(ctx,l,tx+18,yy+4,{size:11,weight:700,color:COL.yellow}); });
+    textAt(ctx,fmt(Tcur,0)+' °C',tx,bot+36,{align:'center',size:14,weight:700,color:COL.red});
+    const st=Tcur<0?'Solid':(Tcur<=100?'Liquid':'Gas');
+    $('#sV').textContent=st; $('#tV').textContent=fmt(Tcur,0)+' °C';
+    $('#shV').textContent=st==='Solid'?'Fixed':(st==='Liquid'?'Takes container':'Takes container');
+    $('#vV').textContent=st==='Gas'?'Fills container':'Fixed';
+    $('#qB').querySelectorAll('button').forEach(b=>b.classList.toggle('active',GL.t!==null&&+b.dataset.v===GL.t));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.2  CLASSIFYING MATTER — element, compound, mixture
+   ===================================================================== */
+const SAMPLES={
+  O2:{name:'Oxygen',kind:'Element',parts:[['O2',26]],comp:'One kind of atom only'},
+  H2O:{name:'Water',kind:'Compound',parts:[['H2O',28]],comp:'H and O bonded in a fixed 2 : 1 ratio'},
+  AIR:{name:'Air',kind:'Mixture',parts:[['N2',20],['O2',8]],comp:'N₂ and O₂ side by side, not bonded'},
+  HO:{name:'H₂ + O₂ gas',kind:'Mixture',parts:[['H2',20],['O2',10]],comp:'H₂ and O₂ side by side, not bonded'}
+};
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('smB','Sample',[['O2','Oxygen'],['H2O','Water'],['AIR','Air'],['HO','H₂ + O₂']],0) +
+    `<div class="control-group"><label style="margin-bottom:6px;">Try to change it</label>
+      <button class="toggle-btn navy" id="phB" style="margin-top:0">🧲 Physical separation</button>
+      <button class="toggle-btn navy" id="chB">⚡ Chemical reaction (spark)</button>
+      <button class="toggle-btn" id="rsB" style="width:100%;margin-top:9px">↺ Reset sample</button></div>` +
+    rcardsHTML([{l:'Type',id:'kV',c:COL.blue},{l:'Particles',id:'nV'},{l:'Made of',id:'cV',wide:true,sm:true}]) +
+    `<div class="fb warn hidden" id="fb"></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let key='O2', parts=[], sep=0, sepT=0, spark=0, fx=[], t=0, msg='';
+  const box={x0:0,y0:0,x1:1,y1:1};
+  function reset(){
+    const S=SAMPLES[key]; parts=[]; sepT=0; sep=0; spark=0; fx=[]; msg='';
+    S.parts.forEach(([ty,n])=>{ for(let i=0;i<n;i++) parts.push({t:ty,x:Math.random(),y:Math.random(),vx:(Math.random()-0.5)*0.35,vy:(Math.random()-0.5)*0.35,a:Math.random()*6.28,w:(Math.random()-0.5)*2,delay:0,to:null}); });
+    $('#kV').textContent=S.kind; $('#cV').textContent=S.comp; $('#fb').classList.add('hidden');
+  }
+  toggleWire(wrap.querySelectorAll('#smB button'),b=>{ key=b.dataset.v; reset(); });
+  $('#rsB').onclick=reset;
+  function say(txt){ const f=$('#fb'); f.textContent=txt; f.classList.remove('hidden'); }
+  $('#phB').onclick=()=>{
+    const S=SAMPLES[key]; const types=[...new Set(parts.map(p=>p.t))];
+    if(types.length>1){ sepT=1; say('Components sorted out by a physical method — each is still the same substance.'); }
+    else { fx.push({k:'x',t:0}); say(S.kind==='Element'?'Nothing to separate — only one kind of atom.':'Cannot separate by physical means — a compound is one substance.'); }
+  };
+  $('#chB').onclick=()=>{
+    spark=1; const S=SAMPLES[key];
+    if(key==='H2O'){ let n=0; const w=parts.filter(p=>p.t==='H2O'); for(let i=0;i<w.length;i+=2){ w[i].delay=0.3+Math.random()*1.2; w[i].to='H2'; if(w[i+1]){ w[i+1].delay=w[i].delay; w[i+1].to='H2+O2'; } }
+      say('Spark splits each H₂O: 2 H₂O → 2 H₂ + O₂. A compound breaks into simpler substances.'); }
+    else if(key==='HO'){ const h=parts.filter(p=>p.t==='H2'), o=parts.filter(p=>p.t==='O2'); for(let i=0;i<o.length&&2*i+1<h.length;i++){ const d=0.3+Math.random()*1.2; h[2*i].delay=d; h[2*i].to='H2O'; h[2*i+1].delay=d; h[2*i+1].to='H2O'; o[i].delay=d; o[i].to='gone'; }
+      say('Spark: 2 H₂ + O₂ → 2 H₂O. Two substances joined — a new compound.'); }
+    else { fx.push({k:'x',t:0}); say(key==='O2'?'No change — an element cannot be broken into simpler substances.':'No reaction here — air is just N₂ and O₂ mixed.'); }
+  };
+  reset();
+  animLoop(dt=>{
+    t+=dt; sep=approach(sep,sepT,2.2,dt); spark=Math.max(0,spark-dt*1.2);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const jw=Math.min(w*0.76,(h-80)*1.35), jh=jw/1.35, jx=w*0.5-jw/2, jy=h*0.5-jh/2+10;
+    const types=[...new Set(parts.map(p=>p.t))];
+    parts.forEach(p=>{
+      if(p.to){ p.delay-=dt; if(p.delay<=0){ const to=p.to; p.to=null; fx.push({k:'ring',x:p.x,y:p.y,t:0});
+        if(to==='H2+O2'){ parts.push({t:'O2',x:p.x,y:p.y,vx:0.2,vy:-0.2,a:0,w:1,delay:0,to:null}); p.t='H2'; }
+        else if(to==='gone'){ p.dead=true; } else p.t=to; } }
+      const ti=types.indexOf(p.t), lo=lerp(0,types.length>1?(ti/types.length)*0.92:0,sep), hi=lerp(1,types.length>1?((ti+1)/types.length)*0.92:1,sep);
+      if(p.x<lo) p.vx+=(lo-p.x)*14*dt; else if(p.x>hi) p.vx-=(p.x-hi)*14*dt;
+      p.x+=p.vx*dt; p.y+=p.vy*dt; p.a+=p.w*dt;
+      if(p.x<0.03){p.x=0.03;p.vx=Math.abs(p.vx);} if(p.x>0.97){p.x=0.97;p.vx=-Math.abs(p.vx);}
+      if(p.y<0.05){p.y=0.05;p.vy=Math.abs(p.vy);} if(p.y>0.95){p.y=0.95;p.vy=-Math.abs(p.vy);}
+      const sp=Math.hypot(p.vx,p.vy); if(sp>0.45){ p.vx*=0.98; p.vy*=0.98; } if(sp<0.2){ p.vx*=1.03; p.vy*=1.03; }
+    });
+    for(let i=parts.length-1;i>=0;i--) if(parts[i].dead) parts.splice(i,1);
+    /* jar */
+    ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.beginPath(); ctx.moveTo(jx+12,jy-18); ctx.lineTo(jx+jw-12,jy-18); ctx.lineTo(jx+jw-12,jy); ctx.lineTo(jx+jw,jy+10); ctx.lineTo(jx+jw,jy+jh); ctx.lineTo(jx,jy+jh); ctx.lineTo(jx,jy+10); ctx.lineTo(jx+12,jy); ctx.closePath(); ctx.fillStyle='rgba(47,143,224,0.04)'; ctx.fill(); ctx.stroke(); ctx.restore();
+    if(sep>0.4){ types.forEach((ty,i)=>{ if(i>0){ const dx=jx+jw*(0.04+0.92*(i/types.length)*0.92); line(ctx,dx,jy+4,dx,jy+jh,COL.yellow,2.4,[7,5]); } }); }
+    /* particles */
+    const s=Math.max(11,jw/26);
+    parts.forEach(p=>drawMol(ctx,p.t,jx+jw*0.04+p.x*jw*0.92,jy+jh*0.04+p.y*jh*0.92,s,p.a));
+    /* labels per zone */
+    if(sep>0.5) types.forEach((ty,i)=>{ const cx=jx+jw*(0.04+0.92*((i+0.5)/types.length)*0.92); textAt(ctx,subText(ty),cx,jy+jh+22,{align:'center',size:13,weight:700,color:EL[ty[0]].col}); });
+    /* spark electrodes */
+    line(ctx,jx+jw*0.35,jy-18,jx+jw*0.35,jy+jh*0.14,COL.ink,3); line(ctx,jx+jw*0.65,jy-18,jx+jw*0.65,jy+jh*0.14,COL.ink,3);
+    if(spark>0.02){ ctx.save(); ctx.globalAlpha=Math.min(1,spark*2); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(jx+jw*0.35,jy+jh*0.14); for(let i=1;i<=6;i++) ctx.lineTo(lerp(jx+jw*0.35,jx+jw*0.65,i/6),jy+jh*0.14+(Math.random()-0.5)*22); ctx.stroke(); ctx.restore(); }
+    fx.forEach(f=>{ f.t+=dt; if(f.k==='ring'){ circ(ctx,jx+jw*0.04+f.x*jw*0.92,jy+jh*0.04+f.y*jh*0.92,10+f.t*60,COL.yellow,null,2.4); } else { ctx.save(); ctx.globalAlpha=Math.max(0,1-f.t*1.2); textAt(ctx,'✕',jx+jw/2,jy+jh/2,{align:'center',size:70+f.t*30,weight:700,color:COL.red}); ctx.restore(); } });
+    fx=fx.filter(f=>f.t<(f.k==='ring'?0.5:0.9));
+    /* live tally */
+    const tally={}; parts.forEach(p=>tally[p.t]=(tally[p.t]||0)+1);
+    $('#nV').textContent=Object.keys(tally).map(k=>subText(k)+' ×'+tally[k]).join('  ');
+    const kinds=new Set(); parts.forEach(p=>{ for(const e in parseFormula(p.t)) kinds.add(e); });
+    const nowType=types.length>1?'Mixture':(kinds.size>1?'Compound':'Element');
+    $('#kV').textContent=nowType;
+    $('#cV').textContent=nowType==='Mixture'?'Different substances, not bonded':(nowType==='Compound'?'H and O bonded in a fixed 2 : 1 ratio':'One kind of atom only');
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.3  UNITS & CONVERSIONS — length, temperature, volume
+   2.54 cm = 1 in · K = °C + 273.15 · °F = 9/5 °C + 32 · 1 L = 1000 mL = 1 dm³
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('mdB','Measure',[['len','Length'],['tmp','Temperature'],['vol','Volume']],0) +
+    `<div id="sl"></div>` +
+    `<div class="control-group"><div class="result-cards three" id="rc"></div></div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='len', t=0;
+  const S={len:{x:12.7,v:0},tmp:{x:25,v:0},vol:{x:500,v:0},sl:{x:0,v:0}};
+  const cfg={
+    len:{lab:'Length',min:0,max:25,step:0.1,val:12.7,u:' cm',cards:[['cm','cm',COL.yellow],['inch','in',COL.blue],['m','m',COL.green]]},
+    tmp:{lab:'Temperature',min:-50,max:150,step:1,val:25,u:' °C',cards:[['°C','c',COL.red],['K','k',COL.blue],['°F','f',COL.green]]},
+    vol:{lab:'Liquid poured',min:0,max:1000,step:5,val:500,u:' mL',cards:[['mL','ml',COL.yellow],['L','l',COL.blue],['dm³','d',COL.green]]}
+  };
+  let sld=null;
+  function setMode(m){
+    mode=m; const c=cfg[m];
+    $('#sl').innerHTML=sliderHTML('xR',c.lab,c.min,c.max,c.step,c.val);
+    sld=$('#xR'); S[m].x=S[m].x; sld.value=S[m].x;
+    $('#rc').innerHTML=c.cards.map((k,i)=>`<div class="rcard"><div class="rlabel">${k[0]}</div><div class="rval" id="c${i}" style="color:${k[2]}">—</div></div>`).join('');
+  }
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>setMode(b.dataset.v));
+  setMode('len');
+  animLoop(dt=>{
+    t+=dt; const st=S[mode]; const tgt=+sld.value; $('#xRV').textContent=fmt(tgt,mode==='len'?1:0)+cfg[mode].u;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(st,tgt,mode==='tmp'?18:26,mode==='tmp'?7:6.5,dt);
+    const x=st.x;
+    if(mode==='len'){
+      const x0=w*0.07, x1=w*0.93, pc=(x1-x0)/25, ry=h*0.44, RH=64;
+      /* ruler body */
+      rect(ctx,x0-8,ry-RH,x1-x0+16,RH*2,COL.ink,'#fbfdff',2.8);
+      for(let c=0;c<=250;c++){ const xx=x0+c*pc/10, big=c%10===0, mid=c%5===0; line(ctx,xx,ry,xx,ry-(big?26:mid?18:10),COL.yellow,big?2:1.2); if(big) textAt(ctx,String(c/10),xx,ry-32,{align:'center',size:12,weight:700,color:COL.yellow}); }
+      const pi=pc*2.54; for(let i=0;i<=Math.floor(25/2.54*8);i++){ const xx=x0+i*pi/8; if(xx>x1+1) break; const big=i%8===0, mid=i%4===0, q=i%2===0; line(ctx,xx,ry,xx,ry+(big?28:mid?20:q?14:8),COL.blue,big?2:1.2); if(big) textAt(ctx,String(i/8),xx,ry+44,{align:'center',size:12,weight:700,color:COL.blue}); }
+      textAt(ctx,'cm',x0-16,ry-RH+16,{size:12,weight:700,color:COL.yellow,align:'right'}); textAt(ctx,'in',x0-16,ry+RH-10,{size:12,weight:700,color:COL.blue,align:'right'});
+      /* the object: a glass rod growing from zero with spring overshoot */
+      const L=Math.max(0,x)*pc, oy=ry-RH-46;
+      ctx.save(); ctx.lineCap='round'; line(ctx,x0,oy,x0+L,oy,COL.red,10); line(ctx,x0,oy,x0+L,oy,'#fff',4); ctx.restore();
+      line(ctx,x0,oy-14,x0,oy+14,COL.red,2.4); line(ctx,x0+L,oy-14,x0+L,oy+14,COL.red,2.4);
+      line(ctx,x0+L,oy+14,x0+L,ry+RH+20,COL.red,1.4,[5,4]);
+      textAt(ctx,'sample',x0+L/2,oy-16,{align:'center',size:12,weight:700,color:COL.red});
+      /* conversion with cancelling units */
+      const cm=x, inch=cm/2.54, cy=ry+RH+88;
+      ctx.save(); ctx.font='700 '+Math.min(30,w*0.034)+'px Poppins, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=COL.ink;
+      const fsz=Math.min(30,w*0.034); const parts=[[fmt(cm,1)+' ',COL.yellow],['cm',COL.yellow],['  ×  ',COL.ink],['1 in',COL.blue],['  ─────  ',COL.ink],['2.54 cm',COL.yellow],['  =  ',COL.ink],[fmt(inch,2)+' in',COL.blue]];
+      let tw=0; ctx.font='700 '+fsz+'px Poppins, sans-serif'; parts.forEach(p=>tw+=ctx.measureText(p[0]).width);
+      let px=w/2-tw/2; ctx.textAlign='left'; parts.forEach(p=>{ ctx.fillStyle=p[1]; ctx.fillText(p[0],px,cy); const wd=ctx.measureText(p[0]).width; if(p[0]==='cm'||p[0]==='2.54 cm'){ ctx.strokeStyle=COL.red; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(px,cy-fsz*0.3); ctx.lineTo(px+wd,cy-fsz*0.3); ctx.stroke(); } px+=wd; });
+      ctx.restore();
+      textAt(ctx,'units cancel  →  inches left',w/2,cy+26,{align:'center',size:12,weight:600,color:COL.muted});
+      $('#c0').textContent=fmt(cm,1); $('#c1').textContent=fmt(inch,2); $('#c2').textContent=fmt(cm/100,3);
+    } else if(mode==='tmp'){
+      const C=x, K=C+273.15, F=C*9/5+32;
+      const frac=(C+50)/200;
+      const top=h*0.1, bot=h*0.78, cx=w*0.6;
+      /* beaker with water/ice/steam */
+      const bw=Math.min(w*0.2,170), bh=bot-top-60, bb=bot+6;
+      const liq=C<=0?'rgba(47,143,224,0.12)':'rgba(47,143,224,0.28)';
+      liquidBeaker(ctx,cx,bb,bw,bh*0.55,0.85,liq,t,0);
+      const wy=bb-bh*0.55*0.85;
+      if(C<=0){ for(let i=0;i<5;i++){ const ix=cx-bw*0.32+i*bw*0.16+Math.sin(t*1.3+i)*2, iy=wy+4+Math.sin(t*1.7+i*2)*2+ (i%2)*4; ctx.save(); ctx.translate(ix,iy); ctx.rotate(0.3*Math.sin(i)); rect(ctx,-11,-11,22,22,COL.blue,'rgba(255,255,255,0.7)',2); line(ctx,-11,-4,11,-4,COL.blue,1); ctx.restore(); } }
+      if(C>=100||C>85){ const amt=clamp((C-85)/30,0,1); for(let i=0;i<14;i++){ const ph=(t*0.6+i*0.37)%1; const bx2=cx-bw*0.4+((i*53)%100)/100*bw*0.8; circ(ctx,bx2+Math.sin(t*3+i)*3,bb-10-ph*(bb-wy-10),3+ph*3,COL.blue,null,1.5); } if(C>=100){ for(let i=0;i<9;i++){ const ph=(t*0.5+i*0.23)%1; ctx.save(); ctx.globalAlpha=1-ph; ctx.strokeStyle=COL.mid; ctx.lineWidth=2.2; ctx.beginPath(); const sx=cx-bw*0.35+((i*37)%70)/70*bw*0.7; ctx.moveTo(sx,wy-ph*90); ctx.bezierCurveTo(sx+14,wy-ph*90-14,sx-14,wy-ph*90-28,sx,wy-ph*90-44); ctx.stroke(); ctx.restore(); } } }
+      function therm(tx,title,val,col,vmin,vmax,tick,fmtv,side){
+        const f=clamp((val-vmin)/(vmax-vmin),0,1);
+        thermo(ctx,tx,top,bot,f,COL.ink,col);
+        for(let v=Math.ceil(vmin/tick)*tick;v<=vmax;v+=tick){ const yy=bot-(bot-top-5)*(v-vmin)/(vmax-vmin); line(ctx,tx+(side>0?5:-5),yy,tx+side*14,yy,col,1.6); textAt(ctx,String(v),tx+side*18,yy+4,{align:side>0?'left':'right',size:11,weight:600,color:col}); }
+        textAt(ctx,title,tx,top-14,{align:'center',size:14,weight:700,color:col});
+        textAt(ctx,fmtv,tx,bot+48,{align:'center',size:15,weight:700,color:col});
+      }
+      therm(w*0.14,'Celsius',C,COL.red,-50,150,25,fmt(C,0)+' °C',-1);
+      therm(w*0.34,'Kelvin',K,COL.blue,223.15,423.15,25,fmt(K,2)+' K',-1);
+      therm(w*0.86,'Fahrenheit',F,COL.green,-58,302,45,fmt(F,1)+' °F',1);
+      /* freeze/boil guides */
+      [[0,'freezes'],[100,'boils']].forEach(([v,l])=>{ const yy=bot-(bot-top-5)*(v+50)/200; line(ctx,w*0.14,yy,w*0.86,yy,COL.yellow,1.4,[6,5]); textAt(ctx,l,w*0.74,yy-5,{align:'center',size:11,weight:700,color:COL.yellow}); });
+      textAt(ctx,'K = °C + 273.15      °F = 9⁄5 × °C + 32',w*0.5,h-10,{align:'center',size:13,weight:700,color:COL.muted});
+      $('#c0').textContent=fmt(C,1); $('#c1').textContent=fmt(K,2); $('#c2').textContent=fmt(F,1);
+    } else {
+      const V=Math.max(0,x), cx=w*0.5-w*0.04, side=Math.min(w*0.42,h*0.45), ox=side*0.22, oy=side*0.22;
+      const bx=cx-side/2-ox/2, by=h*0.82, X0=bx, Y1=by, Y0=by-side;
+      /* oblique cube (1 dm = 10 cm each edge) */
+      const frac=V/1000, fy=Y1-side*frac;
+      const sw=Math.sin(t*2.4)*Math.max(0,Math.abs(tgt-V)/200)*3;
+      ctx.save(); ctx.beginPath(); ctx.rect(X0,Y0,side,side); ctx.clip();
+      ctx.fillStyle='rgba(47,143,224,0.28)'; ctx.beginPath(); ctx.moveTo(X0,fy);
+      for(let q=0;q<=side;q+=5) ctx.lineTo(X0+q,fy+Math.sin(t*3.2+q*0.07)*(1.4+Math.abs(sw))+sw*(q/side-0.5)*4);
+      ctx.lineTo(X0+side,Y1); ctx.lineTo(X0,Y1); ctx.closePath(); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8;
+      ctx.strokeRect(X0,Y0,side,side); ctx.beginPath(); ctx.moveTo(X0,Y0); ctx.lineTo(X0+ox,Y0-oy); ctx.lineTo(X0+side+ox,Y0-oy); ctx.lineTo(X0+side,Y0); ctx.moveTo(X0+side+ox,Y0-oy); ctx.lineTo(X0+side+ox,Y1-oy); ctx.lineTo(X0+side,Y1); ctx.stroke();
+      ctx.setLineDash([6,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(X0,Y1); ctx.lineTo(X0+ox,Y1-oy); ctx.lineTo(X0+side+ox,Y1-oy); ctx.moveTo(X0+ox,Y1-oy); ctx.lineTo(X0+ox,Y0-oy); ctx.stroke(); ctx.restore();
+      /* graduations in mL on the left edge */
+      for(let m=0;m<=1000;m+=100){ const yy=Y1-side*m/1000; line(ctx,X0-12,yy,X0,yy,COL.yellow,2); textAt(ctx,String(m),X0-16,yy+4,{align:'right',size:11,weight:700,color:COL.yellow}); }
+      line(ctx,X0,Y1+22,X0+side,Y1+22,COL.green,1.8); arrowHead(ctx,X0,Y1+22,Math.PI,COL.green,6); arrowHead(ctx,X0+side,Y1+22,0,COL.green,6); textAt(ctx,'10 cm = 1 dm',X0+side/2,Y1+40,{align:'center',size:12,weight:700,color:COL.green});
+      /* pouring jug while level is rising */
+      const rising=tgt-V; const pour=clamp(rising/80,0,1);
+      ctx.save(); const jx=X0+side*0.5, jy=Y0-oy-48; ctx.globalAlpha=clamp(pour*4,0,1); ctx.translate(jx+side*0.12,jy); ctx.rotate(-0.55*pour-0.1); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(-22,-30); ctx.lineTo(-26,20); ctx.lineTo(24,20); ctx.lineTo(20,-30); ctx.stroke(); ctx.beginPath(); ctx.arc(24,-6,13,-1.2,1.2); ctx.stroke(); ctx.restore();
+      if(pour>0.05){ ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=5; ctx.globalAlpha=pour; ctx.beginPath(); ctx.moveTo(jx-6,jy+4); ctx.quadraticCurveTo(jx-14,jy+(fy-jy)*0.4,jx-18,fy); ctx.stroke(); ctx.restore(); }
+      const px=w*0.78; [['1000 mL',COL.yellow],['1 L',COL.blue],['1 dm³',COL.green]].forEach((q,i)=>textAt(ctx,q[0],px,h*0.3+i*34,{align:'center',size:20,weight:700,color:q[1]}));
+      textAt(ctx,'the same volume',px,h*0.3+3*34-8,{align:'center',size:12,weight:600,color:COL.muted});
+      textAt(ctx,'1 cm³ = 1 mL',px,h*0.3+3*34+14,{align:'center',size:12,weight:700,color:COL.red});
+      $('#c0').textContent=fmt(V,0); $('#c1').textContent=fmt(V/1000,3); $('#c2').textContent=fmt(V/1000,3);
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.4  SCIENTIFIC NOTATION
+   Slide the decimal point; the exponent counts the hops.
+   Textbook: 602,200,000,000,000,000,000,000 and 0.00000000000000000000000166 g
+   ===================================================================== */
+const SCI_SETS=[
+  {name:'Molecules in 2 g of H₂', unit:'',    chars:'6022'+'0'.repeat(20), d0:24},
+  {name:'Mass of one H atom',     unit:' g',  chars:'0'+'0'.repeat(23)+'166', d0:1},
+  {name:'Speed of light',         unit:' m/s',chars:'299792458', d0:9}
+];
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Number</label><div class="toggle-group" id="nB" style="flex-direction:column">${SCI_SETS.map((s,i)=>`<button class="toggle-btn small${i?'':' active'}" data-v="${i}">${s.name}</button>`).join('')}</div></div>` +
+    `<div class="control-group"><label>Decimal point <span class="val" id="dV"></span></label><input type="range" id="dR" min="0" max="30" step="1" value="30"></div>` +
+    btnHTML('autoB','✓ Slide to scientific form','play') +
+    rcardsHTML([{l:'Coefficient a',id:'aV',c:COL.blue},{l:'Exponent n',id:'nV',c:COL.red},{l:'Form',id:'fV',wide:true,sm:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), dR=$('#dR');
+  let set=SCI_SETS[0], d0=set.d0, L=set.chars.length, dd={x:d0,v:0}, t=0; const G=new Glider(dR);
+  function pick(i){ set=SCI_SETS[i]; L=set.chars.length; d0=set.d0; dR.max=L; dR.value=d0; dd.x=d0; dd.v=0; G.t=null; }
+  toggleWire(wrap.querySelectorAll('#nB button'),b=>pick(+b.dataset.v));
+  function sciD(){ let i=0; while(i<L&&set.chars[i]==='0') i++; return i+1; }
+  $('#autoB').onclick=()=>{ G.go(sciD()); };
+  pick(0);
+  animLoop(dt=>{
+    t+=dt;
+    const dT=Math.round(G.step(3,dt)); springTo(dd,dT,70,13,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const n=d0-dT, tw=Math.min(34,(w*0.92)/(L+1)), x0=w/2-L*tw/2, ty=h*0.34, th=tw*1.35;
+    /* coefficient string */
+    let a=set.chars.slice(0,dT)+'.'+set.chars.slice(dT); a=a.replace(/^0+(?=\d)/,''); if(a.indexOf('.')>=0) a=a.replace(/0+$/,'').replace(/\.$/,'.0'); if(a.startsWith('.')) a='0'+a;
+    const val=parseFloat(a); const std=val>=1&&val<10;
+    /* hop bands: tiles passed over by the decimal point */
+    const lo=Math.min(d0,dd.x), hi=Math.max(d0,dd.x);
+    ctx.save(); ctx.fillStyle='rgba(217,160,23,0.16)'; ctx.fillRect(x0+lo*tw,ty-th*0.75,(hi-lo)*tw,th*1.5); ctx.restore();
+    for(let i=0;i<L;i++){ const cx=x0+i*tw+tw/2, within=(i>=Math.min(dT,d0)&&i<Math.max(dT,d0)); rect(ctx,x0+i*tw+1.5,ty-th/2,tw-3,th,within?COL.yellow:COL.mid,'#fff',within?2:1.2); textAt(ctx,set.chars[i],cx,ty+th*0.22,{align:'center',size:tw*0.62,weight:700,color:set.chars[i]==='0'?COL.mid:COL.ink}); }
+    /* hop arcs */
+    const dir=dT<d0?-1:1;
+    for(let i=Math.min(dT,d0);i<Math.max(dT,d0);i++){ const cx=x0+i*tw+tw/2; ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(cx,ty-th/2-2,tw/2,Math.PI,2*Math.PI); ctx.stroke(); ctx.restore(); }
+    /* original point (grey) and moving point (yellow) */
+    const ox=x0+d0*tw; circ(ctx,ox,ty+th/2+10,4,COL.mid,COL.mid,1); textAt(ctx,'start',ox,ty+th/2+30,{align:'center',size:11,weight:600,color:COL.mid});
+    const px=x0+dd.x*tw; line(ctx,px,ty-th/2-16,px,ty+th/2+4,COL.yellow,3.4); circ(ctx,px,ty+th/2+10,7,COL.yellow,COL.yellow,1); textAt(ctx,'decimal point',px,ty-th/2-24,{align:'center',size:12,weight:700,color:COL.yellow});
+    /* big result */
+    const fs=Math.min(64,w*0.075); const ey=h*0.7;
+    ctx.save(); ctx.font='700 '+fs+'px Poppins, sans-serif'; const aw=ctx.measureText(a).width; ctx.restore();
+    const shown=a.length>14?val.toPrecision(6):a;
+    const colr=std?COL.green:COL.ink;
+    ctx.save(); ctx.font='700 '+fs+'px Poppins, sans-serif'; ctx.fillStyle=colr; ctx.textAlign='center';
+    const aw2=ctx.measureText(shown+' × 10').width; const sw=Math.max(40,ctx.measureText(String(n)).width*0.6);
+    const left=w/2-(aw2+sw)/2; ctx.textAlign='left'; ctx.fillText(shown+' × 10',left,ey);
+    ctx.fillStyle=COL.red; ctx.font='700 '+(fs*0.6)+'px Poppins, sans-serif'; ctx.fillText(String(n),left+aw2+3,ey-fs*0.45); ctx.restore();
+    textAt(ctx,std?'✓  1 ≤ a < 10  —  scientific form':'move the point until a is between 1 and 10',w/2,ey+36,{align:'center',size:14,weight:700,color:std?COL.green:COL.muted});
+    $('#dV').textContent=n>0?'← '+n:(n<0?'→ '+(-n):'—');
+    $('#aV').textContent=shown; $('#nV').textContent=String(n); $('#fV').textContent=std?'Scientific notation ✓':'Not yet standard';
+  });
+  return wrap;
+}
+
+
+/* =====================================================================
+   1.5  SIGNIFICANT FIGURES
+   Weighing: platform balance 9.4 g  vs  analytical balance 9.4213 g (textbook)
+   Combining: 12.11 + 18.0 + 1.012 = 31.122 → 31.1 · 2.5 × 1.25 = 3.125 → 3.1
+   ===================================================================== */
+function countSig(str){ const d=str.replace('.','').replace('-',''); return d.replace(/^0+/,'').length||1; }
+function roundHalfEven(x,d){ const k=Math.pow(10,d), s=x*k, f=Math.floor(s), diff=s-f; let r; if(Math.abs(diff-0.5)<1e-9) r=(f%2===0)?f:f+1; else r=Math.round(s); return r/k; }
+function drawRock(ctx,x,y,r,rot,col){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.lineJoin='round'; ctx.beginPath();
+  const pts=[[-1,.1],[-.6,-.7],[.1,-1],[.8,-.6],[1,.2],[.5,.8],[-.4,.9]]; pts.forEach((p,i)=>i?ctx.lineTo(p[0]*r,p[1]*r):ctx.moveTo(p[0]*r,p[1]*r)); ctx.closePath();
+  ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=col||COL.ink; ctx.lineWidth=2.6; ctx.stroke();
+  line(ctx,-r*0.5,-r*0.1,r*0.1,-r*0.45,col||COL.ink,1.4); line(ctx,r*0.1,r*0.2,r*0.55,-0.05*r,col||COL.ink,1.4); ctx.restore();
+}
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('mdB','Activity',[['w','Weigh a sample'],['c','Combine numbers']],0) +
+    `<div id="wSide">
+      ${togglesHTML('inB','Balance',[['1','Kitchen'],['0.1','Platform'],['0.0001','Analytical']],2)}
+      ${sliderHTML('mR','Sample mass',2,20,0.0001,9.4213)}
+      <div class="control-group"><button class="toggle-btn play" id="drB" style="width:100%">⬇ Drop the sample again</button></div>
+      ${rcardsHTML([{l:'Reads',id:'rV',c:COL.blue},{l:'Sig. figures',id:'sV',c:COL.green}])}
+    </div>
+    <div id="cSide" class="hidden">
+      ${togglesHTML('opB','Operation',[['add','12.11 + 18.0 + 1.012'],['mul','2.5 × 1.25']],0)}
+      ${sliderHTML('kR','Digits kept after the point',0,3,1,3)}
+      <div class="control-group"><button class="toggle-btn play" id="rlB" style="width:100%">✓ Apply the rule</button></div>
+      ${rcardsHTML([{l:'Result',id:'xV',c:COL.blue},{l:'Verdict',id:'vV',sm:true}])}
+    </div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='w', t=0, res=0.0001;
+  /* ---- weighing state ---- */
+  const S={y:-120,vy:0,rot:0,pan:{x:0,v:0},hit:-9,rd:0,nextRd:0,landed:false};
+  function drop(){ S.y=-160; S.vy=0; S.landed=false; S.hit=-9; S.pan.x=0; S.pan.v=0; }
+  toggleWire(wrap.querySelectorAll('#inB button'),b=>{ res=+b.dataset.v; drop(); });
+  $('#drB').onclick=drop;
+  /* ---- combine state ---- */
+  let op='add', cutX={x:3,v:0}; const G=new Glider($('#kR'));
+  const COMB={ add:{ops:['12.11','18.0','1.012'],sym:'+',val:31.122,rule:1}, mul:{ops:['2.5','1.25'],sym:'×',val:3.125,rule:1} };
+  toggleWire(wrap.querySelectorAll('#opB button'),b=>{ op=b.dataset.v; $('#kR').value=3; cutX.x=3; G.t=null; });
+  $('#rlB').onclick=()=>{ G.go(COMB[op].rule); };
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.v; $('#wSide').classList.toggle('hidden',mode!=='w'); $('#cSide').classList.toggle('hidden',mode!=='c'); if(mode==='w') drop(); });
+  drop();
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='w'){
+      const m=+$('#mR').value; $('#mRV').textContent=fmt(m,4)+' g';
+      /* sample falls, bounces, settles on the pan */
+      const g=900, panTop=h*0.56;
+      S.vy+=g*dt; S.y+=S.vy*dt;
+      const rest=-6; /* sample centre sits at pan surface */
+      if(S.y>rest){ S.y=rest; if(S.vy>60){ S.vy=-S.vy*0.32; S.pan.v+=S.vy*-0.9; S.hit=t; S.landed=true; } else S.vy=0; }
+      S.rot=approach(S.rot,0.18,3,dt);
+      springTo(S.pan,m*0.5,90,10,dt);
+      const cx=w*0.29, bw=Math.min(w*0.44,390), by=h*0.9;
+      /* balance body */
+      ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.moveTo(cx-bw/2,by); ctx.lineTo(cx-bw*0.42,by-bw*0.34); ctx.lineTo(cx+bw*0.42,by-bw*0.34); ctx.lineTo(cx+bw/2,by); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+      rect(ctx,cx-bw*0.3,by-bw*0.27,bw*0.6,bw*0.14,COL.ink,'#f1f6fb',2.4);
+      /* pan on a compressible post */
+      const pd=clamp(S.pan.x,-4,16), py=by-bw*0.34-bw*0.18+pd*0.6;
+      line(ctx,cx,by-bw*0.34,cx,py,COL.ink,6); line(ctx,cx-bw*0.3,py,cx+bw*0.3,py,COL.ink,5); line(ctx,cx-bw*0.3,py,cx-bw*0.34,py-8,COL.ink,3); line(ctx,cx+bw*0.3,py,cx+bw*0.34,py-8,COL.ink,3);
+      /* sample */
+      const rr=10+m*1.5; drawRock(ctx,cx,py+S.y-rr*0.7,rr,S.rot+Math.sin(S.y*0.03)*0.3,COL.yellow);
+      /* reading with settling noise */
+      const dec=Math.max(0,Math.round(-Math.log10(res))), since=t-S.hit;
+      const settle=S.landed?Math.exp(-2.2*since):1;
+      if(t>S.nextRd){ S.nextRd=t+0.14; const amp=res*(0.62+8*settle); S.rd=Math.round((m+gauss()*amp*0.6)/res)*res; if(!S.landed) S.rd=0; }
+      const str=(S.landed?Math.max(0,S.rd):0).toFixed(dec);
+      /* display on the body */
+      textAt(ctx,str+' g',cx,by-bw*0.17,{align:'center',size:bw*0.07,weight:700,color:COL.ink});
+      /* big readout */
+      const px=w*0.68, py2=h*0.34, tw=Math.min(66,w*0.07), n=str.length, x0=px-n*tw/2;
+      textAt(ctx,'Balance reading',px,py2-tw*1.05,{align:'center',size:13,weight:700,color:COL.muted});
+      const sigStr=S.landed?str:'0';
+      for(let i=0;i<n;i++){ const c=str[i], isLast=i===n-1, dot=c==='.'; const wi=dot?tw*0.4:tw; const xx=x0+(i?[...str.slice(0,i)].reduce((a,ch)=>a+(ch==='.'?tw*0.4:tw),0):0);
+        if(dot){ circ(ctx,xx+wi/2,py2+tw*0.55,4,COL.ink,COL.ink,1); continue; }
+        const col=(!S.landed)?COL.mid:(isLast?COL.red:COL.green);
+        rect(ctx,xx+2,py2-tw*0.55,wi-4,tw*1.5,col,'#fff',3); textAt(ctx,c,xx+wi/2,py2+tw*0.45,{align:'center',size:tw*1.0,weight:700,color:col}); }
+      const totalW=[...str].reduce((a,ch)=>a+(ch==='.'?tw*0.4:tw),0), lastW=tw;
+      if(S.landed){
+        /* brackets */
+        const bx0=x0, bx1=x0+totalW-lastW, by0=py2+tw*1.15;
+        if(bx1>bx0+4){ line(ctx,bx0+2,by0,bx1-2,by0,COL.green,3); line(ctx,bx0+2,by0-6,bx0+2,by0,COL.green,3); line(ctx,bx1-2,by0-6,bx1-2,by0,COL.green,3); textAt(ctx,'certain',(bx0+bx1)/2,by0+22,{align:'center',size:14,weight:700,color:COL.green}); }
+        line(ctx,bx1+2,by0,x0+totalW-2,by0,COL.red,3); line(ctx,bx1+2,by0-6,bx1+2,by0,COL.red,3); line(ctx,x0+totalW-2,by0-6,x0+totalW-2,by0,COL.red,3);
+        textAt(ctx,'uncertain',x0+totalW-lastW/2,by0+22,{align:'center',size:14,weight:700,color:COL.red});
+        const sf=countSig(str);
+        textAt(ctx,sf+' significant figures',px,by0+66,{align:'center',size:Math.min(24,w*0.028),weight:700,color:COL.ink});
+        textAt(ctx,'smallest step on this balance: '+(res>=1?res+' g':res+' g'),px,by0+92,{align:'center',size:12,weight:600,color:COL.muted});
+        $('#sV').textContent=sf;
+      } else $('#sV').textContent='—';
+      $('#rV').textContent=S.landed?str+' g':'—';
+    } else {
+      /* ---------------- combine numbers ---------------- */
+      const C=COMB[op], kT=+$('#kR').value;
+      const k=G.step(3.5,dt); $('#kRV').textContent=Math.round(k)+(Math.round(k)===1?' digit':' digits');
+      const kr=Math.round(k);
+      const cw=Math.min(54,w*0.062), dotX=w*0.4, rowH=cw*1.5, y0=h*0.2;
+      springTo(cutX,kr,60,12,dt);
+      const rows=C.ops.length, resStr='';
+      const rowsAll=C.ops.concat(['=']);
+      /* draw operands, decimal aligned */
+      function drawNum(str,rowY,alphaFn,col){
+        const [ip,fp]=str.split('.'); const x=dotX-ip.length*cw;
+        for(let i=0;i<ip.length;i++){ rect(ctx,x+i*cw+2,rowY-cw*0.55,cw-4,cw*1.1,col,'#fff',2); textAt(ctx,ip[i],x+i*cw+cw/2,rowY+cw*0.3,{align:'center',size:cw*0.8,weight:700,color:col}); }
+        circ(ctx,dotX+cw*0.25,rowY+cw*0.4,3.4,col,col,1);
+        for(let i=0;i<(fp||'').length;i++){ const xx=dotX+cw*0.5+i*cw; ctx.save(); ctx.globalAlpha=alphaFn(i); rect(ctx,xx+2,rowY-cw*0.55,cw-4,cw*1.1,col,'#fff',2); textAt(ctx,fp[i],xx+cw/2,rowY+cw*0.3,{align:'center',size:cw*0.8,weight:700,color:col}); ctx.restore(); }
+      }
+      C.ops.forEach((s,i)=>{ const ry=y0+i*rowH; if(i>0||true){ textAt(ctx,i===0?'':C.sym,dotX-5*cw,ry+cw*0.3,{align:'center',size:cw*0.8,weight:700,color:COL.red}); } drawNum(s,ry,()=>1,i===0?COL.yellow:(op==='add'?[COL.yellow,COL.blue,COL.green][i]:COL.blue)); });
+      const ly=y0+rows*rowH-cw*0.1; line(ctx,dotX-6*cw,ly,dotX+cw*4.4,ly,COL.ink,3);
+      const ry=y0+rows*rowH+cw*0.7;
+      const full=C.val.toFixed(3);
+      drawNum(full,ry,i=>(i+0.5<cutX.x?1:0.2),COL.ink);
+      /* rule marker & chosen cut */
+      const cutPx=dotX+cw*0.5+cutX.x*cw;
+      const topY=y0-cw*0.9, botY=ry+cw*0.9;
+      line(ctx,cutPx,topY,cutPx,botY,COL.red,3.4); textAt(ctx,'cut',cutPx,topY-6,{align:'center',size:12,weight:700,color:COL.red});
+      const rulePx=dotX+cw*0.5+C.rule*cw; if(Math.abs(rulePx-cutPx)>3){ line(ctx,rulePx,topY+8,rulePx,botY-8,COL.green,1.8,[5,5]); textAt(ctx,'rule',rulePx,topY+2,{align:'center',size:11,weight:700,color:COL.green}); }
+      /* least-precise factor highlight */
+      if(op==='add'){ const yy=y0+1*rowH; rect(ctx,dotX-cw*3.2,yy-cw*0.62,cw*3.2+cw*0.5+cw*1.1,cw*1.24,COL.green,null,2); textAt(ctx,'fewest decimals',dotX+cw*2.3,yy+cw*0.18,{size:12,weight:700,color:COL.green}); }
+      else { const yy=y0; rect(ctx,dotX-cw*1.2,yy-cw*0.62,cw*1.2+cw*0.5+cw*1.1,cw*1.24,COL.green,null,2); textAt(ctx,'2 sig. figs = fewest',dotX+cw*2.3,yy+cw*0.18,{size:12,weight:700,color:COL.green}); }
+      /* rounded answer */
+      const rd=roundHalfEven(C.val,kr), rdStr=rd.toFixed(kr);
+      const fs=Math.min(60,w*0.07); textAt(ctx,'→  '+rdStr,w*0.5,ry+cw*2.6,{align:'center',size:fs,weight:700,color:kr===C.rule?COL.green:(kr>C.rule?COL.red:COL.yellow)});
+      const verdict=kr===C.rule?'✓ correct':(kr>C.rule?'too precise':'too rough');
+      textAt(ctx,kr>C.rule?'extra digits are not real — measurements never had them':(kr<C.rule?'throwing away real digits':'result limited by the least precise number'),w*0.5,ry+cw*3.5,{align:'center',size:13,weight:600,color:COL.muted});
+      $('#xV').textContent=rdStr; $('#vV').textContent=verdict;
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.6  PRECISION vs ACCURACY — true value 2.00 g
+   Textbook: A 1.95, 1.93 · B 1.94, 2.05 · C 2.01, 1.99
+   ===================================================================== */
+function drawDart(ctx,x,y,ang,len,wob){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang+(wob||0)); ctx.lineCap='round';
+  line(ctx,0,0,-len,0,COL.ink,3); line(ctx,0,0,len*0.16,0,COL.red,3.4);
+  line(ctx,-len,0,-len-len*0.16,-len*0.18,COL.blue,2.4); line(ctx,-len,0,-len-len*0.16,len*0.18,COL.blue,2.4);
+  line(ctx,-len*0.82,0,-len*0.95,-len*0.16,COL.blue,2); line(ctx,-len*0.82,0,-len*0.95,len*0.16,COL.blue,2); ctx.restore();
+}
+function buildA6(){
+  const wrap=labShell();
+  const PRE={A:{vals:[[1.95,-0.02],[1.93,0.03]],name:'Student A'},B:{vals:[[1.94,0.09],[2.05,-0.08]],name:'Student B'},C:{vals:[[2.01,-0.02],[1.99,0.03]],name:'Student C'}};
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('stB','Who is measuring?',[['A','Student A'],['B','Student B'],['C','Student C'],['X','Custom']],0) +
+    `<div id="cust" class="hidden">${sliderHTML('bR','Systematic error (bias)',-0.15,0.15,0.01,0)}${sliderHTML('sR','Random error (spread)',0,0.15,0.01,0.05)}</div>` +
+    `<div class="control-group"><button class="toggle-btn play" id="thB" style="width:100%">🎯 Take measurements</button><button class="toggle-btn" id="clB" style="width:100%;margin-top:7px">Clear</button></div>` +
+    rcardsHTML([{l:'Average',id:'aV',c:COL.blue},{l:'Spread',id:'sV',c:COL.yellow},{l:'Precise?',id:'pV',sm:true},{l:'Accurate?',id:'cV',sm:true}]) +
+    `<p class="hint">True value = 2.00 g</p>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let who='A', darts=[], queue=[], t=0, qT=0;
+  const clear=()=>{ darts=[]; queue=[]; };
+  toggleWire(wrap.querySelectorAll('#stB button'),b=>{ who=b.dataset.v; $('#cust').classList.toggle('hidden',who!=='X'); clear(); });
+  $('#clB').onclick=clear;
+  $('#thB').onclick=()=>{
+    if(who!=='X'){ darts=darts.filter(d=>d.t0!==undefined&&false); darts=[]; queue=PRE[who].vals.map(v=>({m:v[0],y:v[1]})); }
+    else { const b=+$('#bR').value, s=+$('#sR').value; for(let i=0;i<6;i++) queue.push({m:2+b+gauss()*s*0.8,y:gauss()*s*0.8}); }
+    qT=0;
+  };
+  animLoop(dt=>{
+    t+=dt; qT-=dt;
+    if(queue.length&&qT<=0){ const q=queue.shift(); darts.push({m:q.m,y:q.y,u:0,wob:0}); qT=0.65; }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const R=Math.min(w*0.27,h*0.31), bx=w*0.5, by=h*0.37, K=R/0.25;
+    /* board */
+    for(let i=5;i>=1;i--){ circ(ctx,bx,by,R*i/5,i%2?COL.blue:COL.ink,i===1?'rgba(217,67,43,0.12)':null,i%2?2:1.4); }
+    line(ctx,bx-R-8,by,bx+R+8,by,COL.mid,1,[4,4]); line(ctx,bx,by-R-8,bx,by+R+8,COL.mid,1,[4,4]);
+    circ(ctx,bx,by,5,COL.red,COL.red,1); textAt(ctx,'2.00 g  (true)',bx,by-R-12,{align:'center',size:12,weight:700,color:COL.red});
+    /* darts */
+    darts.forEach(d=>{
+      d.u=Math.min(1,d.u+dt/0.7);
+      const tx=bx+(d.m-2)*K, ty=by+d.y*K;
+      const sx=w*0.1, sy=h*0.98; const u=d.u, e=u*u*(3-2*u)*0.4+u*0.6;
+      const px=lerp(sx,tx,e), py=lerp(sy,ty,e)-Math.sin(Math.PI*u)*h*0.22;
+      const ang=Math.atan2(ty-sy-(Math.cos(Math.PI*u)*Math.PI*h*0.22*-1)*0.0,tx-sx)+(u<1?-Math.cos(Math.PI*u)*0.5:0)*-1;
+      if(u<1){ const vx=(tx-sx), vy=(ty-sy)-Math.PI*Math.cos(Math.PI*u)*h*0.22; drawDart(ctx,px,py,Math.atan2(vy,vx),46,0); }
+      else { d.wob=(d.wob||0)+dt; const wob=Math.sin(d.wob*28)*0.35*Math.exp(-d.wob*5); drawDart(ctx,tx,ty,-0.9,46,wob); circ(ctx,tx,ty,4,COL.yellow,COL.yellow,1); }
+    });
+    /* number line */
+    const nx0=w*0.12, nx1=w*0.88, ny=h*0.9, lo=1.85, hi=2.15, X=v=>lerp(nx0,nx1,(v-lo)/(hi-lo));
+    line(ctx,nx0,ny,nx1,ny,COL.ink,2.4);
+    for(let v=1.85;v<=2.151;v+=0.05){ line(ctx,X(v),ny-5,X(v),ny+5,COL.ink,1.6); textAt(ctx,v.toFixed(2),X(v),ny+20,{align:'center',size:11,weight:600,color:COL.muted}); }
+    line(ctx,X(2),ny-34,X(2),ny+5,COL.red,3); textAt(ctx,'true',X(2),ny-40,{align:'center',size:11,weight:700,color:COL.red});
+    const done=darts.filter(d=>d.u>=1);
+    done.forEach(d=>{ const fall=Math.min(1,(t-0)*0); circ(ctx,X(d.m),ny,6,COL.yellow,COL.yellow,1); });
+    if(done.length>=2){
+      const vals=done.map(d=>d.m), avg=vals.reduce((a,b)=>a+b,0)/vals.length, spread=Math.max(...vals)-Math.min(...vals);
+      const ax=X(avg); ctx.save(); ctx.fillStyle=COL.blue; ctx.beginPath(); ctx.moveTo(ax,ny-4); ctx.lineTo(ax-8,ny-20); ctx.lineTo(ax+8,ny-20); ctx.closePath(); ctx.fill(); ctx.restore();
+      textAt(ctx,'average',ax,ny-26,{align:'center',size:11,weight:700,color:COL.blue});
+      line(ctx,X(Math.min(...vals)),ny+34,X(Math.max(...vals)),ny+34,COL.yellow,3);
+      const prec=spread<0.05, acc=Math.abs(avg-2)<0.03;
+      $('#aV').textContent=fmt(avg,3)+' g'; $('#sV').textContent=fmt(spread,2)+' g'; $('#pV').textContent=prec?'Yes — close together':'No — scattered'; $('#cV').textContent=acc?'Yes — near 2.00':'No — off target';
+      const v=prec&&acc?'Precise AND accurate':prec?'Precise, not accurate':acc?'Accurate on average, not precise':'Neither';
+      textAt(ctx,v,bx,by+R+36,{align:'center',size:Math.min(24,w*0.03),weight:700,color:prec&&acc?COL.green:(prec||acc?COL.yellow:COL.red)});
+    } else { ['#aV','#sV','#pV','#cV'].forEach(i=>$(i).textContent='—'); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.7  LAW OF CONSERVATION OF MASS  (Lavoisier)
+   CH₄ + 2 O₂ → CO₂ + 2 H₂O   16 g + 64 g = 80 g  →  44 g + 36 g = 80 g
+   Each unit = 1 CH₄ + 2 O₂ ; 3 units are shown.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('flB','Flask',[['closed','Sealed'],['open','Open to air']],0) +
+    sliderHTML('pR','Reaction progress',0,100,1,0) +
+    `<div class="control-group"><button class="toggle-btn play" id="ignB" style="width:100%">🔥 Ignite</button><button class="toggle-btn" id="rsB" style="width:100%;margin-top:7px">↺ Reset</button></div>` +
+    rcardsHTML([{l:'Gas on pan',id:'mV',c:COL.blue},{l:'Weights',id:'wV'},{l:'C atoms',id:'cV',c:COL.ink},{l:'H atoms',id:'hV',c:COL.blue},{l:'O atoms',id:'oV',c:COL.red}],true);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), pR=$('#pR');
+  const NU=3; let open=false, t=0, run=false, pr=0, pv=0, beam={x:0,v:0};
+  const R=rng(5);
+  let U=[];
+  function build(){ U=[]; for(let u=0;u<NU;u++){ const rw=()=>({x:R(),y:R(),a:R()*6.28,w:(R()-0.5)*2,ph:R()*6.28,esc:0,ex:0,ey:0});
+      U.push({ch4:rw(),o2a:rw(),o2b:rw(),co2:rw(),w1:rw(),w2:rw(),cx:0.2+0.3*(u%3)*0.9,cy:0.55+0.0*u}); } }
+  build();
+  toggleWire(wrap.querySelectorAll('#flB button'),b=>{ open=b.dataset.v==='open'; });
+  pR.addEventListener('input',()=>{ run=false; pv=+pR.value; });
+  $('#ignB').onclick=()=>{ run=true; pv=+pR.value; };
+  $('#rsB').onclick=()=>{ run=false; pv=0; pR.value=0; build(); };
+  const reactH=[[0.2,0.78],[0.5,0.7],[0.8,0.78]];
+  animLoop(dt=>{
+    t+=dt;
+    if(run){ pv=Math.min(100,pv+dt*20); pR.value=pv; if(pv>=100) run=false; }
+    pr=approach(pr,(run?pv:+pR.value)/100,6,dt); $('#pRV').textContent=Math.round(+pR.value)+' %';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const W=Math.min(w*0.74,(h-110)*1.15), cx=w/2, base=h-18;
+    /* mass logic: gas escapes only in open flask once products exist */
+    let atomsC=0,atomsH=0,atomsO=0, massIn=0;
+    const fx=cx-W*0.2, fw=W*0.3, fh=W*0.34, ftop=base-W*0.46-fh*0.2;
+    const lipY=0;
+    /* balance — sample flask on left pan, weights on right */
+    const unitTot=80/NU;
+    let massLeft=0;
+    const ang0=0;
+    const parts=[];
+    U.forEach((u,ui)=>{
+      const s=clamp(pr*NU*1.0-ui*0.9,0,1)*1; /* staggered progress 0..1 per unit */
+      const sp=clamp((s-0)/1,0,1);
+      u.s=sp;
+      /* escape of gaseous products in open flask */
+      const prod=sp>0.55; const k=clamp((sp-0.55)/0.45,0,1);
+      if(open&&prod){ u.co2.esc=Math.min(1,u.co2.esc+dt*0.4); u.w1.esc=Math.min(1,u.w1.esc+dt*0.5); u.w2.esc=Math.min(1,u.w2.esc+dt*0.45); }
+      if(!open||!prod){ u.co2.esc=Math.max(0,u.co2.esc-dt*2); u.w1.esc=Math.max(0,u.w1.esc-dt*2); u.w2.esc=Math.max(0,u.w2.esc-dt*2); }
+    });
+    U.forEach(u=>{
+      const sp=u.s; const product=smooth01(0.5,0.58,sp), reactant=1-product;
+      massLeft+= reactant*80/NU + product*( (1-u.co2.esc)*44/NU + (1-u.w1.esc)*18/NU + (1-u.w2.esc)*18/NU );
+      /* atoms present (rounded by fractions) */
+      atomsC+= reactant*1 + product*(1-u.co2.esc);
+      atomsH+= reactant*4 + product*((1-u.w1.esc)*2+(1-u.w2.esc)*2);
+      atomsO+= reactant*4 + product*((1-u.co2.esc)*2+(1-u.w1.esc)+(1-u.w2.esc));
+    });
+    /* the beam */
+    const diff=(80-massLeft); /* weights heavier -> right pan down => ang>0 */
+    const target=clamp(diff/80*0.34,-0.4,0.4);
+    springTo(beam,target,70,6,dt);
+    const bw=W*0.9, bcx=cx, bbase=base;
+    const leftDraw=(px,py,pw)=>{
+      /* the flask on the pan */
+      const fW=pw*1.5, fH=W*0.23, topy=py-fH, neckW=fW*0.3;
+      ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(px-neckW/2,topy); ctx.lineTo(px-neckW/2,topy+fH*0.3); ctx.lineTo(px-fW/2,py-2); ctx.lineTo(px+fW/2,py-2); ctx.lineTo(px+neckW/2,topy+fH*0.3); ctx.lineTo(px+neckW/2,topy);
+      ctx.fillStyle='rgba(47,143,224,0.05)'; ctx.fill(); ctx.stroke(); ctx.restore();
+      /* cork */
+      if(!open){ ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle=COL.yellow; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(px-neckW/2-3,topy-12); ctx.lineTo(px+neckW/2+3,topy-12); ctx.lineTo(px+neckW/2-2,topy+4); ctx.lineTo(px-neckW/2+2,topy+4); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); }
+      else { textAt(ctx,'open',px+neckW/2+12,topy+8,{size:11,weight:700,color:COL.red}); }
+      /* molecules */
+      const ms=fW/9;
+      U.forEach((u,ui)=>{
+        const sp=u.s;
+        const hx=px-fW*0.35+ (ui*0.35)*fW*0.7, hy=py-fH*0.28;
+        const meet={x:px-fW*0.3+ui*fW*0.3, y:py-fH*0.34};
+        const jig=(o,a)=>({x:Math.sin(t*1.7+o.ph)*ms*0.35, y:Math.cos(t*1.3+o.ph*1.3)*ms*0.3});
+        function reactPos(o,dx,dy){ const j=jig(o); return {x:meet.x+dx*fW*0.05+(o.x-0.5)*fW*0.3*(1-smooth01(0.2,0.45,sp))+j.x*(1-smooth01(0.3,0.45,sp)), y:meet.y+dy*fW*0.04+(o.y-0.5)*fH*0.24*(1-smooth01(0.2,0.45,sp))+j.y}; }
+        if(sp<0.55){
+          const a=reactPos(u.ch4,-1.4,0.6), b=reactPos(u.o2a,1.4,-0.4), c=reactPos(u.o2b,0.2,1.8);
+          const al=1-smooth01(0.45,0.55,sp);
+          drawMol(ctx,'CH4',a.x,a.y,ms,u.ch4.a+t*u.ch4.w,al); drawMol(ctx,'O2',b.x,b.y,ms,u.o2a.a+t*u.o2a.w,al); drawMol(ctx,'O2',c.x,c.y,ms,u.o2b.a+t*u.o2b.w,al);
+        }
+        if(sp>0.45&&sp<0.7){ const f=1-Math.abs(sp-0.57)/0.12; if(f>0){ circ(ctx,meet.x,meet.y,ms*(1+f*4),COL.yellow,null,2.6); circ(ctx,meet.x,meet.y,ms*(1+f*2.4),COL.red,null,2); } }
+        if(sp>0.5){
+          const ap=smooth01(0.5,0.65,sp);
+          [['CO2',u.co2,-1.6,-0.7,0],['H2O',u.w1,1.6,-0.5,1],['H2O',u.w2,0.1,1.9,2]].forEach(([nm,o,dx,dy,k])=>{
+            const j=jig(o);
+            let X=meet.x+dx*fW*0.07*ap+(o.x-0.5)*fW*0.34*ap+j.x, Y=meet.y+dy*fW*0.07*ap+(o.y-0.5)*fH*0.26*ap+j.y, al=ap;
+            if(o.esc>0){ const e=o.esc; X=lerp(X,px+Math.sin(t*2+k)*fW*0.1,smooth01(0,0.5,e)); Y=lerp(Y,topy-14-e*fH*1.6,e); al=ap*(1-smooth01(0.6,1,e)); }
+            if(al>0.02) drawMol(ctx,nm,X,Y,ms,o.a+t*o.w,al);
+          });
+        }
+      });
+    };
+    const rightDraw=(px,py,pw)=>{
+      /* reference weights stack: 80 g total (50 + 20 + 10) */
+      let y=py-2; [[50,pw*1.4],[20,pw*1.1],[10,pw*0.8]].forEach(([g,ww],i)=>{ const hh=ww*0.46; rect(ctx,px-ww/2,y-hh,ww,hh,COL.ink,'#fff',2.4); line(ctx,px-ww*0.2,y-hh,px-ww*0.2,y-hh-5,COL.ink,2); textAt(ctx,g+' g',px,y-hh*0.3,{align:'center',size:Math.max(10,ww*0.15),weight:700,color:COL.ink}); y-=hh; });
+    };
+    drawBalance(ctx,bcx,bbase,W,beam.x,leftDraw,rightDraw,'flask + gas','80 g weights',{H:0.5,drop:0.3});
+    $('#mV').textContent=fmt(massLeft,1)+' g'; $('#wV').textContent='80 g';
+    $('#cV').textContent=fmt(atomsC,1); $('#hV').textContent=fmt(atomsH,0); $('#oV').textContent=fmt(atomsO,0);
+    /* equation banner */
+    textAt(ctx,'CH₄ + 2 O₂  →  CO₂ + 2 H₂O',w/2,28,{align:'center',size:Math.min(24,w*0.03),weight:700,color:COL.ink});
+    textAt(ctx,'16 g + 64 g  =  44 g + 36 g',w/2,52,{align:'center',size:13,weight:700,color:COL.blue});
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.8  DEFINITE & MULTIPLE PROPORTIONS
+   Proust: Cu 51.35 %, C 9.74 %, O 38.91 % in natural AND synthetic cupric carbonate
+   Dalton: H₂ + O → H₂O (2 g : 16 g) ; H₂O₂ (2 g : 32 g) → oxygen 16 : 32 = 1 : 2
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('mdB','Law',[['def','Definite proportions'],['mul','Multiple proportions']],0) +
+    `<div id="dS">${sliderHTML('nR','Natural sample',20,200,1,100)}${sliderHTML('sR','Synthetic sample',20,200,1,60)}
+       ${rcardsHTML([{l:'% Copper',id:'cuV',c:COL.yellow},{l:'% Carbon',id:'cV',c:COL.ink},{l:'% Oxygen',id:'oV',c:COL.red}],true)}</div>
+     <div id="mS" class="hidden">${sliderHTML('hR','Hydrogen (fixed)',1,3,0.5,2)}
+       ${rcardsHTML([{l:'O in water',id:'wV',c:COL.red},{l:'O in peroxide',id:'pV',c:COL.red},{l:'Ratio O : O',id:'rV',c:COL.green,wide:true}])}</div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='def', t=0;
+  const A={nat:{x:100,v:0},syn:{x:60,v:0},h:{x:2,v:0}};
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.v; $('#dS').classList.toggle('hidden',mode!=='def'); $('#mS').classList.toggle('hidden',mode!=='mul'); });
+  const CU=51.35,CC=9.74,CO=38.91;
+  function column(ctx,x,bot,hMax,mass,maxMass,cols,vals,lab,labCol){
+    const bw=Math.min(120,hMax*0.34); const hh=hMax*mass/maxMass;
+    let y=bot; vals.forEach((v,i)=>{ const seg=hh*v; rect(ctx,x-bw/2,y-seg,bw,seg,cols[i],'#fff',2.4); ctx.save(); ctx.strokeStyle=cols[i]; ctx.globalAlpha=0.35; ctx.lineWidth=1; for(let q=0;q<seg;q+=7){ ctx.beginPath(); ctx.moveTo(x-bw/2,y-q); ctx.lineTo(x+bw/2,y-q-6<y-seg?y-seg:y-q-6); ctx.stroke(); } ctx.restore(); if(seg>16) textAt(ctx,fmt(mass*v,1)+' g',x,y-seg/2+4,{align:'center',size:12,weight:700,color:cols[i]}); y-=seg; });
+    return bw;
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='def'){
+      springTo(A.nat,+$('#nR').value,40,7,dt); springTo(A.syn,+$('#sR').value,40,7,dt);
+      $('#nRV').textContent=Math.round(+$('#nR').value)+' g'; $('#sRV').textContent=Math.round(+$('#sR').value)+' g';
+      const bot=h*0.84, hMax=h*0.64, cols=[COL.yellow,COL.ink,COL.red], vals=[CU/100,CC/100,CO/100];
+      [[w*0.28,A.nat.x,'Natural sample','mine'],[w*0.72,A.syn.x,'Synthetic sample','flask']].forEach(([cx,m,lab,ic])=>{
+        column(ctx,cx,bot,hMax,m,200,cols,vals,lab);
+        line(ctx,cx-80,bot,cx+80,bot,COL.ink,3);
+        textAt(ctx,lab+'  ·  '+fmt(m,0)+' g',cx,bot+24,{align:'center',size:14,weight:700,color:COL.ink});
+        /* origin icon */
+        const iy=h*0.1;
+        if(ic==='mine'){ ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(cx-40,iy+30); ctx.lineTo(cx-12,iy-4); ctx.lineTo(cx+4,iy+14); ctx.lineTo(cx+20,iy-12); ctx.lineTo(cx+44,iy+30); ctx.closePath(); ctx.stroke(); ctx.restore(); }
+        else { ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(cx-8,iy-12); ctx.lineTo(cx-8,iy+6); ctx.lineTo(cx-26,iy+30); ctx.lineTo(cx+26,iy+30); ctx.lineTo(cx+8,iy+6); ctx.lineTo(cx+8,iy-12); ctx.stroke(); ctx.restore(); line(ctx,cx-20,iy+22,cx+20,iy+22,COL.blue,3); circ(ctx,cx+Math.sin(t*3)*6,iy+16-Math.abs(Math.sin(t*4))*6,3,COL.blue,null,1.5); }
+      });
+      /* percent callouts between the columns */
+      const mx=w*0.5; let yy=bot-hMax*0.06; const lines=[['Copper',CU,COL.yellow],['Carbon',CC,COL.ink],['Oxygen',CO,COL.red]];
+      lines.forEach((q,i)=>{ textAt(ctx,q[0],mx,h*0.34+i*58,{align:'center',size:13,weight:700,color:q[2]}); textAt(ctx,q[1].toFixed(2)+' %',mx,h*0.34+i*58+26,{align:'center',size:24,weight:700,color:q[2]}); });
+      textAt(ctx,'= same, whatever the source or size',mx,h*0.34+3*58+6,{align:'center',size:12,weight:700,color:COL.green});
+      $('#cuV').textContent=CU.toFixed(2); $('#cV').textContent=CC.toFixed(2); $('#oV').textContent=CO.toFixed(2);
+    } else {
+      springTo(A.h,+$('#hR').value,45,7,dt); const hg=A.h.x; $('#hRV').textContent=fmt(+$('#hR').value,1)+' g';
+      const ratio=(+$('#hR').value)/2, o1=16*ratio, o2=32*ratio;
+      const bot=h*0.86, unit=Math.min(h*0.5/ (32*3.1/ 2),9);
+      const u=h*0.6/54; /* px per gram: H 3 g ×3 + O 48 g ×0.9 fits */
+      const colX=[w*0.3,w*0.7], names=['H2O','H2O2'], labels=['Water','Hydrogen peroxide'], oM=[16*hg/2,32*hg/2];
+      colX.forEach((cx,i)=>{
+        const bw=Math.min(100,w*0.13);
+        let y=bot;
+        const hh=hg*u*3, oh=oM[i]*u*0.9;
+        rect(ctx,cx-bw/2,y-hh,bw,hh,COL.blue,'#fff',2.8); textAt(ctx,fmt(hg,1)+' g H',cx,y-hh/2+4,{align:'center',size:13,weight:700,color:COL.blue}); y-=hh;
+        /* oxygen as 16-g blocks */
+        const blocks=i===0?1:2, each=oM[i]/blocks*u*0.9;
+        for(let b=0;b<blocks;b++){ rect(ctx,cx-bw/2,y-each,bw,each,COL.red,'rgba(217,67,43,0.07)',2.8); textAt(ctx,fmt(oM[i]/blocks,0)+' g O',cx,y-each/2+4,{align:'center',size:13,weight:700,color:COL.red}); y-=each; }
+        line(ctx,cx-bw*0.8,bot,cx+bw*0.8,bot,COL.ink,3);
+        textAt(ctx,labels[i],cx,bot+22,{align:'center',size:14,weight:700,color:COL.ink});
+        drawMol(ctx,names[i],cx,y-34,Math.min(26,w*0.03),Math.sin(t*1.2+i)*0.25);
+      });
+      textAt(ctx,'O combining with the same H  =  '+fmt(oM[0],0)+' : '+fmt(oM[1],0)+'  =  1 : 2',w/2,h*0.07,{align:'center',size:Math.min(22,w*0.027),weight:700,color:COL.green});
+      $('#wV').textContent=fmt(oM[0],0)+' g'; $('#pV').textContent=fmt(oM[1],0)+' g'; $('#rV').textContent='1 : 2   — small whole numbers';
+    }
+  });
+  return wrap;
+}
+
+
+/* =====================================================================
+   1.9  GAY-LUSSAC'S LAW & AVOGADRO'S LAW
+   2 H₂ + O₂ → 2 H₂O(g) : 100 mL + 50 mL → 100 mL (same T and P)
+   Avogadro: equal volumes, equal numbers of molecules → 10 mL ≙ 1 molecule here.
+   The piston height is driven by the number of molecules inside.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sliderHTML('hR','Hydrogen added',20,200,10,100) + sliderHTML('oR','Oxygen added',20,200,10,50) +
+    `<div class="control-group"><button class="toggle-btn play" id="spB" style="width:100%">⚡ Spark</button><button class="toggle-btn" id="rsB" style="width:100%;margin-top:7px">↺ Reset</button></div>` +
+    rcardsHTML([{l:'H₂ : O₂ used',id:'rV',c:COL.green},{l:'H₂O formed',id:'wV',c:COL.red},{l:'Left over',id:'lV',wide:true,sm:true}]) +
+    `<p class="hint">Same T and P · 10 mL = 1 molecule</p>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let parts=[], groups=[], fx=[], t=0, phase=0, spark=0;
+  const PL={x:150,v:0};
+  const R=rng(9);
+  function build(){
+    const nH=Math.round(+$('#hR').value/10), nO=Math.round(+$('#oR').value/10);
+    parts=[]; groups=[]; fx=[]; phase=0; spark=0;
+    for(let i=0;i<nH;i++) parts.push({t:'H2',x:R(),y:R(),vx:(R()-0.5)*0.9,vy:(R()-0.5)*0.9,a:R()*6.28,w:(R()-0.5)*3});
+    for(let i=0;i<nO;i++) parts.push({t:'O2',x:R(),y:R(),vx:(R()-0.5)*0.9,vy:(R()-0.5)*0.9,a:R()*6.28,w:(R()-0.5)*3});
+  }
+  ['#hR','#oR'].forEach(i=>$(i).addEventListener('input',build)); $('#rsB').onclick=build;
+  $('#spB').onclick=()=>{
+    if(phase!==0) return; phase=1; spark=1.2;
+    const H=parts.filter(p=>p.t==='H2'), O=parts.filter(p=>p.t==='O2'); const u=Math.min(Math.floor(H.length/2),O.length);
+    for(let i=0;i<u;i++) groups.push({ps:[H[2*i],H[2*i+1],O[i]],t:0.5+R()*1.6});
+  };
+  build();
+  animLoop(dt=>{
+    t+=dt; spark=Math.max(0,spark-dt);
+    $('#hRV').textContent=$('#hR').value+' mL'; $('#oRV').textContent=$('#oR').value+' mL';
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cw=Math.min(w*0.3,260), cx=w*0.3, base=h-40, maxH=h-90, pxml=maxH/420;
+    /* groups react: approach, flash, merge */
+    groups.forEach(g=>{ g.t-=dt; const cxg=g.ps.reduce((a,p)=>a+p.x,0)/3, cyg=g.ps.reduce((a,p)=>a+p.y,0)/3;
+      g.ps.forEach(p=>{ p.vx+=(cxg-p.x)*6*dt; p.vy+=(cyg-p.y)*6*dt; p.vx*=0.985; p.vy*=0.985; });
+      if(g.t<=0){ g.ps[0].t='H2O'; g.ps[1].t='H2O'; g.ps[2].dead=true; fx.push({x:cxg,y:cyg,t:0}); g.done=true; } });
+    groups=groups.filter(g=>!g.done); parts=parts.filter(p=>!p.dead);
+    if(phase===1&&!groups.length) phase=2;
+    const count=parts.length; springTo(PL,count*10,70,9,dt);
+    const V=Math.max(10,PL.x), topY=base-V*pxml;
+    /* particle motion inside the moving piston */
+    parts.forEach(p=>{
+      p.x+=p.vx*dt*0.5; p.y+=p.vy*dt*0.5; p.a+=p.w*dt;
+      if(p.x<0.08){p.x=0.08;p.vx=Math.abs(p.vx);} if(p.x>0.92){p.x=0.92;p.vx=-Math.abs(p.vx);}
+      if(p.y<0.06){p.y=0.06;p.vy=Math.abs(p.vy);} if(p.y>0.94){p.y=0.94;p.vy=-Math.abs(p.vy);}
+      const sp=Math.hypot(p.vx,p.vy); if(sp<0.4&&!groups.length){ p.vx*=1.04; p.vy*=1.04; } if(sp>1.1){ p.vx*=0.97; p.vy*=0.97; }
+    });
+    /* cylinder */
+    line(ctx,cx-cw/2,base-maxH-6,cx-cw/2,base,COL.ink,3.4); line(ctx,cx+cw/2,base-maxH-6,cx+cw/2,base,COL.ink,3.4); line(ctx,cx-cw/2-8,base,cx+cw/2+8,base,COL.ink,5);
+    for(let v=0;v<=400;v+=50){ const yy=base-v*pxml; line(ctx,cx-cw/2-12,yy,cx-cw/2,yy,COL.yellow,2); textAt(ctx,v+' mL',cx-cw/2-16,yy+4,{align:'right',size:11,weight:700,color:COL.yellow}); }
+    /* gas shading + piston */
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.06)'; ctx.fillRect(cx-cw/2,topY,cw,base-topY); ctx.restore();
+    rect(ctx,cx-cw/2+2,topY-12,cw-4,12,COL.ink,'#fff',3); line(ctx,cx,topY-12,cx,Math.max(8,topY-60),COL.ink,5); line(ctx,cx-26,Math.max(8,topY-60),cx+26,Math.max(8,topY-60),COL.ink,6);
+    dimArrowH(ctx,cx+cw/2+22,topY,base,COL.yellow); textAt(ctx,Math.round(V)+' mL',cx+cw/2+34,(topY+base)/2+4,{size:15,weight:700,color:COL.yellow});
+    /* electrodes + spark */
+    line(ctx,cx-cw*0.3,base,cx-cw*0.3,base-22,COL.ink,3); line(ctx,cx+cw*0.3,base,cx+cw*0.3,base-22,COL.ink,3);
+    if(spark>0.01){ ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.8; ctx.beginPath(); ctx.moveTo(cx-cw*0.3,base-22); for(let i=1;i<=6;i++) ctx.lineTo(lerp(cx-cw*0.3,cx+cw*0.3,i/6),base-22+(Math.random()-0.5)*14); ctx.stroke(); ctx.restore(); }
+    /* molecules */
+    const ms=Math.min(cw/7,24);
+    parts.forEach(p=>drawMol(ctx,p.t,cx-cw/2+p.x*cw,topY+p.y*(base-topY),ms,p.a));
+    fx.forEach(f=>{ f.t+=dt; circ(ctx,cx-cw/2+f.x*cw,topY+f.y*(base-topY),8+f.t*70,COL.yellow,null,2.4); }); fx=fx.filter(f=>f.t<0.45);
+    /* comparison columns: volume of each gas, drawn on the same mL scale */
+    const nH=Math.round(+$('#hR').value/10), nO=Math.round(+$('#oR').value/10);
+    const used=Math.min(Math.floor(nH/2),nO), nW=2*used, lH=nH-2*used, lO=nO-used;
+    const bx0=w*0.64, bw=Math.min(90,w*0.1);
+    const colBox=(x,items,title)=>{ let y=base; items.forEach(([n,col,label])=>{ if(n<=0) return; const hh=n*10*pxml; rect(ctx,x-bw/2,y-hh,bw,hh,col,'#fff',2.6); textAt(ctx,label+' '+n*10+' mL',x,y-hh/2+4,{align:'center',size:12,weight:700,color:col}); y-=hh; }); textAt(ctx,title,x,base+22,{align:'center',size:13,weight:700,color:COL.ink}); };
+    colBox(bx0,[[nH,COL.blue,'H₂'],[nO,COL.red,'O₂']],'Before');
+    const done=phase===2;
+    colBox(bx0+bw*1.9,done?[[lH,COL.blue,'H₂'],[lO,COL.red,'O₂'],[nW,COL.green,'H₂O']]:[],'After');
+    if(!done){ textAt(ctx,'?',bx0+bw*1.9,base-60,{align:'center',size:40,weight:700,color:COL.mid}); }
+    line(ctx,bx0+bw*0.62,base-70,bx0+bw*1.28,base-70,COL.green,2.4); arrowHead(ctx,bx0+bw*1.28,base-70,0,COL.green,9);
+    textAt(ctx,'2 H₂ + O₂ → 2 H₂O',w*0.66+bw*0.5,h*0.07,{align:'center',size:Math.min(22,w*0.027),weight:700,color:COL.ink});
+    textAt(ctx,'volumes  '+Math.min(nH,2*nO)*10+' : '+Math.min(nH/2,nO)*10+' : '+nW*10+'  =  2 : 1 : 2',w*0.66+bw*0.5,h*0.07+26,{align:'center',size:13,weight:700,color:COL.green});
+    $('#rV').textContent=(used*2*10)+' : '+(used*10)+' mL'; $('#wV').textContent=done?(nW*10)+' mL':'—';
+    $('#lV').textContent=done?(lH>0?'H₂ '+lH*10+' mL':(lO>0?'O₂ '+lO*10+' mL':'nothing — perfect ratio')):'—';
+  });
+  return wrap;
+}
+function dimArrowH(ctx,x,y1,y2,color){ line(ctx,x,y1,x,y2,color,1.8); arrowHead(ctx,x,y1,-Math.PI/2,color,6); arrowHead(ctx,x,y2,Math.PI/2,color,6); }
+
+/* =====================================================================
+   1.10  AVERAGE ATOMIC MASS
+   C: 98.892 % ¹²C (12) · 1.108 % ¹³C (13.00335) → 12.011 u
+   Cl: 75.77 % ³⁵Cl (34.9689) · 24.23 % ³⁷Cl (36.9659) → 35.453 u
+   The average is the balance point of the isotopes.
+   ===================================================================== */
+const ISO={
+  C:{name:'Carbon',a:{sym:'¹²C',m:12,ab:98.892},b:{sym:'¹³C',m:13.00335,ab:1.108},lo:11.5,hi:13.5,real:12.011},
+  Cl:{name:'Chlorine',a:{sym:'³⁵Cl',m:34.9689,ab:75.77},b:{sym:'³⁷Cl',m:36.9659,ab:24.23},lo:34.5,hi:37.5,real:35.453}
+};
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('elB','Element',[['Cl','Chlorine'],['C','Carbon']],0) +
+    sliderHTML('abR','Heavier isotope abundance',0,100,0.01,24.23) +
+    `<div class="control-group"><button class="toggle-btn play" id="rlB" style="width:100%">↺ Natural abundance</button></div>` +
+    rcardsHTML([{l:'Average mass',id:'avV',c:COL.blue},{l:'Periodic table',id:'pdV'},{l:'Light isotope',id:'lV',sm:true,c:COL.red},{l:'Heavy isotope',id:'hV',sm:true,c:COL.yellow}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas'), abR=$('#abR');
+  let el='Cl', t=0; const GL=new Glider(abR);
+  const FUL={x:0,v:0}; let first=true;
+  const R=rng(3), rnd=[]; for(let i=0;i<150;i++) rnd.push(R());
+  toggleWire(wrap.querySelectorAll('#elB button'),b=>{ el=b.dataset.v; abR.value=ISO[el].b.ab; first=true; });
+  $('#rlB').onclick=()=>GL.go(ISO[el].b.ab);
+  animLoop(dt=>{
+    t+=dt; const I=ISO[el], ab=GL.step(2.5,dt)/100; $('#abRV').textContent=fmt(ab*100,2)+' %';
+    const mA=I.a.m, mB=I.b.m, avg=mA*(1-ab)+mB*ab;
+    if(first){ FUL.x=avg; FUL.v=0; first=false; }
+    springTo(FUL,avg,34,5.5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* mass axis + lever */
+    const ax0=w*0.1, ax1=w*0.9, X=m=>lerp(ax0,ax1,(m-I.lo)/(I.hi-I.lo)), ly=h*0.52;
+    const torque=(avg-FUL.x), ang=clamp(torque*0.55/((I.hi-I.lo)/3),-0.3,0.3);
+    /* fulcrum triangle */
+    const fx=X(FUL.x); ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(fx,ly+4); ctx.lineTo(fx-26,ly+70); ctx.lineTo(fx+26,ly+70); ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke(); ctx.restore();
+    /* beam rotates about fulcrum */
+    ctx.save(); ctx.translate(fx,ly); ctx.rotate(ang);
+    line(ctx,ax0-fx,0,ax1-fx,0,COL.ink,6);
+    for(let m=Math.ceil(I.lo*2)/2;m<=I.hi;m+=0.5){ const xx=X(m)-fx; line(ctx,xx,0,xx,12,COL.mid,1.6); textAt(ctx,String(m),xx,26,{align:'center',size:11,weight:600,color:COL.muted}); }
+    /* isotope blocks: area ∝ abundance, sitting on the beam at their masses */
+    [[mA,1-ab,COL.red,I.a.sym],[mB,ab,COL.yellow,I.b.sym]].forEach(([m,f,col,sym])=>{
+      const r=8+Math.sqrt(f)*Math.min(70,w*0.07), xx=X(m)-fx;
+      circ(ctx,xx,-3-r,r,col,'#fff',3.2); circ(ctx,xx,-3-r,r*0.82,col,col,1); ctx.save(); ctx.globalAlpha=0.0; ctx.restore();
+      textAt(ctx,sym,xx,-3-r+5,{align:'center',size:Math.max(11,Math.min(22,r*0.6)),weight:700,color:'#fff'});
+      textAt(ctx,fmt(f*100,2)+' %',xx,-3-2*r-10,{align:'center',size:13,weight:700,color:col});
+    });
+    ctx.restore();
+    /* average marker */
+    const ax=X(avg); line(ctx,ax,ly+84,ax,ly+104,COL.blue,3); arrowHead(ctx,ax,ly+84,-Math.PI/2,COL.blue,9);
+    textAt(ctx,'average = '+fmt(avg,3)+' u',ax,ly+126,{align:'center',size:Math.min(24,w*0.028),weight:700,color:COL.blue});
+    /* the sample: 100 atoms */
+    const gx=w*0.5-5*Math.min(26,w*0.03), gy=h*0.08, s=Math.min(26,w*0.03);
+    for(let i=0;i<100;i++){ const col=i%10, row=Math.floor(i/10); const heavy=rnd[i]<ab; const jx=Math.sin(t*2+i)*1.2, jy=Math.cos(t*1.7+i*1.3)*1.2;
+      circ(ctx,gx+col*s+s/2+jx,gy+row*s*0.62+jy,s*0.36,heavy?COL.yellow:COL.red,heavy?'rgba(217,160,23,0.25)':'rgba(217,67,43,0.14)',2); }
+    textAt(ctx,'100 atoms',w*0.5,gy+10*s*0.62+16,{align:'center',size:11,weight:600,color:COL.muted});
+    /* the sum, always visible */
+    textAt(ctx,'('+fmt(1-ab,4)+') × '+fmt(mA,4)+'  +  ('+fmt(ab,4)+') × '+fmt(mB,4)+'  =  '+fmt(avg,3)+' u',w/2,h-26,{align:'center',size:Math.min(16,w*0.019),weight:700,color:COL.ink});
+    $('#avV').textContent=fmt(avg,3)+' u'; $('#pdV').textContent=fmt(I.real,3)+' u';
+    $('#lV').textContent=I.a.sym+'  '+fmt(mA,4); $('#hV').textContent=I.b.sym+'  '+fmt(mB,4);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.11  MOLECULAR / FORMULA MASS BUILDER
+   H₂O 18.02 · CH₄ 16.043 · glucose 180.162 · NaCl 58.5 (formula mass)
+   ===================================================================== */
+const BUILD_EL=['C','H','O','N','Cl','Na'];
+const TARGETS=[
+  {k:'H2O',label:'Water',f:'H2O',cnt:{H:2,O:1},m:18.02,mol:'H2O'},
+  {k:'CH4',label:'Methane',f:'CH4',cnt:{C:1,H:4},m:16.043,mol:'CH4'},
+  {k:'NH3',label:'Ammonia',f:'NH3',cnt:{N:1,H:3},m:17.031,mol:'NH3'},
+  {k:'GLU',label:'Glucose',f:'C6H12O6',cnt:{C:6,H:12,O:6},m:180.162},
+  {k:'NACL',label:'NaCl',f:'NaCl',cnt:{Na:1,Cl:1},m:58.44}
+];
+function buildA11(){
+  const wrap=labShell();
+  const cnt={}; BUILD_EL.forEach(e=>cnt[e]=0);
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Make this</label><div class="toggle-group" id="tgB">${TARGETS.map((q,i)=>`<button class="toggle-btn small${i===3?' active':''}" data-v="${i}">${q.label}</button>`).join('')}</div>
+     <button class="toggle-btn navy" id="bdB">✦ Build it for me</button></div>` +
+    `<div class="control-group"><label>Atoms</label>${BUILD_EL.map(e=>`<div class="ctr"><div class="cn"><i style="background:${EL[e].col}"></i>${e} · ${fmt(EL[e].m,3)} u</div><button data-e="${e}" data-d="-1">−</button><span class="cv" id="n${e}">0</span><button data-e="${e}" data-d="1">+</button></div>`).join('')}</div>` +
+    rcardsHTML([{l:'Total mass',id:'tV',c:COL.blue},{l:'Target',id:'gV'}]) + `<div class="fb warn" id="fb">Add atoms</div>`;
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let tg=TARGETS[3], t=0, auto=false, aT=0; const sc2={x:200}; const atoms=[]; /* {el,s:{x,v},seed,home} */
+  const Rn=rng(17);
+  function sync(){ BUILD_EL.forEach(e=>{ const have=atoms.filter(a=>a.el===e&&!a.dying).length; let d=cnt[e]-have;
+      while(d>0){ atoms.push({el:e,s:{x:0,v:0},ph:Rn()*6.28,sd:Rn()}); d--; }
+      if(d<0){ const arr=atoms.filter(a=>a.el===e&&!a.dying); while(d<0&&arr.length){ arr.pop().dying=true; d++; } } $('#n'+e).textContent=cnt[e]; }); }
+  wrap.querySelectorAll('.ctr button').forEach(b=>b.onclick=()=>{ auto=false; const e=b.dataset.e; cnt[e]=clamp(cnt[e]+(+b.dataset.d),0,24); sync(); });
+  toggleWire(wrap.querySelectorAll('#tgB button'),b=>{ tg=TARGETS[+b.dataset.v]; });
+  $('#bdB').onclick=()=>{ auto=true; aT=0; };
+  sync();
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ aT-=dt; if(aT<=0){ aT=0.11; let moved=false; for(const e of BUILD_EL){ const want=tg.cnt[e]||0; if(cnt[e]>want){ cnt[e]--; moved=true; break; } }
+        if(!moved) for(const e of BUILD_EL){ const want=tg.cnt[e]||0; if(cnt[e]<want){ cnt[e]++; moved=true; break; } } sync(); if(!moved) auto=false; } }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* cluster: golden-angle spiral, heavy atoms near the middle; atoms scale in with a spring */
+    const live=atoms.filter(a=>!a.dying), cx=w*0.36, cy=h*0.5;
+    const order=[...live].sort((a,b)=>EL[b.el].m-EL[a.el].m||a.sd-b.sd);
+    const sc=Math.min(2.4,Math.max(1.1,Math.min(w*0.55,h*0.8)/(60+order.length*7.5)*1.6));
+    order.forEach((a,i)=>{ const rr=(i===0?0:Math.sqrt(i)*22*sc*0.62), th=i*2.39996; a.hx=cx+Math.cos(th)*rr; a.hy=cy+Math.sin(th)*rr*0.86; });
+    const pos=a=>({x:a.hx+Math.sin(t*1.4+a.ph)*3,y:a.hy+Math.cos(t*1.1+a.ph)*3});
+    /* bonds: connect close neighbours */
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.beginPath();
+    order.forEach((a,i)=>{ const pa=pos(a); for(let j=i+1;j<order.length;j++){ const pb=pos(order[j]); if(Math.hypot(pa.x-pb.x,pa.y-pb.y)<46*sc*0.8){ ctx.moveTo(pa.x,pa.y); ctx.lineTo(pb.x,pb.y); } } }); ctx.stroke(); ctx.restore();
+    for(let k=atoms.length-1;k>=0;k--){ const a=atoms[k]; springTo(a.s,a.dying?0:1,150,11,dt); if(a.dying&&a.s.x<0.04) atoms.splice(k,1); }
+    atoms.forEach(a=>{ const p=pos(a); if(a.hx===undefined) return; atom(ctx,a.el,p.x,p.y,Math.max(0.01,a.s.x*sc*1.1)); });
+    if(!live.length) textAt(ctx,'press  +  to add atoms',cx,cy,{align:'center',size:15,weight:600,color:COL.mid});
+    /* mass tally bar */
+    const bx=w*0.74, bw=Math.min(90,w*0.1), base=h*0.9;
+    let y=base, total=0; const tally=[];
+    BUILD_EL.forEach(e=>{ const m=cnt[e]*EL[e].m; if(m>0){ total+=m; tally.push([e,m]); } });
+    sc2.x=approach(sc2.x,Math.max(200,total*1.12,tg.m*1.15),4,dt); const maxM=sc2.x, pxm=(h*0.72)/maxM, tk=maxM>420?200:(maxM>230?100:50);
+    tally.forEach(([e,m])=>{ const hh=m*pxm; rect(ctx,bx-bw/2,y-hh,bw,hh,EL[e].col,'#fff',2.6); if(hh>16) textAt(ctx,cnt[e]+'×'+e,bx,y-hh/2+4,{align:'center',size:12,weight:700,color:EL[e].col}); y-=hh; });
+    line(ctx,bx-bw*0.8,base,bx+bw*0.8,base,COL.ink,4);
+    for(let m=0;m<=maxM;m+=tk){ const yy=base-m*pxm; line(ctx,bx-bw*0.8-8,yy,bx-bw*0.8,yy,COL.mid,1.6); textAt(ctx,m+' u',bx-bw*0.8-12,yy+4,{align:'right',size:11,weight:600,color:COL.muted}); }
+    const ty=base-tg.m*pxm; line(ctx,bx-bw*0.9,ty,bx+bw*0.9,ty,COL.green,2.4,[7,5]); textAt(ctx,'target '+fmt(tg.m,3),bx+bw*0.95,ty+4,{size:12,weight:700,color:COL.green});
+    textAt(ctx,fmt(total,3)+' u',bx,y-14,{align:'center',size:Math.min(24,w*0.028),weight:700,color:COL.blue});
+    /* per-element ledger */
+    let ly=h*0.12; tally.forEach(([e,m])=>{ textAt(ctx,cnt[e]+' × '+fmt(EL[e].m,3)+' = '+fmt(m,3)+' u',w*0.06,ly,{size:13,weight:700,color:EL[e].col}); ly+=22; });
+    const match=Math.abs(total-tg.m)<0.06 && BUILD_EL.every(e=>cnt[e]===(tg.cnt[e]||0));
+    $('#tV').textContent=fmt(total,3)+' u'; $('#gV').textContent=subText(tg.f)+'  '+fmt(tg.m,3)+' u';
+    const f=$('#fb'); f.className='fb '+(match?'ok':'warn'); f.textContent=match?'✓ '+subText(tg.f)+(tg.k==='NACL'?' — formula mass (ions, not molecules)':' — molecular mass')+' = '+fmt(total,3)+' u':(total>0?(total<tg.m?'Still lighter than the target':'Over the target'):'Add atoms');
+    if(match){ circ(ctx,cx,cy,Math.min(w*0.3,h*0.4)+Math.sin(t*3)*4,COL.green,null,2.4); }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.12  THE MOLE
+   1 mol = 6.022 × 10²³ entities · molar mass in g/mol · gas: 22.7 L (textbook)
+   ===================================================================== */
+const MOLES={
+  C:{name:'Carbon (¹²C)',M:12,kind:'pile',col:COL.ink,unit:'atoms'},
+  H2O:{name:'Water',M:18.02,kind:'liquid',col:COL.blue,unit:'molecules'},
+  NaCl:{name:'Sodium chloride',M:58.5,kind:'cubes',col:COL.yellow,unit:'formula units'},
+  GLU:{name:'Glucose',M:180.16,kind:'pile',col:COL.red,unit:'molecules'},
+  O2:{name:'Oxygen gas',M:32.0,kind:'gas',col:COL.red,unit:'molecules'}
+};
+function buildA12(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Substance</label><div class="toggle-group" id="sbB">${Object.keys(MOLES).map((k,i)=>`<button class="toggle-btn small${i===1?' active':''}" data-v="${k}">${MOLES[k].name}</button>`).join('')}</div></div>` +
+    sliderHTML('nR','Amount',0.1,3,0.05,1) +
+    rcardsHTML([{l:'Mass',id:'mV',c:COL.yellow},{l:'Molar mass',id:'MV'},{l:'Particles',id:'pV',c:COL.red,wide:true},{l:'Gas volume (STP)',id:'vV',sm:true,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let key='H2O', t=0; const N={x:1,v:0}; const gas=newGas(40,0,0,1,1,0.6,5);
+  const Rg=rng(31), grains=[]; for(let i=0;i<260;i++) grains.push({a:Rg(),b:Rg(),r:Rg()});
+  toggleWire(wrap.querySelectorAll('#sbB button'),b=>{ key=b.dataset.v; });
+  animLoop(dt=>{
+    t+=dt; const S=MOLES[key], nT=+$('#nR').value; $('#nRV').textContent=fmt(nT,2)+' mol';
+    springTo(N,nT,50,7,dt); const n=Math.max(0.02,N.x);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.36, base=h*0.78, ps=Math.min(w*0.5,300);
+    /* platform scale */
+    ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.moveTo(cx-ps*0.6,base+90); ctx.lineTo(cx-ps*0.52,base+10); ctx.lineTo(cx+ps*0.52,base+10); ctx.lineTo(cx+ps*0.6,base+90); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    rect(ctx,cx-ps*0.34,base+30,ps*0.68,44,COL.ink,'#f1f6fb',2.4); textAt(ctx,fmt(n*S.M,2)+' g',cx,base+60,{align:'center',size:24,weight:700,color:COL.ink});
+    const dip=Math.min(8,n*2.2); line(ctx,cx-ps*0.5,base+10,cx+ps*0.5,base+10,COL.ink,5);
+    const frac=n/3;
+    if(S.kind==='liquid'){
+      const bw=ps*0.62, bh=Math.min(h*0.5,260), lvl=0.12+0.78*frac; liquidBeaker(ctx,cx,base+6,bw,bh,lvl,'rgba(47,143,224,0.28)',t,Math.sin(t*3)*Math.abs(nT-n)*2);
+      for(let i=0;i<22;i++){ const gx=cx-bw*0.42+((i*57)%100)/100*bw*0.84, gy=base-4-(((i*31)%100)/100)*bh*lvl*0.9; drawMol(ctx,'H2O',gx+Math.sin(t*1.5+i)*4,gy+Math.cos(t*1.2+i)*4,7,t*0.5+i); }
+      for(let g=0;g<=3;g+=1){ const yy=base+6-bh*(0.12+0.78*g/3); line(ctx,cx+bw/2,yy,cx+bw/2+10,yy,COL.yellow,1.8); textAt(ctx,fmt(g*S.M,0)+' g',cx+bw/2+14,yy+4,{size:10.5,weight:700,color:COL.yellow}); }
+    } else if(S.kind==='gas'){
+      const R=Math.cbrt(frac)*Math.min(h*0.34,ps*0.48)+10, by=base-R-12+Math.sin(t*1.4)*3;
+      circ(ctx,cx,by,R,COL.red,'rgba(217,67,43,0.05)',3); line(ctx,cx,by+R,cx,base+6,COL.ink,2.6);
+      gas.forEach(p=>{ p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.x<0.08||p.x>0.92) p.vx*=-1; if(p.y<0.08||p.y>0.92) p.vy*=-1; p.x=clamp(p.x,0.05,0.95); p.y=clamp(p.y,0.05,0.95); p.a+=p.w*dt; });
+      const vis=Math.max(3,Math.round(frac*40)); for(let i=0;i<vis;i++){ const p=gas[i], dx=(p.x-0.5)*2, dy=(p.y-0.5)*2; if(dx*dx+dy*dy>0.7) continue; drawMol(ctx,'O2',cx+dx*R*0.8,by+dy*R*0.8,Math.max(5,R/9),p.a); }
+    } else if(S.kind==='cubes'){
+      const cnum=Math.round(10+frac*130); const sw=ps*0.55;
+      for(let i=0;i<cnum;i++){ const g=grains[i], row=Math.floor(i/14); const gx=cx+(g.a-0.5)*sw*(1-row*0.025)*(1.5-0.5*(i/cnum)), gy=base+4-(row*7+g.b*4); const sz=5+g.r*3; ctx.save(); ctx.translate(gx,gy); ctx.rotate((g.r-0.5)*0.6); rect(ctx,-sz/2,-sz/2,sz,sz,COL.yellow,'#fff',1.4); ctx.restore(); }
+    } else {
+      const cnum=Math.round(10+frac*240), pw=ps*0.52;
+      for(let i=0;i<cnum;i++){ const g=grains[i%260]; const hgt=Math.sqrt(1-Math.pow((g.a-0.5)*2,2)); const gx=cx+(g.a-0.5)*pw*2*(0.35+0.65*frac), gy=base+2-g.b*hgt*frac*ps*0.55; circ(ctx,gx,gy,3+g.r*2,S.col,'#fff',1.6); }
+    }
+    /* particle odometer */
+    const NA=6.022e23, cnt=n*NA, e=Math.floor(Math.log10(cnt)), m=cnt/Math.pow(10,e);
+    const px=w*0.78;
+    textAt(ctx,'number of '+S.unit,px,h*0.2,{align:'center',size:13,weight:700,color:COL.muted});
+    sciText(ctx,fmt(m,3),e,px,h*0.2+54,Math.min(46,w*0.052),COL.red);
+    textAt(ctx,'= '+fmt(n,2)+' mol × 6.022 × 10²³ per mol',px,h*0.2+84,{align:'center',size:12,weight:600,color:COL.muted});
+    /* tiny ‘dozen’ analogy row */
+    textAt(ctx,'1 mol of '+S.name.toLowerCase()+' weighs',px,h*0.5,{align:'center',size:13,weight:700,color:COL.muted});
+    textAt(ctx,fmt(S.M,2)+' g',px,h*0.5+40,{align:'center',size:Math.min(40,w*0.045),weight:700,color:COL.yellow});
+    $('#mV').textContent=fmt(n*S.M,2)+' g'; $('#MV').textContent=fmt(S.M,2)+' g/mol'; $('#pV').textContent=fmt(m,3)+' × 10'+sup(e);
+    $('#vV').textContent=key==='O2'?fmt(n*22.7,1)+' L':'— (not a gas)';
+  });
+  return wrap;
+}
+
+
+/* ---------------------------------------------------------------------
+   Species drawing for 1.13 – 1.15: molecules from MOL, others as clusters
+   --------------------------------------------------------------------- */
+function clusterPos(n){
+  if(n===1) return [[0,0]]; if(n===2) return [[-0.6,0],[0.6,0]];
+  const p=[[0,0]]; const r1=Math.min(6,n-1); for(let i=0;i<r1;i++){ const a=i*Math.PI*2/r1+0.4; p.push([Math.cos(a)*1.15,Math.sin(a)*1.15]); }
+  for(let i=0;i<n-1-r1;i++){ const a=(i+0.5)*Math.PI*2/Math.max(1,n-1-r1); p.push([Math.cos(a)*2.15,Math.sin(a)*2.15]); }
+  return p;
+}
+function speciesRadius(f){
+  if(MOL[f]) return Math.max(...MOL[f].atoms.map(q=>Math.hypot(q[1],q[2])))+0.55;
+  const n=Object.values(parseFormula(f)).reduce((a,b)=>a+b,0); return Math.max(...clusterPos(n).map(q=>Math.hypot(q[0],q[1])))+0.55;
+}
+function drawSpecies(ctx,f,x,y,s,a,alpha){
+  if(MOL[f]){ drawMol(ctx,f,x,y,s,a,alpha); return; }
+  const c=parseFormula(f), list=[]; for(const e in c) for(let i=0;i<c[e];i++) list.push(e);
+  list.sort((p,q)=>EL[q].m-EL[p].m); const P=clusterPos(list.length), ca=Math.cos(a||0), sa=Math.sin(a||0);
+  const Q=P.map(q=>[x+(q[0]*ca-q[1]*sa)*s, y+(q[0]*sa+q[1]*ca)*s]);
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  for(let i=1;i<Q.length;i++){ let b=0,bd=1e9; for(let j=0;j<i;j++){ const d=Math.hypot(Q[i][0]-Q[j][0],Q[i][1]-Q[j][1]); if(d<bd){bd=d;b=j;} } line(ctx,Q[i][0],Q[i][1],Q[b][0],Q[b][1],COL.ink,2); }
+  list.forEach((e,i)=>atom(ctx,e,Q[i][0],Q[i][1],s/22,undefined,s/22>0.7));
+  ctx.restore();
+}
+function sup(n){ const d={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'}; return String(n).replace(/./g,c=>d[c]||c); }
+function easeBack(x){ x=clamp(x,0,1); const c=1.70158; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); }
+
+/* =====================================================================
+   1.13  PERCENTAGE COMPOSITION → EMPIRICAL → MOLECULAR FORMULA
+   Textbook Problem 1.2: 4.07 % H, 24.27 % C, 71.65 % Cl, molar mass 98.96 g
+   → ratio 2 : 1 : 1 → CH₂Cl → n = 2 → C₂H₄Cl₂
+   ===================================================================== */
+const EMP=[
+  {name:'Problem 1.2',els:[['C',24.27],['H',4.07],['Cl',71.65]],M:98.96},
+  {name:'Glucose',els:[['C',40.00],['H',6.71],['O',53.29]],M:180.16},
+  {name:'Iron oxide',els:[['Fe',69.9],['O',30.1]],M:159.69},
+  {name:'Ethanol',els:[['C',52.14],['H',13.13],['O',34.73]],M:46.07}
+];
+function empCalc(P,Mm){
+  const els=P.els.map(([e,p])=>({e,g:p,mol:p/EL[e].m})); const mn=Math.min(...els.map(x=>x.mol)); els.forEach(x=>x.r=x.mol/mn);
+  let k=1; for(const kk of [1,2,3,4,5]){ if(els.every(x=>Math.abs(x.r*kk-Math.round(x.r*kk))<0.09)){ k=kk; break; } }
+  els.forEach(x=>{ x.w=Math.round(x.r*k); });
+  const efm=els.reduce((a,x)=>a+x.w*EL[x.e].m,0), n=Math.max(1,Math.round(Mm/efm));
+  return {els,k,efm,n};
+}
+function buildA13(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Compound</label><div class="toggle-group" id="cpB">${EMP.map((q,i)=>`<button class="toggle-btn small${i?'':' active'}" data-v="${i}">${q.name}</button>`).join('')}</div></div>` +
+    `<div class="control-group"><div class="step-row" id="stR">${['% → g','→ mol','÷ min','empirical','molecular'].map((s,i)=>`<button class="step-pill${i?'':' active'}" data-s="${i}">${i+1} ${s}</button>`).join('')}</div>
+      <button class="toggle-btn play" id="wkB" style="width:100%;margin-top:9px">▶ Walk me through</button></div>` +
+    sliderHTML('mR','Molar mass (g/mol)',20,400,0.01,98.96) +
+    rcardsHTML([{l:'Empirical',id:'eV',c:COL.blue},{l:'Molecular',id:'fV',c:COL.green},{l:'n',id:'nV'}],true);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let P=EMP[0], stage=0, t=0, walk=false, wt=0; const H={}; const pops=[];
+  function setStage(i){ stage=i; wrap.querySelectorAll('.step-pill').forEach((b,j)=>{ b.classList.toggle('active',j===i); b.classList.toggle('done',j<i); }); }
+  wrap.querySelectorAll('.step-pill').forEach(b=>b.onclick=()=>{ walk=false; setStage(+b.dataset.s); });
+  toggleWire(wrap.querySelectorAll('#cpB button'),b=>{ P=EMP[+b.dataset.v]; $('#mR').value=P.M; setStage(0); });
+  $('#wkB').onclick=()=>{ walk=true; wt=0; setStage(0); };
+  animLoop(dt=>{
+    t+=dt; if(walk){ wt+=dt; if(wt>2.6){ wt=0; if(stage<4) setStage(stage+1); else walk=false; } }
+    const Mm=+$('#mR').value; $('#mRV').textContent=fmt(Mm,2)+' g';
+    const C=empCalc(P,Mm); const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* ----- bars ----- */
+    const bx0=w*0.07, bx1=w*0.5, base=h*0.78, topY=h*0.16, BH=base-topY;
+    const val=x=>[x.g,x.mol,x.r,x.w,x.w*C.n][stage];
+    const maxV=Math.max(...C.els.map(val)); const nb=C.els.length, bw=Math.min(70,(bx1-bx0)/nb*0.62), gap=(bx1-bx0)/nb;
+    const unit=['g','mol','','',''][stage];
+    C.els.forEach((x,i)=>{
+      const key=x.e; H[key]=H[key]||{x:0,v:0}; springTo(H[key],val(x)/maxV,70,10,dt);
+      const cx=bx0+gap*(i+0.5), hh=Math.max(2,H[key].x*BH*0.92), col=EL[x.e].col;
+      rect(ctx,cx-bw/2,base-hh,bw,hh,col,'#fff',3); ctx.save(); ctx.strokeStyle=col; ctx.globalAlpha=0.3; ctx.lineWidth=1; for(let q=6;q<hh;q+=8){ ctx.beginPath(); ctx.moveTo(cx-bw/2,base-q); ctx.lineTo(cx+bw/2,base-q); ctx.stroke(); } ctx.restore();
+      const v=val(x); const txt=stage===0?fmt(v,2)+' g':stage===1?fmt(v,3)+' mol':stage===2?fmt(v,2):String(Math.round(v));
+      textAt(ctx,txt,cx,base-hh-10,{align:'center',size:15,weight:700,color:col});
+      textAt(ctx,x.e,cx,base+24,{align:'center',size:17,weight:700,color:col});
+    });
+    line(ctx,bx0-6,base,bx1+6,base,COL.ink,3.4);
+    textAt(ctx,['mass in a 100 g sample','moles of each element','divide by the smallest','whole-number ratio','atoms in one molecule'][stage],(bx0+bx1)/2,topY-26,{align:'center',size:14,weight:700,color:COL.muted});
+    /* ----- arithmetic column ----- */
+    const ax=w*0.56; let ay=h*0.2;
+    C.els.forEach(x=>{ const col=EL[x.e].col; let s='';
+      if(stage===0) s=x.e+':  '+fmt(x.g,2)+' % of 100 g  =  '+fmt(x.g,2)+' g';
+      else if(stage===1) s=x.e+':  '+fmt(x.g,2)+' g ÷ '+fmt(EL[x.e].m,3)+'  =  '+fmt(x.mol,3)+' mol';
+      else if(stage===2) s=x.e+':  '+fmt(x.mol,3)+' ÷ '+fmt(Math.min(...C.els.map(q=>q.mol)),3)+'  =  '+fmt(x.r,2);
+      else if(stage===3) s=x.e+':  '+fmt(x.r,2)+(C.k>1?'  × '+C.k:'')+'  =  '+x.w;
+      else s=x.e+':  '+x.w+' × '+C.n+'  =  '+x.w*C.n;
+      textAt(ctx,s,ax,ay,{size:Math.min(16,w*0.019),weight:700,color:col}); ay+=26; });
+    const efS=C.els.map(x=>x.e+(x.w>1?x.w:'')).join(''), mfS=C.els.map(x=>x.e+(x.w*C.n>1?x.w*C.n:'')).join('');
+    if(stage>=3){ textAt(ctx,'Empirical formula',ax,ay+16,{size:12,weight:700,color:COL.muted}); textAt(ctx,subText(efS)+'    ('+fmt(C.efm,2)+' g/mol)',ax,ay+46,{size:Math.min(28,w*0.034),weight:700,color:COL.blue}); }
+    if(stage>=4){ textAt(ctx,fmt(Mm,2)+' ÷ '+fmt(C.efm,2)+'  =  '+fmt(Mm/C.efm,2)+'  →  n = '+C.n,ax,ay+76,{size:Math.min(16,w*0.019),weight:700,color:COL.ink}); textAt(ctx,'Molecular formula',ax,ay+104,{size:12,weight:700,color:COL.muted}); textAt(ctx,subText(mfS),ax,ay+138,{size:Math.min(34,w*0.04),weight:700,color:COL.green}); }
+    /* ----- atoms (empirical unit, then n copies) ----- */
+    if(stage>=3){
+      const copies=stage>=4?C.n:1, unitS=Math.min(27,w*0.03), px0=ax, py0=h*0.8;
+      const list=[]; C.els.forEach(x=>{ for(let i=0;i<x.w;i++) list.push(x.e); });
+      const per=list.length, gx=unitS*2.4*Math.max(per,3)*0.5;
+      for(let c=0;c<copies;c++){ const col=c%Math.max(1,Math.floor((w*0.4)/(per*unitS*2.1+16))), row=Math.floor(c/Math.max(1,Math.floor((w*0.4)/(per*unitS*2.1+16))));
+        const key='u'+c; pops[c]=pops[c]===undefined?0:pops[c]; pops[c]=approach(pops[c],1,5,dt);
+        list.forEach((e,i)=>{ const x=px0+col*(per*unitS*2.1+16)+i*unitS*2.1+unitS, y=py0-row*unitS*2.8; if(i) line(ctx,x-unitS*2.1,y,x,y,COL.ink,2); atom(ctx,e,x,y,unitS/10*pops[c]*(c===0?1:1),1,unitS>11); });
+      }
+      pops.length=Math.max(copies,pops.length>copies?copies:pops.length);
+    }
+    $('#eV').textContent=subText(efS); $('#fV').textContent=subText(mfS); $('#nV').textContent=C.n;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.14  BALANCING CHEMICAL EQUATIONS
+   Propane: C₃H₈ + 5 O₂ → 3 CO₂ + 4 H₂O  (textbook) ; Fe, Mg, P₄ also from the text
+   The balance tilts by the true mass imbalance; only matching atoms level it.
+   ===================================================================== */
+const EQS=[
+  {name:'Propane',L:['C3H8','O2'],R:['CO2','H2O'],sol:[1,5,3,4]},
+  {name:'Methane',L:['CH4','O2'],R:['CO2','H2O'],sol:[1,2,1,2]},
+  {name:'Magnesium',L:['Mg','O2'],R:['MgO'],sol:[2,1,2]},
+  {name:'Phosphorus',L:['P4','O2'],R:['P4O10'],sol:[1,5,1]},
+  {name:'Iron',L:['Fe','O2'],R:['Fe2O3'],sol:[4,3,2]},
+  {name:'Ammonia',L:['N2','H2'],R:['NH3'],sol:[1,3,2]}
+];
+function buildA14(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    `<div class="control-group"><label style="margin-bottom:6px;">Reaction</label><div class="toggle-group" id="eqB">${EQS.map((q,i)=>`<button class="toggle-btn small${i?'':' active'}" data-v="${i}">${q.name}</button>`).join('')}</div></div>` +
+    `<div class="control-group"><label>Coefficients</label><div id="cf"></div><button class="toggle-btn navy" id="shB">✦ Show me</button><button class="toggle-btn" id="rsB" style="width:100%;margin-top:7px">↺ All = 1</button></div>` +
+    rcardsHTML([{l:'Left atoms',id:'lV'},{l:'Right atoms',id:'rV'},{l:'Status',id:'sV',wide:true,sm:true,c:COL.red}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let E=EQS[0], co=[1,1,1,1], shown=[1,1,1,1], t=0, beam={x:0,v:0}, auto=null, aT=0;
+  const species=()=>E.L.concat(E.R);
+  function buildCtrl(){
+    $('#cf').innerHTML=species().map((f,i)=>`<div class="ctr"><div class="cn">${subText(f)}</div><button data-i="${i}" data-d="-1">−</button><span class="cv" id="c${i}">1</span><button data-i="${i}" data-d="1">+</button></div>`).join('');
+    $('#cf').querySelectorAll('button').forEach(b=>b.onclick=()=>{ auto=null; const i=+b.dataset.i; co[i]=clamp(co[i]+(+b.dataset.d),0,9); });
+  }
+  function load(i){ E=EQS[i]; co=species().map(()=>1); shown=species().map(()=>1); auto=null; buildCtrl(); }
+  toggleWire(wrap.querySelectorAll('#eqB button'),b=>load(+b.dataset.v));
+  $('#rsB').onclick=()=>{ auto=null; co=co.map(()=>1); };
+  $('#shB').onclick=()=>{ auto=E.sol.map((v,i)=>({i,v})); aT=0; };
+  load(0);
+  function tally(side,offset){ const o={}; side.forEach((f,i)=>{ const c=parseFormula(f); for(const e in c) o[e]=(o[e]||0)+c[e]*co[offset+i]; }); return o; }
+  animLoop(dt=>{
+    t+=dt;
+    if(auto){ aT-=dt; if(aT<=0){ aT=0.55; const nxt=auto.find(q=>co[q.i]!==q.v); if(nxt) co[nxt.i]+=Math.sign(nxt.v-co[nxt.i]); else auto=null; } }
+    species().forEach((f,i)=>{ shown[i]=approach(shown[i],co[i],8,dt); $('#c'+i).textContent=co[i]; });
+    const nL=E.L.length, TL=tally(E.L,0), TR=tally(E.R,nL);
+    const els=[...new Set([...Object.keys(TL),...Object.keys(TR)])];
+    const mL=Object.entries(TL).reduce((a,[e,n])=>a+EL[e].m*n,0), mR=Object.entries(TR).reduce((a,[e,n])=>a+EL[e].m*n,0);
+    const ok=els.every(e=>(TL[e]||0)===(TR[e]||0)) && (mL>0);
+    const target=clamp((mR-mL)/Math.max(mL+mR,40)*3.2,-0.3,0.3); springTo(beam,target,60,6.5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* equation banner */
+    const eqT=(side,off)=>side.map((f,i)=>(co[off+i]!==1?co[off+i]+' ':'')+subText(f)).join(' + ');
+    textAt(ctx,eqT(E.L,0)+'   →   '+eqT(E.R,nL),w/2,34,{align:'center',size:Math.min(28,w*0.034),weight:700,color:ok?COL.green:COL.ink});
+    /* balance */
+    const W=Math.min(w*0.78,(h-250)*1.7), cx=w/2, base=h*0.66;
+    const drawPan=(fl,off)=>(px,py,pw)=>{
+      const width=pw*1.9; let x=px-width/2, rowY=py-6, rowH=0, s=Math.max(10,Math.min(19,W/34));
+      fl.forEach((f,fi)=>{ const k=off+fi, r=speciesRadius(f)*s, cnt=Math.ceil(shown[k]-0.001);
+        for(let c=0;c<cnt;c++){ const sc=easeBack(shown[k]-c); if(x+2*r>px+width/2){ x=px-width/2; rowY-=rowH+4; rowH=0; }
+          drawSpecies(ctx,f,x+r,rowY-r,s*Math.max(0.05,sc),Math.sin(t*1.3+c+fi)*0.4,undefined); x+=2*r+4; rowH=Math.max(rowH,2*r); }
+        x+=6; });
+    };
+    drawBalance(ctx,cx,base,W,beam.x,drawPan(E.L,0),drawPan(E.R,nL),'reactants','products',{H:0.4,drop:0.22});
+    if(ok){ ctx.save(); ctx.globalAlpha=0.5+0.5*Math.sin(t*4); textAt(ctx,'✓ balanced',cx,base-W*0.4-24,{align:'center',size:22,weight:700,color:COL.green}); ctx.restore(); }
+    /* atom ledger */
+    const ty=h-30-els.length*26, bw=Math.min(240,w*0.28), lx=w*0.5-bw-40, rx=w*0.5+40;
+    const maxN=Math.max(1,...els.map(e=>Math.max(TL[e]||0,TR[e]||0)));
+    els.forEach((e,i)=>{ const y=ty+i*26, a=TL[e]||0, b=TR[e]||0, good=a===b, col=EL[e].col;
+      textAt(ctx,e,w/2,y+5,{align:'center',size:15,weight:700,color:col});
+      rect(ctx,lx+bw-bw*a/maxN,y-8,bw*a/maxN,16,col,'#fff',2.4); textAt(ctx,String(a),lx+bw-bw*a/maxN-8,y+5,{align:'right',size:13,weight:700,color:col});
+      rect(ctx,rx,y-8,bw*b/maxN,16,col,'#fff',2.4); textAt(ctx,String(b),rx+bw*b/maxN+8,y+5,{size:13,weight:700,color:col});
+      textAt(ctx,good?'✓':'✗',w/2+bw+70,y+5,{align:'center',size:16,weight:700,color:good?COL.green:COL.red}); });
+    $('#lV').textContent=Object.entries(TL).map(([e,n])=>n+e).join(' '); $('#rV').textContent=Object.entries(TR).map(([e,n])=>n+e).join(' ');
+    const st=$('#sV'); st.textContent=ok?'Balanced ✓':(mL===0&&mR===0?'Add molecules':'Not balanced'); st.style.color=ok?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.15  STOICHIOMETRY & LIMITING REAGENT
+   N₂ + 3 H₂ → 2 NH₃ ; Problem 1.5: 50.0 kg N₂ + 10.0 kg H₂ → H₂ limits
+   ===================================================================== */
+function buildA15(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    sliderHTML('nR','N₂ available',0,100,0.5,50) + sliderHTML('hR','H₂ available',0,20,0.1,10) +
+    `<div class="control-group"><button class="toggle-btn play" id="goB" style="width:100%">⚗ React</button><button class="toggle-btn" id="rsB" style="width:100%;margin-top:7px">↺ Reset</button></div>` +
+    rcardsHTML([{l:'Limiting reagent',id:'lV',c:COL.red,wide:true},{l:'NH₃ formed',id:'pV',c:COL.green},{l:'NH₃ mass',id:'mV'},{l:'Left over',id:'oV',wide:true,sm:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  const MN=28.0, MH=2.016, MA=17.0; let t=0, prog=0, run=false, flow=0;
+  const G1=newGas(40,0,0,1,1,0.5,2);
+  ['#nR','#hR'].forEach(i=>$(i).addEventListener('input',()=>{ prog=0; run=false; }));
+  $('#goB').onclick=()=>{ run=true; };
+  $('#rsB').onclick=()=>{ run=false; prog=0; };
+  animLoop(dt=>{
+    t+=dt;
+    const kgN=+$('#nR').value, kgH=+$('#hR').value; $('#nRV').textContent=fmt(kgN,1)+' kg'; $('#hRV').textContent=fmt(kgH,1)+' kg';
+    const nN=kgN*1000/MN, nH=kgH*1000/MH, xmax=Math.min(nN,nH/3);
+    if(run){ prog=Math.min(1,prog+dt/4.5); flow=approach(flow,1,6,dt); if(prog>=1) run=false; } else flow=approach(flow,0,5,dt);
+    const e=prog*prog*(3-2*prog), xi=xmax*e;
+    const lN=nN-xi, lH=nH-3*xi, pA=2*xi;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=Math.min(110,w*0.13), base=h*0.84, th=h*0.56, ty=base-th;
+    const maxN=100*1000/MN, maxH=3*maxN, maxA=2*maxN;
+    const tanks=[{x:w*0.14,l:lN,max:maxN,col:COL.green,name:'N₂',need:Math.min(nH/3,maxN),mol:'N2',have:nN},
+                 {x:w*0.33,l:lH,max:maxH,col:COL.blue,name:'H₂',need:Math.min(3*nN,maxH),mol:'H2',have:nH},
+                 {x:w*0.88,l:pA,max:maxA,col:COL.green,name:'NH₃',need:0,mol:'NH3',have:0}];
+    const limN=nN<=nH/3+1e-9&&nN>0, limH=nH/3<nN-1e-9;
+    /* reactor in the middle */
+    const rx=w*0.59, ry=base-th*0.5, rw=Math.min(130,w*0.15), rh=th*0.5;
+    rect(ctx,rx-rw/2,ry-rh/2,rw,rh,COL.ink,'#fff',3.4); textAt(ctx,'reactor',rx,ry-rh/2-10,{align:'center',size:12,weight:700,color:COL.muted});
+    if(flow>0.05) flame(ctx,rx,ry+rh/2+2,rw*0.8,flow*0.9,t);
+    /* pipes with moving packets */
+    const pipe=(path,col)=>{ const segs=[]; let L=0; for(let i=1;i<path.length;i++){ const d=Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]); segs.push(d); L+=d; }
+      ctx.save(); ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle=COL.mid; ctx.lineWidth=5; ctx.beginPath(); path.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+      if(flow>0.05){ for(let i=0;i<6;i++){ let d=((t*0.35+i/6)%1)*L, k=0; while(k<segs.length-1&&d>segs[k]){ d-=segs[k]; k++; } const u=d/(segs[k]||1); circ(ctx,lerp(path[k][0],path[k+1][0],u),lerp(path[k][1],path[k+1][1],u),4,col,col,1); } } };
+    pipe([[tanks[0].x,ty],[tanks[0].x,ty-62],[rx-22,ty-62],[rx-22,ry-rh/2]],COL.green);
+    pipe([[tanks[1].x,ty],[tanks[1].x,ty-34],[rx+22,ty-34],[rx+22,ry-rh/2]],COL.blue);
+    pipe([[rx+rw/2,ry],[tanks[2].x-tw/2,ry]],COL.green);
+    /* tanks */
+    tanks.forEach((T,ti)=>{
+      const f=clamp(T.l/T.max,0,1), fy=base-th*f;
+      ctx.save(); ctx.beginPath(); ctx.rect(T.x-tw/2+1,ty,tw-2,th-1); ctx.clip(); ctx.fillStyle=T.col==COL.blue?'rgba(47,143,224,0.2)':'rgba(31,157,85,0.2)';
+      ctx.beginPath(); ctx.moveTo(T.x-tw/2,fy); for(let q=0;q<=tw;q+=4) ctx.lineTo(T.x-tw/2+q,fy+Math.sin(t*3+q*0.12+ti)*1.5); ctx.lineTo(T.x+tw/2,base); ctx.lineTo(T.x-tw/2,base); ctx.closePath(); ctx.fill(); ctx.restore();
+      const nd=Math.round(f*26); for(let i=0;i<nd;i++){ const g=G1[i]; g.x+=g.vx*dt*0.5; g.y+=g.vy*dt*0.5; if(g.x<0.12||g.x>0.88) g.vx*=-1; if(g.y<0.05||g.y>0.95) g.vy*=-1; g.x=clamp(g.x,0.1,0.9); g.y=clamp(g.y,0.04,0.96);
+        drawMol(ctx,T.mol,T.x-tw/2+g.x*tw,base-g.y*th*f,Math.max(5,tw/12),t+i); }
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.beginPath(); ctx.moveTo(T.x-tw/2,ty); ctx.lineTo(T.x-tw/2,base-8); ctx.quadraticCurveTo(T.x-tw/2,base,T.x-tw/2+8,base); ctx.lineTo(T.x+tw/2-8,base); ctx.quadraticCurveTo(T.x+tw/2,base,T.x+tw/2,base-8); ctx.lineTo(T.x+tw/2,ty); ctx.stroke(); ctx.restore();
+      textAt(ctx,T.name,T.x,base+24,{align:'center',size:16,weight:700,color:T.col});
+      const kg=T.l*(ti===0?MN:ti===1?MH:MA)/1000; textAt(ctx,fmt(kg,1)+' kg',T.x,base+44,{align:'center',size:14,weight:700,color:T.col});
+      /* "needed" marker */
+      if(ti<2&&T.need>0){ const yy=base-th*clamp(T.need/T.max,0,1); line(ctx,T.x-tw/2-8,yy,T.x+tw/2+8,yy,COL.yellow,2.4,[6,4]); textAt(ctx,'needed',T.x-tw/2+5,yy-6,{size:11,weight:700,color:COL.yellow}); }
+      const lim=(ti===0&&limN)||(ti===1&&limH);
+      if(lim){ ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=3; ctx.setLineDash([8,5]); ctx.strokeRect(T.x-tw/2-14,ty-20,tw+28,th+78); ctx.restore(); textAt(ctx,'limiting',T.x,base+66,{align:'center',size:13,weight:700,color:COL.red}); }
+    });
+    textAt(ctx,'N₂ + 3 H₂ → 2 NH₃',w/2,30,{align:'center',size:Math.min(26,w*0.03),weight:700,color:COL.ink});
+    const lim=nN<=0||nH<=0?'—':(limH?'H₂':(limN?'N₂':'neither — exact ratio'));
+    const left=lN>1e-6&&lH>1e-6?'both':(!limH&&!limN?'none':(limH?'N₂ '+fmt(Math.max(0,nN-nH/3)*MN/1000,1)+' kg':'H₂ '+fmt(Math.max(0,nH-3*nN)*MH/1000,1)+' kg'));
+    const fin=2*xmax; const done=prog>=1;
+    $('#lV').textContent=lim; $('#pV').textContent=fmt(done?fin:pA,0)+' mol'; $('#mV').textContent=fmt((done?fin:pA)*MA/1000,1)+' kg';
+    $('#oV').textContent=!done?'(press React)':(lim==='—'?'—':(limH?'N₂ '+fmt((nN-nH/3)*MN/1000,1)+' kg':limN?'H₂ '+fmt((nH-3*nN)*MH/1000,1)+' kg':'nothing'));
+  });
+  return wrap;
+}
+
+
+/* ---------------------------------------------------------------------
+   Dissolved-particle field shared by 1.16 and 1.17.
+   Dots live in normalised liquid coordinates, so when the level rises the
+   same dots spread out (dilution) ; new dots fall in from above (dissolving).
+   --------------------------------------------------------------------- */
+function SoluteField(seed){ this.d=[]; this.R=rng(seed||5); }
+SoluteField.prototype.setCount=function(n){
+  while(this.d.length<n) this.d.push({x:0.1+this.R()*0.8,y:1.5+this.R()*0.8,vx:(this.R()-0.5)*0.3,vy:0,ph:this.R()*6.28,a:1});
+  while(this.d.length>n){ const i=Math.floor(this.R()*this.d.length); this.d.splice(i,1); }
+};
+SoluteField.prototype.step=function(dt,t){
+  this.d.forEach(p=>{
+    if(p.y>1){ p.vy-=1.6*dt; p.y+=p.vy*dt; if(p.y<=0.96){ p.y=0.96; p.vy=0; } }
+    else { p.x+=(Math.sin(t*1.3+p.ph)*0.12+p.vx)*dt; p.y+=Math.cos(t*1.1+p.ph*1.7)*0.1*dt; if(p.x<0.07||p.x>0.93) p.vx*=-1; p.x=clamp(p.x,0.06,0.94); p.y=clamp(p.y,0.05,0.97); }
+  });
+};
+
+/* =====================================================================
+   1.16  MOLARITY & DILUTION
+   Make: 4 g NaOH in 250 mL → 0.4 M (textbook Problem 1.7)
+   Dilute: 200 mL of 1 M NaOH made up to 1000 mL → 0.2 M ; M₁V₁ = M₂V₂
+   ===================================================================== */
+function buildA16(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('mdB','Task',[['mk','Make a solution'],['dl','Dilute a stock']],0) +
+    `<div id="mkS">${sliderHTML('gR','NaOH dissolved',0,20,0.1,4)}${sliderHTML('vR','Final volume',100,1000,10,250)}</div>
+     <div id="dlS" class="hidden">${sliderHTML('m1R','Stock molarity',0.5,3,0.1,1)}${sliderHTML('v1R','Stock taken',50,500,10,200)}${sliderHTML('v2R','Make up to',100,1000,10,1000)}</div>` +
+    rcardsHTML([{l:'Moles',id:'nV'},{l:'Volume',id:'vV'},{l:'Molarity',id:'mV',c:COL.blue,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let mode='mk', t=0; const LV={x:250,v:0}, F=new SoluteField(7);
+  toggleWire(wrap.querySelectorAll('#mdB button'),b=>{ mode=b.dataset.v; $('#mkS').classList.toggle('hidden',mode!=='mk'); $('#dlS').classList.toggle('hidden',mode!=='dl'); });
+  animLoop(dt=>{
+    t+=dt;
+    let n,V,M1;
+    if(mode==='mk'){ const g=+$('#gR').value; V=+$('#vR').value; n=g/40.0; $('#gRV').textContent=fmt(g,1)+' g'; $('#vRV').textContent=V+' mL'; }
+    else { M1=+$('#m1R').value; const V1=+$('#v1R').value; V=Math.max(V1,+$('#v2R').value); n=M1*V1/1000; $('#m1RV').textContent=fmt(M1,1)+' M'; $('#v1RV').textContent=V1+' mL'; $('#v2RV').textContent=V+' mL'; }
+    F.setCount(Math.min(110,Math.round(n*60))); F.step(dt,t);
+    springTo(LV,V,38,6.5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cw=Math.min(w*0.24,190), cx=w*0.42, base=h*0.88, maxH=h*0.74, pxml=maxH/1000, lvl=Math.max(5,LV.x)*pxml;
+    const M=n/(V/1000), Mshow=n/(Math.max(10,LV.x)/1000);
+    /* cylinder */
+    const tint='rgba(47,143,224,'+(0.07+0.45*Math.min(1,Mshow/2)).toFixed(3)+')';
+    ctx.save(); ctx.beginPath(); ctx.rect(cx-cw/2+1,base-lvl,cw-2,lvl); ctx.clip(); ctx.fillStyle=tint; ctx.beginPath(); ctx.moveTo(cx-cw/2,base-lvl);
+    const sl=(V-LV.x)/300; for(let q=0;q<=cw;q+=4) ctx.lineTo(cx-cw/2+q,base-lvl+Math.sin(t*3+q*0.1)*(1.2+Math.abs(sl)*4)+sl*(q/cw-0.5)*10); ctx.lineTo(cx+cw/2,base); ctx.lineTo(cx-cw/2,base); ctx.closePath(); ctx.fill(); ctx.restore();
+    line(ctx,cx-cw/2,base-maxH-8,cx-cw/2,base,COL.ink,3.4); line(ctx,cx+cw/2,base-maxH-8,cx+cw/2,base,COL.ink,3.4); line(ctx,cx-cw/2-14,base,cx+cw/2+14,base,COL.ink,5);
+    for(let v=0;v<=1000;v+=100){ const yy=base-v*pxml; line(ctx,cx+cw/2,yy,cx+cw/2+(v%500===0?16:9),yy,COL.yellow,2); if(v%200===0||v===1000) textAt(ctx,v+' mL',cx+cw/2+20,yy+4,{size:11,weight:700,color:COL.yellow}); }
+    /* dissolved particles : each dot = NaOH formula unit shown as Na⁺ / OH⁻ pair */
+    F.d.forEach(p=>{ const px=cx-cw/2+p.x*cw, py=p.y>1?base-lvl-(p.y-1)*maxH*0.4:base-p.y*lvl; circ(ctx,px,py,5.2,COL.yellow,'rgba(217,160,23,0.3)',2); circ(ctx,px+7,py+3,3.4,COL.red,'rgba(217,67,43,0.25)',1.6); });
+    /* left prop */
+    if(mode==='mk'){
+      const gx=w*0.13, gy=base-18, gm=+$('#gR').value; ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(gx,gy-4,50,0.15*Math.PI,0.85*Math.PI); ctx.stroke(); ctx.restore();
+      const pel=Math.round(gm*3); for(let i=0;i<pel;i++){ const a=(i*2.4)%6.28, r=Math.sqrt(i/Math.max(1,pel))*38; circ(ctx,gx+Math.cos(a)*r,gy-20+Math.sin(a)*r*0.35-Math.floor(i/14)*3,4,COL.yellow,'#fff',1.8); }
+      textAt(ctx,fmt(gm,1)+' g NaOH',gx,gy+68,{align:'center',size:13,weight:700,color:COL.yellow});
+    } else {
+      const bx=w*0.13, by=base; ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(bx-14,by-170); ctx.lineTo(bx-14,by-132); ctx.quadraticCurveTo(bx-46,by-120,bx-46,by-96); ctx.lineTo(bx-46,by-4); ctx.lineTo(bx+46,by-4); ctx.lineTo(bx+46,by-96); ctx.quadraticCurveTo(bx+46,by-120,bx+14,by-132); ctx.lineTo(bx+14,by-170); ctx.closePath(); ctx.fillStyle='rgba(217,160,23,0.18)'; ctx.fill(); ctx.stroke(); ctx.restore();
+      textAt(ctx,fmt(M1,1)+' M',bx,by-52,{align:'center',size:20,weight:700,color:COL.yellow}); textAt(ctx,'stock NaOH',bx,by-30,{align:'center',size:11,weight:700,color:COL.muted});
+      line(ctx,bx+50,by-90,cx-cw/2-12,by-lvl+10,COL.yellow,2.4,[6,5]); arrowHead(ctx,cx-cw/2-12,by-lvl+10,Math.atan2(-lvl+100,cx-cw/2-bx-60),COL.yellow,9);
+    }
+    /* maths */
+    const px=w*0.78, fs=Math.min(22,w*0.026);
+    if(mode==='mk'){
+      textAt(ctx,'n  =  '+fmt(+$('#gR').value,1)+' g ÷ 40 g/mol',px,h*0.2,{align:'center',size:fs,weight:700,color:COL.ink});
+      textAt(ctx,'=  '+fmt(n,3)+' mol',px,h*0.2+32,{align:'center',size:fs,weight:700,color:COL.yellow});
+      textAt(ctx,'M  =  n ÷ V(L)',px,h*0.42,{align:'center',size:fs,weight:700,color:COL.ink});
+      textAt(ctx,fmt(n,3)+' ÷ '+fmt(V/1000,3),px,h*0.42+32,{align:'center',size:fs,weight:700,color:COL.ink});
+    } else {
+      textAt(ctx,'M₁V₁  =  M₂V₂',px,h*0.2,{align:'center',size:fs*1.1,weight:700,color:COL.ink});
+      textAt(ctx,fmt(M1,1)+' × '+(+$('#v1R').value)+'  =  M₂ × '+V,px,h*0.2+34,{align:'center',size:fs*0.95,weight:700,color:COL.yellow});
+    }
+    textAt(ctx,'= '+fmt(M,mode==='mk'?2:2)+' M',px,h*0.66,{align:'center',size:Math.min(52,w*0.06),weight:700,color:COL.blue});
+    textAt(ctx,mode==='mk'?'moles of solute per litre of solution':'same moles, more volume → lower M',px,h*0.66+30,{align:'center',size:12,weight:600,color:COL.muted});
+    $('#nV').textContent=fmt(n,3)+' mol'; $('#vV').textContent=V+' mL'; $('#mV').textContent=fmt(M,2)+' mol/L';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.17  CONCENTRATION UNITS — mass %, mole fraction, molality
+   Problem 1.6: 2 g of A in 18 g water → 10 % w/w
+   ===================================================================== */
+const SOLUTES={NaCl:{M:58.44,name:'NaCl'},NaOH:{M:40.0,name:'NaOH'},GLU:{M:180.16,name:'Glucose'}};
+function buildA17(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML =
+    togglesHTML('slB','Solute',[['NaCl','NaCl'],['NaOH','NaOH'],['GLU','Glucose']],0) +
+    sliderHTML('sR','Solute',0.5,60,0.5,2) + sliderHTML('wR','Water',10,200,1,18) +
+    rcardsHTML([{l:'Mass %',id:'pV',c:COL.red},{l:'Mole fraction',id:'xV',c:COL.blue},{l:'Molality',id:'mV',c:COL.green,wide:true}]);
+  const $=s=>wrap.querySelector(s), canvas=$('canvas');
+  let key='NaCl', t=0; const LV={x:20,v:0}, F=new SoluteField(11); const Rg=rng(4), cells=[]; for(let i=0;i<100;i++) cells.push(Rg());
+  toggleWire(wrap.querySelectorAll('#slB button'),b=>{ key=b.dataset.v; });
+  animLoop(dt=>{
+    t+=dt; const S=SOLUTES[key], ms=+$('#sR').value, mw=+$('#wR').value; $('#sRV').textContent=fmt(ms,1)+' g'; $('#wRV').textContent=mw+' g';
+    const ns=ms/S.M, nw=mw/18.02, pct=ms/(ms+mw)*100, xs=ns/(ns+nw), mol=ns/(mw/1000);
+    F.setCount(Math.min(100,Math.max(2,Math.round(ns*120)))); F.step(dt,t);
+    springTo(LV,ms+mw,40,6.5,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    /* beaker */
+    const bw=Math.min(w*0.32,250), bh=h*0.55, cx=w*0.27, base=h*0.86, lvl=clamp(0.07+0.85*LV.x/260,0.07,0.96);
+    liquidBeaker(ctx,cx,base,bw,bh,lvl,'rgba(47,143,224,0.2)',t,0);
+    F.d.forEach(p=>{ const px=cx-bw/2+p.x*bw, py=p.y>1?base-bh*lvl-(p.y-1)*bh*0.35:base-p.y*bh*lvl; circ(ctx,px,py,4.8,COL.red,'rgba(217,67,43,0.3)',2); });
+    textAt(ctx,fmt(ms,1)+' g '+S.name+' + '+mw+' g water',cx,base+26,{align:'center',size:13,weight:700,color:COL.ink});
+    /* mass-% bar */
+    const bx=w*0.52, bwid=w*0.4, by=h*0.14;
+    textAt(ctx,'Mass %  =  mass of solute ÷ mass of solution × 100',bx,by-14,{size:13,weight:700,color:COL.muted});
+    const sw=bwid*ms/(ms+mw); rect(ctx,bx,by,sw,30,COL.red,'rgba(217,67,43,0.15)',2.6); rect(ctx,bx+sw,by,bwid-sw,30,COL.blue,'rgba(47,143,224,0.12)',2.6);
+    textAt(ctx,fmt(ms,1)+' g',bx+sw/2,by+21,{align:'center',size:13,weight:700,color:COL.red}); textAt(ctx,mw+' g water',bx+sw+(bwid-sw)/2,by+21,{align:'center',size:13,weight:700,color:COL.blue});
+    textAt(ctx,fmt(ms,1)+' ÷ '+fmt(ms+mw,1)+' × 100  =  '+fmt(pct,2)+' %',bx,by+62,{size:Math.min(24,w*0.028),weight:700,color:COL.red});
+    /* mole-fraction grid */
+    const gy=h*0.4; textAt(ctx,'Mole fraction  =  n(solute) ÷ n(total)   ·   100 particles',bx,gy-12,{size:13,weight:700,color:COL.muted});
+    const nS=Math.min(100,Math.max(ns>0?1:0,Math.round(xs*100))); const order=cells.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]); const sol=new Set(order.slice(0,nS).map(q=>q[1]));
+    const cs=Math.min(22,bwid/22);
+    for(let i=0;i<100;i++){ const c=i%20, r=Math.floor(i/20), x=bx+c*cs+cs/2+Math.sin(t*1.6+i)*1.2, y=gy+r*cs*0.95+cs/2+Math.cos(t*1.3+i*1.7)*1.2; if(sol.has(i)) circ(ctx,x,y,cs*0.4,COL.red,'rgba(217,67,43,0.45)',2.2); else circ(ctx,x,y,cs*0.28,COL.blue,null,1.6); }
+    textAt(ctx,fmt(ns,4)+' ÷ ('+fmt(ns,4)+' + '+fmt(nw,3)+')  =  '+fmt(xs,4),bx,gy+5*cs*0.95+cs+26,{size:Math.min(20,w*0.024),weight:700,color:COL.blue});
+    /* molality */
+    const my=h*0.78; textAt(ctx,'Molality  =  mol of solute ÷ kg of solvent',bx,my-12,{size:13,weight:700,color:COL.muted});
+    textAt(ctx,fmt(ns,4)+' mol ÷ '+fmt(mw/1000,3)+' kg  =  '+fmt(mol,3)+' m',bx,my+22,{size:Math.min(24,w*0.028),weight:700,color:COL.green});
+    $('#pV').textContent=fmt(pct,2)+' %'; $('#xV').textContent=fmt(xs,4); $('#mV').textContent=fmt(mol,3)+' mol/kg';
+  });
+  return wrap;
+}
+
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'1.1',  title:'States of Matter',        desc:'Heat · cool · watch the particles', build: buildA1 },
+  { num:'1.2',  title:'Classifying Matter',      desc:'Element · compound · mixture', build: buildA2 },
+  { num:'1.3',  title:'Units & Conversions',     desc:'cm ↔ in · °C ↔ K ↔ °F · L ↔ mL', build: buildA3 },
+  { num:'1.4',  title:'Scientific Notation',     desc:'Slide the point · count the hops', build: buildA4 },
+  { num:'1.5',  title:'Significant Figures',     desc:'Weigh · certain + uncertain digits', build: buildA5 },
+  { num:'1.6',  title:'Precision & Accuracy',    desc:'Throw darts at 2.00 g', build: buildA6 },
+  { num:'1.7',  title:'Conservation of Mass',    desc:'Burn methane · weigh the flask', build: buildA7 },
+  { num:'1.8',  title:'Fixed & Multiple Ratios', desc:'Proust · Dalton', build: buildA8 },
+  { num:'1.9',  title:'Gay-Lussac & Avogadro',   desc:'Volumes combine in simple ratios', build: buildA9 },
+  { num:'1.10', title:'Average Atomic Mass',     desc:'Isotope mix · weighted balance', build: buildA10 },
+  { num:'1.11', title:'Molecular Mass Builder',  desc:'Add atoms · sum the masses', build: buildA11 },
+  { num:'1.12', title:'The Mole',                desc:'Moles · grams · particles · litres', build: buildA12 },
+  { num:'1.13', title:'Empirical Formula',       desc:'% → moles → ratio → formula', build: buildA13 },
+  { num:'1.14', title:'Balancing Equations',     desc:'Same atoms in, same atoms out', build: buildA14 },
+  { num:'1.15', title:'Limiting Reagent',        desc:'Who runs out first?', build: buildA15 },
+  { num:'1.16', title:'Molarity & Dilution',     desc:'M₁V₁ = M₂V₂', build: buildA16 },
+  { num:'1.17', title:'Concentration Units',     desc:'Mass % · mole fraction · molality', build: buildA17 },
+];
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; try{ history.replaceState(null,'','#'+a.num); }catch(e){} render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   INIT
+   --------------------------------------------------------------------- */
+(function(){ const h=(location.hash||'').slice(1); const i=activities.findIndex(a=>a.num===h); if(i>=0) currentIndex=i; })();
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

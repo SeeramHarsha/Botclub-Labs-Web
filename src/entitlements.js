@@ -26,7 +26,13 @@ async function ensureTrial(userId) {
   const chapters = config.trialChapters.filter((k) => { const [c, n] = k.split('/').map(Number); return catalog.has(c, n) || !catalog.total(); });
   if (!chapters.length) return null;
   const have = await col().findOne({ userId: String(userId), source: 'trial' });
-  if (have) return have;
+  if (have) {                                  // chapters added to the free trial later (a new class, say) reach existing students too
+    const missing = chapters.filter((k) => !have.chapters.includes(k));
+    if (!missing.length) return have;
+    const all = [...have.chapters, ...missing], classes = [...new Set(all.map((k) => Number(k.split('/')[0])))];
+    await col().updateOne({ _id: have._id }, { $set: { chapters: all, classes } });
+    return { ...have, chapters: all, classes };
+  }
   const doc = { _id: crypto.randomUUID(), userId: String(userId), source: 'trial', planId: 'trial', orderId: null, classes: [...new Set(chapters.map((k) => Number(k.split('/')[0])))], chapters, startsAt: new Date(), endsAt: null };
   await col().insertOne(doc);
   return doc;

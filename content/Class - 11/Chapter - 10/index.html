@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 2 · Chapter 4 — Thermodynamics | Botclub Labs</title>
+<style>
+
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">🔥</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 2 · Ch 4</div>
+      <h1>Thermodynamics</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Internal energy U · Cold</span>
+      <span><i style="background:var(--f-green)"></i>Work W · Output</span>
+      <span><i style="background:var(--f-red)"></i>Heat Q · Hot</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">11.1</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+
+/* =========================================================================
+   GRADE 11 — PHYSICS PART 2 — CHAPTER 4: THERMODYNAMICS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn object eases, springs or physically integrates toward
+   it every frame. Gas molecules always move; heat flows, pistons settle,
+   engines run — never a static picture.
+   Colour code:  yellow = what you change · red = heat Q / hot
+                 green = work W / output   · blue = internal energy U / cold
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+const R_GAS = 8.314;                     // J / (mol K)
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  const L=Math.hypot(x2-x1,y2-y1); if(L<3) return;
+  const wd=width||2.6, hs=Math.min(7+wd,L*0.6);
+  const a=Math.atan2(y2-y1,x2-x1);
+  line(ctx,x1,y1,x2-Math.cos(a)*hs*0.6,y2-Math.sin(a)*hs*0.6,color,wd); arrowHead(ctx,x2,y2,a,color,hs);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2247; }
+function hexRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+function mixCol(a,b,t){ const A=hexRgb(a),B=hexRgb(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+function rampCol(stops,x){
+  if(x<=stops[0][0]) return mixCol(stops[0][1],stops[0][1],0);
+  for(let i=1;i<stops.length;i++){ if(x<=stops[i][0]){ const a=stops[i-1],b=stops[i]; return mixCol(a[1],b[1],(x-a[0])/(b[0]-a[0])); } }
+  const l=stops[stops.length-1][1]; return mixCol(l,l,0);
+}
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf, alive=true;
+  function frame(now){
+    if(!alive) return;
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>{ alive=false; cancelAnimationFrame(raf); };
+  activeStops.push(stop);
+  return stop;
+}
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------------------------------------------------------------
+   0c. THERMODYNAMICS HELPERS — molecules, cylinder, P–V axes, flame, ice
+   --------------------------------------------------------------------- */
+function tempCol(T){ return rampCol([[200,COL.blue],[450,COL.yellow],[800,COL.red]],T); }
+/** molecule speed (px/s): v ∝ √T  (kinetic theory) */
+function gasSpeed(T,h){ return (h/600)*120*Math.sqrt(Math.max(T,20)/300); }
+/** molecules live in fractional box coordinates (0..1) so a moving piston carries them along */
+function makeGas(n){ const a=[]; for(let i=0;i<n;i++){ const th=Math.random()*6.283; a.push({x:Math.random(),y:Math.random(),vx:Math.cos(th),vy:Math.sin(th)}); } return a; }
+function stepGas(g,dt,speed,W,H,rad){
+  const mx=rad/Math.max(W,1), my=rad/Math.max(H,1);
+  for(const p of g){
+    p.x+=p.vx*speed*dt/Math.max(W,1); p.y+=p.vy*speed*dt/Math.max(H,1);
+    if(p.x<mx){p.x=mx;p.vx=Math.abs(p.vx);} else if(p.x>1-mx){p.x=1-mx;p.vx=-Math.abs(p.vx);}
+    if(p.y<my){p.y=my;p.vy=Math.abs(p.vy);} else if(p.y>1-my){p.y=1-my;p.vy=-Math.abs(p.vy);}
+    if(Math.random()<dt*1.4){ const th=Math.atan2(p.vy,p.vx)+gauss()*0.7; p.vx=Math.cos(th); p.vy=Math.sin(th); }
+  }
+}
+function drawGas(ctx,g,x,y,W,H,T,rad,alpha){
+  const c=tempCol(T);
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  for(const p of g) circ(ctx,x+p.x*W,y+p.y*H,rad,c,'#fff',1.5);
+  ctx.restore();
+}
+/** vertical cylinder. o:{cx,baseY,wd,topY,pistonY,jacket,pins,rodTop,lw} · returns gas rect */
+function drawCylinder(ctx,o){
+  const x0=o.cx-o.wd/2, x1=o.cx+o.wd/2, pt=14;
+  if(o.jacket){
+    ctx.save(); ctx.fillStyle='#f6f9fc'; ctx.fillRect(x0-12,o.topY,12,o.baseY-o.topY+12); ctx.fillRect(x1,o.topY,12,o.baseY-o.topY+12); if(o.jacket!=='sides') ctx.fillRect(x0-12,o.baseY,o.wd+24,12);
+    ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath();
+    for(let yy=o.topY;yy<o.baseY+12;yy+=9){ ctx.moveTo(x0-12,yy); ctx.lineTo(x0,yy+9); ctx.moveTo(x1,yy); ctx.lineTo(x1+12,yy+9); }
+    if(o.jacket!=='sides') for(let xx=x0-12;xx<x1+12;xx+=9){ ctx.moveTo(xx,o.baseY); ctx.lineTo(xx+9,o.baseY+12); }
+    ctx.stroke(); ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; ctx.strokeRect(x0-12,o.topY,o.wd+24,o.baseY-o.topY+(o.jacket==='sides'?0:12)); ctx.restore();
+  }
+  line(ctx,x0,o.topY,x0,o.baseY,COL.ink,3.4); line(ctx,x1,o.topY,x1,o.baseY,COL.ink,3.4);
+  line(ctx,x0-2,o.baseY,x1+2,o.baseY,COL.ink,4.4);
+  if(o.rodTop!==undefined){ line(ctx,o.cx,o.pistonY-pt,o.cx,o.rodTop,COL.ink,4); line(ctx,o.cx-16,o.rodTop,o.cx+16,o.rodTop,COL.ink,4); }
+  rect(ctx,x0+2,o.pistonY-pt,o.wd-4,pt,COL.ink,'#fff',2.6);
+  line(ctx,x0+6,o.pistonY-pt*0.5,x1-6,o.pistonY-pt*0.5,COL.mid,1);
+  if(o.pins) o.pins.forEach(py=>{ line(ctx,x0-9,py,x0+10,py,COL.yellow,5); line(ctx,x1-10,py,x1+9,py,COL.yellow,5); });
+  return {x:x0,y:o.pistonY,w:o.wd,h:o.baseY-o.pistonY};
+}
+function drawFlame2(ctx,cx,baseY,width,inten,t){      // red/yellow line flame; inten 0..1
+  if(inten<0.02) return;
+  const n=Math.max(3,Math.round(width/22));
+  for(let i=0;i<n;i++){
+    const fx=cx-width/2+width*(i+0.5)/n;
+    const hh=(6+inten*40)*(0.78+0.22*Math.sin(t*13+i*1.7)), sway=Math.sin(t*9+i*2.1)*3;
+    ctx.save(); ctx.lineJoin='round'; ctx.strokeStyle=COL.red; ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.moveTo(fx-8,baseY); ctx.quadraticCurveTo(fx-8,baseY-hh*0.55,fx+sway,baseY-hh); ctx.quadraticCurveTo(fx+8,baseY-hh*0.55,fx+8,baseY); ctx.stroke();
+    ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(fx-4,baseY); ctx.quadraticCurveTo(fx-3.5,baseY-hh*0.35,fx+sway*0.5,baseY-hh*0.55); ctx.quadraticCurveTo(fx+3.5,baseY-hh*0.35,fx+4,baseY); ctx.stroke(); ctx.restore();
+  }
+}
+function drawIce(ctx,cx,topY,width,inten,t){          // blue ice cubes with drifting cold lines
+  if(inten<0.02) return;
+  const n=Math.max(2,Math.round(width/38)), s=Math.min(30,width/n*0.78);
+  for(let i=0;i<n;i++){
+    const x=cx-width/2+width*(i+0.5)/n, y=topY+4;
+    ctx.save(); ctx.globalAlpha=0.35+0.65*inten; ctx.lineJoin='round';
+    rect(ctx,x-s/2,y,s,s*0.85,COL.blue,'#eaf4fd',2.2);
+    line(ctx,x-s*0.25,y+s*0.2,x+s*0.1,y+s*0.2,COL.blue,1.4); line(ctx,x-s*0.25,y+s*0.45,x,y+s*0.45,COL.blue,1.4);
+    for(let q=0;q<2;q++){ const ph=(t*0.7+i*0.37+q*0.5)%1; line(ctx,x-s*0.3+q*s*0.6,y-4-ph*16,x-s*0.3+q*s*0.6,y-10-ph*16,COL.blue,1.5); }
+    ctx.restore();
+  }
+}
+/** P–V axes. returns mappers. ticks: [[value,label],…] */
+function pvFrame(ctx,x,y,w,h,v0,v1,p0,p1,o){
+  o=o||{};
+  const X=v=>x+(v-v0)/(v1-v0)*w, Y=p=>y+h-(p-p0)/(p1-p0)*h;
+  ctx.save(); ctx.fillStyle='#fbfdff'; ctx.fillRect(x,y,w,h); ctx.restore();
+  (o.tx||[]).forEach(([v,l])=>{ line(ctx,X(v),y,X(v),y+h,'#e6edf5',1); textAt(ctx,l,X(v),y+h+14,{align:'center',size:10.5,color:COL.mid}); });
+  (o.ty||[]).forEach(([p,l])=>{ line(ctx,x,Y(p),x+w,Y(p),'#e6edf5',1); textAt(ctx,l,x-6,Y(p)+4,{align:'right',size:10.5,color:COL.mid}); });
+  vec(ctx,x,y+h,x+w+8,y+h,COL.ink,2); vec(ctx,x,y+h,x,y-8,COL.ink,2);
+  textAt(ctx,o.xl||'V',x+w+4,y+h+16,{size:13,weight:700,align:'right'}); textAt(ctx,o.yl||'P',x+6,y-2,{size:13,weight:700});
+  return {X,Y,x,y,w,h};
+}
+function clipRect(ctx,x,y,w,h){ ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip(); }
+/** little horizontal energy bar (value may be ±) */
+function hbar(ctx,x,y,w,h,val,max,col,label,valTxt){
+  rect(ctx,x,y,w,h,'#c2d1e5','#f6f9fc',1.2);
+  const cx=x+w/2, L=clamp(val/max,-1,1)*w/2;
+  ctx.save(); ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(Math.min(cx,cx+L),y+1.5,Math.abs(L),h-3); ctx.restore();
+  line(ctx,cx,y-2,cx,y+h+2,COL.ink,1.4);
+  textAt(ctx,label,x,y-5,{size:11,weight:700,color:col});
+  if(valTxt) textAt(ctx,valTxt,x+w,y-5,{size:11,weight:700,align:'right',color:COL.ink});
+}
+/** low-poly line-art horse, walking in place. s = scale, ph = leg phase, dir = ±1 */
+function drawHorse(ctx,x,y,s,ph,dir){
+  ctx.save(); ctx.translate(x,y); ctx.scale(dir*s,s); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.strokeStyle=COL.ink; ctx.lineWidth=2.2/Math.max(s,0.3); ctx.fillStyle='#fff';
+  const leg=(bx,p,sg)=>{ const sw=Math.sin(p)*9, lift=Math.max(0,Math.cos(p))*5;
+    ctx.beginPath(); ctx.moveTo(bx,0); ctx.lineTo(bx+sw*0.5,14-lift*0.4); ctx.lineTo(bx+sw,26-lift); ctx.stroke(); };
+  leg(-17,ph+Math.PI,1); leg(-11,ph,1); leg(11,ph,1); leg(17,ph+Math.PI,1);
+  ctx.beginPath(); ctx.ellipse(0,-2,23,10,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(17,-8); ctx.quadraticCurveTo(26,-20,30,-24); ctx.lineTo(41,-22); ctx.lineTo(43,-17); ctx.lineTo(31,-14); ctx.quadraticCurveTo(24,-5,19,3); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-22,-6); ctx.quadraticCurveTo(-32,-2+Math.sin(ph)*3,-31,10); ctx.stroke();
+  ctx.restore();
+}
+function thermo(ctx,x,top,bot,frac,outline,liquid){
+  const br=8;
+  ctx.save(); ctx.lineWidth=2; ctx.strokeStyle=outline; ctx.fillStyle='#fff';
+  rrect(ctx,x-5,top,10,bot-top+2,5); ctx.fill(); ctx.stroke(); ctx.restore();
+  const lh=(bot-top-5)*clamp(frac,0,1);
+  ctx.save(); ctx.fillStyle=liquid; ctx.fillRect(x-2.2,bot-lh,4.4,lh+6); ctx.restore();
+  circ(ctx,x,bot+br,br,outline,'#fff',2); circ(ctx,x,bot+br,br-3.2,liquid,liquid,1);
+  for(let i=0;i<=4;i++){ const yy=top+5+(bot-top-5)*i/4; line(ctx,x+5,yy,x+9,yy,outline,1.1); }
+}
+
+
+/* =====================================================================
+   11.1 RUMFORD'S DRILL  (§11.1 — work becomes heat)
+   Heat gained by water + brass:  Q = (m_w c_w + m_b c_b)·ΔT  = W
+   m_w = 5 kg (4186 J/kg·K), m_b = 3 kg (380 J/kg·K) → C = 22 070 J/K
+   1 horse-power = 746 W.  1 s of animation ≙ 90 s of boring.
+   Sharp or blunt: more/fewer chips, but the SAME work gives the SAME heat.
+   ===================================================================== */
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Horses turning the drill <span class="val" id="hV"></span></label><input type="range" id="hR" min="1" max="5" step="1" value="2"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Drill</label>
+      <div class="toggle-group" id="drB"><button class="toggle-btn active" data-s="1">Sharp</button><button class="toggle-btn" data-s="0">Blunt</button></div></div>
+    <div class="control-group"><div class="toggle-group"><button class="toggle-btn play" id="go">▶ Start boring</button><button class="toggle-btn" id="rs">↺ Cool down</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Work done</div><div class="rval" id="r1" style="color:var(--f-green)">0 kJ</div></div>
+      <div class="rcard"><div class="rlabel">Heat gained</div><div class="rval" id="r2" style="color:var(--f-red)">0 kJ</div></div>
+      <div class="rcard"><div class="rlabel">Water</div><div class="rval" id="r3" style="color:var(--f-blue)">20 °C</div></div></div>
+      <p class="hint">Q = mcΔT = W — sharpness does not matter</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), hR=$('#hR');
+  const CAP=5*4186+3*380, TS=90, EB=CAP*80;
+  let sharp=true, t=0;
+  const S={run:false, cool:false, om:0, ang:0, W:0, depth:0, ph:0, tReal:0, chips:[], bub:[]};
+  toggleWire(wrap.querySelectorAll('#drB button'),b=>sharp=b.dataset.s==='1');
+  function paintGo(){ $('#go').textContent=S.run?'⏸ Pause':'▶ Start boring'; }
+  $('#go').onclick=()=>{ S.cool=false; S.run=!S.run; paintGo(); };
+  $('#rs').onclick=()=>{ S.run=false; S.cool=true; paintGo(); };
+
+  animLoop((dt)=>{
+    t+=dt;
+    const hp=+hR.value; $('#hV').textContent=hp+(hp>1?' horses':' horse');
+    S.om=approach(S.om,S.run?1:0,1.6,dt);                 // flywheel inertia: spins up / coasts down
+    const P=hp*746*S.om;
+    if(S.cool){ S.W=approach(S.W,0,2.2,dt); if(S.W<30){ S.W=0; S.cool=false; } }
+    else { S.W+=P*dt*TS; S.tReal+=S.om*dt*TS; }
+    S.ang+=S.om*dt*(2+hp*0.9); S.ph+=S.om*dt*(5+hp);
+    const Tw=20+Math.min(S.W,EB)/CAP, excess=Math.max(0,S.W-EB);
+    const Q=CAP*(Tw-20)+excess;
+    S.depth=Math.min(1,S.depth+S.om*dt*(sharp?0.05:0.018)*(S.cool?0:1));
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cy=h*0.5, gY=h*0.9;
+    const tx0=w*0.33, tx1=w*0.85, ty0=h*0.2, ty1=h*0.8, wl=ty0+h*0.05;
+    // ground
+    line(ctx,w*0.02,gY,w*0.3,gY,COL.ink,2.4);
+    // ---- tank + water
+    const wf=clamp((Tw-20)/80,0,1);
+    ctx.save(); ctx.fillStyle=mixCol('#e6f2fd','#fde3da',wf); ctx.fillRect(tx0,wl,tx1-tx0,ty1-wl);
+    ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let x=tx0;x<=tx1;x+=5){ const yy=wl+Math.sin(x*0.07+t*(2+wf*5))*(1.5+wf*2.5); x===tx0?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke(); ctx.restore();
+    line(ctx,tx0,ty0,tx0,ty1,COL.ink,3.2); line(ctx,tx1,ty0,tx1,ty1,COL.ink,3.2); line(ctx,tx0-3,ty1,tx1+3,ty1,COL.ink,3.2);
+    // ---- cannon barrel (brass)
+    const bx0=tx0+w*0.03, bx1=tx1-w*0.04, bh=h*0.2;
+    ctx.save(); ctx.lineJoin='round'; ctx.lineWidth=3; ctx.strokeStyle=COL.yellow; ctx.fillStyle='#fff6d9';
+    ctx.beginPath(); ctx.moveTo(bx0,cy-bh*0.62); ctx.lineTo(bx1-w*0.05,cy-bh*0.45); ctx.lineTo(bx1,cy-bh*0.38); ctx.lineTo(bx1,cy+bh*0.38); ctx.lineTo(bx1-w*0.05,cy+bh*0.45); ctx.lineTo(bx0,cy+bh*0.62); ctx.closePath(); ctx.fill(); ctx.stroke();
+    line(ctx,bx0+w*0.07,cy-bh*0.58,bx0+w*0.07,cy+bh*0.58,COL.yellow,2); line(ctx,bx1-w*0.12,cy-bh*0.5,bx1-w*0.12,cy+bh*0.5,COL.yellow,2);
+    ctx.restore();
+    // bore (grows as drilling proceeds)
+    const bore=S.depth*(bx1-bx0)*0.55, br=bh*0.17;
+    if(bore>1){ ctx.save(); ctx.fillStyle='#e3ebf5'; ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.rect(bx0,cy-br,bore,br*2); ctx.fill(); ctx.stroke(); ctx.restore(); }
+    // ---- drill shaft + bit
+    const px=w*0.235, wx=w*0.12, WR=h*0.14, pr=h*0.045, jit=(Math.random()-0.5)*1.6*S.om;
+    const tip=bx0+bore;
+    line(ctx,px,cy+jit,tip-w*0.07,cy+jit,COL.ink,5);
+    rect(ctx,tx0-5,cy-12,10,24,COL.ink,'#fff',2.2);
+    const bl=w*0.07, bb=br*0.9;
+    ctx.save(); ctx.translate(0,jit); ctx.lineJoin='round'; ctx.strokeStyle=COL.ink; ctx.fillStyle='#fff'; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    if(sharp){ ctx.moveTo(tip-bl,cy-bb); ctx.lineTo(tip-bl*0.25,cy-bb); ctx.lineTo(tip,cy); ctx.lineTo(tip-bl*0.25,cy+bb); ctx.lineTo(tip-bl,cy+bb); }
+    else { ctx.moveTo(tip-bl,cy-bb); ctx.lineTo(tip-3,cy-bb); ctx.lineTo(tip,cy-bb*0.5); ctx.lineTo(tip,cy+bb*0.5); ctx.lineTo(tip-3,cy+bb); ctx.lineTo(tip-bl,cy+bb); }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(tip-bl,cy-bb,bl*0.98,bb*2); ctx.clip();
+    for(let k=0;k<7;k++){ const xk=tip-bl+((k/7+S.ang*0.5/(Math.PI))%1)*bl*1.1; line(ctx,xk-4,cy-bb,xk+4,cy+bb,COL.ink,sharp?1.8:1.2); }
+    ctx.restore();
+    // ---- friction heat shimmering from the bore into the water (red)
+    const hl=clamp(P/3730,0,1);
+    for(let i=0;i<4;i++){ const ph=(t*0.7+i*0.25)%1; ctx.save(); ctx.globalAlpha=(1-ph)*hl; ctx.strokeStyle=COL.red; ctx.lineWidth=2; ctx.beginPath();
+      for(let q=0;q<=8;q++){ const yy=cy-bh*0.7-ph*h*0.1-q*3, xx=bx0+bore*0.6+i*w*0.04+Math.sin(q*0.9+t*5)*3; q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore(); }
+    // ---- brass chips: real projectile arcs, sink in the water
+    const rate=S.om*(sharp?46:11);
+    while(rate>0 && Math.random()<rate*dt) S.chips.push({x:bx0+bore,y:cy+(Math.random()-0.5)*br,vx:-30-Math.random()*80,vy:-60-Math.random()*90,a:Math.random()*3});
+    S.chips=S.chips.filter(c=>{ c.vy+=(c.y<wl?520:180)*dt; if(c.y>=wl){ c.vx*=0.97; } c.x+=c.vx*dt; c.y+=c.vy*dt; c.a+=dt*6;
+      if(c.y>ty1-4||c.x<tx0+4){ return false; }
+      line(ctx,c.x-3*Math.cos(c.a),c.y-3*Math.sin(c.a),c.x+3*Math.cos(c.a),c.y+3*Math.sin(c.a),COL.yellow,2.2); return true; });
+    // ---- bubbles when hot
+    if(Tw>55 && Math.random()<(Tw-55)/45*dt*40) S.bub.push({x:tx0+10+Math.random()*(tx1-tx0-20),y:ty1-8,r:2+Math.random()*3});
+    S.bub=S.bub.filter(b=>{ b.y-=dt*(40+b.r*10); b.x+=Math.sin(b.y*0.08)*0.4; if(b.y<wl) return false; circ(ctx,b.x,b.y,b.r,COL.blue,null,1.3); return true; });
+    // ---- steam over boiling water
+    const sf=smooth01(88,100,Tw)*0.55+clamp(excess/1.2e6,0,0.45);
+    for(let i=0;i<7&&sf>0.02;i++){ const ph=(t*0.35+i/7)%1; ctx.save(); ctx.globalAlpha=Math.sin(ph*Math.PI)*sf; ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.beginPath();
+      for(let q=0;q<=14;q++){ const yy=wl-q*(h*0.012)-ph*h*0.08, xx=tx0+(i+0.5)/7*(tx1-tx0)+Math.sin(q*0.6+t*3+i)*7; q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); } ctx.stroke(); ctx.restore(); }
+    // ---- thermometer
+    const thx=tx1+w*0.05;
+    thermo(ctx,thx,ty0,ty1-18,clamp(Tw/110,0,1),COL.ink,COL.red);
+    textAt(ctx,fmt(Tw,1)+' °C',thx,ty0-10,{align:'center',size:13,weight:700,color:COL.red});
+    // ---- wheel + belt (yellow = what you drive)
+    line(ctx,wx,cy-WR,px,cy-pr,COL.ink,2); line(ctx,wx,cy+WR,px,cy+pr,COL.ink,2);
+    circ(ctx,wx,cy,WR,COL.yellow,'#fffdf4',4);
+    for(let i=0;i<6;i++){ const a=S.ang+i*Math.PI/3; line(ctx,wx,cy,wx+Math.cos(a)*WR*0.94,cy+Math.sin(a)*WR*0.94,COL.yellow,2.2); }
+    circ(ctx,wx,cy,5,COL.ink,'#fff',2); circ(ctx,px,cy,pr,COL.ink,'#fff',2.4);
+    for(let i=0;i<3;i++){ const a=S.ang*WR/pr+i*2.09; line(ctx,px,cy,px+Math.cos(a)*pr*0.9,cy+Math.sin(a)*pr*0.9,COL.ink,1.6); }
+    // ---- horses (stick-line), walking harder as the wheel spins faster
+    const sc=Math.min(0.85,(w*0.27)/(hp*64)), sp=(w*0.27)/hp;
+    for(let i=0;i<hp;i++){ const hx=w*0.03+sp*(i+0.5)+29*sc;
+      drawHorse(ctx,hx,gY-26*sc,sc,S.ph+i*0.7,1);
+      const ax=hx+36*sc, ay=gY-40*sc; ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=1.8; ctx.setLineDash([5,4]); ctx.lineDashOffset=-S.ang*20; ctx.beginPath(); ctx.moveTo(ax,ay); ctx.quadraticCurveTo((ax+wx)/2,Math.max(ay,cy+WR)+8,wx+(i-hp/2)*3,cy+WR*0.9); ctx.stroke(); ctx.restore(); }
+    // labels
+    textAt(ctx,'Brass cannon',bx1-w*0.2,cy+bh*0.95,{size:11.5,weight:700,color:COL.yellow});
+    textAt(ctx,'Water 5 kg',tx0+8,ty0+16,{size:11.5,weight:700,color:COL.blue});
+    textAt(ctx,hp+' × 746 W = '+fmt(hp*746/1000,2)+' kW',w*0.03,h*0.1,{size:13,weight:700,color:COL.yellow});
+    textAt(ctx,'Boring for '+fmt(S.tReal/60,1)+' min',w*0.03,h*0.1+20,{size:12,weight:600,color:COL.muted});
+    // power bar
+    hbar(ctx,w*0.03,h*0.2,w*0.2,12,P,3730,COL.green,'Power in',fmt(P,0)+' W');
+    $('#r1').textContent=fmt(S.W/1000,0)+' kJ'; $('#r2').textContent=fmt(Q/1000,0)+' kJ'; $('#r3').textContent=fmt(Tw,1)+' °C';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.2 THERMAL EQUILIBRIUM & THE ZEROTH LAW  (§11.2–11.3, Fig 11.1–11.2)
+   Diathermic wall: dT_i/dt = k (T_j − T_i)   (equal heat capacities)
+   Adiabatic wall: no exchange.  A≈C and B≈C  ⇒  A≈B.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  const wallRow=(id,name)=>`<div class="var-row"><div class="vname">${name}</div><div class="toggle-group" id="${id}"><button class="toggle-btn small active" data-d="0">Adiabatic</button><button class="toggle-btn small" data-d="1">Diathermic</button></div></div>`;
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:2px;">Walls</label>
+      ${wallRow('wAC','A | C')}${wallRow('wBC','B | C')}${wallRow('wAB','A | B')}
+      <div class="chip-wrap"><button class="chip-btn" id="pr1">① A and B touch C</button><button class="chip-btn" id="pr2">② Seal C · join A–B</button></div></div>
+    <div class="control-group"><label>Gas A <span class="val" id="vA"></span></label><input type="range" id="sA" min="250" max="450" step="1" value="400"></div>
+    <div class="control-group"><label>Gas B <span class="val" id="vB"></span></label><input type="range" id="sB" min="250" max="450" step="1" value="300"></div>
+    <div class="control-group"><label>Gas C (the thermometer) <span class="val" id="vC"></span></label><input type="range" id="sC" min="250" max="450" step="1" value="350"></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">T of A</div><div class="rval" id="r1" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">T of B</div><div class="rval" id="r2" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">T of C</div><div class="rval" id="r3">—</div></div></div>
+      <div id="fb"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), K=0.5;
+  const sl={A:$('#sA'),B:$('#sB'),C:$('#sC')};
+  const T={A:400,B:300,C:350}, lock={A:0,B:0,C:0};
+  const wall={AC:0,BC:0,AB:0};
+  const gas={A:makeGas(22),B:makeGas(22),C:makeGas(46)};
+  let t=0;
+  ['A','B','C'].forEach(k=>sl[k].addEventListener('input',()=>{ lock[k]=0.7; }));
+  [['wAC','AC'],['wBC','BC'],['wAB','AB']].forEach(([id,key])=>toggleWire(wrap.querySelectorAll('#'+id+' button'),b=>wall[key]=+b.dataset.d));
+  function setWalls(ac,bc,ab){
+    wall.AC=ac; wall.BC=bc; wall.AB=ab;
+    [['wAC',ac],['wBC',bc],['wAB',ab]].forEach(([id,v])=>wrap.querySelectorAll('#'+id+' button').forEach(b=>b.classList.toggle('active',+b.dataset.d===v)));
+  }
+  $('#pr1').onclick=()=>setWalls(1,1,0);
+  $('#pr2').onclick=()=>setWalls(0,0,1);
+  const GEO=(w,h)=>({x0:w*0.06,x1:w*0.94,xm:w*0.5,y0:h*0.07,ym:h*0.5,y1:h*0.93});
+  function drawWall(ctx,x1,y1,x2,y2,dia,dT,nx,ny,t){        // dT>0 : heat flows along +normal
+    if(!dia){
+      line(ctx,x1,y1,x2,y2,COL.ink,13); line(ctx,x1,y1,x2,y2,'#e3ebf5',9);
+      const L=Math.hypot(x2-x1,y2-y1), ux=(x2-x1)/L, uy=(y2-y1)/L;
+      for(let d=6;d<L;d+=9) line(ctx,x1+ux*d-ny*4,y1+uy*d+nx*4,x1+ux*d+ny*4,y1+uy*d-nx*4,COL.mid,1.4);
+    } else {
+      line(ctx,x1,y1,x2,y2,COL.yellow,5);
+      const L=Math.hypot(x2-x1,y2-y1), ux=(x2-x1)/L, uy=(y2-y1)/L, mag=clamp(Math.abs(dT)/40,0,1);
+      if(Math.abs(dT)>0.6) for(let i=0;i<5;i++){
+        const p=(t*(0.35+mag*1.1)+i*0.2)%1, off=(p-0.5)*46*Math.sign(dT), al=Math.sin(p*Math.PI)*Math.min(1,0.25+mag);
+        const px=x1+ux*L*(i+0.5)/5+nx*off, py=y1+uy*L*(i+0.5)/5+ny*off;
+        ctx.save(); ctx.globalAlpha=al; vec(ctx,px-nx*9*Math.sign(dT),py-ny*9*Math.sign(dT),px+nx*9*Math.sign(dT),py+ny*9*Math.sign(dT),COL.red,2.6+mag*2); ctx.restore();
+      }
+    }
+  }
+  animLoop((dt)=>{
+    t+=dt;
+    ['A','B','C'].forEach(k=>{ $('#v'+k).textContent=sl[k].value+' K'; });
+    // drive a gas to its slider value while the slider is being moved; otherwise heat flows freely
+    ['A','B','C'].forEach(k=>{ if(lock[k]>0){ lock[k]-=dt; T[k]=approach(T[k],+sl[k].value,9,dt); } });
+    const pairs=[['A','C',wall.AC],['B','C',wall.BC],['A','B',wall.AB]];
+    for(let s=0;s<3;s++) pairs.forEach(([a,b,d])=>{ if(!d||lock[a]>0||lock[b]>0) return; const f=K*(T[b]-T[a])*dt/3; T[a]+=f; T[b]-=f; });
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const G=GEO(w,h), pad=8;
+    const boxes={A:[G.x0,G.y0,G.xm-G.x0,G.ym-G.y0],B:[G.xm,G.y0,G.x1-G.xm,G.ym-G.y0],C:[G.x0,G.ym,G.x1-G.x0,G.y1-G.ym]};
+    ['A','B','C'].forEach(k=>{
+      const [x,y,bw,bh]=boxes[k];
+      ctx.save(); ctx.fillStyle=mixCol('#eef6fe','#fdece6',clamp((T[k]-250)/200,0,1)); ctx.fillRect(x,y,bw,bh); ctx.restore();
+      stepGas(gas[k],dt,gasSpeed(T[k],h)*1.1,bw-2*pad-40,bh-2*pad,5);
+      drawGas(ctx,gas[k],x+pad,y+pad,bw-2*pad-40,bh-2*pad,T[k],5);
+      textAt(ctx,k,x+14,y+34,{size:26,weight:700,color:COL.ink});
+      const tx=x+bw-pad-16;
+      thermo(ctx,tx,y+22,y+bh-58,clamp((T[k]-250)/200,0,1),COL.ink,tempCol(T[k]));
+      textAt(ctx,fmt(T[k],0)+' K',tx,y+bh-18,{align:'center',size:12.5,weight:700,color:tempCol(T[k])});
+    });
+    rect(ctx,G.x0,G.y0,G.x1-G.x0,G.y1-G.y0,COL.ink,null,4);
+    drawWall(ctx,G.x0,G.ym,G.xm,G.ym,wall.AC,T.A-T.C,0,1,t);
+    drawWall(ctx,G.xm,G.ym,G.x1,G.ym,wall.BC,T.B-T.C,0,1,t);
+    drawWall(ctx,G.xm,G.y0,G.xm,G.ym,wall.AB,T.A-T.B,1,0,t);
+    // equilibrium ticks on touching walls
+    [[wall.AC,T.A-T.C,(G.x0+G.xm)/2,G.ym],[wall.BC,T.B-T.C,(G.xm+G.x1)/2,G.ym],[wall.AB,T.A-T.B,G.xm,(G.y0+G.ym)/2]].forEach(([d,dt2,x,y])=>{
+      if(d&&Math.abs(dt2)<0.8){ circ(ctx,x,y,13,COL.green,'#e4f7ec',2.4); textAt(ctx,'=',x,y+6,{align:'center',size:18,weight:700,color:COL.green}); } });
+    textAt(ctx,'insulating wall',G.x0+8,G.ym-14,{size:10.5,weight:600,color:COL.mid,alpha:wall.AC?0:1});
+    $('#r1').textContent=fmt(T.A,0)+' K'; $('#r2').textContent=fmt(T.B,0)+' K'; $('#r3').textContent=fmt(T.C,0)+' K';
+    const eq=(a,b)=>Math.abs(T[a]-T[b])<1;
+    let msg='';
+    if(wall.AC&&wall.BC&&!wall.AB&&eq('A','C')&&eq('B','C')) msg='<div class="fb ok">A ≈ C and B ≈ C ⇒ A ≈ B &nbsp;(Zeroth Law)</div>';
+    else if(wall.AB&&!wall.AC&&!wall.BC&&eq('A','B')) msg='<div class="fb ok">A–B joined: nothing flows — already in equilibrium</div>';
+    else if((wall.AC&&!eq('A','C'))||(wall.BC&&!eq('B','C'))||(wall.AB&&!eq('A','B'))) msg='<div class="fb warn">Heat flows hot → cold…</div>';
+    else if(!wall.AC&&!wall.BC&&!wall.AB) msg='<div class="fb warn">All walls adiabatic — no heat can pass</div>';
+    if($('#fb')._m!==msg){ $('#fb').innerHTML=msg; $('#fb')._m=msg; }
+  });
+  return wrap;
+}
+
+
+/* =====================================================================
+   11.3 HEAT AND WORK  (§11.4, Fig 11.4)
+   Insulated gas, 0.5 mol monatomic (Cv = 3R/2).  Two doors for energy:
+     dU = δQ + δW_on ,   δW_on = −P dV ,   P = nRT/V ,   U = n Cv T
+   Burner/ice sets δQ; the piston sets dV. Compress it and T rises with no flame.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Burner · Ice <span class="val" id="bV"></span></label><input type="range" id="bR" min="-100" max="100" step="1" value="0">
+      <div class="hint">← ice takes heat out · flame puts heat in →</div></div>
+    <div class="control-group"><label>Piston · volume <span class="val" id="vV"></span></label><input type="range" id="vR" min="4" max="12" step="0.1" value="8">
+      <div class="hint">← push in (work on gas) · pull out (gas does work) →</div></div>
+    <div class="control-group"><button class="toggle-btn navy" id="rs" style="margin-top:0">↺ Reset</button></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Temperature</div><div class="rval" id="r1" style="color:var(--f-red)">300 K</div></div>
+      <div class="rcard"><div class="rlabel">Pressure</div><div class="rval" id="r2">—</div></div>
+      <div class="rcard"><div class="rlabel">ΔU</div><div class="rval" id="r3" style="color:var(--f-blue)">0 J</div></div></div>
+      <p class="hint">ΔU = Q + W (work on gas) — heat and work both change U</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), bR=$('#bR'), vR=$('#vR');
+  const n=0.5, nCv=n*1.5*R_GAS, QMAX=800;
+  const S={T:300, V:{x:8,v:0}, Q:0, W:0, resetting:false, push:0};
+  const gas=makeGas(38); let t=0;
+  $('#rs').onclick=()=>{ bR.value=0; vR.value=8; S.resetting=true; };
+  [bR,vR].forEach(el=>el.addEventListener('input',()=>{ S.resetting=false; }));
+  animLoop((dt)=>{
+    t+=dt;
+    const pct=+bR.value, Vt=+vR.value;
+    $('#bV').textContent=pct>0?'🔥 '+pct+'%':pct<0?'🧊 '+(-pct)+'%':'off'; $('#vV').textContent=fmt(S.V.x,1)+' L';
+    let q=pct/100*QMAX;
+    if((S.T>1200&&q>0)||(S.T<110&&q<0)) q=0;
+    const Vold=S.V.x, P0=n*R_GAS*S.T/Vold;            // kPa when V in L  →  P·dV in joules
+    for(let k=0;k<2;k++) springTo(S.V,Vt,70,13,dt/2);
+    const dV=S.V.x-Vold, Won=-P0*dV;
+    if(S.resetting){ S.T=approach(S.T,300,4,dt); S.Q=approach(S.Q,0,4,dt); S.W=approach(S.W,0,4,dt); if(Math.abs(S.T-300)<1){ S.T=300; S.Q=S.W=0; S.resetting=false; } }
+    else { S.T=clamp(S.T+(q*dt+Won)/nCv,100,1300); S.Q+=q*dt; S.W+=Won; }
+    S.push=approach(S.push,dV/Math.max(dt,1e-3)/12,8,dt);
+    const V=S.V.x, P=n*R_GAS*S.T/V, dU=nCv*(S.T-300);
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.27, wd=Math.min(w*0.2,160), baseY=h*0.7, topY=h*0.12, Hc=baseY-topY-24;
+    const pistonY=baseY-Hc*V/12;
+    // burner / ice under the base
+    const pedY=baseY+58;
+    if(q>0){ rect(ctx,cx-wd*0.32,pedY,wd*0.64,10,COL.ink,'#fff',2.2); drawFlame2(ctx,cx,pedY,wd*0.9,q/QMAX,t); }
+    if(q<0) drawIce(ctx,cx,baseY+10,wd*0.95,-q/QMAX,t);
+    // heat flow arrow (red) through the base
+    if(Math.abs(q)>2){ const L=clamp(Math.abs(q)/QMAX,0,1)*38+8; if(q>0) vec(ctx,cx,baseY+52,cx,baseY+52-L,COL.red,3.2); else vec(ctx,cx,baseY+18,cx,baseY+18+L,COL.blue,3.2); }
+    // cylinder: insulated sides, conducting base
+    const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY,jacket:'sides',rodTop:pistonY-14-Hc*0.42});
+    stepGas(gas,dt,gasSpeed(S.T,h)*1.15,cyl.w-8,cyl.h-8,5);
+    // pressure-colour tint inside
+    ctx.save(); ctx.fillStyle='rgba(217,67,43,'+clamp((P-80)/500,0,0.22).toFixed(3)+')'; ctx.fillRect(cyl.x+3,cyl.y,cyl.w-6,cyl.h-2); ctx.restore();
+    drawGas(ctx,gas,cyl.x+4,cyl.y+4,cyl.w-8,cyl.h-8,S.T,5);
+    // hand push arrow (yellow) follows the real piston speed
+    const hy=pistonY-14-Hc*0.42-8, ps=clamp(S.push,-1,1);
+    if(Math.abs(ps)>0.05) vec(ctx,cx+34,hy-ps*10,cx+34,hy+ps*46,COL.yellow,4.5);
+    textAt(ctx,'Insulated walls',cx,topY-26,{size:11,weight:600,color:COL.mid,align:'center'});
+    textAt(ctx,'Conducting base',cx,baseY+(q<0?64:78),{size:11,weight:600,color:COL.mid,align:'center',alpha:Math.abs(q)<2?1:0.0});
+    // ---- energy ledger (right)
+    const bx=w*0.56, bw=w*0.38, M=Math.max(1000,1.15*Math.max(Math.abs(S.Q),Math.abs(S.W),Math.abs(dU)));
+    textAt(ctx,'Energy ledger',bx,h*0.12,{size:15,weight:700});
+    hbar(ctx,bx,h*0.24,bw,20,S.Q,M,COL.red,'Heat in  Q',(S.Q>=0?'+':'')+fmt(S.Q,0)+' J');
+    hbar(ctx,bx,h*0.38,bw,20,S.W,M,COL.green,'Work done ON gas  W',(S.W>=0?'+':'')+fmt(S.W,0)+' J');
+    line(ctx,bx+bw/2,h*0.38+26,bx+bw/2,h*0.5,COL.mid,1.4,[3,3]);
+    hbar(ctx,bx,h*0.54,bw,24,dU,M,COL.blue,'Internal energy change  ΔU',(dU>=0?'+':'')+fmt(dU,0)+' J');
+    textAt(ctx,'ΔU  =  Q  +  W',bx+bw/2,h*0.68,{size:20,weight:700,align:'center'});
+    textAt(ctx,fmt(dU,0)+'  =  '+fmt(S.Q,0)+'  +  '+fmt(S.W,0),bx+bw/2,h*0.68+24,{size:13,weight:600,align:'center',color:COL.muted});
+    // little thermometer for the gas
+    thermo(ctx,w*0.5,h*0.2,h*0.6,clamp((S.T-100)/1200,0,1),COL.ink,tempCol(S.T));
+    $('#r1').textContent=fmt(S.T,0)+' K'; $('#r2').textContent=fmt(P,0)+' kPa'; $('#r3').textContent=(dU>=0?'+':'')+fmt(dU,0)+' J';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.4 FIRST LAW — Cv AND Cp  (§11.5–11.6)
+   Locked piston: W = 0,        Q = ΔU = n Cv ΔT
+   Free piston:   W = PΔV = nRΔT,  Q = n Cp ΔT = ΔU + W,  Cp − Cv = R
+   0.2 mol, start 300 K, 5 L (≈100 kPa).
+   ===================================================================== */
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Heat supplied  Q <span class="val" id="qV"></span></label><input type="range" id="qR" min="0" max="600" step="5" value="300"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Gas</label>
+      <div class="toggle-group" id="gsB"><button class="toggle-btn active" data-f="3">Monatomic</button><button class="toggle-btn" data-f="5">Diatomic</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Cv</div><div class="rval" id="r1" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Cp</div><div class="rval" id="r2" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Cp − Cv</div><div class="rval" id="r3">—</div></div>
+      <div class="rcard"><div class="rlabel">ΔT locked</div><div class="rval" id="r4" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">ΔT free</div><div class="rval" id="r5" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">γ = Cp/Cv</div><div class="rval" id="r6">—</div></div></div>
+      <p class="hint">Cv, Cp in J / mol·K · R = 8.31</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), qR=$('#qR');
+  const n=0.2, T0=300, V0=5;
+  let f=3, t=0;
+  const S={Qd:0, TL:300, TR:300, V:{x:V0,v:0}, flow:0};
+  const gL=makeGas(26), gR=makeGas(26);
+  toggleWire(wrap.querySelectorAll('#gsB button'),b=>f=+b.dataset.f);
+  animLoop((dt)=>{
+    t+=dt;
+    const Qt=+qR.value; $('#qV').textContent=Qt+' J';
+    const Cv=f/2*R_GAS, Cp=Cv+R_GAS;
+    const step=clamp(Qt-S.Qd,-450*dt,450*dt); S.Qd+=step; S.flow=approach(S.flow,step/dt/450,10,dt);
+    S.TL=approach(S.TL,T0+S.Qd/(n*Cv),8,dt);
+    const TRt=T0+S.Qd/(n*Cp); S.TR=approach(S.TR,TRt,8,dt);
+    springTo(S.V,V0*S.TR/T0,70,12,dt);
+    const dTL=S.TL-T0, dTR=S.TR-T0, Wr=n*R_GAS*dTR, dUr=n*Cv*dTR, dUl=n*Cv*dTL;
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const wd=Math.min(w*0.17,140), baseY=h*0.56, topY=h*0.08, Hc=baseY-topY-24, Vmax=9;
+    const cxs=[w*0.24,w*0.7];
+    textAt(ctx,'Piston locked  ( V constant )',cxs[0],h*0.04+4,{size:13,weight:700,align:'center',color:COL.yellow});
+    textAt(ctx,'Piston free  ( P constant )',cxs[1],h*0.04+4,{size:13,weight:700,align:'center',color:COL.green});
+    const pedY=baseY+52;
+    cxs.forEach(cx=>{
+      if(S.flow>0.03){ rect(ctx,cx-wd*0.3,pedY,wd*0.6,9,COL.ink,'#fff',2.2); drawFlame2(ctx,cx,pedY,wd*0.85,S.flow,t); }
+      if(S.flow<-0.03) drawIce(ctx,cx,baseY+10,wd*0.9,-S.flow,t);
+    });
+    // locked
+    const pyL=baseY-Hc*V0/Vmax;
+    const cL=drawCylinder(ctx,{cx:cxs[0],baseY,wd,topY,pistonY:pyL,jacket:'sides',pins:[pyL-18],rodTop:pyL-14-30});
+    stepGas(gL,dt,gasSpeed(S.TL,h)*1.15,cL.w-8,cL.h-8,5); drawGas(ctx,gL,cL.x+4,cL.y+4,cL.w-8,cL.h-8,S.TL,5);
+    // free
+    const pyR=baseY-Hc*S.V.x/Vmax;
+    const cR=drawCylinder(ctx,{cx:cxs[1],baseY,wd,topY,pistonY:pyR,jacket:'sides'});
+    rect(ctx,cxs[1]-wd*0.32,pyR-14-34,wd*0.64,34,COL.green,'#e4f7ec',2.6); textAt(ctx,'weight',cxs[1],pyR-14-12,{align:'center',size:11,weight:700,color:COL.green});
+    stepGas(gR,dt,gasSpeed(S.TR,h)*1.15,cR.w-8,cR.h-8,5); drawGas(ctx,gR,cR.x+4,cR.y+4,cR.w-8,cR.h-8,S.TR,5);
+    if(Math.abs(S.V.v)>0.2||Wr>1) vec(ctx,cxs[1]+wd*0.5+22,pyR-14,cxs[1]+wd*0.5+22,pyR-14-clamp(Wr*0.5,6,60),COL.green,3.6);
+    thermo(ctx,cxs[0]-wd/2-34,topY+20,baseY-30,clamp((S.TL-250)/350,0,1),COL.ink,tempCol(S.TL));
+    thermo(ctx,cxs[1]-wd/2-34,topY+20,baseY-30,clamp((S.TR-250)/350,0,1),COL.ink,tempCol(S.TR));
+    textAt(ctx,fmt(S.TL,0)+' K',cxs[0]-wd/2-34,baseY+16,{size:11.5,weight:700,align:'center',color:COL.red});
+    textAt(ctx,fmt(S.TR,0)+' K',cxs[1]-wd/2-34,baseY+16,{size:11.5,weight:700,align:'center',color:COL.red});
+    // stacked energy bars:  Q = ΔU + W
+    const Bw=w*0.34, by=h*0.86, sc=Bw/600;
+    [[cxs[0],S.Qd,dUl,0],[cxs[1],S.Qd,dUr,Wr]].forEach(([cx,Q,dU,W])=>{
+      const x0=cx-Bw/2;
+      rect(ctx,x0,by,Bw,22,'#c2d1e5','#f6f9fc',1.2);
+      ctx.save(); ctx.fillStyle=COL.blue; ctx.globalAlpha=0.85; ctx.fillRect(x0,by,Math.max(0,dU*sc),22); ctx.fillStyle=COL.green; ctx.fillRect(x0+Math.max(0,dU*sc),by,Math.max(0,W*sc),22); ctx.restore();
+      rect(ctx,x0,by,Math.max(0.5,Q*sc),22,COL.red,null,2);
+      textAt(ctx,'Q = '+fmt(Q,0)+' J',x0,by-26,{size:12,weight:700,color:COL.red});
+      textAt(ctx,'ΔU '+fmt(dU,0)+' J',x0,by-9,{size:11.5,weight:700,color:COL.blue});
+      textAt(ctx,'+ W '+fmt(W,0)+' J',x0+68,by-9,{size:11.5,weight:700,color:COL.green});
+    });
+    textAt(ctx,'Q = ΔU',cxs[0],by+40,{size:12,weight:600,align:'center',color:COL.muted});
+    textAt(ctx,'Q = ΔU + W   (extra heat lifts the weight)',cxs[1],by+40,{size:12,weight:600,align:'center',color:COL.muted});
+    const meas=S.Qd>6;
+    $('#r1').textContent=fmt(meas?S.Qd/(n*dTL||1):Cv,2); $('#r2').textContent=fmt(meas?S.Qd/(n*dTR||1):Cp,2);
+    $('#r3').textContent=fmt(Cp-Cv,2)+' = R'; $('#r4').textContent=fmt(dTL,0)+' K'; $('#r5').textContent=fmt(dTR,0)+' K'; $('#r6').textContent=fmt(Cp/Cv,2);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.5 WATER TO STEAM  (§11.5 worked example, Eq. 11.3)
+   1 g water → steam at 1 atm:  Q = 2256 J,  V: 1 → 1671 cm³
+   W = P(Vg − Vl) = 1.013×10⁵ × 1670×10⁻⁶ = 169.2 J ,  ΔU = Q − W = 2086.8 J
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label>Heat supplied  Q <span class="val" id="qV"></span></label><input type="range" id="qR" min="0" max="2256" step="1" value="2256">
+      <div class="toggle-group"><button class="toggle-btn play" id="bo">🔥 Boil it all</button><button class="toggle-btn" id="rs">↺ Reset</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Heat  Q</div><div class="rval" id="r1" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Work  W = PΔV</div><div class="rval" id="r2" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">Internal  ΔU</div><div class="rval" id="r3" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Volume</div><div class="rval" id="r4">—</div></div></div>
+      <p class="hint">Latent heat 2256 J / g · P = 1.013 × 10⁵ Pa</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), qR=$('#qR');
+  const LV=2256, P_ATM=1.013e5, N=48;
+  const S={Qd:0, flow:0, pist:{x:0,v:0}};
+  let liq=[], vap=[], t=0;
+  for(let i=0;i<N;i++){ const th=Math.random()*6.283; liq.push({x:Math.random(),y:Math.random(),vx:Math.cos(th),vy:Math.sin(th)}); }
+  $('#bo').onclick=()=>{ qR.value=LV; }; $('#rs').onclick=()=>{ qR.value=0; };
+  animLoop((dt)=>{
+    t+=dt;
+    const Qt=+qR.value; $('#qV').textContent=Qt+' J';
+    const step=clamp(Qt-S.Qd,-700*dt,700*dt); S.Qd+=step; S.flow=approach(S.flow,step/dt/700,10,dt);
+    const x=clamp(S.Qd/LV,0,1), dV=1670*x, Vcm=1+dV;           // cm³
+    const W=P_ATM*dV*1e-6, dU=S.Qd-W;
+    springTo(S.pist,x,60,11,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.27, wd=Math.min(w*0.22,190), baseY=h*0.8, topY=h*0.17, Hc=baseY-topY-26;
+    const poolH=Hc*0.12*(1-x), gasHtot=Hc*(0.12+0.88*Math.sqrt(clamp(S.pist.x,0,1.05)));
+    const pistonY=baseY-gasHtot;
+    const pedY=baseY+48;
+    if(S.flow>0.03){ rect(ctx,cx-wd*0.3,pedY,wd*0.6,9,COL.ink,'#fff',2.2); drawFlame2(ctx,cx,pedY,wd*0.9,Math.min(1,S.flow+0.15),t); }
+    if(S.flow<-0.03) drawIce(ctx,cx,baseY+10,wd*0.9,-S.flow,t);
+    const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY,jacket:'sides',rodTop:undefined});
+    // atmosphere weight on the piston (blue arrows = constant pressure)
+    for(let i=0;i<4;i++){ const ax=cx-wd*0.36+wd*0.72*i/3; vec(ctx,ax,pistonY-14-30,ax,pistonY-14-3,COL.blue,2.6); }
+    textAt(ctx,'1 atm  (constant)',cx,pistonY-14-38,{size:11.5,weight:700,color:COL.blue,align:'center'});
+    // molecules: liquid pool (tight jiggle) and free vapour
+    const nv=Math.round(x*N);
+    while(vap.length<nv && liq.length){ const p=liq.pop(); p.y=0.98; p.vy=-Math.abs(p.vy)-0.3; vap.push(p); }
+    while(vap.length>nv){ const p=vap.pop(); p.y=0.02; p.vy=Math.abs(p.vy); liq.push(p); }
+    const gw=cyl.w-8, gx=cyl.x+4;
+    const vapH=Math.max(4,gasHtot-poolH-8);
+    stepGas(vap,dt,gasSpeed(373,h)*1.3,gw,vapH,5); drawGas(ctx,vap,gx,pistonY+4,gw,vapH,373,5);
+    if(poolH>2){
+      ctx.save(); ctx.fillStyle='rgba(47,143,224,0.14)'; ctx.fillRect(cyl.x+3,baseY-poolH,cyl.w-6,poolH); ctx.restore();
+      stepGas(liq,dt,gasSpeed(300,h)*0.25,gw,Math.max(poolH-2,3),3.2); drawGas(ctx,liq,gx,baseY-poolH,gw,Math.max(poolH-2,3),300,3.2);
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2; ctx.beginPath(); for(let q=cyl.x+3;q<=cyl.x+cyl.w-3;q+=4){ const yy=baseY-poolH+Math.sin(q*0.15+t*4)*1.2; q===cyl.x+3?ctx.moveTo(q,yy):ctx.lineTo(q,yy); } ctx.stroke(); ctx.restore();
+    }
+    textAt(ctx,x<0.02?'1 g water  (1 cm³)':x>0.98?'1 g steam  (1671 cm³)':fmt(x*100,0)+' % steam',cx,baseY+(S.flow<-0.03?70:78),{size:12.5,weight:700,align:'center'});
+    textAt(ctx,'drawn not to scale: 1 → 1671 cm³',cx,h*0.04,{size:10.5,weight:600,color:COL.mid,align:'center'});
+    // ---- energy split column (right) — Q = ΔU + W
+    const colX=w*0.5, colW=w*0.08, colH=h*0.64, colB=h*0.84, sc=colH/LV;
+    rect(ctx,colX,colB-colH,colW,colH,'#c2d1e5','#f6f9fc',1.2);
+    const hU=dU*sc, hW=W*sc;
+    ctx.save(); ctx.globalAlpha=0.85; ctx.fillStyle=COL.blue; ctx.fillRect(colX,colB-hU,colW,hU); ctx.fillStyle=COL.green; ctx.fillRect(colX,colB-hU-hW,colW,hW); ctx.restore();
+    rect(ctx,colX,colB-S.Qd*sc,colW,Math.max(S.Qd*sc,0.5),COL.red,null,2.4);
+    for(let i=0;i<=4;i++){ const yy=colB-colH*i/4; line(ctx,colX+colW,yy,colX+colW+6,yy,COL.ink,1.2); textAt(ctx,fmt(LV*i/4,0),colX+colW+10,yy+4,{size:10.5,color:COL.mid}); }
+    textAt(ctx,'Q  (J)',colX+colW/2,colB-colH-12,{size:13,weight:700,align:'center',color:COL.red});
+    const lx=colX+colW+50, fs=w<700?13:15;
+    textAt(ctx,'Q = '+fmt(S.Qd,0)+' J',lx,h*0.2,{size:fs+1,weight:700,color:COL.red});
+    textAt(ctx,'W = PΔV = '+fmt(W,1)+' J',lx,h*0.2+34,{size:fs,weight:700,color:COL.green});
+    textAt(ctx,fmt(x>0?W/S.Qd*100:0,1)+' % of Q',lx,h*0.2+54,{size:12,weight:600,color:COL.green});
+    textAt(ctx,'ΔU = Q − W = '+fmt(dU,1)+' J',lx,h*0.2+90,{size:fs,weight:700,color:COL.blue});
+    textAt(ctx,fmt(x>0?dU/S.Qd*100:0,1)+' % of Q',lx,h*0.2+110,{size:12,weight:600,color:COL.blue});
+    $('#r1').textContent=fmt(S.Qd,0)+' J'; $('#r2').textContent=fmt(W,1)+' J'; $('#r3').textContent=fmt(dU,1)+' J'; $('#r4').textContent=fmt(Vcm,0)+' cm³';
+  });
+  return wrap;
+}
+
+
+/* ---------------------------------------------------------------------
+   SHARED: sand pile on a piston (grains = pressure), flying/falling grains
+   --------------------------------------------------------------------- */
+function sandPos(i,cx,topY,wd){                // i-th grain, packed in rows from the piston upward
+  const gr=3.4, cap=Math.max(6,Math.floor(wd*0.84/(2*gr)));
+  let row=0, left=i, c=cap;
+  while(left>=c && c>3){ left-=c; row++; c=Math.max(3,cap-row*2); }
+  const x=cx+(left-(c-1)/2)*gr*2, y=topY-gr-row*gr*1.75;
+  return [x,y,gr];
+}
+function drawSand(ctx,n,cx,topY,wd){
+  ctx.save(); ctx.strokeStyle=COL.yellow; ctx.fillStyle='#fff6d9'; ctx.lineWidth=1.3;
+  for(let i=0;i<n;i++){ const [x,y,r]=sandPos(i,cx,topY,wd); ctx.beginPath(); ctx.arc(x,y,r*0.92,0,Math.PI*2); ctx.fill(); ctx.stroke(); }
+  ctx.restore();
+}
+function sandTopY(n,cx,topY,wd){ return n>0?sandPos(n-1,cx,topY,wd)[1]:topY; }
+
+/* =====================================================================
+   11.6 PATH DEPENDENCE  (§11.5, Eq. 11.2)
+   A (2 atm, 10 L) → B (1 atm, 25 L),  U = 3/2 PV  (monatomic)
+   ΔU = 3/2 (P_B V_B − P_A V_A) = 7.5 L·atm = 760 J  — on EVERY path
+   W = ∫P dV :  path ① 30 L·atm · path ② 15 L·atm · straight 22.5 L·atm
+   Q = ΔU + W.  Round trip A→B→A:  ΔU = 0,  W = enclosed area.
+   ===================================================================== */
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Path from A to B</label>
+      <div class="toggle-group" id="pB" style="flex-wrap:wrap"><button class="toggle-btn active" data-p="0">① Expand, then cool</button><button class="toggle-btn" data-p="1">② Cool, then expand</button><button class="toggle-btn" data-p="2">③ Straight</button><button class="toggle-btn" data-p="3">⟲ A→B→A</button></div>
+      <div class="toggle-group"><button class="toggle-btn play" id="go">▶ Run</button><button class="toggle-btn" id="rs">↺ Back to A</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Heat  Q</div><div class="rval" id="r1" style="color:var(--f-red)">0 J</div></div>
+      <div class="rcard"><div class="rlabel">Work  W</div><div class="rval" id="r2" style="color:var(--f-green)">0 J</div></div>
+      <div class="rcard"><div class="rlabel">ΔU</div><div class="rval" id="r3" style="color:var(--f-blue)">0 J</div></div>
+      <div class="rcard"><div class="rlabel">Q − W</div><div class="rval" id="r4">0 J</div></div></div></div>
+    <div class="control-group"><label>Runs so far</label>
+      <table class="log"><thead><tr><th>Path</th><th>Q</th><th>W</th><th>ΔU</th></tr></thead><tbody id="lg"><tr><td colspan="4" style="color:var(--text-3)">Run each path…</td></tr></tbody></table>
+      <p class="hint">ΔU never changes · Q and W do</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), L2J=101.325;
+  const PATHS=[
+    {n:'①',pts:[[10,2],[25,2],[25,1]]},
+    {n:'②',pts:[[10,2],[10,1],[25,1]]},
+    {n:'③',pts:[[10,2],[25,1]]},
+    {n:'⟲',pts:[[10,2],[25,2],[25,1],[10,1],[10,2]]}];
+  const segLen=(a,b)=>Math.hypot((b[0]-a[0])/15,(b[1]-a[1])/1);
+  PATHS.forEach(p=>{ p.cum=[0]; for(let i=1;i<p.pts.length;i++) p.cum.push(p.cum[i-1]+segLen(p.pts[i-1],p.pts[i])); p.len=p.cum[p.cum.length-1]; });
+  function posAt(p,s){ s=clamp(s,0,p.len); let i=1; while(i<p.pts.length-1&&s>p.cum[i]) i++; const u=(s-p.cum[i-1])/(p.cum[i]-p.cum[i-1]||1), a=p.pts[i-1], b=p.pts[i]; return [lerp(a[0],b[0],u),lerp(a[1],b[1],u)]; }
+  let pi=0, t=0; const log={};
+  const S={run:false, sT:0, s:0, Q:0, W:0, prev:[10,2], dQ:0, trace:[[10,2,0]], resetting:false, want:0, after:false, logged:false};
+  const gas=makeGas(34);
+  function reset(){ S.run=false; S.sT=0; S.resetting=true; S.logged=false; paintGo(); }
+  function paintGo(){ $('#go').textContent=S.run?'⏸ Pause':(S.sT>0&&S.sT<PATHS[pi].len-1e-6?'▶ Resume':'▶ Run'); }
+  toggleWire(wrap.querySelectorAll('#pB button'),b=>{ S.want=+b.dataset.p; S.after=false; reset(); });
+  $('#go').onclick=()=>{ if(S.resetting){ S.after=true; return; } if(S.sT>=PATHS[pi].len-1e-6){ S.after=true; reset(); return; } S.run=!S.run; paintGo(); };
+  $('#rs').onclick=()=>{ S.after=false; reset(); };
+  function addLog(){
+    const P=PATHS[pi], row=`<tr><td>${P.n}</td><td>${fmt(S.Q,0)}</td><td>${fmt(S.W,0)}</td><td>${fmt(S.Q-S.W,0)}</td></tr>`;
+    log[pi]=row; $('#lg').innerHTML=[0,1,2,3].filter(k=>log[k]).map(k=>log[k]).join('');
+  }
+  animLoop((dt)=>{
+    t+=dt;
+    const P=PATHS[pi];
+    if(S.run){ S.sT=Math.min(P.len,S.sT+dt*P.len/(pi===3?9:5.5)); if(S.sT>=P.len-1e-6){ S.run=false; paintGo(); } }
+    S.s=approach(S.s,S.sT,7,dt); if(Math.abs(S.s-S.sT)<1e-4) S.s=S.sT;
+    if(S.resetting && S.s<0.012){ S.s=0; S.resetting=false; pi=S.want; S.Q=0; S.W=0; S.prev=[10,2]; S.trace=[[10,2,0]]; $('#pB').querySelectorAll('button').forEach(b=>b.classList.toggle('active',+b.dataset.p===pi)); if(S.after){ S.after=false; S.run=true; } paintGo(); }
+    const [V,Pr]=posAt(P,S.s), dV=V-S.prev[0], Pm=(Pr+S.prev[1])/2;
+    const dW=Pm*dV*L2J;
+    const dU=1.5*(Pr*V-S.prev[1]*S.prev[0])*L2J;
+    if(!S.resetting){ S.W+=dW; S.Q+=dU+dW; if(dt>0){ const lp=S.trace[S.trace.length-1]; if(Math.hypot(lp[0]-V,(lp[1]-Pr)*15)>0.1) S.trace.push([V,Pr,S.s]); } }
+    S.dQ=approach(S.dQ,(dU+dW)/Math.max(dt,1e-3),9,dt);
+    S.prev=[V,Pr];
+    if(!S.resetting && S.sT>=P.len-1e-6 && Math.abs(S.s-S.sT)<1e-3 && !S.logged){ S.logged=true; addLog(); }
+    if(S.sT<P.len-1e-6) S.logged=false;
+    const T=15*Pr*V, dUtot=1.5*(Pr*V-20)*L2J;
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- cylinder
+    const cx=w*0.19, wd=Math.min(w*0.17,135), baseY=h*0.74, topY=h*0.1, Hc=baseY-topY-20;
+    const pistonY=baseY-Hc*V/30;
+    const q=clamp(S.dQ/2500,-1,1);
+    if(q>0.04){ rect(ctx,cx-wd*0.3,baseY+50,wd*0.6,9,COL.ink,'#fff',2.2); drawFlame2(ctx,cx,baseY+50,wd*0.9,q,t); }
+    if(q<-0.04) drawIce(ctx,cx,baseY+10,wd*0.9,-q,t);
+    let si=1; while(si<P.pts.length-1&&S.s>P.cum[si]) si++;
+    const vertical=Math.abs(P.pts[si][0]-P.pts[si-1][0])<1e-9 && S.s>0.001 && S.s<P.len-0.001;
+    const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY,jacket:'sides',pins:vertical?[pistonY-14-4]:undefined});
+    stepGas(gas,dt,gasSpeed(T,h)*1.1,cyl.w-8,cyl.h-8,5); drawGas(ctx,gas,cyl.x+4,cyl.y+4,cyl.w-8,cyl.h-8,T,5);
+    // sand pile on the piston: height ∝ P
+    drawSand(ctx,Math.round(Pr*22),cx,pistonY-14,wd);
+    textAt(ctx,'P = '+fmt(Pr,2)+' atm',cx,baseY+(q<-0.04?70:84),{size:12,weight:700,align:'center',color:COL.blue});
+    textAt(ctx,'V = '+fmt(V,1)+' L',cx,baseY+(q<-0.04?88:102),{size:12,weight:700,align:'center',color:COL.ink});
+    // ---- P–V diagram
+    const px=w*0.43, py=h*0.1, pw=w*0.5, ph=h*0.68;
+    const F=pvFrame(ctx,px,py,pw,ph,0,30,0,2.5,{tx:[[10,'10'],[20,'20'],[25,'25']],ty:[[1,'1'],[2,'2']],xl:'V (L)',yl:'P (atm)'});
+    // faint guides of all three routes
+    [[PATHS[0],COL.red],[PATHS[1],COL.blue],[PATHS[2],COL.green]].forEach(([pp,c])=>{ ctx.save(); ctx.globalAlpha=pi===PATHS.indexOf(pp)||pi===3?0.35:0.18; ctx.setLineDash([5,5]); ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); pp.pts.forEach((a,i)=>i?ctx.lineTo(F.X(a[0]),F.Y(a[1])):ctx.moveTo(F.X(a[0]),F.Y(a[1]))); ctx.stroke(); ctx.restore(); });
+    // work = area under the traversed path (loop area for the round trip)
+    const outLen=PATHS[3].cum[2];
+    ctx.save(); ctx.fillStyle='rgba(31,157,85,0.24)'; ctx.beginPath();
+    if(pi===3&&S.s>outLen){ [[10,2],[25,2],[25,1]].forEach((a,i)=>i?ctx.lineTo(F.X(a[0]),F.Y(a[1])):ctx.moveTo(F.X(a[0]),F.Y(a[1]))); S.trace.filter(a=>a[2]>outLen).forEach(a=>ctx.lineTo(F.X(a[0]),F.Y(a[1]))); ctx.lineTo(F.X(V),F.Y(Pr)); }
+    else { ctx.moveTo(F.X(10),F.Y(0)); S.trace.forEach(a=>ctx.lineTo(F.X(a[0]),F.Y(a[1]))); ctx.lineTo(F.X(V),F.Y(Pr)); ctx.lineTo(F.X(V),F.Y(0)); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    // travelled path (bold)
+    const pc=[COL.red,COL.blue,COL.green,COL.ink][pi];
+    ctx.save(); ctx.strokeStyle=pc; ctx.lineWidth=3.6; ctx.lineJoin='round'; ctx.beginPath(); S.trace.forEach((a,i)=>i?ctx.lineTo(F.X(a[0]),F.Y(a[1])):ctx.moveTo(F.X(a[0]),F.Y(a[1]))); ctx.lineTo(F.X(V),F.Y(Pr)); ctx.stroke(); ctx.restore();
+    // states A, B and the moving state
+    [[10,2,'A'],[25,1,'B']].forEach(([v,p,l])=>{ circ(ctx,F.X(v),F.Y(p),7,COL.ink,'#fff',2.6); textAt(ctx,l,F.X(v)+(l==='A'?-20:10),F.Y(p)-(l==='A'?4:10),{size:16,weight:700}); });
+    circ(ctx,F.X(V),F.Y(Pr),6,pc,pc,2); circ(ctx,F.X(V),F.Y(Pr),11+Math.sin(t*6)*2,pc,null,1.4);
+    textAt(ctx,'Work W = area under the path',F.x+F.w*0.5,F.y+F.h*0.9,{size:12,weight:700,color:COL.green,align:'center'});
+    // ---- three live energy bars under the diagram
+    const bx=px, bw=pw, by=h*0.97;
+    hbar(ctx,bx,by-20,bw*0.31,13,S.Q,4000,COL.red,'Q',fmt(S.Q,0)+' J');
+    hbar(ctx,bx+bw*0.345,by-20,bw*0.31,13,S.W,4000,COL.green,'W',fmt(S.W,0)+' J');
+    hbar(ctx,bx+bw*0.69,by-20,bw*0.31,13,dUtot,4000,COL.blue,'ΔU',fmt(dUtot,0)+' J');
+    textAt(ctx,'T = '+fmt(T,0)+' K',bx+bw,py-6,{size:12,weight:700,color:tempCol(T),align:'right'});
+    $('#r1').textContent=fmt(S.Q,0)+' J'; $('#r2').textContent=fmt(S.W,0)+' J'; $('#r3').textContent=fmt(dUtot,0)+' J'; $('#r4').textContent=fmt(S.Q-S.W,0)+' J';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.7 SLOW vs SUDDEN  (§11.7–11.8.1, Fig 11.6, 11.7)
+   Isothermal gas, 2000 J = nRT:   P_gas = 2000 / V   (kPa, L)
+   Piston obeys  M V̈ = P_gas − P_ext − c V̇   — underdamped when the load is
+   lifted at once, so the gas is NOT in equilibrium while it rings.
+   W_by_gas = ∫ P_ext dV :  slow ⇒ nRT ln(V₂/V₁),  sudden ⇒ P_f ΔV  (smaller)
+   Free expansion: W = 0, Q = 0, ΔT = 0 for an ideal gas.
+   ===================================================================== */
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">How the load is removed</label>
+      <div class="toggle-group" id="mB"><button class="toggle-btn active" data-m="qs">Slowly · grain by grain</button><button class="toggle-btn" data-m="sd">Suddenly · all at once</button><button class="toggle-btn" data-m="fx">Free expansion</button></div></div>
+    <div class="control-group" id="sandCtl"><label>Sand left on piston <span class="val" id="gV"></span></label><input type="range" id="gR" min="25" max="100" step="1" value="100">
+      <button class="toggle-btn navy" id="rs">↺ Reset</button></div>
+    <div class="control-group hidden" id="fxCtl"><button class="toggle-btn play" id="pull" style="width:100%">🔓 Pull the partition out</button><button class="toggle-btn navy" id="rs2">↺ Put it back</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Work by gas</div><div class="rval" id="r1" style="color:var(--f-green)">0 J</div></div>
+      <div class="rcard"><div class="rlabel">Slow-limit W</div><div class="rval" id="r2" style="color:var(--f-green)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">State of the gas</div><div class="rval" id="r3">Equilibrium ✓</div></div></div>
+      <p class="hint" id="hn">Work done by gas = ∫ P_ext dV</p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), gR=$('#gR');
+  const KT=2000, VMIN=8, VMAX=48, NB=200;
+  let mode='qs', t=0;
+  const S={V:10,Vv:0, Ng:100, acc:0, pe:200, W:0, V0:10, bins:new Array(NB).fill(null), fly:[], reset:false, vsm:0};
+  const gas=makeGas(34);
+  // free-expansion state
+  const FX={out:false, lift:{x:0,v:0}, g:[], wall:0.5};
+  function fxInit(){ FX.out=false; FX.lift.x=0; FX.lift.v=0; FX.wall=0.5; FX.g=[]; for(let i=0;i<40;i++){ const th=Math.random()*6.28; FX.g.push({x:Math.random()*0.48+0.01,y:Math.random(),vx:Math.cos(th),vy:Math.sin(th)}); } FX.t=0; }
+  fxInit();
+  toggleWire(wrap.querySelectorAll('#mB button'),b=>{ mode=b.dataset.m; $('#sandCtl').classList.toggle('hidden',mode==='fx'); $('#fxCtl').classList.toggle('hidden',mode!=='fx');
+    $('#hn').textContent=mode==='fx'?'Free expansion: no work, no heat, no ΔT':'Work done by gas = ∫ P_ext dV'; if(mode==='fx') fxInit(); });
+  $('#rs').onclick=()=>{ gR.value=100; S.reset=true; };
+  $('#rs2').onclick=fxInit; $('#pull').onclick=()=>{ FX.out=true; };
+  [gR].forEach(el=>el.addEventListener('input',()=>{ S.reset=false; }));
+  function spawnFly(n,cx,topY,wd,from){
+    for(let k=0;k<n;k++){ const [x,y]=sandPos(Math.max(0,from-1-k),cx,topY,wd); S.fly.push({x,y,vx:(Math.random()<0.5?-1:1)*(70+Math.random()*130),vy:-(140+Math.random()*200),down:false}); }
+  }
+  animLoop((dt)=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.2, wd=Math.min(w*0.17,135);
+    const px=w*0.43, py=h*0.1, pw=w*0.5, ph=h*0.68;
+    const F=pvFrame(ctx,px,py,pw,ph,0,50,0,230,{tx:[[10,'10'],[20,'20'],[30,'30'],[40,'40']],ty:[[50,'50'],[100,'100'],[150,'150'],[200,'200']],xl:'V (L)',yl:'P (kPa)'});
+    // isotherm (blue): P V = const
+    ctx.save(); clipRect(ctx,F.x,F.y,F.w,F.h); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.6; ctx.beginPath();
+    for(let v=VMIN;v<=VMAX;v+=0.5){ const X=F.X(v),Y=F.Y(KT/v); v===VMIN?ctx.moveTo(X,Y):ctx.lineTo(X,Y); } ctx.stroke(); ctx.restore();
+    textAt(ctx,'isotherm  PV = const',F.X(30),F.Y(KT/30)-12,{size:11.5,weight:700,color:COL.blue});
+
+    if(mode!=='fx'){
+      const Ngt=+gR.value; $('#gV').textContent=Ngt+' %';
+      // ---- load: grains leave one by one (slow) or all together (sudden)
+      const baseY=h*0.74, topY=h*0.12, Hc=baseY-topY-20;
+      const pistonY=baseY-Hc*S.V/50;
+      const diff=Ngt-S.Ng;
+      if(diff<0){
+        if(mode==='sd'){ spawnFly(-diff,cx,pistonY-14,wd,S.Ng); S.Ng=Ngt; }
+        else { S.acc+=dt*9; let k=Math.min(Math.floor(S.acc),-diff); if(k>0){ S.acc-=k; spawnFly(k,cx,pistonY-14,wd,S.Ng); S.Ng-=k; } }
+      } else if(diff>0){
+        if(mode==='sd'){ for(let k=0;k<Math.min(diff,40);k++) S.fly.push({x:cx+(Math.random()-0.5)*wd*0.7,y:-20-Math.random()*60,vx:0,vy:60,down:true}); S.Ng=Ngt; }
+        else { S.acc+=dt*9; let k=Math.min(Math.floor(S.acc),diff); if(k>0){ S.acc-=k; for(let q=0;q<k;q++) S.fly.push({x:cx+(Math.random()-0.5)*wd*0.5,y:-10,vx:0,vy:60,down:true}); S.Ng+=k; } }
+      }
+      const peT=S.Ng*2;
+      S.pe = mode==='qs' ? approach(S.pe,peT,2.2,dt) : peT;
+      // ---- piston dynamics (sub-stepped semi-implicit Euler)
+      const M=0.18, c=mode==='qs'?1.5:0.28, n=8;
+      for(let k=0;k<n;k++){ const hd=dt/n, Pg=KT/S.V, acc=(Pg-S.pe-c*S.Vv)/M; const Vold=S.V; S.Vv+=acc*hd; S.V=clamp(S.V+S.Vv*hd,VMIN,VMAX); if(S.V===VMIN||S.V===VMAX) S.Vv*=-0.2; S.W+=S.pe*(S.V-Vold); }
+      const Pg=KT/S.V, V=S.V;
+      S.vsm=approach(S.vsm,S.Vv,10,dt);
+      // work-area bins: set when the piston passes forward through a bin, cleared when it retreats
+      const bi=Math.floor((V-VMIN)/(VMAX-VMIN)*NB), b0=Math.floor((S.V0-VMIN)/(VMAX-VMIN)*NB);
+      for(let j=0;j<NB;j++){ if(j>bi) S.bins[j]=null; else if(j>=b0 && S.bins[j]===null) S.bins[j]=S.pe; }
+      if(S.reset && Math.abs(V-10)<0.12 && Math.abs(S.Vv)<0.6 && S.Ng===100){ S.reset=false; S.W=0; S.V0=V; S.bins.fill(null); }
+      // ---- shaded work area under P_ext
+      ctx.save(); ctx.fillStyle='rgba(31,157,85,0.26)'; const bw=F.w*((VMAX-VMIN)/NB)/50;
+      S.bins.forEach((pe,j)=>{ if(pe===null) return; const X=F.X(VMIN+(j)*(VMAX-VMIN)/NB); ctx.fillRect(X,F.Y(pe),bw+0.6,F.Y(0)-F.Y(pe)); }); ctx.restore();
+      // external-pressure line (red) and equilibrium target
+      line(ctx,F.X(S.V0),F.Y(S.pe),F.X(Math.max(V,S.V0)),F.Y(S.pe),COL.red,2.4);
+      textAt(ctx,'P_ext',F.X(S.V0)+4,F.Y(S.pe)-6,{size:11,weight:700,color:COL.red});
+      circ(ctx,F.X(KT/(peT)),F.Y(peT),6,COL.ink,null,2); textAt(ctx,'goal',F.X(KT/peT)+8,F.Y(peT)-8,{size:11,weight:600,color:COL.muted});
+      const eq=Math.abs(S.Vv)<1.2 && Math.abs(Pg-S.pe)<4;
+      ctx.save(); ctx.globalAlpha=eq?1:0.55; circ(ctx,F.X(V),F.Y(Pg),6.5,COL.blue,eq?COL.blue:'#fff',2.4); ctx.restore();
+      if(!eq) { ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(F.X(S.V0),F.Y(200)); ctx.lineTo(F.X(V),F.Y(Pg)); ctx.stroke(); ctx.restore(); }
+      // ---- heat bath + cylinder + gas
+      rect(ctx,cx-wd/2-22,baseY+4,wd+44,46,COL.blue,'#e6f2fd',2.2);
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; ctx.beginPath(); for(let x=cx-wd/2-20;x<=cx+wd/2+20;x+=4){ const yy=baseY+14+Math.sin(x*0.15+t*3)*1.6; x===cx-wd/2-20?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke(); ctx.restore();
+      textAt(ctx,'Heat bath · 300 K',cx,baseY+38,{size:11,weight:700,align:'center',color:COL.blue});
+      const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY});
+      const u=clamp(S.vsm/9,-1,1);
+      if(Math.abs(u)>0.03){ const gd=ctx.createLinearGradient(0,cyl.y,0,baseY); const a=0.34*Math.abs(u);
+        const lo='rgba(47,143,224,'+a.toFixed(3)+')', hi='rgba(217,67,43,'+a.toFixed(3)+')';
+        gd.addColorStop(0,u>0?lo:hi); gd.addColorStop(1,u>0?hi:lo); ctx.save(); ctx.fillStyle=gd; ctx.fillRect(cyl.x+3,cyl.y,cyl.w-6,cyl.h-2); ctx.restore(); }
+      stepGas(gas,dt,gasSpeed(300,h)*1.1,cyl.w-8,cyl.h-8,5); drawGas(ctx,gas,cyl.x+4,cyl.y+4,cyl.w-8,cyl.h-8,300,5);
+      drawSand(ctx,S.Ng,cx,pistonY-14,wd);
+      S.fly=S.fly.filter(g=>{ g.vy+=(g.down?200:700)*dt; g.x+=g.vx*dt; g.y+=g.vy*dt;
+        if(g.down&&g.y>=sandTopY(S.Ng,cx,pistonY-14,wd)) return false; if(g.y>h+20) return false;
+        circ(ctx,g.x,g.y,3,COL.yellow,'#fff6d9',1.3); return true; });
+      if(!eq) textAt(ctx,'pressure not uniform — no single P, T',cx,topY-6,{size:11.5,weight:700,color:COL.red,align:'center'});
+      // ---- numbers
+      const Wqs=KT*Math.log(Math.max(KT/Math.max(peT,1),0.01)/S.V0);
+      $('#r1').textContent=fmt(S.W,0)+' J'; $('#r2').textContent=fmt(Math.max(Wqs,0),0)+' J';
+      const msg=eq?'Equilibrium ✓':'Not in equilibrium ✗'; if($('#r3').textContent!==msg){ $('#r3').textContent=msg; $('#r3').style.color=eq?'var(--f-green)':'var(--f-red)'; }
+    } else {
+      // ---- FREE EXPANSION (Fig 11.6a): vacuum on the right, partition pulled out
+      const bw=Math.min(w*0.28,300), bh=Math.min(h*0.4,230), bx=w*0.12, by=h*0.24;
+      FX.t+=dt;
+      if(FX.out) springTo(FX.lift,1,14,6,dt); else FX.lift.x=0;
+      if(FX.lift.x>0.8) FX.wall=1; else FX.wall=0.5;
+      const sp=gasSpeed(300,h)*1.6;
+      FX.g.forEach(p=>{ p.x+=p.vx*sp*dt/(bw-14); p.y+=p.vy*sp*dt/(bh-14);
+        const wl=FX.wall; if(p.x<0.02){p.x=0.02;p.vx=Math.abs(p.vx);} if(p.x>wl-0.02){p.x=wl-0.02;p.vx=-Math.abs(p.vx);}
+        if(p.y<0.02){p.y=0.02;p.vy=Math.abs(p.vy);} if(p.y>0.98){p.y=0.98;p.vy=-Math.abs(p.vy);}
+        if(Math.random()<dt*1.4){ const th=Math.atan2(p.vy,p.vx)+gauss()*0.7; p.vx=Math.cos(th); p.vy=Math.sin(th); } });
+      ctx.save(); ctx.fillStyle='#fbfdff'; ctx.fillRect(bx,by,bw,bh); ctx.restore();
+      textAt(ctx,'vacuum',bx+bw*0.75,by+bh/2+4,{size:13,weight:600,color:COL.mid,align:'center',alpha:FX.wall<1?1:0});
+      rect(ctx,bx,by,bw,bh,COL.ink,null,3.6);
+      drawGas(ctx,FX.g,bx+7,by+7,bw-14,bh-14,300,5);
+      // partition lifts out through the roof
+      const lift=FX.lift.x*(bh+30);
+      line(ctx,bx+bw/2,by-lift,bx+bw/2,by+bh-lift,COL.yellow,5);
+      line(ctx,bx+bw/2-8,by-lift-2,bx+bw/2+8,by-lift-2,COL.yellow,5);
+      // density in each half → pressure
+      const nl=FX.g.filter(p=>p.x<0.5).length, nr=FX.g.length-nl;
+      const Pf=KT/20, Pi=KT/10;
+      const mixed=FX.wall>=1 && Math.abs(nl-nr)<=6;
+      // P–V: initial (10,200) → final (20,100) on the same isotherm; no path in between
+      circ(ctx,F.X(10),F.Y(Pi),7,COL.ink,'#fff',2.6); textAt(ctx,'initial',F.X(10)+10,F.Y(Pi)-8,{size:12,weight:700});
+      circ(ctx,F.X(20),F.Y(Pf),7,COL.ink,mixed?COL.ink:'#fff',2.6); textAt(ctx,'final',F.X(20)+10,F.Y(Pf)-10,{size:12,weight:700});
+      if(FX.out){ ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(F.X(10),F.Y(Pi)); ctx.lineTo(F.X(20),F.Y(Pf)); ctx.stroke(); ctx.restore();
+        if(!mixed) textAt(ctx,'in between: no P, no T',F.X(15),F.Y(Pi*0.8)-14,{size:11.5,weight:700,color:COL.red,align:'center'}); }
+      thermo(ctx,bx-30,by+4,by+bh-20,0.5,COL.ink,tempCol(300));
+      textAt(ctx,'300 K',bx-30,by+bh+22,{size:12,weight:700,color:COL.yellow,align:'center'});
+      textAt(ctx,'ΔT = 0',bx-30,by-6,{size:12,weight:700,color:COL.blue,align:'center'});
+      textAt(ctx,'Gas rushes into vacuum',bx,by-30,{size:12.5,weight:700,color:COL.muted}); textAt(ctx,'there is nothing to push',bx,by-14,{size:12,weight:600,color:COL.mid});
+      textAt(ctx,'W = 0     Q = 0     ΔU = 0',bx+bw/2,by+bh+44,{size:15,weight:700,align:'center'});
+      textAt(ctx,'left '+nl+' : right '+nr,bx+bw/2,by+bh+66,{size:12,weight:600,color:COL.muted,align:'center'});
+      $('#r1').textContent='0 J'; $('#r2').textContent='0 J';
+      const msg=!FX.out?'Equilibrium ✓':mixed?'Equilibrium ✓ (new)':'Not in equilibrium ✗'; if($('#r3').textContent!==msg){ $('#r3').textContent=msg; $('#r3').style.color=msg.includes('✓')?'var(--f-green)':'var(--f-red)'; }
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.8 GAS PROCESSES  (§11.8.2–11.8.5, Fig 11.8)    n = 0.8 mol, start 300 K, 20 L, ≈100 kPa
+   Isothermal  PV = const              W = nRT ln(V/V₀)        ΔU = 0   Q = W
+   Adiabatic   PV^γ = const            W = (P₀V₀ − PV)/(γ−1)   Q = 0    ΔU = −W
+   Isobaric    P = const               W = P(V−V₀)             Q = ΔU + W
+   Isochoric   V = const               W = 0                   Q = ΔU = (PV−P₀V₀)/(γ−1)
+   Readings are counted from where you last switched process (nothing jumps).
+   ===================================================================== */
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Process</label>
+      <div class="toggle-group" id="pB"><button class="toggle-btn active" data-p="iso">Isothermal</button><button class="toggle-btn" data-p="adi">Adiabatic</button><button class="toggle-btn" data-p="isb">Isobaric</button><button class="toggle-btn" data-p="ich">Isochoric</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Gas</label>
+      <div class="toggle-group" id="gB"><button class="toggle-btn active" data-g="1.667">Monatomic γ=1.67</button><button class="toggle-btn" data-g="1.4">Diatomic γ=1.40</button></div></div>
+    <div class="control-group" id="vCtl"><label>Volume <span class="val" id="vV"></span></label><input type="range" id="vR" min="7" max="45" step="0.1" value="20"></div>
+    <div class="control-group hidden" id="tCtl"><label>Heater / ice → temperature <span class="val" id="tV"></span></label><input type="range" id="tR" min="150" max="900" step="1" value="300"></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Pressure</div><div class="rval" id="r1" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Volume</div><div class="rval" id="r2">—</div></div>
+      <div class="rcard"><div class="rlabel">Temp</div><div class="rval" id="r3" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Heat Q</div><div class="rval" id="r4" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Work W</div><div class="rval" id="r5" style="color:var(--f-green)">—</div></div>
+      <div class="rcard"><div class="rlabel">ΔU</div><div class="rval" id="r6" style="color:var(--f-blue)">—</div></div></div>
+      <p class="hint" id="hn"></p></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), vR=$('#vR'), tR=$('#tR');
+  const nR=0.8*R_GAS;
+  let proc='iso', g=1.667, t=0;
+  const A={P:nR*300/20,V:20,T:300};                       // anchor = state at the last process switch
+  const S={V:{x:20,v:0}, T:300, Q:0, dQ:0, lastQ:0};
+  const gas=makeGas(34);
+  const NOTE={iso:'T fixed · P ∝ 1/V · all heat becomes work',adi:'No heat in or out · compressing heats the gas',isb:'P fixed · heat → ΔU and work',ich:'V fixed · no work · all heat raises U'};
+  const PCOL={iso:COL.blue,adi:COL.red,isb:COL.green,ich:COL.yellow};
+  function anchor(){ const V=S.V.x, T=S.T; A.V=V; A.T=T; A.P=nR*T/V; S.Q=0; S.lastQ=0; S.dQ=0; }
+  function paintCtl(){ $('#vCtl').classList.toggle('hidden',proc==='ich'); $('#tCtl').classList.toggle('hidden',proc!=='ich'); $('#hn').textContent=NOTE[proc]; }
+  toggleWire(wrap.querySelectorAll('#pB button'),b=>{ proc=b.dataset.p; anchor(); vR.value=clamp(S.V.x,7,45); tR.value=clamp(Math.round(S.T),150,900); paintCtl(); });
+  toggleWire(wrap.querySelectorAll('#gB button'),b=>{ g=+b.dataset.g; anchor(); });
+  paintCtl();
+  function stateAt(p,V,Tt){            // returns {P,T,W,dU,Q}
+    const P0=A.P,V0=A.V,T0=A.T;
+    if(p==='iso'){ const W=nR*T0*Math.log(V/V0); return {P:P0*V0/V,T:T0,W,dU:0,Q:W}; }
+    if(p==='adi'){ const P=P0*Math.pow(V0/V,g), T=P*V/nR, W=(P0*V0-P*V)/(g-1); return {P,T,W,dU:-W,Q:0}; }
+    if(p==='isb'){ const T=P0*V/nR, W=P0*(V-V0), dU=(P0*V-P0*V0)/(g-1); return {P:P0,T,W,dU,Q:dU+W}; }
+    const P=P0*Tt/T0, dU=(P-P0)*V0/(g-1); return {P,T:Tt,W:0,dU,Q:dU};
+  }
+  animLoop((dt)=>{
+    t+=dt;
+    const Vt=proc==='ich'?A.V:+vR.value, Tt=+tR.value;
+    $('#vV').textContent=fmt(+vR.value,1)+' L'; $('#tV').textContent=Tt+' K';
+    springTo(S.V,Vt,55,13,dt);
+    if(proc==='ich') S.T=approach(S.T,Tt,3,dt);
+    const st=stateAt(proc,S.V.x,S.T);
+    S.T=proc==='ich'?S.T:st.T;
+    S.dQ=approach(S.dQ,(st.Q-S.lastQ)/Math.max(dt,1e-3),8,dt); S.lastQ=st.Q;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.19, wd=Math.min(w*0.17,135), baseY=h*0.72, topY=h*0.1, Hc=baseY-topY-20, V=S.V.x, pistonY=baseY-Hc*V/50;
+    // ---- environment of the cylinder depends on the process
+    const jacket=proc==='adi'?true:proc==='iso'?false:'sides';
+    if(proc==='iso'){
+      rect(ctx,cx-wd/2-24,baseY+4,wd+48,52,COL.blue,'#e6f2fd',2.2);
+      ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; ctx.beginPath(); for(let x=cx-wd/2-22;x<=cx+wd/2+22;x+=4){ const yy=baseY+15+Math.sin(x*0.15+t*3)*1.6; x===cx-wd/2-22?ctx.moveTo(x,yy):ctx.lineTo(x,yy); } ctx.stroke(); ctx.restore();
+      textAt(ctx,'Heat bath · T fixed',cx,baseY+42,{size:11,weight:700,align:'center',color:COL.blue});
+      const hf=clamp(S.dQ/1800,-1,1); if(Math.abs(hf)>0.04){ const L=8+Math.abs(hf)*30; for(let i=-1;i<=1;i++){ if(hf>0) vec(ctx,cx+i*wd*0.28,baseY+44,cx+i*wd*0.28,baseY+44-L,COL.red,3); else vec(ctx,cx+i*wd*0.28,baseY+8,cx+i*wd*0.28,baseY+8+L,COL.blue,3); } }
+    } else if(proc==='isb'||proc==='ich'){
+      const hf=clamp(S.dQ/1800,-1,1);
+      if(hf>0.03){ rect(ctx,cx-wd*0.3,baseY+52,wd*0.6,9,COL.ink,'#fff',2.2); drawFlame2(ctx,cx,baseY+52,wd*0.9,hf,t); }
+      if(hf<-0.03) drawIce(ctx,cx,baseY+10,wd*0.9,-hf,t);
+    } else textAt(ctx,'Fully insulated',cx,baseY+34,{size:11,weight:700,align:'center',color:COL.mid});
+    const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY,jacket,pins:proc==='ich'?[pistonY-14-4]:undefined,rodTop:proc==='isb'||proc==='ich'?undefined:pistonY-14-50});
+    if(proc==='isb'||proc==='ich'){ rect(ctx,cx-wd*0.32,pistonY-14-30,wd*0.64,30,COL.green,'#e4f7ec',2.4); textAt(ctx,proc==='isb'?'P const':'weight',cx,pistonY-14-10,{size:10.5,weight:700,align:'center',color:COL.green}); }
+    stepGas(gas,dt,gasSpeed(S.T,h)*1.1,cyl.w-8,cyl.h-8,5); drawGas(ctx,gas,cyl.x+4,cyl.y+4,cyl.w-8,cyl.h-8,S.T,5);
+    thermo(ctx,cx-wd/2-34,topY+20,baseY-30,clamp((S.T-150)/750,0,1),COL.ink,tempCol(S.T));
+    textAt(ctx,fmt(S.T,0)+' K',cx-wd/2-34,baseY+14,{size:11.5,weight:700,align:'center',color:tempCol(S.T)});
+    // ---- P–V diagram with all four curves through the anchor
+    const px=w*0.43, py=h*0.1, pw=w*0.5, ph=h*0.74;
+    const F=pvFrame(ctx,px,py,pw,ph,0,50,0,700,{tx:[[10,'10'],[20,'20'],[30,'30'],[40,'40']],ty:[[100,'100'],[200,'200'],[300,'300'],[400,'400'],[500,'500'],[600,'600']],xl:'V (L)',yl:'P (kPa)'});
+    ctx.save(); clipRect(ctx,F.x,F.y,F.w,F.h);
+    const curve=(fn,col,lw,al)=>{ ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); let first=true; for(let v=6;v<=48;v+=0.4){ const p=fn(v); const X=F.X(v),Y=F.Y(p); first?ctx.moveTo(X,Y):ctx.lineTo(X,Y); first=false; } ctx.stroke(); ctx.restore(); };
+    const fns={iso:v=>A.P*A.V/v, adi:v=>A.P*Math.pow(A.V/v,g), isb:v=>A.P};
+    ['iso','adi','isb'].forEach(k=>curve(fns[k],PCOL[k],proc===k?3.6:1.8,proc===k?1:0.35));
+    line(ctx,F.X(A.V),F.Y(0),F.X(A.V),F.Y(700),PCOL.ich,proc==='ich'?3.6:1.8);
+    // work area under the active path
+    if(proc!=='ich'){ ctx.save(); ctx.fillStyle='rgba(31,157,85,0.24)'; ctx.beginPath(); ctx.moveTo(F.X(A.V),F.Y(0)); const n=40; for(let i=0;i<=n;i++){ const v=lerp(A.V,V,i/n); ctx.lineTo(F.X(v),F.Y(fns[proc](v))); } ctx.lineTo(F.X(V),F.Y(0)); ctx.closePath(); ctx.fill(); ctx.restore(); }
+    ctx.restore();
+    circ(ctx,F.X(A.V),F.Y(A.P),5.5,COL.ink,'#fff',2.4); textAt(ctx,'start',F.X(A.V)+8,F.Y(A.P)+16,{size:11,weight:700,color:COL.muted});
+    const dp=PCOL[proc]; circ(ctx,F.X(V),F.Y(st.P),6.5,dp,dp,2); circ(ctx,F.X(V),F.Y(st.P),11+Math.sin(t*6)*2,dp,null,1.4);
+    // curve labels
+    const lab=[['isothermal',COL.blue,'iso'],['adiabatic',COL.red,'adi'],['isobaric',COL.green,'isb'],['isochoric',COL.yellow,'ich']];
+    lab.forEach(([n,c,k],i)=>{ const yy=py+14+i*16; line(ctx,px+pw-112,yy-4,px+pw-92,yy-4,c,proc===k?4:2); textAt(ctx,n,px+pw-86,yy,{size:11.5,weight:proc===k?700:500,color:proc===k?COL.ink:COL.mid}); });
+    $('#r1').textContent=fmt(st.P,0)+' kPa'; $('#r2').textContent=fmt(V,1)+' L'; $('#r3').textContent=fmt(S.T,0)+' K';
+    $('#r4').textContent=fmt(st.Q,0)+' J'; $('#r5').textContent=fmt(st.W,0)+' J'; $('#r6').textContent=fmt(st.dU,0)+' J';
+  });
+  return wrap;
+}
+
+
+function niceTicks(max,approx){
+  const raw=max/approx, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p, st=(m<1.5?1:m<3.5?2:m<7.5?5:10)*p, out=[];
+  for(let v=st;v<max*0.98;v+=st) out.push([v,fmt(v,v<1?2:0)]);
+  return out;
+}
+
+/* =====================================================================
+   11.9 SECOND LAW  (§11.9–11.10)
+   Clausius: heat never flows cold → hot by itself.  A refrigerator moves it
+   only if work is supplied:   Q_hot = Q_cold + W ,  COP = Q_cold / W = T₂/(T₁−T₂)
+   (best-possible, reversible fridge).  Rod conduction: real 1-D heat chain.
+   Blocks 3000 J/K each, rod 20 cells, 12 W/K end-to-end · 1 s ≙ 40 s.
+   ===================================================================== */
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><label style="margin-bottom:6px;">Copper rod between the blocks</label>
+      <div class="toggle-group" id="rB"><button class="toggle-btn active" data-r="1">Connected</button><button class="toggle-btn" data-r="0">Cut</button></div></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Refrigerator</label>
+      <div class="toggle-group" id="fB"><button class="toggle-btn active" data-f="0">Off</button><button class="toggle-btn" data-f="1">On</button></div>
+      <label style="margin-top:10px;">Electrical work supplied <span class="val" id="pV"></span></label><input type="range" id="pR" min="0" max="200" step="1" value="80">
+      <button class="toggle-btn navy" id="rs">↺ Reset temperatures</button></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Hot block</div><div class="rval" id="r1" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Cold block</div><div class="rval" id="r2" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Ideal COP</div><div class="rval" id="r3">—</div></div></div>
+      <div id="fb"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), pR=$('#pR');
+  const C=3000, N=20, cc=40, G=12, gl=G*(N+1), TS=40;
+  let conn=1, fr=0, t=0;
+  const S={Th:360, Tc:300, rod:new Array(N).fill(330), gap:{x:0,v:0}, flux:0, Qc:0, ph:0, hold:0};
+  for(let i=0;i<N;i++) S.rod[i]=360-60*(i+1)/(N+1);
+  toggleWire(wrap.querySelectorAll('#rB button'),b=>conn=+b.dataset.r);
+  toggleWire(wrap.querySelectorAll('#fB button'),b=>fr=+b.dataset.f);
+  $('#rs').onclick=()=>{ S.hold=1.2; };
+  animLoop((dt)=>{
+    t+=dt;
+    const Pw=fr?+pR.value:0; $('#pV').textContent=pR.value+' W';
+    if(S.hold>0){ S.hold-=dt; S.Th=approach(S.Th,360,6,dt); S.Tc=approach(S.Tc,300,6,dt); for(let i=0;i<N;i++) S.rod[i]=approach(S.rod[i],360-60*(i+1)/(N+1),6,dt); }
+    else {
+      let sim=dt*TS; const nsub=Math.ceil(sim/0.05), h=sim/nsub;
+      const mid=N/2, T=new Array(N+2);
+      for(let k=0;k<nsub;k++){
+        T[0]=S.Th; for(let i=0;i<N;i++) T[i+1]=S.rod[i]; T[N+1]=S.Tc;
+        const fl=[]; for(let i=0;i<=N;i++) fl.push((conn||i!==mid)?gl*(T[i]-T[i+1]):0);
+        const cop=S.Th-S.Tc>2?Math.min(30,S.Tc/(S.Th-S.Tc)):30;
+        const Qc=(Pw>0&&S.Tc>100)?cop*Pw:0, Qh=Qc+Pw;
+        S.Qc=Qc;
+        S.Th+=(-fl[0]+Qh)*h/C; S.Tc+=(fl[N]-Qc)*h/C;
+        for(let i=0;i<N;i++) S.rod[i]+=(fl[i]-fl[i+1])*h/cc;
+        S.flux=fl[mid];
+      }
+    }
+    springTo(S.gap,conn?0:1,40,9,dt);
+    S.ph+=dt*(Pw/200)*8;
+    const cop=S.Th-S.Tc>2?Math.min(30,S.Tc/(S.Th-S.Tc)):30, Qc=(Pw>0&&S.Tc>100)?cop*Pw:0;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const bw=w*0.17, by0=h*0.14, bh=h*0.3, hx=w*0.13, cx2=w*0.87, rodY=h*0.29;
+    // ---- blocks with vibrating atoms
+    [[hx,S.Th,'HOT'],[cx2,S.Tc,'COLD']].forEach(([x,T,lab],bi)=>{
+      ctx.save(); ctx.fillStyle=mixCol('#e6f2fd','#fde3da',clamp((T-250)/150,0,1)); ctx.fillRect(x-bw/2,by0,bw,bh); ctx.restore();
+      rect(ctx,x-bw/2,by0,bw,bh,bi?COL.blue:COL.red,null,3.4);
+      const amp=0.5+clamp((T-150)/300,0,1.6)*2.4;
+      for(let r=0;r<4;r++) for(let c=0;c<4;c++){ const ax=x-bw/2+bw*(c+0.5)/4+Math.sin(t*14+r*3+c*5)*amp, ay=by0+bh*0.12+bh*0.72*(r+0.5)/4+Math.cos(t*13+r*2+c*7)*amp; circ(ctx,ax,ay,4.5,tempCol(T),'#fff',1.6); }
+      textAt(ctx,lab+'  ·  '+fmt(T,0)+' K',x,by0-9,{size:13,weight:700,align:'center',color:bi?COL.blue:COL.red});
+    });
+    // ---- rod (cells coloured by temperature) with a gap when cut
+    const x0=hx+bw/2, x1=cx2-bw/2, L=x1-x0, cw=L/N, rh=Math.min(h*0.05,22);
+    const gp=S.gap.x*Math.min(26,L*0.06);
+    for(let i=0;i<N;i++){ const off=i<N/2?-gp/2:gp/2; const X=x0+i*cw+off; ctx.save(); ctx.fillStyle=tempCol(S.rod[i]); ctx.globalAlpha=0.85; ctx.fillRect(X,rodY-rh/2,cw+0.6,rh); ctx.restore(); }
+    line(ctx,x0-gp/2,rodY-rh/2,x1+gp/2,rodY-rh/2,COL.ink,2.2); line(ctx,x0-gp/2,rodY+rh/2,x1+gp/2,rodY+rh/2,COL.ink,2.2);
+    if(S.gap.x>0.5){ textAt(ctx,'✕',(x0+x1)/2,rodY+5,{size:20,weight:700,color:COL.red,align:'center'}); }
+    // heat flowing through the rod: hot → cold (red chevrons)
+    const fm=clamp(Math.abs(S.flux)/900,0,1);
+    if(conn && fm>0.01) for(let i=0;i<7;i++){ const p=(t*(0.25+fm*0.9)+i/7)%1, x=x0+p*L, d=Math.sign(S.flux)||1; ctx.save(); ctx.globalAlpha=Math.sin(p*Math.PI)*Math.min(1,0.2+fm*1.4); arrowHead(ctx,d>0?x:x1-(x-x0),rodY-rh-8,d>0?0:Math.PI,COL.red,8+fm*8); ctx.restore(); }
+    textAt(ctx,conn?(Math.abs(S.flux)>8?fmt(Math.abs(S.flux),0)+' W  '+(S.flux>0?'hot → cold':'cold → hot'):'no net flow'):'rod cut — no conduction',(x0+x1)/2,rodY-rh-26,{size:12.5,weight:700,align:'center',color:conn&&Math.abs(S.flux)>8?COL.red:COL.mid});
+    // ---- refrigerator between the blocks, pipes to each block
+    const fx0=w*0.36, fx1=w*0.64, fy0=h*0.62, fy1=h*0.8, pyy=(fy0+fy1)/2;
+    const act=Pw>0, pa=clamp(Qc/1500,0,1);
+    const pipe=(ax,ay,bx,by,col,flow,rev)=>{ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=9; ctx.globalAlpha=0.18; ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke(); ctx.restore(); line(ctx,ax,ay,bx,by,col,2.2,[7,5]);
+      if(flow>0.02) for(let i=0;i<5;i++){ const p=(t*0.5+i/5)%1; const q=rev?1-p:p; const X=lerp(ax,bx,q), Y=lerp(ay,by,q); ctx.save(); ctx.globalAlpha=Math.sin(p*Math.PI); arrowHead(ctx,X,Y,Math.atan2((by-ay)*(rev?-1:1),(bx-ax)*(rev?-1:1)),col,8+flow*7); ctx.restore(); } };
+    // cold block → fridge  (blue) ; fridge → hot block (red)
+    ctx.save(); ctx.lineJoin='round';
+    const cPath=[[cx2,by0+bh],[cx2,pyy],[fx1,pyy]], hPath=[[fx0,pyy],[hx,pyy],[hx,by0+bh]];
+    [[cPath,COL.blue,pa,false],[hPath,COL.red,clamp((Qc+Pw)/1500,0,1),false]].forEach(([pp,col,fl])=>{ for(let i=1;i<pp.length;i++) pipe(pp[i-1][0],pp[i-1][1],pp[i][0],pp[i][1],col,act?fl:0,i===0); });
+    ctx.restore();
+    rrect(ctx,fx0,fy0,fx1-fx0,fy1-fy0,12); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke();
+    // compressor
+    const cr=Math.min((fy1-fy0)*0.32,26), ccx=(fx0+fx1)/2, ccy=(fy0+fy1)/2;
+    circ(ctx,ccx,ccy,cr,COL.green,'#e4f7ec',3); for(let i=0;i<4;i++){ const a=S.ph+i*Math.PI/2; line(ctx,ccx,ccy,ccx+Math.cos(a)*cr*0.85,ccy+Math.sin(a)*cr*0.85,COL.green,2.4); }
+    textAt(ctx,'Refrigerator',ccx,fy0-8,{size:12.5,weight:700,align:'center'});
+    // work in (green)
+    if(act){ vec(ctx,ccx,fy1+h*0.13,ccx,fy1+3,COL.green,3+Pw/60); textAt(ctx,'W = '+Pw+' W',ccx+10,fy1+h*0.1,{size:12,weight:700,color:COL.green}); }
+    if(act){ textAt(ctx,'Qc = '+fmt(Qc,0)+' W',(cx2+fx1)/2,pyy-10,{size:12,weight:700,color:COL.blue,align:'center'}); textAt(ctx,'Qh = Qc + W = '+fmt(Qc+Pw,0)+' W',(hx+fx0)/2,pyy-10,{size:12,weight:700,color:COL.red,align:'center'}); }
+    $('#r1').textContent=fmt(S.Th,0)+' K'; $('#r2').textContent=fmt(S.Tc,0)+' K'; $('#r3').textContent=fmt(cop,1);
+    let msg;
+    if(act) msg='<div class="fb ok">Work W pumps heat cold → hot: Q<sub>h</sub> = Q<sub>c</sub> + W</div>';
+    else if(fr&&!act) msg='<div class="fb warn">Fridge on but W = 0 — nothing is pumped</div>';
+    else if(conn&&Math.abs(S.Th-S.Tc)<1) msg='<div class="fb ok">Equal temperatures — flow stops, never reverses by itself</div>';
+    else if(conn) msg='<div class="fb warn">Heat flows hot → cold, never the other way</div>';
+    else msg='<div class="fb warn">Rod cut — blocks keep their temperatures</div>';
+    if($('#fb')._m!==msg){ $('#fb').innerHTML=msg; $('#fb')._m=msg; }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   11.10 CARNOT ENGINE  (§11.11, Fig 11.9, Eq. 11.18–11.22)    n = 0.5 mol
+   1→2 isothermal at T₁ :  Q₁ = nRT₁ ln(V₂/V₁)
+   2→3 adiabatic        :  W = nR(T₁−T₂)/(γ−1) ,  T V^(γ−1) = const
+   3→4 isothermal at T₂ :  Q₂ = nRT₂ ln(V₃/V₄)
+   4→1 adiabatic        :  V₃/V₄ = V₂/V₁  ⇒  W = Q₁ − Q₂ ,  η = 1 − T₂/T₁
+   ===================================================================== */
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML = `
+    <div class="control-group"><div class="toggle-group" style="margin-top:0"><button class="toggle-btn play" id="go">⏸ Pause</button></div>
+      <div class="step-row" id="stp" style="margin-top:8px"><button class="step-pill" data-s="0">① hot</button><button class="step-pill" data-s="1">② expand</button><button class="step-pill" data-s="2">③ cold</button><button class="step-pill" data-s="3">④ squeeze</button></div>
+      <label style="margin-top:10px;">Speed <span class="val" id="spV"></span></label><input type="range" id="spR" min="1" max="10" step="1" value="4"></div>
+    <div class="control-group"><label>Hot reservoir  T₁ <span class="val" id="t1V"></span></label><input type="range" id="t1R" min="400" max="900" step="5" value="600"></div>
+    <div class="control-group"><label>Cold reservoir  T₂ <span class="val" id="t2V"></span></label><input type="range" id="t2R" min="200" max="400" step="5" value="300">
+      <label style="margin-top:10px;">Expansion ratio  V₂/V₁ <span class="val" id="rV"></span></label><input type="range" id="rR" min="1.5" max="3" step="0.05" value="2"></div>
+    <div class="control-group"><label style="margin-bottom:6px;">Gas</label>
+      <div class="toggle-group" id="gB"><button class="toggle-btn active" data-g="1.667">Monatomic</button><button class="toggle-btn" data-g="1.4">Diatomic</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">Heat in Q₁</div><div class="rval" id="r1" style="color:var(--f-red)">—</div></div>
+      <div class="rcard"><div class="rlabel">Heat out Q₂</div><div class="rval" id="r2" style="color:var(--f-blue)">—</div></div>
+      <div class="rcard"><div class="rlabel">Work W</div><div class="rval" id="r3" style="color:var(--f-green)">—</div></div>
+      <div class="rcard wide"><div class="rlabel">Efficiency  η = W / Q₁ = 1 − T₂/T₁</div><div class="rval" id="r4">—</div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas'), n=0.5, nR=n*R_GAS;
+  const sl={t1:$('#t1R'),t2:$('#t2R'),r:$('#rR'),sp:$('#spR')};
+  let g=1.667, playing=true, seek=null, t=0;
+  const P={T1:600,T2:300,r:2,g:1.667};            // eased copies of the sliders — nothing jumps
+  const S={phi:0, cx:{x:0,v:0}, vsc:60, psc:300, init:false};
+  const gas=makeGas(36);
+  toggleWire(wrap.querySelectorAll('#gB button'),b=>g=+b.dataset.g);
+  const pills=[...wrap.querySelectorAll('#stp .step-pill')];
+  pills.forEach(p=>p.onclick=()=>{ seek=+p.dataset.s; playing=false; $('#go').textContent='▶ Run'; });
+  $('#go').onclick=()=>{ playing=!playing; seek=null; $('#go').textContent=playing?'⏸ Pause':'▶ Run'; };
+  function geom(){ const V1=10, V2=V1*P.r, k=Math.pow(P.T1/P.T2,1/(P.g-1)), V3=V2*k, V4=V1*k;
+    return {V1,V2,V3,V4,P1:nR*P.T1/V1,P2:nR*P.T1/V2,P3:nR*P.T2/V3,P4:nR*P.T2/V4}; }
+  function at(phi,G){                         // state at playhead phi ∈ [0,4)
+    const s=Math.floor(phi)%4, e=smooth01(0,1,phi-Math.floor(phi)), g_=P.g, T1=P.T1, T2=P.T2;
+    let V,T,W=0,Q1=0,Q2=0;
+    const W1=nR*T1*Math.log(G.V2/G.V1), W2=nR*(T1-T2)/(g_-1), W3=nR*T2*Math.log(G.V3/G.V4);   // W3 positive magnitude of work done ON gas
+    if(s===0){ V=lerp(G.V1,G.V2,e); T=T1; W=nR*T1*Math.log(V/G.V1); Q1=W; }
+    else if(s===1){ V=lerp(G.V2,G.V3,e); T=T1*Math.pow(G.V2/V,g_-1); W=W1+nR*(T1-T)/(g_-1); Q1=W1; }
+    else if(s===2){ V=lerp(G.V3,G.V4,e); T=T2; W=W1+W2+nR*T2*Math.log(V/G.V3); Q1=W1; Q2=-nR*T2*Math.log(V/G.V3); }
+    else { V=lerp(G.V4,G.V1,e); T=T2*Math.pow(G.V4/V,g_-1); W=W1+W2-W3-nR*(T-T2)/(g_-1)*1; Q1=W1; Q2=W3; }
+    return {s,V,T,Pr:nR*T/V,W,Q1,Q2,e};
+  }
+  animLoop((dt)=>{
+    t+=dt;
+    const T1t=+sl.t1.value; let T2t=+sl.t2.value; T2t=Math.min(T2t,T1t-100);
+    $('#t1V').textContent=T1t+' K'; $('#t2V').textContent=T2t+' K'; $('#rV').textContent='× '+fmt(+sl.r.value,2); $('#spV').textContent=sl.sp.value;
+    P.T1=approach(P.T1,T1t,6,dt); P.T2=approach(P.T2,T2t,6,dt); P.r=approach(P.r,+sl.r.value,6,dt); P.g=approach(P.g,g,6,dt);
+    if(seek!==null){ const d=(((seek-S.phi+2)%4)+4)%4-2; S.phi+=d*(1-Math.exp(-3*dt)); if(Math.abs(d)<0.01){ S.phi=seek; seek=null; } }
+    else if(playing) S.phi+=dt*(+sl.sp.value)*0.05;
+    S.phi=((S.phi%4)+4)%4;
+    const G=geom(), st=at(S.phi,G), V=st.V, T=st.T;
+    const Wc=G.V2>0?nR*P.T1*Math.log(G.V2/G.V1)-nR*P.T2*Math.log(G.V3/G.V4):0, Q1f=nR*P.T1*Math.log(G.V2/G.V1), Q2f=nR*P.T2*Math.log(G.V3/G.V4);
+    pills.forEach((p,i)=>p.classList.toggle('active',i===st.s));
+
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // ---- track: hot block · insulating stand · cold block ; cylinder slides between them
+    const slotX=[w*0.1,w*0.225,w*0.35], bw=w*0.1, wd=Math.min(w*0.085,78);
+    const u=S.phi-Math.floor(S.phi), nxt=(st.s+1)%4, slotOf=s=>s===0?0:s===2?2:1;
+    springTo(S.cx,slotX[slotOf(u>0.9?nxt:st.s)],20,8.5,dt);
+    const baseY=h*0.6, topY=h*0.07, Hc=baseY-topY-20;
+    S.vsc=approach(S.vsc,G.V3*1.06,5,dt);
+    const pistonY=baseY-Hc*V/S.vsc, cx=S.cx.x;
+    const blkTop=baseY+4, blkH=h*0.12;
+    // hot block
+    rect(ctx,slotX[0]-bw/2,blkTop,bw,blkH,COL.red,'#fde3da',3);
+    for(let i=0;i<3;i++){ const ph=(t*0.6+i/3)%1; ctx.save(); ctx.globalAlpha=(1-ph)*0.8; ctx.strokeStyle=COL.red; ctx.lineWidth=1.8; ctx.beginPath(); for(let q=0;q<=8;q++){ const yy=blkTop+blkH-8-q*2.6-ph*8, xx=slotX[0]-bw*0.3+i*bw*0.3+Math.sin(q*0.9+t*5)*3; q?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); ctx.restore(); }
+    textAt(ctx,'T₁ = '+fmt(P.T1,0)+' K',slotX[0],blkTop+blkH+h*0.05,{size:12.5,weight:700,align:'center',color:COL.red});
+    // insulating stand
+    ctx.save(); ctx.beginPath(); ctx.rect(slotX[1]-bw/2,blkTop,bw,blkH); ctx.clip(); ctx.fillStyle='#f6f9fc'; ctx.fillRect(slotX[1]-bw/2,blkTop,bw,blkH); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.2; ctx.beginPath(); for(let x=slotX[1]-bw/2-blkH;x<slotX[1]+bw/2;x+=9){ ctx.moveTo(x,blkTop+blkH); ctx.lineTo(x+blkH,blkTop); } ctx.stroke(); ctx.restore();
+    rect(ctx,slotX[1]-bw/2,blkTop,bw,blkH,COL.ink,null,2.2);
+    textAt(ctx,'insulator',slotX[1],blkTop+blkH+h*0.045,{size:12,weight:700,align:'center',color:COL.mid});
+    // cold block
+    rect(ctx,slotX[2]-bw/2,blkTop,bw,blkH,COL.blue,'#e6f2fd',3);
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.6; for(let i=0;i<3;i++){ const ph=(t*0.5+i/3)%1; ctx.globalAlpha=Math.sin(ph*Math.PI); line(ctx,slotX[2]-bw*0.3+i*bw*0.3,blkTop+6+ph*(blkH-20),slotX[2]-bw*0.3+i*bw*0.3,blkTop+14+ph*(blkH-20),COL.blue,1.8); } ctx.restore();
+    textAt(ctx,'T₂ = '+fmt(P.T2,0)+' K',slotX[2],blkTop+blkH+h*0.05,{size:12.5,weight:700,align:'center',color:COL.blue});
+    // cylinder
+    const cyl=drawCylinder(ctx,{cx,baseY,wd,topY,pistonY,jacket:'sides',rodTop:pistonY-14-Hc*0.2});
+    stepGas(gas,dt,gasSpeed(T,h)*1.1,cyl.w-8,cyl.h-8,4.5); drawGas(ctx,gas,cyl.x+4,cyl.y+4,cyl.w-8,cyl.h-8,T,4.5);
+    // heat flow arrows at the contact (only when the cylinder has settled on a reservoir)
+    const settled=Math.abs(S.cx.x-slotX[slotOf(st.s)])<4&&Math.abs(S.cx.v)<30;
+    if(settled&&st.s===0&&u>0.04&&u<0.96) for(let i=-1;i<=1;i++) vec(ctx,cx+i*wd*0.28,baseY+36,cx+i*wd*0.28,baseY+8,COL.red,3.2);
+    if(settled&&st.s===2&&u>0.04&&u<0.96) for(let i=-1;i<=1;i++) vec(ctx,cx+i*wd*0.28,baseY+8,cx+i*wd*0.28,baseY+36,COL.blue,3.2);
+    textAt(ctx,['① isothermal · absorbs Q₁','② adiabatic · cools','③ isothermal · rejects Q₂','④ adiabatic · warms'][st.s],w*0.225,h*0.035,{size:13,weight:700,align:'center',color:[COL.red,COL.ink,COL.blue,COL.ink][st.s]});
+    thermo(ctx,w*0.03,topY+30,baseY-40,clamp((T-150)/800,0,1),COL.ink,tempCol(T));
+    textAt(ctx,fmt(T,0)+' K',w*0.03,baseY-8,{size:11.5,weight:700,align:'center',color:tempCol(T)});
+    // ---- P–V diagram
+    const px=w*0.5, py=h*0.1, pw=w*0.46, ph=h*0.58;
+    S.psc=approach(S.psc,G.P1*1.12,5,dt);
+    const F=pvFrame(ctx,px,py,pw,ph,0,S.vsc,0,S.psc,{tx:niceTicks(S.vsc,5),ty:niceTicks(S.psc,5),xl:'V (L)',yl:'P (kPa)'});
+    const br=(fn,va,vb,col,lw,al,dash)=>{ ctx.save(); ctx.globalAlpha=al; ctx.strokeStyle=col; ctx.lineWidth=lw; if(dash) ctx.setLineDash(dash); ctx.beginPath(); const nn=50; for(let i=0;i<=nn;i++){ const v=lerp(va,vb,i/nn); i?ctx.lineTo(F.X(v),F.Y(fn(v))):ctx.moveTo(F.X(v),F.Y(fn(v))); } ctx.stroke(); ctx.restore(); };
+    const f1=v=>nR*P.T1/v, f2=v=>G.P2*Math.pow(G.V2/v,P.g), f3=v=>nR*P.T2/v, f4=v=>G.P1*Math.pow(G.V1/v,P.g);
+    // loop fill = net work
+    ctx.save(); ctx.fillStyle='rgba(31,157,85,0.17)'; ctx.beginPath(); const NN=40;
+    for(let i=0;i<=NN;i++){ const v=lerp(G.V1,G.V2,i/NN); i?ctx.lineTo(F.X(v),F.Y(f1(v))):ctx.moveTo(F.X(v),F.Y(f1(v))); }
+    for(let i=0;i<=NN;i++){ const v=lerp(G.V2,G.V3,i/NN); ctx.lineTo(F.X(v),F.Y(f2(v))); }
+    for(let i=0;i<=NN;i++){ const v=lerp(G.V3,G.V4,i/NN); ctx.lineTo(F.X(v),F.Y(f3(v))); }
+    for(let i=0;i<=NN;i++){ const v=lerp(G.V4,G.V1,i/NN); ctx.lineTo(F.X(v),F.Y(f4(v))); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    const act=s=>st.s===s?4:2.2, alp=s=>st.s===s?1:0.6;
+    br(f1,G.V1,G.V2,COL.red,act(0),alp(0)); br(f2,G.V2,G.V3,COL.ink,act(1),alp(1),[7,5]); br(f3,G.V4,G.V3,COL.blue,act(2),alp(2)); br(f4,G.V1,G.V4,COL.ink,act(3),alp(3),[7,5]);
+    [[G.V1,G.P1,'1'],[G.V2,G.P2,'2'],[G.V3,G.P3,'3'],[G.V4,G.P4,'4']].forEach(([v,p,l])=>{ circ(ctx,F.X(v),F.Y(p),5.5,COL.ink,'#fff',2.2); textAt(ctx,l,F.X(v)+(l==='1'||l==='4'?-18:9),F.Y(p)+(l==='1'||l==='2'?-7:16),{size:15,weight:700}); });
+    const dc=[COL.red,COL.ink,COL.blue,COL.ink][st.s];
+    circ(ctx,F.X(V),F.Y(st.Pr),6.5,dc,dc,2); circ(ctx,F.X(V),F.Y(st.Pr),11+Math.sin(t*6)*2,dc,null,1.4);
+    textAt(ctx,'Work = enclosed area',F.x+F.w*0.62,F.y+F.h*0.42,{size:12,weight:700,color:COL.green,align:'center'});
+    // legend
+    [['isothermal T₁',COL.red,0],['adiabatic',COL.ink,1],['isothermal T₂',COL.blue,2]].forEach(([n_,c,i])=>{ const yy=py+10+i*16; line(ctx,px+pw-124,yy-4,px+pw-102,yy-4,c,3,i===1?[5,3]:null); textAt(ctx,n_,px+pw-96,yy,{size:11,weight:600,color:COL.muted}); });
+    // ---- running tallies (this cycle)
+    const bx=px, bwid=pw, by=h*0.82, M=Q1f*1.05;
+    hbar(ctx,bx,by,bwid*0.31,14,st.Q1,M,COL.red,'Q₁ in',fmt(st.Q1,0)+' J');
+    hbar(ctx,bx+bwid*0.345,by,bwid*0.31,14,st.Q2,M,COL.blue,'Q₂ out',fmt(st.Q2,0)+' J');
+    hbar(ctx,bx+bwid*0.69,by,bwid*0.31,14,st.W,M,COL.green,'W so far',fmt(st.W,0)+' J');
+    textAt(ctx,'η = 1 − T₂/T₁ = 1 − '+fmt(P.T2,0)+'/'+fmt(P.T1,0)+' = '+fmt((1-P.T2/P.T1)*100,1)+' %',bx+bwid/2,h*0.94,{size:14,weight:700,align:'center'});
+    $('#r1').textContent=fmt(Q1f,0)+' J'; $('#r2').textContent=fmt(Q2f,0)+' J'; $('#r3').textContent=fmt(Wc,0)+' J'; $('#r4').textContent=fmt(Wc/Q1f*100,1)+' %';
+  });
+  return wrap;
+}
+
+
+/* ---------------------------------------------------------------------
+   ACTIVITIES + ROUTER
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'11.1',  title:"Rumford's Drill",     desc:'Turn the drill · water heats up',               build:'buildA1' },
+  { num:'11.2',  title:'Thermal Equilibrium', desc:'Open the walls · temperatures meet',            build:'buildA2' },
+  { num:'11.3',  title:'Heat and Work',       desc:'Two ways to warm a gas',                        build:'buildA3' },
+  { num:'11.4',  title:'First Law · Cv, Cp',  desc:'Same heat · locked vs free piston',             build:'buildA4' },
+  { num:'11.5',  title:'Water to Steam',      desc:'Where does 2256 J go?',                         build:'buildA5' },
+  { num:'11.6',  title:'Path Dependence',     desc:'Same two states · different paths',             build:'buildA6' },
+  { num:'11.7',  title:'Slow vs Sudden',      desc:'Sand grains · lifted weight · free expansion',  build:'buildA7' },
+  { num:'11.8',  title:'Gas Processes',       desc:'Isothermal · adiabatic · isobaric · isochoric', build:'buildA8' },
+  { num:'11.9',  title:'Second Law',          desc:'Heat runs downhill · a fridge needs work',      build:'buildA9' },
+  { num:'11.10', title:'Carnot Engine',       desc:'Run the four-step cycle',                       build:'buildA10' },
+].filter(a=>typeof window[a.build]==='function');
+let currentIndex = 0;
+
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(window[a.build]());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+const _q=new URLSearchParams(location.search).get('a'); if(_q){ const i=activities.findIndex(a=>a.num===_q); if(i>=0) currentIndex=i; }
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 12 · Maths Part 1 · Chapter 6 — Application of Derivatives | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease; color:var(--text-1);
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{position:absolute; left:0; top:0; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group.chg{border-left:4px solid var(--f-yellow);}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-group:first-child{margin-top:0;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px; min-width:0;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); line-height:1.4;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:340px; flex:0 0 auto;}
+  .lab-side{min-width:0; overflow:visible;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">📈</div>
+    <div>
+      <div class="chip">Grade 12 · Maths Part 1 · Ch 6</div>
+      <h1>Application of Derivatives</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Rate · Derivative</span>
+      <span><i style="background:var(--f-green)"></i>Increasing · Maximum</span>
+      <span><i style="background:var(--f-red)"></i>Decreasing · Minimum</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">6.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 12 — MATHS PART 1 — CHAPTER 6: APPLICATION OF DERIVATIVES
+   Every activity runs a continuous animation loop. Sliders and buttons only
+   set a TARGET; the drawn object eases / springs toward it every frame and
+   all numbers come from the textbook's own formulas.
+   Worked-example checks (textbook values reproduced by the live readouts):
+     6.1  Ex 3   r=10, dr/dt=4  ->  dA/dt = 2*pi*r*dr/dt = 80*pi  (251.3 cm2/s)
+     6.2  Ex 31  Q=5, h=4       ->  dh/dt = Q/(4*pi)   = 0.398 m/h  (35/88)
+     6.3  Ex 32  H=6, h=2, v=5  ->  ds/dt = v*h/(H-h)  = 2.5 km/h
+     6.4  Ex 11  f'(x)=12(x-3)(x+2): rising on (-inf,-2),(3,inf); falling on (-2,3)
+     6.5  Ex 20  max f(0)=12 ; min f(-2)=-20, f(1)=7
+     6.6  Ex 27  f on [1,5]: abs max 56 at x=5, abs min 24 at x=1
+     6.7  Ex 29  nearest point x=1, distance sqrt(5)
+     6.8  Ex 36  3x8 sheet: x=2/3 -> V = 200/27 m3
+     6.9  Ex 26  best cylinder radius = r/2 , S = pi*r*h/2
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', grid:'#e3eaf3'};
+const PI = Math.PI;
+
+/* ---------------- canvas + drawing helpers ---------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash,offset){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]); if(offset) ctx.lineDashOffset=offset;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  if(Math.hypot(x2-x1,y2-y1)<4) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,8);
+}
+function dim(ctx,x1,y1,x2,y2,color){
+  if(Math.hypot(x2-x1,y2-y1)<10) return;
+  line(ctx,x1,y1,x2,y2,color,1.6);
+  const a=Math.atan2(y2-y1,x2-x1); arrowHead(ctx,x2,y2,a,color,6); arrowHead(ctx,x1,y1,a+PI,color,6);
+}
+function textAt(ctx,txt,x,y,o){
+  o=o||{}; ctx.save();
+  ctx.font=(o.weight||500)+' '+(o.size||12)+'px Poppins, sans-serif';
+  ctx.textAlign=o.align||'left'; ctx.textBaseline=o.baseline||'alphabetic';
+  if(o.halo!==false){ ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,0.92)'; ctx.strokeText(txt,x,y); }
+  ctx.fillStyle=o.color||COL.ink; ctx.fillText(txt,x,y); ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw){
+  ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,PI*2);
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore();
+}
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function poly(ctx,pts,fill,stroke,lw){
+  ctx.save(); ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.lineJoin='round'; ctx.stroke();} ctx.restore();
+}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString().replace('-','−'); }
+function smooth01(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
+
+/* ---------------- animation engine ---------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000)); last = now;
+    tick(dt); raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf); activeStops.push(stop); return stop;
+}
+function stage(cv,draw){ return animLoop(dt=>{ const f=fitCanvas(cv); f.ctx.clearRect(0,0,f.w,f.h); draw(f.ctx,f.w,f.h,dt); }); }
+/** exponential ease — frame-rate independent */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** spring-damper — natural overshoot and settle. state={x,v} */
+function springTo(s,target,k,damp,dt){
+  const n=Math.max(1,Math.ceil(dt/0.008)), h=dt/n;
+  for(let i=0;i<n;i++){ s.v += ((target-s.x)*k - s.v*damp)*h; s.x += s.v*h; }
+  return s.x;
+}
+
+/* ---------------- layout helpers ---------------- */
+function split(w,h,f,pad){
+  pad=pad===undefined?12:pad; f=f||0.62;
+  if(w>=h*1.2) return [{x:pad,y:pad,w:w*f-pad*1.5,h:h-2*pad},{x:w*f+pad*0.5,y:pad,w:w*(1-f)-pad*1.5,h:h-2*pad}];
+  return [{x:pad,y:pad,w:w-2*pad,h:h*f-pad*1.5},{x:pad,y:h*f+pad*0.5,w:w-2*pad,h:h*(1-f)-pad*1.5}];
+}
+function halves(R,f,gap){
+  f=f||0.5; gap=gap===undefined?10:gap;
+  if(R.w>=R.h*1.5) return [{x:R.x,y:R.y,w:R.w*f-gap/2,h:R.h},{x:R.x+R.w*f+gap/2,y:R.y,w:R.w*(1-f)-gap/2,h:R.h}];
+  return [{x:R.x,y:R.y,w:R.w,h:R.h*f-gap/2},{x:R.x,y:R.y+R.h*f+gap/2,w:R.w,h:R.h*(1-f)-gap/2}];
+}
+
+/* ---------------- graph helpers ---------------- */
+function mkPlot(b,x0,x1,y0,y1){ return {x:b.x,y:b.y,w:b.w,h:b.h,x0,x1,y0,y1,
+  X:v=>b.x+(v-x0)/(x1-x0)*b.w, Y:v=>b.y+b.h-(v-y0)/(y1-y0)*b.h,
+  sx:b.w/(x1-x0), sy:b.h/(y1-y0)}; }
+function axes(ctx,P,o){
+  o=o||{}; ctx.save();
+  rrect(ctx,P.x,P.y,P.w,P.h,8); ctx.fillStyle='#fafcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke();
+  ctx.beginPath(); ctx.rect(P.x,P.y,P.w,P.h); ctx.clip();
+  (o.xt||[]).forEach(v=>{ line(ctx,P.X(v),P.y,P.X(v),P.y+P.h,COL.grid,1); });
+  (o.yt||[]).forEach(v=>{ line(ctx,P.x,P.Y(v),P.x+P.w,P.Y(v),COL.grid,1); });
+  if(P.y0<0&&P.y1>0) line(ctx,P.x,P.Y(0),P.x+P.w,P.Y(0),COL.ink,1.5);
+  if(P.x0<0&&P.x1>0) line(ctx,P.X(0),P.y,P.X(0),P.y+P.h,COL.ink,1.5);
+  (o.xt||[]).forEach(v=>{ textAt(ctx,fmt(v,o.xd||0),P.X(v),P.y+P.h-4,{size:10,color:COL.mid,align:'center',halo:false}); });
+  (o.yt||[]).forEach(v=>{ textAt(ctx,fmt(v,o.yd||0),P.x+5,P.Y(v)-3,{size:10,color:COL.mid,halo:false}); });
+  ctx.restore();
+  if(o.yl) textAt(ctx,o.yl,P.x+10,P.y+17,{size:12,weight:700,color:COL.muted});
+  if(o.xl) textAt(ctx,o.xl,P.x+P.w-8,P.y+P.h-16,{size:12,weight:700,color:COL.muted,align:'right'});
+}
+function clipBox(ctx,P){ ctx.save(); ctx.beginPath(); ctx.rect(P.x,P.y,P.w,P.h); ctx.clip(); }
+function curve(ctx,P,f,col,lw,a,b){
+  a=a===undefined?P.x0:a; b=b===undefined?P.x1:b; const n=Math.max(40,Math.round(P.w/3));
+  clipBox(ctx,P); ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=lw||3; ctx.lineJoin='round'; ctx.lineCap='round';
+  for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, X=P.X(x), Y=P.Y(f(x)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+  ctx.stroke(); ctx.restore();
+}
+/** curve coloured green where df>0, red where df<0 */
+function curveSigned(ctx,P,f,df,lw){
+  const n=Math.max(80,Math.round(P.w/2)); clipBox(ctx,P); ctx.lineWidth=lw||3.4; ctx.lineCap='round';
+  for(let i=0;i<n;i++){
+    const x0=P.x0+(P.x1-P.x0)*i/n, x1=P.x0+(P.x1-P.x0)*(i+1)/n, m=df((x0+x1)/2);
+    ctx.strokeStyle=m>=0?COL.green:COL.red; ctx.beginPath(); ctx.moveTo(P.X(x0),P.Y(f(x0))); ctx.lineTo(P.X(x1),P.Y(f(x1))); ctx.stroke();
+  }
+  ctx.restore();
+}
+/** tint between a curve and its zero line: green above, red below */
+function tintSign(ctx,P,f){
+  const n=Math.max(80,Math.round(P.w/2)); clipBox(ctx,P); const y0=P.Y(0);
+  for(let i=0;i<n;i++){
+    const xa=P.x0+(P.x1-P.x0)*i/n, xb=P.x0+(P.x1-P.x0)*(i+1)/n, m=f((xa+xb)/2);
+    ctx.fillStyle=m>=0?'rgba(31,157,85,0.13)':'rgba(217,67,43,0.13)';
+    ctx.beginPath(); ctx.moveTo(P.X(xa),y0); ctx.lineTo(P.X(xa),P.Y(f(xa))); ctx.lineTo(P.X(xb),P.Y(f(xb))); ctx.lineTo(P.X(xb),y0); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+function tangent(ctx,P,x,f,df,half,col,lw){
+  const px=P.X(x), py=P.Y(f(x)), s=df(x)*P.sy/P.sx, L=Math.hypot(1,s), dx=1/L*half, dy=-s/L*half;
+  clipBox(ctx,P); line(ctx,px-dx,py-dy,px+dx,py+dy,col,lw||3); ctx.restore();
+}
+function band(ctx,P,a,b,col){ clipBox(ctx,P); ctx.fillStyle=col; ctx.fillRect(P.X(a),P.y,P.X(b)-P.X(a),P.h); ctx.restore(); }
+
+/* ---------------- control builders ---------------- */
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function ctlSlider(p,o){
+  const g=el('div','control-group chg');
+  g.innerHTML='<label><span>'+o.label+'</span><span class="val"></span></label><input type="range" min="'+o.min+'" max="'+o.max+'" step="'+o.step+'" value="'+o.value+'">';
+  const inp=g.querySelector('input'), val=g.querySelector('.val');
+  const show=()=>{ val.textContent=fmt(+inp.value,o.dec===undefined?2:o.dec)+(o.unit||''); };
+  inp.addEventListener('input',()=>{ show(); if(o.on) o.on(+inp.value); });
+  show(); p.append(g);
+  return {el:g, get:()=>+inp.value, set:v=>{ inp.value=v; show(); }};
+}
+function ctlSeg(p,label,opts,cb,init){
+  const g=el('div','control-group');
+  if(label) g.append(el('label','',label));
+  const row=el('div','toggle-group'); g.append(row);
+  const btns=opts.map((o,i)=>{ const b=el('button','toggle-btn'+(i===(init||0)?' active':''),o[0]); b.onclick=()=>{ set(i); cb(o[1],i); }; row.append(b); return b; });
+  function set(i){ btns.forEach((b,j)=>b.classList.toggle('active',i===j)); }
+  p.append(g); return {set};
+}
+function ctlBtns(p,defs){
+  const g=el('div','control-group'); const row=el('div','toggle-group'); g.append(row);
+  const out=defs.map(d=>{ const b=el('button','toggle-btn '+(d[1]||'navy'),d[0]); b.onclick=()=>d[2](b); row.append(b); return b; });
+  p.append(g); return out;
+}
+function ctlCards(p,defs){
+  const wrap=el('div','result-cards'), els={}, cache={};
+  defs.forEach(d=>{ const c=el('div','rcard'+(d[3]?' wide':'')); c.innerHTML='<div class="rlabel">'+d[1]+'</div><div class="rval" style="color:'+(d[2]||'inherit')+'"></div>'; els[d[0]]=c.querySelector('.rval'); wrap.append(c); });
+  p.append(wrap);
+  return (k,v,col)=>{ if(cache[k]!==v){ els[k].innerHTML=v; cache[k]=v; } if(col) els[k].style.color=col; };
+}
+function hint(p,txt){ p.append(el('div','hint',txt)); }
+
+/* ---------------- activity registry ---------------- */
+const ACTS=[];
+function act(num,title,desc,init){ ACTS.push({num,title,desc,init}); }
+
+/* =========================================================================
+   6.1  RIPPLE ON A LAKE  (Example 3 — dA/dt = 2πr · dr/dt)
+   ========================================================================= */
+act('6.1','Ripple on a Lake','Area grows faster as the ring widens',(cv,side)=>{
+  const R={x:0,v:0}; let mode='auto', rt=10, pause=0, t=0, drop=0;
+  const sv=ctlSlider(side,{label:'Wave speed  dr/dt',min:1,max:8,step:0.5,value:4,unit:' cm/s',dec:1});
+  const sr=ctlSlider(side,{label:'Radius  r',min:0.5,max:20,step:0.5,value:10,unit:' cm',dec:1,on:v=>{ mode='hold'; rt=v; seg.set(1); }});
+  const seg=ctlSeg(side,'Ripple',[['Auto-expand','auto'],['Hold r','hold']],m=>{ mode=m; if(m==='hold') rt=sr.get(); else { R.x=0; R.v=0; drop=0; } },0);
+  ctlBtns(side,[['💧 Drop stone','navy',()=>{ mode='auto'; seg.set(0); R.x=0; R.v=0; pause=0; drop=0; }]]);
+  const card=ctlCards(side,[['r','Radius r','var(--f-yellow)'],['v','dr/dt','var(--f-yellow)'],['A','Area A = πr²','var(--f-green)'],['dAr','dA/dr = 2πr','var(--f-blue)'],['dAt','dA/dt = 2πr · dr/dt','var(--f-blue)',1]]);
+  hint(side,'Try r = 10 cm, dr/dt = 4 cm/s → 80π ≈ 251.3 cm²/s');
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; drop+=dt; const v=sv.get();
+    if(mode==='auto'){
+      if(R.x>=20){ pause+=dt; R.v=0; if(pause>0.9){ R.x=0; pause=0; drop=0; } }
+      else { R.x+=v*dt; R.v=v; }
+    } else springTo(R,rt,38,9,dt);
+    const r=clamp(R.x,0,22);
+    const [A,B]=split(w,h,0.58);
+    // pond
+    const cx=A.x+A.w/2, cy=A.y+A.h/2, big=Math.min(A.w,A.h)/2*0.95, k=big/24;
+    circ(ctx,cx,cy,24*k,COL.mid,'#f4f9fe',2.5);
+    for(let i=1;i<=4;i++){ const rr=r-i*2.4; if(rr>0.3) circ(ctx,cx,cy,rr*k,COL.blue,null,1.6-i*0.25); ctx.globalAlpha=1; }
+    // band gained in the next second
+    ctx.save(); const ro=Math.min(r+v,24);
+    ctx.beginPath(); ctx.arc(cx,cy,ro*k,0,PI*2); ctx.arc(cx,cy,r*k,0,PI*2,true); ctx.fillStyle='rgba(217,160,23,0.30)'; ctx.fill('evenodd'); ctx.restore();
+    circ(ctx,cx,cy,ro*k,COL.yellow,null,1.8);
+    // enclosed area (green)
+    circ(ctx,cx,cy,r*k,null,'rgba(31,157,85,0.14)',0);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,Math.max(0.1,r*k),0,PI*2); ctx.clip();
+    for(let i=-40;i<40;i++) line(ctx,cx+i*9-r*k,cy-r*k,cx+i*9+r*k,cy+r*k,'rgba(31,157,85,0.28)',1);
+    ctx.restore();
+    circ(ctx,cx,cy,r*k,COL.blue,null,3.4);
+    // outward velocity arrows
+    for(let i=0;i<4;i++){ const a=i*PI/2+PI/4; vec(ctx,cx+Math.cos(a)*r*k,cy+Math.sin(a)*r*k,cx+Math.cos(a)*(r*k+v*5.5),cy+Math.sin(a)*(r*k+v*5.5),COL.blue,2.4); }
+    // stone + splash
+    if(drop<0.5){ const sp=drop/0.5; circ(ctx,cx,cy,(1-sp)*7+1,COL.ink,'#fff',2);
+      for(let i=0;i<8;i++){ const a=i*PI/4; line(ctx,cx+Math.cos(a)*sp*26,cy+Math.sin(a)*sp*26-sp*10*(1-sp),cx+Math.cos(a)*(sp*26+6),cy+Math.sin(a)*(sp*26+6)-sp*10*(1-sp),COL.blue,2); } }
+    // radius arrow
+    vec(ctx,cx,cy,cx-r*k*0.0+r*k*Math.cos(-0.5),cy+r*k*Math.sin(-0.5),COL.yellow,3);
+    textAt(ctx,'r',cx+r*k*0.5*Math.cos(-0.5)-4,cy+r*k*0.5*Math.sin(-0.5)-8,{size:14,weight:700,color:COL.yellow});
+    textAt(ctx,'new area in 1 s',cx,cy+24*k+16,{size:11,weight:600,color:COL.yellow,align:'center'});
+    // A(r) graph
+    const P=mkPlot({x:B.x,y:B.y+B.h*0.06,w:B.w,h:B.h*0.88},0,22,0,1450);
+    axes(ctx,P,{xt:[0,5,10,15,20],yt:[400,800,1200],yl:'A (cm²)',xl:'r (cm)'});
+    const f=x=>PI*x*x, df=x=>2*PI*x;
+    curve(ctx,P,f,COL.green,3.4,0,21);
+    tangent(ctx,P,r,f,df,Math.min(P.w,P.h)*0.34,COL.blue,3);
+    line(ctx,P.X(r),P.Y(f(r)),P.X(r),P.y+P.h,COL.yellow,1.6,[5,4]);
+    circ(ctx,P.X(r),P.Y(f(r)),6,COL.green,'#fff',3);
+    const lr=P.X(r)>P.x+P.w*0.55;
+    textAt(ctx,'slope = 2πr',P.X(r)+(lr?-12:10),P.Y(f(r))+(lr?-4:22),{size:11,weight:700,color:COL.blue,align:lr?'right':'left'});
+    card('r',fmt(r,1)+' cm'); card('v',fmt(v,1)+' cm/s'); card('A',fmt(f(r),1)+' cm²');
+    card('dAr',fmt(df(r),1)+' cm'); card('dAt',fmt(df(r)*v,1)+' cm²/s');
+  });
+});
+
+/* =========================================================================
+   6.2  FILLING A CONE TANK  (Example 31 — dh/dt = 4 dV/dt / (π h²))
+   ========================================================================= */
+act('6.2','Filling a Cone Tank','Same inflow, slower rise as it widens',(cv,side)=>{
+  let V=0, run=true, drain=false, full=0, t=0, ripples=[], spawn=0, ymax=1.6;
+  const sq=ctlSlider(side,{label:'Inflow  dV/dt',min:1,max:10,step:0.5,value:5,unit:' m³/h',dec:1});
+  ctlBtns(side,[['⏯ Fill / Pause','play',()=>{ run=!run; }],['↺ Empty','navy',()=>{ drain=true; }]]);
+  const card=ctlCards(side,[['h','Depth h','var(--f-blue)'],['V','Volume V','var(--f-green)'],['dh','dh/dt now','var(--f-blue)'],['d4','dh/dt at h = 4 m','var(--f-red)']]);
+  hint(side,'r = h/2 · V = πh³/12 · dh/dt = 4·(dV/dt) / (πh²)');
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; const Q=sq.get(), Vmax=PI*512/12;
+    let H=Math.cbrt(12*V/PI);
+    if(drain){ V=approach(V,0,2.6,dt); if(V<0.05){ V=0; drain=false; } }
+    else if(run && H<8){ V=Math.min(Vmax,V+Q*1.5*dt); }
+    if(H>=7.99 && !drain){ full+=dt; if(full>1.3){ drain=true; full=0; } } else if(H<7.9) full=0;
+    H=Math.cbrt(12*V/PI);
+    const flowing = run && !drain && H<8;
+    const [A,B]=split(w,h,0.58);
+    const s=Math.max(8,Math.min((A.h-110)/8,(A.w-120)/9.6)), cx=A.x+(A.w-120)/9.6*0+4.8*s+34, yb=A.y+A.h-26, ytop=yb-8*s;
+    // tank
+    const rimRx=4*s, rimRy=0.13*rimRx;
+    ctx.save(); ctx.lineJoin='round';
+    // water
+    if(H>0.02){
+      const wr=H/2*s, wy=yb-H*s;
+      ctx.beginPath(); ctx.moveTo(cx,yb); ctx.lineTo(cx-wr,wy); ctx.ellipse(cx,wy,wr,wr*0.13,0,PI,0,true); ctx.lineTo(cx,yb); ctx.closePath();
+      ctx.fillStyle='rgba(47,143,224,0.22)'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx,wy,wr,wr*0.13,0,0,PI*2); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.stroke();
+      if(flowing){ spawn+=dt; if(spawn>0.32){ spawn=0; ripples.push(0); } }
+      ripples=ripples.map(a=>a+dt).filter(a=>a<1.1);
+      ripples.forEach(a=>{ ctx.globalAlpha=1-a/1.1; ctx.beginPath(); ctx.ellipse(cx,wy,wr*0.9*a/1.1+2,(wr*0.9*a/1.1+2)*0.13,0,0,PI*2); ctx.strokeStyle=COL.blue; ctx.lineWidth=1.5; ctx.stroke(); }); ctx.globalAlpha=1;
+      // surface radius r
+      vec(ctx,cx,wy-6,cx+wr,wy-6,COL.green,2.6);
+      textAt(ctx,'r = h/2',cx+wr/2,wy-14,{size:11,weight:700,color:COL.green,align:'center'});
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(cx,ytop,rimRx,rimRy,0,0,PI*2); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.stroke();
+    line(ctx,cx-rimRx,ytop,cx,yb,COL.ink,3); line(ctx,cx+rimRx,ytop,cx,yb,COL.ink,3);
+    for(let i=1;i<8;i++){ const yy=yb-i*s, xx=i/2*s; line(ctx,cx+xx,yy,cx+xx+7,yy,COL.mid,1.4); }
+    // pipe + stream
+    const ny=A.y+26;
+    line(ctx,cx-70,ny-8,cx,ny-8,COL.ink,8); line(ctx,cx,ny-8,cx,ny+4,COL.ink,8); line(ctx,cx-70,ny-8,cx,ny-8,'#fff',4.5);
+    if(flowing){
+      const ye=H>0.02?yb-H*s:yb;
+      line(ctx,cx,ny+6,cx,ye,COL.blue,2+Q*0.45,[9,7],-t*160);
+      line(ctx,cx,ny+6,cx,ye,'rgba(47,143,224,0.35)',2+Q*0.45);
+    }
+    textAt(ctx,'Q = '+fmt(Q,1)+' m³/h',cx-76,ny-16,{size:11,weight:700,color:COL.yellow,align:'right'});
+    // 4 m marker
+    const y4=yb-4*s;
+    line(ctx,cx-2.6*s,y4,cx-4.6*s,y4,COL.red,1.8,[6,5]); textAt(ctx,'4 m',cx-4.7*s,y4+4,{size:11,weight:700,color:COL.red,align:'right'});
+    // depth dimension
+    if(H>0.05){ const dx=cx+4.9*s; line(ctx,cx+H/2*s+4,yb-H*s,dx,yb-H*s,COL.blue,1.2,[3,4]); dim(ctx,dx,yb,dx,yb-H*s,COL.blue); textAt(ctx,'h = '+fmt(H,2)+' m',dx+8,yb-H*s/2+4,{size:12,weight:700,color:COL.blue}); }
+    // dh/dt plot
+    const ymaxT=Math.max(1,4*Q/(PI*4)*1.15); ymax=approach(ymax,ymaxT,5,dt);
+    const P=mkPlot({x:B.x,y:B.y+B.h*0.06,w:B.w,h:B.h*0.88},2,8,0,ymax);
+    axes(ctx,P,{xt:[2,3,4,5,6,7,8],yt:[0.5,1,1.5,2,2.5,3,3.5].filter(v=>v<ymax),yd:1,yl:'dh/dt (m/h)',xl:'h (m)'});
+    const g=x=>4*Q/(PI*x*x);
+    curve(ctx,P,g,COL.blue,3.4);
+    line(ctx,P.X(4),P.y,P.X(4),P.y+P.h,COL.red,1.6,[5,4]);
+    circ(ctx,P.X(4),P.Y(g(4)),5,COL.red,'#fff',2.6);
+    if(H>=2){ circ(ctx,P.X(H),P.Y(g(H)),7,COL.blue,'#fff',3.2); }
+    card('h',fmt(H,2)+' m'); card('V',fmt(V,1)+' m³');
+    card('dh',H>0.3?fmt(4*Q/(PI*H*H),3)+' m/h':'—'); card('d4',fmt(Q/(4*PI),3)+' m/h');
+  });
+});
+
+/* =========================================================================
+   6.3  SHADOW OF A WALKING MAN  (Example 32 — ds/dt = v·h/(H−h))
+   ========================================================================= */
+act('6.3','Lamp Post Shadow','The shadow tip outruns the walker',(cv,side)=>{
+  let l=3, dir=1, go=true, t=0, ph=0, Hc=6, hc=2;
+  const sv=ctlSlider(side,{label:'Walking speed  v',min:1,max:10,step:0.5,value:5,unit:' km/h',dec:1});
+  const sH=ctlSlider(side,{label:'Lamp height  H',min:4,max:10,step:0.5,value:6,unit:' m',dec:1});
+  const sh=ctlSlider(side,{label:'Man height  h',min:1.2,max:2.4,step:0.1,value:2,unit:' m',dec:1});
+  ctlBtns(side,[['⏯ Walk / Stop','play',()=>{ go=!go; }],['⇄ Reverse','navy',()=>{ dir=-dir; }]]);
+  const card=ctlCards(side,[['l','Distance l'],['s','Shadow s','var(--f-red)'],['ds','ds/dt (shadow grows)','var(--f-blue)',1],['tip','Tip speed','var(--f-red)'],['v','Man speed','var(--f-yellow)']]);
+  hint(side,'Similar triangles: s = l·h/(H−h). H=6, h=2, v=5 → ds/dt = 2.5 km/h');
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; const v=sv.get(); Hc=approach(Hc,sH.get(),8,dt); hc=approach(hc,sh.get(),8,dt);
+    const fac=hc/(Hc-hc), tipF=Hc/(Hc-hc), lmax=Math.min(18,25/tipF);
+    if(go){ const dl=dir*v/3.6*3*dt; l+=dl; ph+=Math.abs(dl)*2.6; if(l>lmax){ l=lmax; dir=-1; } if(l<1.5){ l=1.5; dir=1; } }
+    const s_=l*fac, W=30, sc=Math.min(w*0.95/W, (h*0.72)/10.8);
+    const ox=w*0.025, yg=h*0.8, X=m=>ox+m*sc, xp=X(2), xm=X(2+l), xt=X(2+l*tipF);
+    // ground + ruler
+    line(ctx,0,yg,w,yg,COL.ink,2.6);
+    for(let m=0;m<=W;m+=2){ line(ctx,X(m),yg,X(m),yg+(m%4?5:9),COL.mid,1.4); if(m%4===0) textAt(ctx,m+'',X(m),yg+22,{size:10,color:COL.mid,align:'center',halo:false}); }
+    textAt(ctx,'metres',w-ox,yg+22,{size:10,color:COL.mid,align:'right',halo:false});
+    // lamp post
+    const yt=yg-Hc*sc;
+    line(ctx,xp,yg,xp,yt,COL.ink,5); line(ctx,xp-14,yg,xp+14,yg,COL.ink,5);
+    const fl=0.85+0.15*Math.sin(t*23);
+    for(let i=0;i<10;i++){ const a=i*PI/5+t*0.5; line(ctx,xp+Math.cos(a)*14,yt+Math.sin(a)*14,xp+Math.cos(a)*(20+6*fl),yt+Math.sin(a)*(20+6*fl),COL.yellow,2); }
+    circ(ctx,xp,yt,10,COL.yellow,'#fff6d6',3);
+    textAt(ctx,'H = '+fmt(Hc,1)+' m',xp-14,yt+4,{size:11,weight:700,color:COL.yellow,align:'right'});
+    // light ray through head to ground
+    const hy=yg-hc*sc;
+    line(ctx,xp,yt,xt,yg,COL.yellow,2,[7,6],-t*50);
+    // shadow
+    line(ctx,xm,yg+1,xt,yg+1,COL.red,6);
+    circ(ctx,xt,yg,6,COL.red,'#fff',3);
+    // man (stick figure)
+    const sw=Math.sin(ph)*0.5, hp=hc*sc;
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3.2; ctx.lineCap='round';
+    const hipY=yg-hp*0.48, shY=yg-hp*0.82, headR=hp*0.1;
+    ctx.beginPath(); ctx.moveTo(xm,hipY); ctx.lineTo(xm,shY); ctx.stroke();
+    for(const sgn of [1,-1]){
+      ctx.beginPath(); ctx.moveTo(xm,hipY); ctx.lineTo(xm+Math.sin(sw*sgn)*hp*0.3,hipY+Math.cos(sw*sgn)*hp*0.48*0.98); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xm,shY+hp*0.03); ctx.lineTo(xm-Math.sin(sw*sgn)*hp*0.22,shY+hp*0.03+Math.cos(sw*sgn)*hp*0.25); ctx.stroke();
+    }
+    ctx.restore();
+    circ(ctx,xm,yg-hp+headR,headR,COL.ink,'#fff',3);
+    // height dimension
+    dim(ctx,xm+hp*0.3,yg,xm+hp*0.3,yg-hp,COL.green); textAt(ctx,'h',xm+hp*0.3+6,yg-hp/2,{size:12,weight:700,color:COL.green});
+    // distance dimensions under the ground
+    const yd=yg+40;
+    dim(ctx,xp,yd,xm,yd,COL.blue); textAt(ctx,'l = '+fmt(l,1)+' m',(xp+xm)/2,yd+16,{size:12,weight:700,color:COL.blue,align:'center'});
+    dim(ctx,xm,yd,xt,yd,COL.red); textAt(ctx,'s = '+fmt(s_,1)+' m',(xm+xt)/2,yd+16,{size:12,weight:700,color:COL.red,align:'center'});
+    // speed arrows
+    const sg=go?dir:0, a1=sg*v*5.5, a2=sg*v*tipF*5.5, a3=sg*v*fac*5.5;
+    vec(ctx,xm,hy-26,xm+a1,hy-26,COL.yellow,3.4); textAt(ctx,'v',xm,hy-34,{size:12,weight:700,color:COL.yellow,align:'center'});
+    vec(ctx,xt,yg-50,xt+a2,yg-50,COL.red,3.4); textAt(ctx,'tip',xt,yg-58,{size:12,weight:700,color:COL.red,align:'center'});
+    vec(ctx,xt,yg-26,xt+a3,yg-26,COL.blue,3.4); textAt(ctx,'ds/dt',xt,yg-34,{size:12,weight:700,color:COL.blue,align:'center'});
+    card('l',fmt(l,1)+' m'); card('s',fmt(s_,2)+' m');
+    card('ds',fmt(sg*v*fac,2)+' km/h'); card('tip',fmt(sg*v*tipF,2)+' km/h'); card('v',fmt(sg*v,1)+' km/h');
+  });
+});
+
+/* =========================================================================
+   Shared curve scene: ball rolling on y = f(x), tangent + derivative graph
+   ========================================================================= */
+const F4 = {f:x=>4*x**3-6*x**2-72*x+30, d:x=>12*x*x-12*x-72};
+act('6.4','Increasing & Decreasing','Slope sign tells rise or fall',(cv,side)=>{
+  const S={x:0.5,v:0}; let tgt=0.5, roll=false, t=0;
+  const sx=ctlSlider(side,{label:'Position  x',min:-4.8,max:5.8,step:0.05,value:0.5,dec:2,on:v=>{ tgt=v; roll=false; rb.classList.remove('active'); }});
+  const [rb]=ctlBtns(side,[['〰 Roll along curve','play',b=>{ roll=!roll; b.classList.toggle('active',roll); }]]);
+  rb.classList.remove('play');
+  ctlSeg(side,'Jump to interval',[['(−∞,−2)',-3.6],['(−2,3)',0.5],['(3,∞)',4.6]],val=>{ tgt=val; roll=false; rb.classList.remove('active'); sx.set(val); },1);
+  const card=ctlCards(side,[['x','x','var(--f-yellow)'],['f','f(x)','var(--f-green)'],['d',"f ′(x)",'var(--f-blue)'],['verdict','Verdict','',1]]);
+  hint(side,"f(x) = 4x³ − 6x² − 72x + 30 · f ′(x) = 12(x − 3)(x + 2)");
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; if(roll){ tgt=0.5+5.0*Math.sin(t*0.55); sx.set(clamp(tgt,-4.8,5.8)); }
+    const x=springTo(S,clamp(tgt,-4.8,5.8),22,8.5,dt);
+    const f=F4.f, d=F4.d, gap=26, padL=10, tot=h-24-gap, h1=tot*0.6, h2=tot*0.4;
+    const P1=mkPlot({x:padL,y:12,w:w-2*padL,h:h1},-5,6,-300,300);
+    const P2=mkPlot({x:padL,y:12+h1+gap,w:w-2*padL,h:h2},-5,6,-110,310);
+    band(ctx,P1,-5,-2,'rgba(31,157,85,0.06)'); band(ctx,P1,-2,3,'rgba(217,67,43,0.06)'); band(ctx,P1,3,6,'rgba(31,157,85,0.06)');
+    axes(ctx,P1,{xt:[-4,-3,-2,-1,0,1,2,3,4,5],yt:[-200,-100,100,200],yl:'f(x)'});
+    band(ctx,P2,-5,-2,'rgba(31,157,85,0.06)'); band(ctx,P2,-2,3,'rgba(217,67,43,0.06)'); band(ctx,P2,3,6,'rgba(31,157,85,0.06)');
+    axes(ctx,P2,{xt:[-4,-3,-2,-1,0,1,2,3,4,5],yt:[100,200,300],yl:"f ′(x)",xl:'x'});
+    tintSign(ctx,P2,d);
+    curveSigned(ctx,P1,f,d,3.8);
+    curve(ctx,P2,d,COL.blue,3.4);
+    [-2,3].forEach(c=>{ circ(ctx,P2.X(c),P2.Y(0),5.5,COL.yellow,'#fff',2.6); circ(ctx,P1.X(c),P1.Y(f(c)),5,COL.ink,'#fff',2.2);
+      textAt(ctx,'f ′ = 0',P2.X(c),P2.Y(0)+20,{size:10.5,weight:700,color:COL.muted,align:'center'}); });
+    const slope=d(x), col=Math.abs(slope)<4?COL.yellow:(slope>0?COL.green:COL.red);
+    // tangent + slope triangle
+    tangent(ctx,P1,x,f,d,Math.min(150,P1.w*0.14),col,3.4);
+    const bx=P1.X(x), by=P1.Y(f(x)), dxp=0.55*P1.sx, dyp=-slope*0.55*P1.sy;
+    clipBox(ctx,P1); line(ctx,bx,by,bx+dxp,by,COL.mid,1.8,[4,4]); vec(ctx,bx+dxp,by,bx+dxp,by+dyp,col,2.6); ctx.restore();
+    // ball
+    circ(ctx,bx,by,9,col,'#fff',3.6); circ(ctx,bx,by,3.4,col,col,1);
+    // link to derivative graph
+    line(ctx,bx,by+10,bx,P2.Y(slope)-8,'rgba(129,149,171,0.7)',1.4,[4,4]);
+    circ(ctx,P2.X(x),P2.Y(slope),8,col,'#fff',3.4);
+    card('x',fmt(x,2)); card('f',fmt(f(x),1)); card('d',fmt(slope,1),'var(--f-blue)');
+    card('verdict',Math.abs(slope)<4?'f ′ = 0 → turning point':(slope>0?'f ′ &gt; 0 → INCREASING ↗':'f ′ &lt; 0 → DECREASING ↘'),Math.abs(slope)<4?'var(--f-yellow)':(slope>0?'var(--f-green)':'var(--f-red)'));
+  });
+});
+
+/* =========================================================================
+   6.5  LOCAL MAXIMA & MINIMA  (Example 20 — first & second derivative tests)
+   ========================================================================= */
+const F5 = {f:x=>3*x**4+4*x**3-12*x**2+12, d:x=>12*x**3+12*x**2-24*x, d2:x=>36*x*x+24*x-24, crit:[[-2,'min'],[0,'max'],[1,'min']]};
+act('6.5','Hills & Valleys','Test the turning points',(cv,side)=>{
+  const S={x:-2.7,v:0}; let tgt=-2.7, roll=false, t=0, mode=1, found={}, y2lo=-160, y2hi=110;
+  const sx=ctlSlider(side,{label:'Position  x',min:-3,max:2,step:0.02,value:-2.7,dec:2,on:v=>{ tgt=v; roll=false; rb.classList.remove('active'); }});
+  const [rb]=ctlBtns(side,[['〰 Roll along curve','play',b=>{ roll=!roll; b.classList.toggle('active',roll); }]]); rb.classList.remove('play');
+  const jump=ctlSeg(side,'Snap to critical point',[['x = −2',-2],['x = 0',0],['x = 1',1]],val=>{ tgt=val; roll=false; rb.classList.remove('active'); sx.set(val); },-1);
+  ctlSeg(side,'Test',[['1st derivative','1'],['2nd derivative','2']],m=>{ mode=+m; },0);
+  ctlBtns(side,[['Reset findings','navy',()=>{ found={}; }]]);
+  const card=ctlCards(side,[['x','x','var(--f-yellow)'],['f','f(x)','var(--f-green)'],['d',"f ′(x)",'var(--f-blue)'],['d2',"f ″(x)",'var(--f-blue)'],['verdict','Verdict','',1]]);
+  hint(side,"f(x) = 3x⁴ + 4x³ − 12x² + 12 · f ′ = 12x(x − 1)(x + 2) · f ″ = 36x² + 24x − 24");
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; if(roll){ tgt=-0.5+2.4*Math.sin(t*0.5); sx.set(clamp(tgt,-3,2)); }
+    const x=springTo(S,clamp(tgt,-3,2),22,8.5,dt);
+    const f=F5.f,d=F5.d,d2=F5.d2;
+    const lo=mode===1?-160:-60, hi=mode===1?110:240; y2lo=approach(y2lo,lo,7,dt); y2hi=approach(y2hi,hi,7,dt);
+    const gap=26, padL=10, tot=h-24-gap, h1=tot*0.6, h2=tot*0.4;
+    const P1=mkPlot({x:padL,y:12,w:w-2*padL,h:h1},-3.2,2.2,-32,58);
+    const P2=mkPlot({x:padL,y:12+h1+gap,w:w-2*padL,h:h2},-3.2,2.2,y2lo,y2hi);
+    axes(ctx,P1,{xt:[-3,-2,-1,0,1,2],yt:[-20,0,20,40],yl:'f(x)'});
+    if(mode===1){ // sign bands of f'
+      [[-3.2,-2,-1],[-2,0,1],[0,1,-1],[1,2.2,1]].forEach(([a,b,sg])=>{ const c=sg>0?'rgba(31,157,85,0.08)':'rgba(217,67,43,0.08)'; band(ctx,P1,a,b,c); band(ctx,P2,a,b,c); });
+    }
+    axes(ctx,P2,{xt:[-3,-2,-1,0,1,2],yt:mode===1?[-100,100]:[0,100,200],yl:mode===1?"f ′(x)":"f ″(x)",xl:'x'});
+    if(mode===1){ // redraw bands over axes bg
+      [[-3.2,-2,-1],[-2,0,1],[0,1,-1],[1,2.2,1]].forEach(([a,b,sg])=>{ const c=sg>0?'rgba(31,157,85,0.08)':'rgba(217,67,43,0.08)'; band(ctx,P1,a,b,c); band(ctx,P2,a,b,c); });
+      tintSign(ctx,P2,d); curve(ctx,P2,d,COL.blue,3.4);
+      [-2,0,1].forEach(c=>circ(ctx,P2.X(c),P2.Y(0),5.5,COL.yellow,'#fff',2.6));
+    } else { tintSign(ctx,P2,d2); curve(ctx,P2,d2,COL.blue,3.4);
+      F5.crit.forEach(([c,ty])=>{ const val=d2(c); line(ctx,P2.X(c),P1.Y(f(c)),P2.X(c),P2.Y(val),'rgba(129,149,171,0.55)',1.3,[4,4]);
+        circ(ctx,P2.X(c),P2.Y(val),5.5,val>0?COL.red:COL.green,'#fff',2.8);
+        textAt(ctx,'f ″ = '+fmt(val,0),P2.X(c)+8,P2.Y(val)-8,{size:10.5,weight:700,color:val>0?COL.red:COL.green}); });
+    }
+    curve(ctx,P1,f,COL.ink,3.6);
+    // critical markers
+    F5.crit.forEach(([c,ty])=>{
+      if(Math.abs(x-c)<0.1) found[c]=true;
+      const colr=ty==='max'?COL.green:COL.red, fx=P1.X(c), fy=P1.Y(f(c));
+      if(found[c]){ circ(ctx,fx,fy,10,colr,'rgba(255,255,255,0.9)',3.4); circ(ctx,fx,fy,4,colr,colr,1);
+        textAt(ctx,'local '+ty.toUpperCase()+'  f = '+fmt(f(c),0),fx,ty==='max'?fy-18:fy+26,{size:12,weight:700,color:colr,align:'center'}); }
+      else circ(ctx,fx,fy,5,COL.mid,'#fff',2);
+    });
+    const slope=d(x), near=F5.crit.find(([c])=>Math.abs(x-c)<0.09);
+    const col=near?(near[1]==='max'?COL.green:COL.red):(Math.abs(slope)<1?COL.yellow:(slope>0?COL.green:COL.red));
+    tangent(ctx,P1,x,f,d,Math.min(130,P1.w*0.12),COL.blue,3);
+    if(mode===2){ // local quadratic: curls up where f″>0, down where f″<0
+      clipBox(ctx,P1); ctx.beginPath(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6;
+      for(let i=0;i<=30;i++){ const dx=(i/30-0.5)*0.9, yy=f(x)+d(x)*dx+d2(x)*dx*dx/2; const X=P1.X(x+dx), Y=P1.Y(yy); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+      ctx.stroke(); ctx.restore();
+    }
+    const bx=P1.X(x), by=P1.Y(f(x));
+    circ(ctx,bx,by,9,col,'#fff',3.6); circ(ctx,bx,by,3.4,col,col,1);
+    const yv=mode===1?slope:d2(x);
+    line(ctx,bx,by+10,bx,P2.Y(yv)-8,'rgba(129,149,171,0.7)',1.4,[4,4]);
+    circ(ctx,P2.X(x),P2.Y(yv),8,col,'#fff',3.4);
+    let verdict, vc;
+    if(near){
+      if(mode===1){ verdict='f ′ changes '+(near[1]==='max'?'+ → −':'− → +')+'  ⇒  local '+near[1].toUpperCase(); }
+      else { const v2=d2(near[0]); verdict='f ″ = '+fmt(v2,0)+(v2>0?' &gt; 0':' &lt; 0')+'  ⇒  local '+near[1].toUpperCase(); }
+      vc=near[1]==='max'?'var(--f-green)':'var(--f-red)';
+    } else if(mode===1){ verdict=slope>0?'f ′ &gt; 0 · rising':'f ′ &lt; 0 · falling'; vc=slope>0?'var(--f-green)':'var(--f-red)'; }
+    else { verdict=d2(x)>0?'f ″ &gt; 0 · curves up ∪':'f ″ &lt; 0 · curves down ∩'; vc='var(--f-blue)'; }
+    card('x',fmt(x,2)); card('f',fmt(f(x),1)); card('d',fmt(slope,1)); card('d2',fmt(d2(x),1)); card('verdict',verdict,vc);
+  });
+});
+
+/* =========================================================================
+   6.6  ABSOLUTE MAX & MIN ON [a, b]  (Example 27)
+   ========================================================================= */
+act('6.6','Best & Worst on [a, b]','Scan the interval for extremes',(cv,side)=>{
+  const F=x=>2*x**3-15*x**2+36*x+1, D=x=>6*x*x-30*x+36, crit=[2,3];
+  let a=1, b=5, ta=1, tb=5, scan=0, hold=0, t=0;
+  const restart=()=>{ scan=0; hold=0; };
+  const sa=ctlSlider(side,{label:'Left end  a',min:0,max:3.5,step:0.1,value:1,dec:1,on:v=>{ ta=v; if(tb<ta+0.5){ tb=ta+0.5; sb.set(tb); } restart(); }});
+  const sb=ctlSlider(side,{label:'Right end  b',min:1,max:6,step:0.1,value:5,dec:1,on:v=>{ tb=v; if(ta>tb-0.5){ ta=tb-0.5; sa.set(ta); } restart(); }});
+  ctlBtns(side,[['▶ Scan again','play',restart]]);
+  const card=ctlCards(side,[['max','Absolute max','var(--f-green)'],['min','Absolute min','var(--f-red)'],['cand','Candidates: ends + critical points','',1]]);
+  hint(side,'f(x) = 2x³ − 15x² + 36x + 1 · f ′ = 6(x − 2)(x − 3). Try [1, 5]: max 56, min 24');
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; a=approach(a,ta,10,dt); b=approach(b,tb,10,dt);
+    const dur=4.2; if(scan<1){ scan=Math.min(1,scan+dt/dur); } else { hold+=dt; if(hold>3.2) restart(); }
+    const P=mkPlot({x:12,y:12,w:w-24,h:h-24},0,6.2,-8,118);
+    axes(ctx,P,{xt:[0,1,2,3,4,5,6],yt:[25,50,75,100],yl:'f(x)',xl:'x'});
+    // interval band
+    band(ctx,P,a,b,'rgba(217,160,23,0.14)');
+    clipBox(ctx,P); line(ctx,P.X(a),P.y,P.X(a),P.y+P.h,COL.yellow,2.6); line(ctx,P.X(b),P.y,P.X(b),P.y+P.h,COL.yellow,2.6); ctx.restore();
+    textAt(ctx,'a',P.X(a),P.y+P.h-22,{size:13,weight:700,color:COL.yellow,align:'center'}); textAt(ctx,'b',P.X(b),P.y+P.h-22,{size:13,weight:700,color:COL.yellow,align:'center'});
+    curve(ctx,P,F,'#b9c6d6',3);
+    curve(ctx,P,F,COL.ink,4,a,b);
+    // candidates (exact)
+    const cands=[a,...crit.filter(c=>c>a+1e-6&&c<b-1e-6),b];
+    const vals=cands.map(F);
+    let imax=0, imin=0; vals.forEach((v,i)=>{ if(v>vals[imax]) imax=i; if(v<vals[imin]) imin=i; });
+    // scanner
+    const s=a+(b-a)*smooth01(scan), fs=F(s);
+    let rmax=-1e9, rmin=1e9;
+    [a,...crit.filter(c=>c>a&&c<s),s].forEach(xx=>{ const v=F(xx); rmax=Math.max(rmax,v); rmin=Math.min(rmin,v); });
+    clipBox(ctx,P);
+    line(ctx,P.x,P.Y(rmax),P.x+P.w,P.Y(rmax),COL.green,2,[8,6],-t*30); line(ctx,P.x,P.Y(rmin),P.x+P.w,P.Y(rmin),COL.red,2,[8,6],-t*30);
+    ctx.restore();
+    textAt(ctx,'max so far '+fmt(rmax,1),P.x+P.w-8,P.Y(rmax)-6,{size:11,weight:700,color:COL.green,align:'right'});
+    textAt(ctx,'min so far '+fmt(rmin,1),P.x+P.w-8,P.Y(rmin)+16,{size:11,weight:700,color:COL.red,align:'right'});
+    line(ctx,P.X(s),P.Y(fs),P.X(s),P.y+P.h,COL.yellow,1.6,[4,4]);
+    // candidate dots as scanner passes
+    cands.forEach((c,i)=>{ if(c<=s+1e-6){ const ext=scan>=1; const isMax=ext&&i===imax, isMin=ext&&i===imin;
+      circ(ctx,P.X(c),P.Y(vals[i]),isMax||isMin?10:5.5,isMax?COL.green:isMin?COL.red:COL.ink,'#fff',isMax||isMin?4:2.4);
+      textAt(ctx,fmt(vals[i],0),P.X(c),P.Y(vals[i])+(isMax?-16:20),{size:11,weight:700,color:isMax?COL.green:isMin?COL.red:COL.muted,align:'center'});
+      if(isMax||isMin){ const pr=(t*2)%1; ctx.globalAlpha=1-pr; circ(ctx,P.X(c),P.Y(vals[i]),10+pr*16,isMax?COL.green:COL.red,null,2.2); ctx.globalAlpha=1; } } });
+    circ(ctx,P.X(s),P.Y(fs),8,COL.yellow,'#fff',3.6);
+    card('max',fmt(vals[imax],0)+'  at x = '+fmt(cands[imax],1)); card('min',fmt(vals[imin],0)+'  at x = '+fmt(cands[imin],1));
+    card('cand',cands.map((c,i)=>'<span style="color:'+(i===imax?'var(--f-green)':i===imin?'var(--f-red)':'var(--text-2)')+'">f('+fmt(c,1)+') = '+fmt(vals[i],0)+'</span>').join(' · '));
+  });
+});
+
+/* =========================================================================
+   6.7  NEAREST HELICOPTER  (Example 29 — minimise distance)
+   ========================================================================= */
+act('6.7','Helicopter & Soldier','Closest point is where d is smallest',(cv,side)=>{
+  const S={x:-2,v:0}, aim={x:0,v:0}; let tgt=-2, fly=false, t=0, rot=0;
+  const sx=ctlSlider(side,{label:'Helicopter position  x',min:-2.6,max:3.4,step:0.05,value:-2,dec:2,on:v=>{ tgt=v; fly=false; fb.classList.remove('active'); }});
+  const [fb,nb]=ctlBtns(side,[['✈ Fly along curve','play',b=>{ fly=!fly; b.classList.toggle('active',fly); }],['🎯 Nearest point','navy',()=>{ fly=false; fb.classList.remove('active'); tgt=1; sx.set(1); }]]);
+  fb.classList.remove('play');
+  const card=ctlCards(side,[['x','x','var(--f-yellow)'],['y','y = x² + 7','var(--f-yellow)'],['d','Distance d','var(--f-blue)'],['verdict','Verdict','',1]]);
+  hint(side,'d² = (x − 3)² + x⁴ · (d²)′ = 2(x − 1)(2x² + 2x + 3) = 0 → x = 1, d = √5');
+  const dist=x=>Math.sqrt((x-3)**2+x**4);
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; rot+=dt*38;
+    if(fly){ tgt=0.4+2.9*Math.sin(t*0.5); sx.set(clamp(tgt,-2.6,3.4)); }
+    const x=springTo(S,clamp(tgt,-2.6,3.4),20,8,dt), y=x*x+7, d=dist(x);
+    const [A,B]=split(w,h,0.6);
+    const sc=Math.min(A.w/10.2,A.h/14.2), ox=A.x+A.w/2-0.5*sc, oy=A.y+A.h-0.7*sc; // world (0,5.5) maps to oy
+    const WX=u=>ox+u*sc, WY=v=>oy-(v-5.5)*sc;
+    rrect(ctx,A.x,A.y,A.w,A.h,10); ctx.fillStyle='#fafcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(A.x,A.y,A.w,A.h); ctx.clip();
+    // ground
+    line(ctx,A.x,WY(6.3),A.x+A.w,WY(6.3),COL.mid,2);
+    // flight path
+    ctx.beginPath(); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.6; ctx.setLineDash([9,6]);
+    for(let i=0;i<=80;i++){ const u=-4.4+i*0.12; const X=WX(u),Y=WY(u*u+7); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.stroke(); ctx.setLineDash([]);
+    textAt(ctx,'y = x² + 7',WX(-3.5),WY(21)+0,{size:12,weight:700,color:COL.muted});
+    // distance circle + line
+    const px=WX(3), py=WY(7);
+    ctx.beginPath(); ctx.arc(px,py,d*sc,0,PI*2); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.2; ctx.setLineDash([7,6]); ctx.lineDashOffset=-t*20; ctx.stroke(); ctx.setLineDash([]);
+    const hx=WX(x), hy=WY(y);
+    line(ctx,px,py,hx,hy,COL.red,3);
+    textAt(ctx,'d = '+fmt(d,3),(px+hx)/2+10,(py+hy)/2,{size:12,weight:700,color:COL.red});
+    // nearest marker
+    circ(ctx,WX(1),WY(8),Math.abs(x-1)<0.08?9:5,COL.green,'#fff',3);
+    // soldier
+    const ang=springTo(aim,Math.atan2(py-hy,hx-px),60,11,dt);
+    ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineCap='round';
+    const g0=WY(6.3), sh=sc*0.62;
+    ctx.beginPath(); ctx.moveTo(px,g0); ctx.lineTo(px-4,g0-sh*0.5); ctx.lineTo(px,g0-sh); ctx.moveTo(px,g0); ctx.lineTo(px+7,g0-sh*0.5); ctx.lineTo(px,g0-sh); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px,g0-sh); ctx.lineTo(px,py+2); ctx.stroke();
+    circ(ctx,px,py-8,8,COL.ink,'#fff',3);
+    // rifle
+    ctx.translate(px,py+4); ctx.rotate(-ang); ctx.lineWidth=4.5; ctx.strokeStyle=COL.red;
+    ctx.beginPath(); ctx.moveTo(-6,0); ctx.lineTo(sc*0.8,0); ctx.stroke(); ctx.restore();
+    ctx.restore();
+    // helicopter
+    ctx.save(); ctx.beginPath(); ctx.rect(A.x,A.y,A.w,A.h); ctx.clip();
+    ctx.translate(hx,hy); ctx.rotate(clamp(S.v*0.04,-0.4,0.4)); const u=sc*0.036;
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath(); ctx.ellipse(0,0,24*u,12*u,0,0,PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-22*u,-3*u); ctx.lineTo(-52*u,-9*u); ctx.moveTo(-52*u,-9*u); ctx.lineTo(-50*u,-18*u); ctx.stroke();
+    ctx.beginPath(); ctx.arc(10*u,-2*u,9*u,PI*1.05,PI*1.95); ctx.stroke();
+    line(ctx,0,-12*u,0,-19*u,COL.ink,3);
+    const bl=Math.cos(rot)*44*u; line(ctx,-bl,-19*u,bl,-19*u,COL.blue,3.4); line(ctx,-bl*0.96,-19*u,bl*0.96,-19*u,'rgba(47,143,224,0.25)',9);
+    line(ctx,-14*u,15*u,16*u,15*u,COL.ink,3); line(ctx,-8*u,10*u,-8*u,15*u,COL.ink,2.4); line(ctx,8*u,10*u,8*u,15*u,COL.ink,2.4);
+    ctx.restore();
+    // d(x) graph
+    const P=mkPlot({x:B.x,y:B.y+B.h*0.06,w:B.w,h:B.h*0.88},-3,3.6,0,9.6);
+    axes(ctx,P,{xt:[-2,-1,0,1,2,3],yt:[2,4,6],yl:'d (distance)',xl:'x'});
+    curve(ctx,P,dist,COL.blue,3.6,-3,3.6);
+    line(ctx,P.X(1),P.Y(Math.sqrt(5)),P.X(1),P.y+P.h,COL.green,1.6,[5,4]);
+    circ(ctx,P.X(1),P.Y(Math.sqrt(5)),6,COL.green,'#fff',3);
+    textAt(ctx,'min = √5 ≈ 2.236',P.X(1)+10,P.Y(Math.sqrt(5))-12,{size:11,weight:700,color:COL.green});
+    circ(ctx,P.X(x),P.Y(d),8,COL.red,'#fff',3.4);
+    const at=Math.abs(x-1)<0.06;
+    card('x',fmt(x,2)); card('y',fmt(y,2)); card('d',fmt(d,3)); card('verdict',at?'Nearest! d = √5 ≈ 2.236':(x<1?'Getting closer ↘':'Moving away ↗'),at?'var(--f-green)':'var(--f-red)');
+  });
+});
+
+/* =========================================================================
+   6.8  FOLD THE LARGEST OPEN BOX  (Example 36 — 3 m × 8 m sheet)
+   ========================================================================= */
+act('6.8','Largest Open Box','Cut squares, fold, find the best x',(cv,side)=>{
+  const FT={x:0,v:0}; let fold=1, xc=0.5, t=0;
+  const sx=ctlSlider(side,{label:'Square cut-out  x',min:0.05,max:1.45,step:0.01,value:0.5,unit:' m',dec:2});
+  ctlBtns(side,[['⤴ Fold / Unfold','play',()=>{ fold=fold?0:1; }],['🎯 Best x','navy',()=>{ sx.set(2/3); }]]);
+  const card=ctlCards(side,[['L','Length 8 − 2x','var(--f-blue)'],['B','Breadth 3 − 2x','var(--f-blue)'],['V','Volume V','var(--f-green)'],['dV',"V ′(x)",'var(--f-blue)'],['verdict','Verdict','',1]]);
+  hint(side,"V = x(3 − 2x)(8 − 2x) = 4x³ − 22x² + 24x · V ′ = 4(x − 3)(3x − 2) → x = 2/3, V = 200/27 m³");
+  const Vf=x=>x*(3-2*x)*(8-2*x), dV=x=>12*x*x-44*x+24;
+  stage(cv,(ctx,w,h,dt)=>{
+    t+=dt; xc=approach(xc,sx.get(),12,dt); const x=xc, phi=clamp(springTo(FT,fold,26,6.2,dt),0,1.25);
+    const [A,B]=split(w,h,0.62);
+    const Ln=8-2*x, Bn=3-2*x;
+    // ----- net (top) -----
+    const netH=A.h*0.3, nsc=Math.min(A.w*0.8/8, netH*0.62/3), nx=A.x+A.w/2-4*nsc, ny=A.y+netH*0.5-1.5*nsc+6;
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.07)'; ctx.fillRect(nx,ny,8*nsc,3*nsc); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.4; ctx.strokeRect(nx,ny,8*nsc,3*nsc); ctx.restore();
+    [[0,0],[1,0],[0,1],[1,1]].forEach(([i,j])=>{ const cxq=nx+(i?8*nsc-x*nsc:0), cyq=ny+(j?3*nsc-x*nsc:0);
+      ctx.save(); ctx.fillStyle='rgba(217,67,43,0.16)'; ctx.fillRect(cxq,cyq,x*nsc,x*nsc); ctx.restore();
+      ctx.save(); ctx.strokeStyle=COL.red; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.strokeRect(cxq,cyq,x*nsc,x*nsc); ctx.restore(); });
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=2.4; ctx.strokeRect(nx+x*nsc,ny+x*nsc,Ln*nsc,Bn*nsc); ctx.restore();
+    textAt(ctx,'8 m',nx+4*nsc,ny-6,{size:11,weight:700,color:COL.muted,align:'center'}); textAt(ctx,'3 m',nx-8,ny+1.5*nsc+4,{size:11,weight:700,color:COL.muted,align:'right'});
+    textAt(ctx,'x',nx+x*nsc/2,ny+x*nsc/2+4,{size:11,weight:700,color:COL.red,align:'center',halo:false});
+    // ----- 3D box (bottom) -----
+    const bx0=A.x, by0=A.y+netH+8, bw=A.w, bh=A.h-netH-8;
+    const yaw=0.6, pit=0.62, cyw=Math.cos(yaw), syw=Math.sin(yaw);
+    const sc=Math.min(bw*0.86/(8*cyw+3*syw), bh*0.8/((8*syw+3*cyw)*Math.sin(pit)+1.6*Math.cos(pit)+0.2));
+    const cx=bx0+bw/2, cy=by0+bh*0.62;
+    const pj=(X,Y,Z)=>{ const xr=X*cyw-Y*syw, yr=X*syw+Y*cyw; return {x:cx+xr*sc, y:cy-(Z*Math.cos(pit)+yr*Math.sin(pit))*sc, d:yr}; };
+    const cph=Math.cos(phi), sph=Math.sin(phi);
+    const faces=[];
+    const add=(pts,fill)=>{ const P=pts.map(p=>pj(p[0],p[1],p[2])); faces.push({P,fill,d:P.reduce((a,p)=>a+p.d,0)/4}); };
+    add([[-Ln/2,-Bn/2,0],[Ln/2,-Bn/2,0],[Ln/2,Bn/2,0],[-Ln/2,Bn/2,0]],'rgba(47,143,224,0.20)');
+    add([[Ln/2,-Bn/2,0],[Ln/2,Bn/2,0],[Ln/2+x*cph,Bn/2,x*sph],[Ln/2+x*cph,-Bn/2,x*sph]],'rgba(47,143,224,0.10)');
+    add([[-Ln/2,-Bn/2,0],[-Ln/2,Bn/2,0],[-Ln/2-x*cph,Bn/2,x*sph],[-Ln/2-x*cph,-Bn/2,x*sph]],'rgba(47,143,224,0.10)');
+    add([[-Ln/2,Bn/2,0],[Ln/2,Bn/2,0],[Ln/2,Bn/2+x*cph,x*sph],[-Ln/2,Bn/2+x*cph,x*sph]],'rgba(47,143,224,0.10)');
+    add([[-Ln/2,-Bn/2,0],[Ln/2,-Bn/2,0],[Ln/2,-Bn/2-x*cph,x*sph],[-Ln/2,-Bn/2-x*cph,x*sph]],'rgba(47,143,224,0.10)');
+    faces.sort((a,b)=>b.d-a.d);
+    // removed corner squares slide away and fade
+    const gone=smooth01(phi);
+    [[1,1],[-1,1],[1,-1],[-1,-1]].forEach(([i,j])=>{
+      const o=gone*1.6, c=[[0,0],[1,0],[1,1],[0,1]].map(([u,v])=>pj(i*(Ln/2+u*x)+i*o,j*(Bn/2+v*x)+j*o,0));
+      ctx.save(); ctx.globalAlpha=1-gone; poly(ctx,c.map(p=>[p.x,p.y]),'rgba(217,67,43,0.16)',COL.red,2); ctx.restore(); });
+    faces.forEach(f=>poly(ctx,f.P.map(p=>[p.x,p.y]),f.fill,COL.ink,2.4));
+    // dimension labels (visible once folded)
+    const lab=smooth01(phi*1.1);
+    ctx.save(); ctx.globalAlpha=lab;
+    const a1=pj(-Ln/2,-Bn/2,0), a2=pj(Ln/2,-Bn/2,0);
+    textAt(ctx,'8−2x = '+fmt(Ln,2),(a1.x+a2.x)/2+12,(a1.y+a2.y)/2+30,{size:11.5,weight:700,color:COL.blue,align:'center'});
+    const b1=pj(Ln/2,-Bn/2,0), b2=pj(Ln/2,Bn/2,0);
+    textAt(ctx,'3−2x = '+fmt(Bn,2),(b1.x+b2.x)/2+20,(b1.y+b2.y)/2+4,{size:11.5,weight:700,color:COL.blue,align:'left'});
+    const c1=pj(Ln/2,-Bn/2,0), c2=pj(Ln/2,-Bn/2,x*sph);
+    line(ctx,c1.x-8,c1.y,c2.x-8,c2.y,COL.green,2.6); textAt(ctx,'x = '+fmt(x,2),c1.x-16,(c1.y+c2.y)/2+4,{size:12,weight:700,color:COL.green,align:'right'});
+    ctx.restore();
+    // V(x) graph
+    const P=mkPlot({x:B.x,y:B.y+B.h*0.06,w:B.w,h:B.h*0.88},0,1.5,0,8.6);
+    axes(ctx,P,{xt:[0.5,1,1.5],xd:1,yt:[2,4,6],yl:'V (m³)',xl:'x (m)'});
+    curve(ctx,P,Vf,COL.green,3.6,0,1.5);
+    line(ctx,P.X(2/3),P.Y(200/27),P.X(2/3),P.y+P.h,COL.green,1.6,[5,4]);
+    circ(ctx,P.X(2/3),P.Y(200/27),6,COL.green,'#fff',3);
+    textAt(ctx,'max 200/27 ≈ 7.41',P.X(2/3)+12,P.Y(200/27)-8,{size:11,weight:700,color:COL.green});
+    tangent(ctx,P,x,Vf,dV,Math.min(P.w,P.h)*0.24,COL.blue,3);
+    circ(ctx,P.X(x),P.Y(Vf(x)),7.5,COL.yellow,'#fff',3.4);
+    const at=Math.abs(x-2/3)<0.025;
+    card('L',fmt(Ln,2)+' m'); card('B',fmt(Bn,2)+' m'); card('V',fmt(Vf(x),3)+' m³'); card('dV',fmt(dV(x),2));
+    card('verdict',at?'Maximum! V = 200/27 ≈ 7.407 m³':(dV(x)>0?'V ′ &gt; 0 · volume still rising':'V ′ &lt; 0 · volume falling'),at?'var(--f-green)':(dV(x)>0?'var(--f-green)':'var(--f-red)'));
+  });
+});
+
+/* =========================================================================
+   6.9  CYLINDER INSIDE A CONE  (Example 26 — greatest curved surface area)
+   ========================================================================= */
+act('6.9','Cylinder in a Cone','Biggest curved surface at x = r/2',(cv,side)=>{
+  let r=5, h=10, x=1.5, tx=1.5, sw=0;
+  const sr=ctlSlider(side,{label:'Cone radius  r',min:3,max:6,step:0.1,value:5,unit:' cm',dec:1,on:v=>{ if(tx>v-0.3){ tx=v-0.3; sxr.set(tx); } sxr.el.querySelector('input').max=(v-0.3).toFixed(1); }});
+  const sh=ctlSlider(side,{label:'Cone height  h',min:6,max:12,step:0.5,value:10,unit:' cm',dec:1});
+  const sxr=ctlSlider(side,{label:'Cylinder radius  x',min:0.3,max:4.7,step:0.05,value:1.5,unit:' cm',dec:2,on:v=>{ tx=v; }});
+  ctlBtns(side,[['🎯 Best x = r/2','navy',()=>{ tx=sr.get()/2; sxr.set(tx); }]]);
+  const card=ctlCards(side,[['H','Cylinder height H','var(--f-blue)'],['S','Curved area S','var(--f-green)'],['Sm','Max πrh/2','var(--f-green)'],['xr','x : r','var(--f-yellow)'],['verdict','Verdict','',1]]);
+  hint(side,'H = h(r − x)/r · S = 2πx·H = 2πh(rx − x²)/r · S ′ = 0 → x = r/2');
+  let wc=0, hc=0;
+  stage(cv,(ctx,w,hh,dt)=>{
+    r=approach(r,sr.get(),10,dt); h=approach(h,sh.get(),10,dt); x=approach(x,Math.min(tx,r-0.3),12,dt);
+    const H=h*(r-x)/r, S=2*PI*x*H, Sm=PI*r*h/2;
+    const [A,Rr]=split(w,hh,0.56); const [B,C]=halves(Rr,0.52);
+    // ----- cone scene -----
+    const s=Math.min((A.h-70)/12.4, A.w*0.8/12), e=0.2, cx=A.x+A.w/2+8, yB=A.y+A.h-34-r*s*e;
+    const apexY=yB-h*s;
+    // cone
+    ctx.save(); ctx.lineJoin='round';
+    ctx.beginPath(); ctx.ellipse(cx,yB,r*s,r*s*e,0,0,PI); ctx.strokeStyle=COL.ink; ctx.lineWidth=2.8; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx,yB,r*s,r*s*e,0,PI,PI*2); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.8; ctx.setLineDash([6,5]); ctx.stroke(); ctx.setLineDash([]);
+    line(ctx,cx-r*s,yB,cx,apexY,COL.ink,2.8); line(ctx,cx+r*s,yB,cx,apexY,COL.ink,2.8);
+    // cylinder
+    const yT=yB-H*s, xr=x*s;
+    ctx.beginPath(); ctx.moveTo(cx-xr,yB); ctx.lineTo(cx-xr,yT); ctx.ellipse(cx,yT,xr,xr*e,0,PI,0,true); ctx.lineTo(cx+xr,yB); ctx.ellipse(cx,yB,xr,xr*e,0,0,PI); ctx.closePath();
+    ctx.fillStyle='rgba(47,143,224,0.20)'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx-xr,yT); ctx.lineTo(cx-xr,yB); ctx.ellipse(cx,yB,xr,xr*e,0,PI,0,true); ctx.lineTo(cx+xr,yT); ctx.strokeStyle=COL.blue; ctx.lineWidth=3.2; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx,yT,xr,xr*e,0,0,PI*2); ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fill(); ctx.strokeStyle=COL.blue; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx,yB,xr,xr*e,0,PI,PI*2); ctx.setLineDash([5,4]); ctx.lineWidth=1.6; ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore();
+    // dimensions
+    vec(ctx,cx,yT,cx+xr,yT,COL.yellow,2.8); textAt(ctx,'x',cx+xr/2,yT-8,{size:13,weight:700,color:COL.yellow,align:'center'});
+    dim(ctx,cx+xr+(r*s-xr)*0.5+6,yB,cx+xr+(r*s-xr)*0.5+6,yT,COL.blue); textAt(ctx,'H',cx+xr+(r*s-xr)*0.5+14,(yB+yT)/2+4,{size:13,weight:700,color:COL.blue});
+    vec(ctx,cx,yB+r*s*e+14,cx+r*s,yB+r*s*e+14,COL.yellow,2.4); textAt(ctx,'r',cx+r*s/2,yB+r*s*e+30,{size:13,weight:700,color:COL.yellow,align:'center'});
+    dim(ctx,cx-r*s-14,yB,cx-r*s-14,apexY,COL.yellow); textAt(ctx,'h',cx-r*s-24,(yB+apexY)/2,{size:13,weight:700,color:COL.yellow,align:'right'});
+    // ----- S(x) graph -----
+    const P=mkPlot({x:B.x,y:B.y+B.h*0.04,w:B.w,h:B.h*0.92},0,r,0,Sm*1.2);
+    axes(ctx,P,{xt:[1,2,3,4,5,6].filter(v=>v<r),yt:[],yl:'S (cm²)',xl:'x'});
+    const Sf=u=>2*PI*h*(r*u-u*u)/r, dS=u=>2*PI*h*(r-2*u)/r;
+    curve(ctx,P,Sf,COL.green,3.6,0,r);
+    line(ctx,P.X(r/2),P.Y(Sm),P.X(r/2),P.y+P.h,COL.green,1.6,[5,4]);
+    circ(ctx,P.X(r/2),P.Y(Sm),6,COL.green,'#fff',3); textAt(ctx,'x = r/2',P.X(r/2),P.y+P.h-20,{size:11,weight:700,color:COL.green,align:'center'});
+    tangent(ctx,P,x,Sf,dS,Math.min(P.w,P.h)*0.22,COL.blue,3);
+    circ(ctx,P.X(x),P.Y(Sf(x)),7.5,COL.yellow,'#fff',3.4);
+    // ----- unrolled curved surface -----
+    rrect(ctx,C.x,C.y,C.w,C.h,8); ctx.fillStyle='#fafcfe'; ctx.fill(); ctx.strokeStyle=COL.grid; ctx.lineWidth=1.2; ctx.stroke();
+    const us=Math.min((C.w-24)/(2*PI*6),(C.h-52)/(0.5*12)), bx=C.x+C.w/2, by=C.y+C.h-26;
+    const Wn=2*PI*x*us, Hn=H*us, Wb=PI*r*us, Hb=h/2*us;
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=COL.green; ctx.lineWidth=1.8; ctx.strokeRect(bx-Wb/2,by-Hb,Wb,Hb); ctx.restore();
+    ctx.save(); ctx.fillStyle='rgba(47,143,224,0.18)'; ctx.fillRect(bx-Wn/2,by-Hn,Wn,Hn); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.strokeRect(bx-Wn/2,by-Hn,Wn,Hn); ctx.restore();
+    textAt(ctx,'2πx',bx,by+16,{size:11,weight:700,color:COL.yellow,align:'center'});
+    textAt(ctx,'H',bx-Wn/2-6,by-Hn/2+4,{size:11,weight:700,color:COL.blue,align:'right'});
+    textAt(ctx,'unrolled: area S',C.x+10,C.y+16,{size:11,weight:700,color:COL.muted});
+    const at=Math.abs(x-r/2)<0.06;
+    card('H',fmt(H,2)+' cm'); card('S',fmt(S,2)+' cm²'); card('Sm',fmt(Sm,2)+' cm²'); card('xr',fmt(x/r,2)+' r');
+    card('verdict',at?'Greatest area! x = r/2':(x<r/2?'S ′ &gt; 0 · widen the cylinder':'S ′ &lt; 0 · narrow the cylinder'),at?'var(--f-green)':(x<r/2?'var(--f-green)':'var(--f-red)'));
+  });
+});
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+const nav=document.getElementById('sideNav'), body=document.getElementById('panelBody');
+ACTS.forEach((a,i)=>{
+  const b=el('button','nav-item','<span class="n-num">'+a.num+'</span><span class="n-title">'+a.title+'</span>');
+  b.onclick=()=>openAct(i); nav.append(b); a.btn=b;
+});
+function openAct(i){
+  stopAllLoops(); const a=ACTS[i];
+  ACTS.forEach(x=>x.btn.classList.toggle('active',x===a));
+  document.getElementById('panelBadge').textContent=a.num;
+  document.getElementById('panelTitle').textContent=a.title;
+  document.getElementById('panelDesc').textContent=a.desc;
+  body.innerHTML='';
+  const view=el('div','lab-view'), wrap=el('div','lab-canvas-wrap'), cv=el('canvas'), side=el('div','lab-side');
+  wrap.append(cv); view.append(wrap,side); body.append(view);
+  a.init(cv,side);
+  try{ history.replaceState(null,'','#'+(i+1)); }catch(e){}
+}
+openAct(Math.max(0,Math.min(ACTS.length-1,(parseInt(location.hash.slice(1))||1)-1)));
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

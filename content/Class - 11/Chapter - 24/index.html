@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Chapter 2 — Relations and Functions | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --fs-xl:clamp(18px,1.5vw,25px);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px; --sp-6:30px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{
+  flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px);
+  display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5;
+}
+.topbar .brand-badge{
+  width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:clamp(15px,1.3vw,20px); flex:0 0 auto;
+}
+.topbar .chip{
+  display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px;
+}
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{
+  flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:8px; text-align:left; width:100%;
+  border:1px solid var(--border); background:var(--surface-1); border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease;
+}
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.side-sub{display:flex; flex-direction:column; gap:var(--sp-3);}
+
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--navy-2); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.toggle-btn.play{background:var(--f-green); border-color:var(--f-green); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%; margin-top:9px;}
+.toggle-btn:disabled{opacity:.5; cursor:not-allowed;}
+.chip-btn{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; margin:3px 3px 0 0; border:1px solid var(--border-strong); background:var(--surface-1); border-radius:18px; cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--text-2);}
+.chip-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.chip-btn.ok{border-color:var(--f-green);} .chip-btn.bad{border-color:var(--f-red);}
+.chip-wrap{display:flex; flex-wrap:wrap; margin-top:3px;}
+
+.role-row{display:flex; align-items:center; gap:8px; margin-top:7px; font-size:var(--fs-sm); font-weight:600;}
+.role-row .rdot{width:10px; height:10px; border-radius:50%; flex:0 0 auto; display:inline-block;}
+.role-row .rname{width:70px; flex:0 0 auto; color:var(--text-2);}
+.role-row select{flex:1; min-width:0; padding:6px 7px; border:1px solid var(--border-strong); border-radius:7px; font-size:var(--fs-sm); background:var(--surface-1); color:var(--text-1); cursor:pointer;}
+
+.step-row{display:flex; gap:5px;}
+.step-pill{flex:1; padding:6px 4px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:10.5px; font-weight:700; color:var(--text-3); cursor:pointer;}
+.step-pill.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.step-pill.done{border-color:var(--f-green); color:var(--f-green);}
+.step-pill.active.done{color:#fff;}
+.opt-btn{display:block; width:100%; text-align:left; margin-top:6px; padding:7px 9px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:500; color:var(--text-1); cursor:pointer; line-height:1.3;}
+.opt-btn.active{border-color:var(--navy-2); background:#e3ecf7; font-weight:600;}
+.var-row{display:flex; align-items:center; gap:6px; margin-top:7px;}
+.var-row .vname{flex:0 0 88px; font-size:var(--fs-sm); font-weight:600;}
+.var-row .toggle-group{margin-top:0; flex:1;}
+
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.result-cards.three{grid-template-columns:1fr 1fr 1fr;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+.fb{font-size:var(--fs-xs); font-weight:600; margin-top:6px; padding:5px 8px; border-radius:7px;}
+.fb.ok{background:#e4f7ec; color:#1f6b3d;}
+.fb.bad{background:#fdece7; color:#a4331c;}
+.fb.warn{background:#fdf4dc; color:#8a6410;}
+.log{width:100%; border-collapse:collapse; font-size:10.5px; margin-top:4px;}
+.log th{text-align:left; color:var(--text-3); font-weight:600; text-transform:uppercase; font-size:9px; letter-spacing:.04em; padding:3px 4px; border-bottom:1px solid var(--border);}
+.log td{padding:4px; border-bottom:1px solid var(--surface-2); color:var(--text-2);}
+.log td.r-ok{color:var(--f-green); font-weight:700;} .log td.r-bad{color:var(--f-red); font-weight:700;} .log td.r-warn{color:var(--f-yellow); font-weight:700;}
+.hidden{display:none !important;}
+
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">ƒ</div>
+    <div>
+      <div class="chip">Grade 11 · Ch 2</div>
+      <h1>Relations and Functions</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Input x · Set A</span>
+      <span><i style="background:var(--f-red)"></i>Output y · Set B</span>
+      <span><i style="background:var(--f-green)"></i>Pair · result</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">2.2a</div>
+        <h2 id="panelTitle">Select an activity</h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 — CHAPTER 2: RELATIONS AND FUNCTIONS
+   Every activity runs a continuous animation loop: sliders/buttons set a
+   TARGET; the drawn objects fly (true parabolic arcs), spring, bounce or
+   ease toward it every frame — nothing ever jumps. Idle objects breathe,
+   scanners sweep, gears turn: never a single static frame.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab'};
+
+/* ---------------------------------------------------------------------
+   0. CANVAS HELPERS
+   --------------------------------------------------------------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2;
+  if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){ line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7); }
+function dimH(ctx,x1,x2,y,color){ line(ctx,x1,y,x2,y,color,1.6); arrowHead(ctx,x1,y,Math.PI,color,6); arrowHead(ctx,x2,y,0,color,6); }
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore(); }
+function circ(ctx,x,y,r,stroke,fill,lw){ ctx.save(); ctx.lineWidth=lw||2.2; ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2); if(fill){ctx.fillStyle=fill; ctx.fill();} ctx.strokeStyle=stroke; ctx.stroke(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ r=Math.max(0,Math.min(r,w/2,h/2)); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function rng(seed){ let s=(seed>>>0)||1; return ()=>{ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function isPrime(n){ if(n<2) return false; for(let i=2;i*i<=n;i++) if(n%i===0) return false; return true; }
+function isSquare(n){ const r=Math.round(Math.sqrt(n)); return r*r===n; }
+
+/* ---------------------------------------------------------------------
+   0b. ANIMATION ENGINE
+   --------------------------------------------------------------------- */
+let activeStops = [];
+let activeTicks = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; activeTicks=[]; }
+function animLoop(tick){
+  let last = performance.now();
+  let raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now;
+    tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  activeTicks.push(tick);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** Fast-forward hook (used for automated checks): runs every live loop for <sec> seconds of simulated time. */
+window.__sim={ advance(sec){ const n=Math.round(sec*60); for(let i=0;i<n;i++) activeTicks.slice().forEach(f=>f(1/60)); } };
+/** Exponential ease — frame-rate independent, always smooth. */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** Spring-damper — gives natural overshoot and settle. */
+function springTo(state,target,k,damping,dt){
+  const acc = (target-state.x)*k - state.v*damping;
+  state.v += acc*dt;
+  state.x += state.v*dt;
+  return state.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+/** Chip row builder: items = [{id,label}], returns the buttons */
+function chips(container,items,activeId,cb,cls){
+  container.innerHTML='';
+  const btns=items.map(it=>{
+    const b=document.createElement('button'); b.className=(cls||'chip-btn')+(it.id===activeId?' active':''); b.textContent=it.label; b.dataset.id=it.id;
+    container.appendChild(b); return b;
+  });
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b.dataset.id,b); });
+  return btns;
+}
+
+/* ---------------------------------------------------------------------
+   0c. SET-THEORY DRAWING HELPERS
+   --------------------------------------------------------------------- */
+/** A set element: round token, or a pill when the label is long.
+    o: r, fill, stroke, stroke2 (inner ring), text, alpha, sx, sy, rot, lw, size */
+function tok(ctx,x,y,label,o){
+  o=o||{}; const r=o.r||15; label=String(label);
+  ctx.save(); ctx.translate(x,y);
+  if(o.sx||o.sy) ctx.scale(o.sx||1,o.sy||1);
+  if(o.alpha!==undefined) ctx.globalAlpha=clamp(o.alpha,0,1);
+  const fs=o.size||Math.max(9,Math.round(r*0.9));
+  ctx.font='700 '+fs+'px Poppins, sans-serif';
+  const tw=ctx.measureText(label).width, W=Math.max(r*2, tw+r*0.9);
+  const path=(ins)=>{ if(W>r*2+1) rrect(ctx,-W/2+ins,-r+ins,W-2*ins,2*(r-ins),r-ins); else { ctx.beginPath(); ctx.arc(0,0,r-ins,0,Math.PI*2); } };
+  path(0); ctx.fillStyle=o.fill||'#fff'; ctx.fill(); ctx.lineWidth=o.lw||2.2; ctx.strokeStyle=o.stroke||COL.ink; ctx.stroke();
+  if(o.stroke2){ path(3.4); ctx.lineWidth=(o.lw||2.2)*0.8; ctx.strokeStyle=o.stroke2; ctx.stroke(); }
+  ctx.fillStyle=o.text||COL.ink; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,0,1);
+  if(o.rot!==undefined && W<=r*2+1){ ctx.beginPath(); ctx.arc(Math.cos(o.rot)*r*0.76,Math.sin(o.rot)*r*0.76,2.3,0,Math.PI*2); ctx.fillStyle=COL.mid; ctx.fill(); }
+  ctx.restore();
+  return W;
+}
+/** Parabolic flight: x moves uniformly, y follows a true parabola of apex height h. */
+function startFlight(b,x1,y1,T,h,d){ b.fl={t:0,T:T,x0:b.x,y0:b.y,x1:x1,y1:y1,h:h,d:d||0}; }
+function stepFlight(b,dt){
+  const f=b.fl; if(!f) return false;
+  if(f.d>0){ f.d-=dt; return false; }
+  f.t+=dt; const s=clamp(f.t/f.T,0,1);
+  b.x=lerp(f.x0,f.x1,s); b.y=lerp(f.y0,f.y1,s)-f.h*4*s*(1-s);
+  if(s>=1){ b.fl=null; if(b.sq) b.sq.v=-7; return true; }
+  return false;
+}
+/** squash-and-stretch from a landing spring */
+function squash(b){ const q=b.sq?clamp(b.sq.x,-0.6,0.6):0; return {sx:1+0.28*q, sy:1-0.34*q}; }
+function mkSq(){ return {x:0,v:0}; }
+function stepSq(b,dt){ if(b.sq) springTo(b.sq,0,220,10,dt); }
+
+
+/* ---------------------------------------------------------------------
+   0c. RELATIONS-&-FUNCTIONS HELPERS  (plots, arrow diagrams, effects)
+   --------------------------------------------------------------------- */
+const setS = a => a.length ? '{ '+a.join(', ')+' }' : '∅';
+const pairS = p => '('+p[0]+', '+p[1]+')';
+const fnum = (v,d) => { if(!isFinite(v)) return '—'; const s=Number(v.toFixed(d===undefined?2:d)); return (Object.is(s,-0)?0:s).toString().replace('-','−'); };
+function tokW(ctx,label,r,size){
+  const fs=size||Math.max(9,Math.round(r*0.9)); ctx.save(); ctx.font='700 '+fs+'px Poppins, sans-serif';
+  const tw=ctx.measureText(String(label)).width; ctx.restore(); return Math.max(r*2,tw+r*0.9);
+}
+/** expanding ring effect (a pulse where something lands / locks) */
+function fxAdd(list,x,y,col,r1){ list.push({x:x,y:y,col:col,t:0,r1:r1||34}); }
+function fxDraw(ctx,list,dt){
+  for(let i=list.length-1;i>=0;i--){
+    const f=list[i]; f.t+=dt/0.6; if(f.t>=1){ list.splice(i,1); continue; }
+    ctx.save(); ctx.globalAlpha=1-f.t; circ(ctx,f.x,f.y,6+f.r1*f.t,f.col,null,2.4); ctx.restore();
+  }
+}
+function dot(ctx,x,y,r,stroke,fill,lw){ circ(ctx,x,y,r,stroke,fill===undefined?'#fff':fill,lw||2.2); }
+
+/** Cartesian view. v = {x0,x1,y0,y1}; o.equal keeps 1 unit = 1 unit on both axes. */
+function mkView(w,h,v,o){
+  o=o||{}; const pl=o.pl===undefined?36:o.pl, pr=o.pr===undefined?16:o.pr, pt=o.pt===undefined?14:o.pt, pb=o.pb===undefined?30:o.pb;
+  const aw=w-pl-pr, ah=h-pt-pb;
+  let x0=v.x0,x1=v.x1,y0=v.y0,y1=v.y1, sx=aw/(x1-x0), sy=ah/(y1-y0);
+  if(o.equal){ const s=Math.min(sx,sy), nx=aw/s, ny=ah/s, cx=(x0+x1)/2, cy=(y0+y1)/2; x0=cx-nx/2; x1=cx+nx/2; y0=cy-ny/2; y1=cy+ny/2; sx=sy=s; }
+  return {x0:x0,x1:x1,y0:y0,y1:y1,sx:sx,sy:sy,L:pl,T:pt,R:pl+aw,B:pt+ah,
+    X:x=>pl+(x-x0)*sx, Y:y=>pt+ah-(y-y0)*sy, ix:px=>x0+(px-pl)/sx, iy:py=>y0+(pt+ah-py)/sy};
+}
+function niceStep(range,target){ const raw=range/Math.max(1,target), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+/** grid + axes + tick numbers. */
+function drawAxes(ctx,V,o){
+  o=o||{}; const stx=o.stepX||niceStep(V.x1-V.x0,(V.R-V.L)/58), sty=o.stepY||niceStep(V.y1-V.y0,(V.B-V.T)/44);
+  ctx.save(); ctx.beginPath(); ctx.rect(V.L,V.T,V.R-V.L,V.B-V.T); ctx.clip();
+  ctx.strokeStyle='#e6edf6'; ctx.lineWidth=1; ctx.beginPath();
+  for(let x=Math.ceil(V.x0/stx)*stx; x<=V.x1+1e-9; x+=stx){ ctx.moveTo(V.X(x),V.T); ctx.lineTo(V.X(x),V.B); }
+  for(let y=Math.ceil(V.y0/sty)*sty; y<=V.y1+1e-9; y+=sty){ ctx.moveTo(V.L,V.Y(y)); ctx.lineTo(V.R,V.Y(y)); }
+  ctx.stroke();
+  const ax=clamp(V.X(0),V.L,V.R), ay=clamp(V.Y(0),V.T,V.B);
+  ctx.strokeStyle=COL.ink; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(V.L,ay); ctx.lineTo(V.R,ay); ctx.moveTo(ax,V.T); ctx.lineTo(ax,V.B); ctx.stroke();
+  ctx.restore();
+  arrowHead(ctx,V.R,ay,0,COL.ink,7); arrowHead(ctx,ax,V.T,-Math.PI/2,COL.ink,7);
+  if(o.noTicks) return;
+  const lab=(txt,x,y,al,bl)=>textAt(ctx,txt,x,y,{size:10,color:COL.mid,align:al,baseline:bl,weight:600});
+  for(let x=Math.ceil(V.x0/stx)*stx; x<=V.x1+1e-9; x+=stx){ if(Math.abs(x)<1e-9) continue; if(V.X(x)<V.L+8||V.X(x)>V.R-8) continue; lab(fnum(x,2),V.X(x),clamp(ay+4,V.T+2,V.B-12),'center','top'); }
+  for(let y=Math.ceil(V.y0/sty)*sty; y<=V.y1+1e-9; y+=sty){ if(Math.abs(y)<1e-9) continue; if(V.Y(y)<V.T+8||V.Y(y)>V.B-6) continue; lab(fnum(y,2),clamp(ax-5,V.L+10,V.R),V.Y(y),ax<V.L+12?'left':'right','middle'); }
+  lab('x',V.R-4,ay-12,'right','bottom'); lab('y',ax+8,V.T+2,'left','top');
+}
+/** plot f over [x0,x1]; f may return null/NaN to leave a gap. Segments break on huge jumps (asymptotes). */
+function plotFn(ctx,V,f,x0,x1,color,lw,o){
+  o=o||{}; const n=o.n||360; ctx.save(); ctx.beginPath(); ctx.rect(V.L,V.T,V.R-V.L,V.B-V.T); ctx.clip();
+  ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.lineJoin='round'; ctx.lineCap='round'; if(o.dash) ctx.setLineDash(o.dash);
+  if(o.alpha!==undefined) ctx.globalAlpha=o.alpha;
+  const thr=(V.y1-V.y0)*0.7; let py=null; ctx.beginPath();
+  for(let i=0;i<=n;i++){
+    const x=lerp(x0,x1,i/n), y=f(x);
+    if(y===null||y===undefined||!isFinite(y)){ py=null; continue; }
+    if(py===null||(!o.noBreak&&Math.abs(y-py)>thr)) ctx.moveTo(V.X(x),V.Y(y)); else ctx.lineTo(V.X(x),V.Y(y));
+    py=y;
+  }
+  ctx.stroke(); ctx.restore();
+}
+/** dashed projections from a point down to the x-axis (blue) and across to the y-axis (red) */
+function project(ctx,V,x,y,alpha){
+  const ax=clamp(V.X(0),V.L,V.R), ay=clamp(V.Y(0),V.T,V.B), px=V.X(x), py=V.Y(y);
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=alpha;
+  line(ctx,px,py,px,ay,COL.blue,1.8,[5,4]); line(ctx,px,py,ax,py,COL.red,1.8,[5,4]);
+  circ(ctx,px,ay,3.6,COL.blue,COL.blue,1); circ(ctx,ax,py,3.6,COL.red,COL.red,1); ctx.restore();
+}
+/** smoothly moving view (so changing function / mode glides instead of cutting) */
+function viewTween(cur,tgt,rate,dt){ ['x0','x1','y0','y1'].forEach(k=>{ cur[k]=approach(cur[k],tgt[k],rate,dt); }); return cur; }
+
+/* ---- arrow diagrams ---- */
+function bezPt(p0,c1,c2,p1,u){ const v=1-u, a=v*v*v, b=3*v*v*u, c=3*v*u*u, d=u*u*u; return {x:a*p0.x+b*c1.x+c*c2.x+d*p1.x, y:a*p0.y+b*c1.y+c*c2.y+d*p1.y}; }
+function arrowTo(ctx,x0,y0,x1,y1,s,color,lw){
+  s=clamp(s,0,1); if(s<0.03) return;
+  const dx=(x1-x0)*0.45, p0={x:x0,y:y0}, c1={x:x0+dx,y:y0}, c2={x:x1-dx,y:y1}, p1={x:x1,y:y1};
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2.4; ctx.lineCap='round'; ctx.beginPath();
+  let last=null, prev=null; const N=28;
+  for(let i=0;i<=N;i++){ const p=bezPt(p0,c1,c2,p1,s*i/N); if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); prev=last; last=p; }
+  ctx.stroke(); ctx.restore();
+  if(s>0.15&&prev) arrowHead(ctx,last.x,last.y,Math.atan2(last.y-prev.y,last.x-prev.x),color,8.5);
+}
+function setOval(ctx,cx,cy,rw,rh,color,label,lw,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw||2.4; if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.ellipse(cx,cy,rw,rh,0,0,Math.PI*2); ctx.stroke(); ctx.restore();
+  if(label) textAt(ctx,label,cx,cy-rh-8,{align:'center',weight:700,size:13,color:color});
+}
+/** two vertical columns of elements (A left, B right). Returns positions + half-widths. */
+function adLayout(ctx,w,h,A,B){
+  const n=Math.max(A.length,B.length,1), sp=Math.min(60,(h*0.74)/n), r=Math.min(19,sp*0.4);
+  const wA=A.map(a=>tokW(ctx,a,r)), wB=B.map(b=>tokW(ctx,b,r));
+  const mA=Math.max(2*r,...wA), mB=Math.max(2*r,...wB);
+  const ax=w*0.2+mA*0.1, bx=w*0.8-mB*0.1, cy=h*0.53;
+  const pA=A.map((a,i)=>({x:ax,y:cy+(i-(A.length-1)/2)*sp,w:wA[i]}));
+  const pB=B.map((b,i)=>({x:bx,y:cy+(i-(B.length-1)/2)*sp,w:wB[i]}));
+  return {r:r,sp:sp,pA:pA,pB:pB,ax:ax,bx:bx,cy:cy,
+    rwA:mA/2+26, rhA:A.length*sp/2+20, rwB:mB/2+26, rhB:B.length*sp/2+20};
+}
+/** live arrows: each (i,j) pair has a spring-driven extension s; wanted → grows (with overshoot), unwanted → retracts. */
+function makeArrows(){
+  const m=new Map();
+  return {
+    want(list){ const keep=new Set();
+      list.forEach(p=>{ const k=p[0]+'|'+p[1]; keep.add(k); const a=m.get(k); if(!a) m.set(k,{i:p[0],j:p[1],s:{x:0,v:0},w:1}); else a.w=1; });
+      m.forEach(a=>{ if(!keep.has(a.i+'|'+a.j)) a.w=0; }); },
+    clear(){ m.forEach(a=>{ a.w=0; }); },
+    replay(){ m.forEach(a=>{ a.s.x=0; a.s.v=0; }); },
+    step(dt){ m.forEach((a,k)=>{ if(a.w) springTo(a.s,1,85,12,dt); else { a.s.x=approach(a.s.x,0,10,dt); a.s.v=0; if(a.s.x<0.01) m.delete(k); } }); },
+    all(){ return Array.from(m.values()); },
+    live(){ return Array.from(m.values()).filter(a=>a.w); }
+  };
+}
+/* ---------------------------------------------------------------------
+   1. ROUTER
+   --------------------------------------------------------------------- */
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav');
+  nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops();
+  buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody');
+  body.innerHTML='';
+  body.appendChild(a.build());
+}
+function labShell(){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side"></div>`;
+  return wrap;
+}
+
+/* =====================================================================
+   2.2a CARTESIAN PRODUCT  (§2.2 — Fig 2.1, 2.2, 2.3;  n(A×B) = pq)
+   Each pair is built live: a copy of a leaves its row, a copy of b leaves
+   its column, both fly in true parabolas and fuse into the ordered pair
+   (a, b) with a landing squash. Swapping to B × A flips every pair about
+   its vertical axis — (red, b) is not (b, red).
+   ===================================================================== */
+const CP_SETS=[
+  {id:'col', label:'Colours × Items', A:['red','blue','green','black','pink'], B:['b','c','s','h','t'], nA:2, nB:3},
+  {id:'lic', label:'Licence codes',   A:['DL','MP','KA','TN','UP'], B:['01','02','03','04','05'], nA:3, nB:3},
+  {id:'ab',  label:'a₁… × b₁…',       A:['a1','a2','a3','a4','a5'], B:['b1','b2','b3','b4','b5'], nA:2, nB:4}
+];
+function buildA1(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Sets</label><div class="chip-wrap" id="preB"></div></div>
+    <div class="control-group">
+      <label>n(A) <span class="val" id="nAV" style="color:var(--f-blue)"></span></label><input type="range" id="nAR" min="1" max="5" step="1" value="2">
+      <label style="margin-top:9px;">n(B) <span class="val" id="nBV" style="color:var(--f-red)"></span></label><input type="range" id="nBR" min="1" max="5" step="1" value="3"></div>
+    <div class="control-group"><label style="margin-bottom:2px;">Pair order</label>
+      <div class="toggle-group"><button class="toggle-btn active" id="oAB">A × B</button><button class="toggle-btn" id="oBA">B × A</button></div>
+      <button class="toggle-btn navy" id="rebuildB">▶ Rebuild the pairs</button></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">n(A)</div><div class="rval" id="rA" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">n(B)</div><div class="rval" id="rB" style="color:var(--f-red)"></div></div>
+      <div class="rcard"><div class="rlabel">Pairs</div><div class="rval" id="rP" style="color:var(--f-green)"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let pre=CP_SETS[0], nA=pre.nA, nB=pre.nB, swap=false, t=0, cells=[], fx=[], cur=0, curT=0;
+  const rowEl=()=>swap?pre.B.slice(0,nB):pre.A.slice(0,nA), colEl=()=>swap?pre.A.slice(0,nA):pre.B.slice(0,nB);
+  const label=(c,sw)=>sw?'('+pre.B[c.bj]+', '+pre.A[c.ai]+')':'('+pre.A[c.ai]+', '+pre.B[c.bj]+')';
+  function build(){
+    cells=[]; fx=[];
+    for(let i=0;i<nA;i++) for(let j=0;j<nB;j++){
+      const row=swap?j:i, col=swap?i:j, cols=swap?nA:nB;
+      cells.push({ai:i,bj:j,state:'wait',d:0.3+(row*cols+col)*0.2,x:0,y:0,pa:null,pb:null,sq:mkSq(),ft:1,fromSwap:swap});
+    }
+    $('#nAV').textContent=nA; $('#nBV').textContent=nB; $('#rA').textContent=nA; $('#rB').textContent=nB;
+  }
+  function L(w,h){
+    const rows=swap?nB:nA, cols=swap?nA:nB, cs=Math.max(40,Math.min(92,(w-130)/cols,(h-110)/rows));
+    return {rows:rows,cols:cols,cs:cs,gx:(w-cols*cs)/2+36,gy:(h-rows*cs)/2+36};
+  }
+  const cellPos=(c,l)=>{ const row=swap?c.bj:c.ai, col=swap?c.ai:c.bj; return {x:l.gx+(col+0.5)*l.cs, y:l.gy+(row+0.5)*l.cs}; };
+  chips($('#preB'),CP_SETS.map(s=>({id:s.id,label:s.label})),pre.id,id=>{ pre=CP_SETS.find(s=>s.id===id); nA=pre.nA; nB=pre.nB; $('#nAR').value=nA; $('#nBR').value=nB; build(); });
+  $('#nAR').oninput=e=>{ nA=+e.target.value; build(); };
+  $('#nBR').oninput=e=>{ nB=+e.target.value; build(); };
+  $('#rebuildB').onclick=()=>build();
+  function setOrder(sw){
+    if(sw===swap) return; swap=sw;
+    $('#oAB').classList.toggle('active',!swap); $('#oBA').classList.toggle('active',swap);
+    cells.forEach(c=>{
+      if(c.state==='placed'){ c.fromSwap=!swap; c.ft=0; }
+      else if(c.state==='fly'){ c.state='wait'; c.d=0.25; c.pa=c.pb=null; }
+    });
+  }
+  $('#oAB').onclick=()=>setOrder(false); $('#oBA').onclick=()=>setOrder(true);
+  build();
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const l=L(w,h), cs=l.cs, rr=Math.min(cs*0.3,17), fs=clamp(cs*0.14,9,12);
+    const rc=swap?COL.red:COL.blue, cc=swap?COL.blue:COL.red;
+    const hx=l.gx-cs*0.5-8, hy=l.gy-cs*0.5-8;
+    // grid
+    for(let r=0;r<l.rows;r++) for(let c=0;c<l.cols;c++){
+      ctx.save(); rrect(ctx,l.gx+c*cs+3,l.gy+r*cs+3,cs-6,cs-6,9); ctx.strokeStyle='#dbe4f0'; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+    }
+    // headers
+    rowEl().forEach((e,i)=>tok(ctx,hx,l.gy+(i+0.5)*cs+Math.sin(t*2+i)*2,e,{r:15,stroke:rc,text:rc,size:12}));
+    colEl().forEach((e,j)=>tok(ctx,l.gx+(j+0.5)*cs,hy+Math.sin(t*2+j*1.3)*2,e,{r:15,stroke:cc,text:cc,size:12}));
+    textAt(ctx,(swap?'B':'A')+' ↓',hx-4,hy-2,{align:'right',weight:700,size:13,color:rc});
+    textAt(ctx,(swap?'A':'B')+' →',hx+4,hy-2,{align:'left',weight:700,size:13,color:cc});
+    // cells
+    let placed=0;
+    cells.forEach(c=>{
+      const p=cellPos(c,l), row=swap?c.bj:c.ai, col=swap?c.ai:c.bj;
+      if(c.state==='wait'){
+        c.d-=dt;
+        if(c.d<=0){
+          c.pa={x:hx,y:l.gy+(row+0.5)*cs,sq:mkSq(),lab:swap?pre.B[c.bj]:pre.A[c.ai]};
+          c.pb={x:l.gx+(col+0.5)*cs,y:hy,sq:mkSq(),lab:swap?pre.A[c.ai]:pre.B[c.bj]};
+          startFlight(c.pa,p.x-14,p.y,0.8,70); startFlight(c.pb,p.x+14,p.y,0.8,100); c.state='fly';
+        }
+      }
+      if(c.state==='fly'){
+        if(c.pa.fl){ c.pa.fl.x1=p.x-14; c.pa.fl.y1=p.y; } if(c.pb.fl){ c.pb.fl.x1=p.x+14; c.pb.fl.y1=p.y; }
+        stepFlight(c.pa,dt); stepFlight(c.pb,dt); stepSq(c.pa,dt); stepSq(c.pb,dt);
+        if(!c.pa.fl&&!c.pb.fl){ c.state='placed'; c.x=p.x; c.y=p.y; c.sq.v=-9; c.ft=1; c.fromSwap=swap; fxAdd(fx,p.x,p.y,COL.green,34); }
+        else {
+          const qa=squash(c.pa), qb=squash(c.pb);
+          tok(ctx,c.pa.x,c.pa.y,c.pa.lab,{r:13,stroke:rc,text:rc,size:11,sx:qa.sx,sy:qa.sy});
+          tok(ctx,c.pb.x,c.pb.y,c.pb.lab,{r:13,stroke:cc,text:cc,size:11,sx:qb.sx,sy:qb.sy});
+        }
+      }
+      if(c.state==='placed'){
+        placed++;
+        c.ft=Math.min(1,c.ft+dt/0.75);
+        c.x=approach(c.x,p.x,5,dt); c.y=approach(c.y,p.y,5,dt); stepSq(c,dt);
+        const f=c.ft, sw=f<0.5?c.fromSwap:swap, q=squash(c);
+        const sxf=Math.max(0.05,Math.abs(Math.cos(Math.PI*f)));
+        const hop=c.ft<1?Math.sin(Math.PI*f)*20:0;
+        tok(ctx,c.x,c.y+Math.sin(t*1.8+c.ai*0.9+c.bj*1.3)*1.8-hop,label(c,sw),{r:rr,size:fs,stroke:COL.green,text:COL.ink,sx:sxf*q.sx,sy:q.sy,lw:2.4});
+      }
+    });
+    // cursor: shows how the current pair is made from its row element and column element
+    const pl=cells.filter(c=>c.state==='placed');
+    if(pl.length){
+      curT+=dt; if(curT>1.1){ curT=0; cur=(cur+1)%pl.length; }
+      const c=pl[cur%pl.length], p=cellPos(c,l), row=swap?c.bj:c.ai, col=swap?c.ai:c.bj;
+      line(ctx,hx+16,l.gy+(row+0.5)*cs,p.x-cs*0.5+4,p.y,rc,1.8,[5,4]);
+      line(ctx,l.gx+(col+0.5)*cs,hy+16,p.x,p.y-cs*0.5+4,cc,1.8,[5,4]);
+      ctx.save(); rrect(ctx,p.x-cs/2+3,p.y-cs/2+3,cs-6,cs-6,9); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.8; ctx.stroke(); ctx.restore();
+      textAt(ctx,label(c,swap)+'  ∈  '+(swap?'B × A':'A × B'),w-18,26,{align:'right',weight:700,size:15,color:COL.green});
+    }
+    fxDraw(ctx,fx,dt);
+    const total=nA*nB;
+    $('#rP').textContent=placed<total?placed+' / '+total:total;
+    const vd=$('#vd');
+    if(!swap){ vd.className='fb ok'; vd.textContent='n(A × B) = '+nA+' × '+nB+' = '+total; }
+    else { vd.className='fb warn'; vd.textContent='B × A: ('+pre.B[0]+', '+pre.A[0]+') ≠ ('+pre.A[0]+', '+pre.B[0]+') — order matters'; }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.2b ORDERED PAIRS  (Remark (i), Example 1)
+   (a, b) and (b, a) are different points; two pairs are equal only when
+   both coordinates match. Springs let each point swing and settle.
+   ===================================================================== */
+function buildA2(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Explore</label><div class="chip-wrap" id="modeB"></div></div>
+    <div id="m1">
+      <div class="control-group">
+        <label>a <span class="val" id="aV" style="color:var(--f-blue)"></span></label><input type="range" id="aR" min="-5" max="5" step="1" value="4">
+        <label style="margin-top:9px;">b <span class="val" id="bV" style="color:var(--f-red)"></span></label><input type="range" id="bR" min="-5" max="5" step="1" value="2">
+        <button class="toggle-btn navy" id="swapB">⇄ Swap the order</button></div>
+      <div class="control-group"><div class="result-cards">
+        <div class="rcard"><div class="rlabel">(a, b)</div><div class="rval" id="pab"></div></div>
+        <div class="rcard"><div class="rlabel">(b, a)</div><div class="rval" id="pba" style="color:var(--f-green)"></div></div></div>
+        <div class="fb" id="vd1"></div></div>
+    </div>
+    <div id="m2" class="hidden">
+      <div class="control-group">
+        <label>x <span class="val" id="xV" style="color:var(--f-blue)"></span></label><input type="range" id="xR" min="-4" max="8" step="1" value="0">
+        <label style="margin-top:9px;">y <span class="val" id="yV" style="color:var(--f-red)"></span></label><input type="range" id="yR" min="-4" max="8" step="1" value="6"></div>
+      <div class="control-group"><div class="result-cards">
+        <div class="rcard"><div class="rlabel">x + 1  vs  3</div><div class="rval" id="e1"></div></div>
+        <div class="rcard"><div class="rlabel">y − 2  vs  1</div><div class="rval" id="e2"></div></div></div>
+        <div class="fb" id="vd2"></div></div>
+    </div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let mode='1', a=4, b=2, x=0, y=6, t=0, fx=[], locked=false;
+  const P={x:{x:4,v:0},y:{x:2,v:0}}, Q={x:{x:2,v:0},y:{x:4,v:0}};
+  const V1={x0:-6,x1:6,y0:-6,y1:6}, V2={x0:-4,x1:10,y0:-7,y1:8}, view={x0:-6,x1:6,y0:-6,y1:6};
+  chips($('#modeB'),[{id:'1',label:'Order matters'},{id:'2',label:'Solve Example 1'}],'1',id=>{
+    mode=id; $('#m1').classList.toggle('hidden',id!=='1'); $('#m2').classList.toggle('hidden',id!=='2'); locked=false; });
+  $('#aR').oninput=e=>{ a=+e.target.value; }; $('#bR').oninput=e=>{ b=+e.target.value; };
+  $('#xR').oninput=e=>{ x=+e.target.value; }; $('#yR').oninput=e=>{ y=+e.target.value; };
+  $('#swapB').onclick=()=>{ const o=a; a=b; b=o; $('#aR').value=a; $('#bR').value=b; };
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    viewTween(view,mode==='1'?V1:V2,4,dt);
+    const V=mkView(w,h,view,{equal:true,pl:30,pb:26,pt:12,pr:12});
+    drawAxes(ctx,V);
+    const lx=mode==='1'?a:x+1, ly=mode==='1'?b:y-2;
+    springTo(P.x,lx,70,8.5,dt); springTo(P.y,ly,70,8.5,dt);
+    springTo(Q.x,b,70,8.5,dt); springTo(Q.y,a,70,8.5,dt);
+    if(mode==='1'){
+      $('#aV').textContent=a; $('#bV').textContent=b;
+      // mirror line y = x
+      ctx.save(); ctx.beginPath(); ctx.rect(V.L,V.T,V.R-V.L,V.B-V.T); ctx.clip();
+      line(ctx,V.X(-30),V.Y(-30),V.X(30),V.Y(30),COL.yellow,2,[8,6]); ctx.restore();
+      textAt(ctx,'y = x',V.X(5.2),V.Y(5.2)-8,{color:COL.yellow,weight:700,size:12});
+      const same=a===b;
+      // reflection arc between the two points
+      if(!same){
+        const x1=V.X(P.x.x), y1=V.Y(P.y.x), x2=V.X(Q.x.x), y2=V.Y(Q.y.x);
+        ctx.save(); ctx.setLineDash([3,5]); ctx.strokeStyle=COL.mid; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(x1,y1);
+        ctx.quadraticCurveTo((x1+x2)/2+(y2-y1)*0.18,(y1+y2)/2-(x2-x1)*0.18,x2,y2); ctx.stroke(); ctx.restore();
+      }
+      project(ctx,V,Q.x.x,Q.y.x,0.55);
+      dot(ctx,V.X(Q.x.x),V.Y(Q.y.x),8,COL.green,'#e4f7ec',2.6);
+      project(ctx,V,P.x.x,P.y.x,1);
+      dot(ctx,V.X(P.x.x),V.Y(P.y.x),9,COL.ink,'#fff',2.8);
+      if(same) circ(ctx,V.X(P.x.x),V.Y(P.y.x),13+4*Math.sin(t*5),COL.green,null,2.4);
+      textAt(ctx,'('+a+', '+b+')',V.X(P.x.x)+12,V.Y(P.y.x)-10,{weight:700,size:13,color:COL.ink});
+      if(!same) textAt(ctx,'('+b+', '+a+')',V.X(Q.x.x)+12,V.Y(Q.y.x)+16,{weight:700,size:13,color:COL.green});
+      $('#pab').textContent='('+fnum(a,0)+', '+fnum(b,0)+')'; $('#pba').textContent='('+fnum(b,0)+', '+fnum(a,0)+')';
+      const vd=$('#vd1'); vd.className='fb '+(same?'ok':'bad'); vd.textContent=same?'Equal — both coordinates match':'(a, b) ≠ (b, a) — two different points';
+    } else {
+      $('#xV').textContent=x; $('#yV').textContent=y;
+      const ok1=x+1===3, ok2=y-2===1, now=ok1&&ok2;
+      if(now&&!locked){ fxAdd(fx,V.X(3),V.Y(1),COL.green,60); }
+      locked=now;
+      // target reticle (3, 1)
+      const tx=V.X(3), ty=V.Y(1), pr=12+3*Math.sin(t*4);
+      circ(ctx,tx,ty,pr,COL.green,null,2.4); line(ctx,tx-pr-6,ty,tx+pr+6,ty,COL.green,1.6); line(ctx,tx,ty-pr-6,tx,ty+pr+6,COL.green,1.6);
+      textAt(ctx,'(3, 1)',tx+16,ty+22,{weight:700,size:13,color:COL.green});
+      const px=V.X(P.x.x), py=V.Y(P.y.x);
+      if(!now) line(ctx,px,py,tx,ty,COL.yellow,1.6,[4,5]);
+      project(ctx,V,P.x.x,P.y.x,1);
+      dot(ctx,px,py,9,now?COL.green:COL.ink,now?'#e4f7ec':'#fff',2.8);
+      textAt(ctx,'(x+1, y−2) = ('+(x+1)+', '+(y-2)+')',px+12,py-12,{weight:700,size:13,color:now?COL.green:COL.ink});
+      const e1=$('#e1'), e2=$('#e2');
+      e1.textContent=(x+1)+(ok1?' = 3 ✓':' ≠ 3'); e1.style.color=ok1?'var(--f-green)':'var(--f-red)';
+      e2.textContent=(y-2)+(ok2?' = 1 ✓':' ≠ 1'); e2.style.color=ok2?'var(--f-green)':'var(--f-red)';
+      const vd=$('#vd2'); vd.className='fb '+(now?'ok':'warn');
+      vd.textContent=now?'Pairs equal ⇒ x = 2 and y = 3':'Match BOTH coordinates to land on (3, 1)';
+    }
+    fxDraw(ctx,fx,dt);
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.2c R × R  AND  R × R × R  (Remark (iii)–(iv), Example 5)
+   A × B is a rectangle of ordered pairs; A × B × C stacks such
+   rectangles into a box of ordered triplets. Bounds are springs, so the
+   box stretches and settles; stretched to all of R it fills the space.
+   ===================================================================== */
+function buildA3(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Product</label><div class="chip-wrap" id="dimB"></div>
+      <label style="margin:9px 0 2px;">Sets are</label><div class="chip-wrap" id="kindB"></div></div>
+    <div class="control-group">
+      <label>A from <span class="val" id="a0V" style="color:var(--f-blue)"></span></label><input type="range" id="a0R" min="-4" max="4" step="1" value="-2">
+      <label style="margin-top:7px;">A to <span class="val" id="a1V" style="color:var(--f-blue)"></span></label><input type="range" id="a1R" min="-4" max="4" step="1" value="3">
+      <label style="margin-top:11px;">B from <span class="val" id="b0V" style="color:var(--f-red)"></span></label><input type="range" id="b0R" min="-4" max="4" step="1" value="-1">
+      <label style="margin-top:7px;">B to <span class="val" id="b1V" style="color:var(--f-red)"></span></label><input type="range" id="b1R" min="-4" max="4" step="1" value="3">
+      <div id="cBox"><label style="margin-top:11px;">C from <span class="val" id="c0V" style="color:var(--f-green)"></span></label><input type="range" id="c0R" min="-4" max="4" step="1" value="-1">
+      <label style="margin-top:7px;">C to <span class="val" id="c1V" style="color:var(--f-green)"></span></label><input type="range" id="c1R" min="-4" max="4" step="1" value="2"></div>
+      <button class="toggle-btn navy" id="allB">∞ Stretch to all of ℝ</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">n(A)</div><div class="rval" id="nA" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">n(B)</div><div class="rval" id="nB" style="color:var(--f-red)"></div></div>
+      <div class="rcard"><div class="rlabel">n(C)</div><div class="rval" id="nC" style="color:var(--f-green)"></div></div>
+      <div class="rcard"><div class="rlabel" id="nPL">n(A × B)</div><div class="rval" id="nP"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let dim='2', kind='int', all=false, t=0;
+  const tg={a0:-2,a1:3,b0:-1,b1:3,c0:-1,c1:2};
+  const S={}; Object.keys(tg).forEach(k=>S[k]={x:tg[k],v:0});
+  const H={x:0,y:0,x1:0,y1:0,tm:0,fl:null,gx:0,gy:0,gz:0}, R=rng(9);
+  chips($('#dimB'),[{id:'2',label:'A × B  (plane)'},{id:'3',label:'A × B × C  (space)'}],dim,id=>{ dim=id; $('#cBox').classList.toggle('hidden',id!=='3'); });
+  chips($('#kindB'),[{id:'int',label:'Whole numbers'},{id:'real',label:'Real intervals'}],kind,id=>{ kind=id; });
+  $('#cBox').classList.add('hidden');
+  ['a','b','c'].forEach(s=>{
+    const lo=$('#'+s+'0R'), hi=$('#'+s+'1R');
+    lo.oninput=()=>{ if(+lo.value>+hi.value) hi.value=lo.value; tg[s+'0']=+lo.value; tg[s+'1']=+hi.value; };
+    hi.oninput=()=>{ if(+hi.value<+lo.value) lo.value=hi.value; tg[s+'0']=+lo.value; tg[s+'1']=+hi.value; };
+  });
+  $('#allB').onclick=()=>{ all=!all; $('#allB').textContent=all?'↩ Back to intervals':'∞ Stretch to all of ℝ'; };
+  const bound=(k)=>all?(k.endsWith('0')?-16:16):tg[k];
+  const wgt=(i,lo,hi)=>clamp(i-(lo-0.5),0,1)*clamp((hi+0.5)-i,0,1);
+
+  function proj3(x,y,z,l){
+    const cy=Math.cos(l.yaw), sy=Math.sin(l.yaw), X=x*cy+z*sy, Z=-x*sy+z*cy, cp=Math.cos(l.pit), sp=Math.sin(l.pit);
+    return {x:l.cx+l.s*X, y:l.cy-l.s*(y*cp-Z*sp)};
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    Object.keys(tg).forEach(k=>springTo(S[k],bound(k),60,8.5,dt));
+    ['a0','a1','b0','b1','c0','c1'].forEach(k=>{ $('#'+k+'V').textContent=tg[k]; });
+    const nA=tg.a1-tg.a0+1, nB=tg.b1-tg.b0+1, nC=tg.c1-tg.c0+1;
+    if(dim==='2'){
+      const V=mkView(w,h,{x0:-5.2,x1:5.2,y0:-5,y1:5},{equal:true,pl:20,pb:20,pt:12,pr:12});
+      drawAxes(ctx,V);
+      const xa=V.X(S.a0.x), xb=V.X(S.a1.x), yb=V.Y(S.b1.x), ya=V.Y(S.b0.x);
+      ctx.save(); ctx.beginPath(); ctx.rect(V.L,V.T,V.R-V.L,V.B-V.T); ctx.clip();
+      if(kind==='real'){
+        ctx.fillStyle='rgba(31,157,85,0.08)'; ctx.fillRect(xa,yb,xb-xa,ya-yb);
+        ctx.save(); ctx.beginPath(); ctx.rect(xa,yb,xb-xa,ya-yb); ctx.clip();
+        ctx.strokeStyle=COL.green; ctx.globalAlpha=0.55; ctx.lineWidth=1.4; ctx.beginPath();
+        const off=(t*12)%14, span=(xb-xa)+(ya-yb);
+        for(let d=-14;d<span+14;d+=14){ ctx.moveTo(xa+d+off,ya); ctx.lineTo(xa+d+off+(ya-yb),yb); }
+        ctx.stroke(); ctx.restore();
+      }
+      line(ctx,xa,yb,xb,yb,COL.blue,3); line(ctx,xa,ya,xb,ya,COL.blue,3);
+      line(ctx,xa,yb,xa,ya,COL.red,3); line(ctx,xb,yb,xb,ya,COL.red,3);
+      if(kind==='int'){
+        for(let i=Math.ceil(V.x0);i<=Math.floor(V.x1);i++) for(let j=Math.ceil(V.y0);j<=Math.floor(V.y1);j++){
+          const q=wgt(i,S.a0.x,S.a1.x)*wgt(j,S.b0.x,S.b1.x); if(q<0.02) continue;
+          circ(ctx,V.X(i),V.Y(j),4.8*q,COL.green,COL.green,1);
+        }
+      }
+      ctx.restore();
+      // the sample pair
+      if(kind==='int'){
+        H.tm-=dt;
+        if(!H.fl && H.tm<=0){
+          const lo1=all?-4:tg.a0, hi1=all?4:tg.a1, lo2=all?-4:tg.b0, hi2=all?4:tg.b1;
+          const nx=lo1+Math.floor(R()*(hi1-lo1+1)), ny=lo2+Math.floor(R()*(hi2-lo2+1));
+          H.x=Math.round(H.x); H.y=Math.round(H.y); startFlight(H,nx,ny,0.6,0.9); H.tm=0.35;
+        }
+        if(stepFlight(H,dt)){ H.x=H.x1=Math.round(H.x); H.y=Math.round(H.y); }
+        if(!H.fl){ H.x=Math.round(H.x); H.y=Math.round(H.y); }
+      } else {
+        const cx=(S.a0.x+S.a1.x)/2, cy=(S.b0.x+S.b1.x)/2, hx=clamp((S.a1.x-S.a0.x)/2*0.92,0,4.8), hy=clamp((S.b1.x-S.b0.x)/2*0.92,0,4.6);
+        H.fl=null; H.x=clamp(cx,-5,5)+hx*Math.sin(t*0.9); H.y=clamp(cy,-5,5)+hy*Math.sin(t*1.4+1);
+      }
+      project(ctx,V,H.x,H.y,1);
+      dot(ctx,V.X(H.x),V.Y(H.y),7.5,COL.yellow,'#fff',3);
+      const sh=kind==='int'?[Math.round(H.x),Math.round(H.y)].join(', '):fnum(H.x,1)+', '+fnum(H.y,1);
+      textAt(ctx,'('+sh+')',V.X(H.x)+12,V.Y(H.y)-10,{weight:700,size:13});
+      $('#nC').textContent='—'; $('#nPL').textContent='n(A × B)';
+      if(all){ $('#nA').textContent='∞'; $('#nB').textContent='∞'; $('#nP').textContent='∞'; }
+      else if(kind==='int'){ $('#nA').textContent=nA; $('#nB').textContent=nB; $('#nP').textContent=nA*nB; }
+      else { $('#nA').textContent='∞'; $('#nB').textContent='∞'; $('#nP').textContent='∞'; }
+      $('#vd').textContent=all?'ℝ × ℝ = every point (x, y) of the plane':(kind==='int'?nA+' × '+nB+' = '+(nA*nB)+' ordered pairs':'Infinite sets ⇒ infinite product');
+    } else {
+      const l={cx:w*0.5,cy:h*0.54,s:Math.min(w,h)/10.5,yaw:-0.62+0.32*Math.sin(t*0.45),pit:0.42};
+      const A=[S.a0.x,S.a1.x], B=[S.b0.x,S.b1.x], C=[S.c0.x,S.c1.x];
+      // axes
+      const ax=[[1,0,0,COL.blue,'x'],[0,1,0,COL.red,'y'],[0,0,1,COL.green,'z']];
+      ax.forEach(q=>{
+        const p0=proj3(-5.2*q[0],-5.2*q[1],-5.2*q[2],l), p1=proj3(5.4*q[0],5.4*q[1],5.4*q[2],l);
+        line(ctx,p0.x,p0.y,p1.x,p1.y,q[3],1.4,[2,5]);
+        const an=Math.atan2(p1.y-p0.y,p1.x-p0.x); arrowHead(ctx,p1.x,p1.y,an,q[3],8);
+        textAt(ctx,q[4],p1.x+Math.cos(an)*10,p1.y+Math.sin(an)*10,{color:q[3],weight:700,size:13,align:'center',baseline:'middle'});
+      });
+      if(kind==='int'){
+        for(let i=-4;i<=4;i++) for(let j=-4;j<=4;j++) for(let k=-4;k<=4;k++){
+          const q=wgt(i,A[0],A[1])*wgt(j,B[0],B[1])*wgt(k,C[0],C[1]); if(q<0.02) continue;
+          const p=proj3(i,j,k,l); circ(ctx,p.x,p.y,2.8*q,COL.ink,COL.ink,0.5);
+        }
+      }
+      // sweeping A × B slice
+      const zs=lerp(C[0],C[1],0.5+0.5*Math.sin(t*0.9));
+      const sc=[[A[0],B[0]],[A[1],B[0]],[A[1],B[1]],[A[0],B[1]]].map(p=>proj3(p[0],p[1],zs,l));
+      ctx.save(); ctx.beginPath(); sc.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.closePath();
+      ctx.fillStyle='rgba(217,160,23,0.16)'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+      // box edges
+      const E=(x0,y0,z0,x1,y1,z1,c)=>{ const p=proj3(x0,y0,z0,l), q=proj3(x1,y1,z1,l); line(ctx,p.x,p.y,q.x,q.y,c,3); };
+      [B[0],B[1]].forEach(y=>[C[0],C[1]].forEach(z=>E(A[0],y,z,A[1],y,z,COL.blue)));
+      [A[0],A[1]].forEach(x=>[C[0],C[1]].forEach(z=>E(x,B[0],z,x,B[1],z,COL.red)));
+      [A[0],A[1]].forEach(x=>[B[0],B[1]].forEach(y=>E(x,y,C[0],x,y,C[1],COL.green)));
+      // the travelling triplet
+      const cx=(A[0]+A[1])/2, cy=(B[0]+B[1])/2, cz=(C[0]+C[1])/2;
+      const hx=clamp((A[1]-A[0])/2,0,5), hy=clamp((B[1]-B[0])/2,0,5), hz=clamp((C[1]-C[0])/2,0,5);
+      let tx=clamp(cx,-5,5)+hx*Math.sin(t*0.9), ty=clamp(cy,-5,5)+hy*Math.sin(t*1.3+1), tz=clamp(cz,-5,5)+hz*Math.sin(t*1.7+2);
+      if(kind==='int'){ tx=Math.round(tx); ty=Math.round(ty); tz=Math.round(tz); }
+      H.gx=approach(H.gx,tx,10,dt); H.gy=approach(H.gy,ty,10,dt); H.gz=approach(H.gz,tz,10,dt);
+      const pp=proj3(H.gx,H.gy,H.gz,l);
+      dot(ctx,pp.x,pp.y,7.5,COL.yellow,'#fff',3);
+      textAt(ctx,'('+fnum(H.gx,kind==='int'?0:1)+', '+fnum(H.gy,kind==='int'?0:1)+', '+fnum(H.gz,kind==='int'?0:1)+')',pp.x+12,pp.y-10,{weight:700,size:13});
+      $('#nPL').textContent='n(A × B × C)';
+      if(all||kind==='real'){ ['nA','nB','nC','nP'].forEach(i=>$('#'+i).textContent='∞'); }
+      else { $('#nA').textContent=nA; $('#nB').textContent=nB; $('#nC').textContent=nC; $('#nP').textContent=nA*nB*nC; }
+      $('#vd').textContent=all?'ℝ × ℝ × ℝ = every point (x, y, z) of space':(kind==='int'?nA+' × '+nB+' × '+nC+' = '+(nA*nB*nC)+' ordered triplets':'Infinite sets ⇒ infinite product');
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.3a RELATIONS & ARROW DIAGRAMS  (§2.3 — Fig 2.4–2.6, Examples 7–8)
+   A relation is a subset of A × B. Each arrow shoots out with a spring
+   overshoot; slide k and the whole bundle retracts and re-aims.
+   ===================================================================== */
+const REL4=[
+  {id:'let', label:'First letter (Fig 2.4)', nA:'P', nB:'Q', A:['a','b','c'], B:['Ali','Bhanu','Binoy','Chandra','Divya'], test:(x,y)=>y[0].toLowerCase()===x},
+  {id:'plus',label:'y = x + k  (Ex. 7)',     nA:'A', nB:'A', A:[1,2,3,4,5,6], B:[1,2,3,4,5,6], test:(x,y,k)=>y===x+k, k:true},
+  {id:'sq',  label:'x = y²  (Ex. 8)',        nA:'P', nB:'Q', A:[1,4,9,25], B:[-5,-3,-2,2,3,5], test:(x,y)=>x===y*y},
+  {id:'div', label:'y divisible by x',       nA:'A', nB:'A', A:[1,2,3,4,6], B:[1,2,3,4,6], test:(x,y)=>y%x===0},
+  {id:'odd', label:'x − y is odd',           nA:'A', nB:'B', A:[1,2,3,5], B:[4,6,9], test:(x,y)=>Math.abs(x-y)%2===1}
+];
+const relLab=v=>typeof v==='number'?fnum(v,0):v;
+function buildA4(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Relation</label><div class="chip-wrap" id="relB"></div>
+      <div id="kBox" class="hidden"><label style="margin-top:9px;">k <span class="val" id="kV"></span></label><input type="range" id="kR" min="-3" max="3" step="1" value="1"></div></div>
+    <div class="control-group"><label style="margin-bottom:4px;">Highlight</label><div class="chip-wrap" id="hlB"></div>
+      <button class="toggle-btn navy" id="replayB">▶ Fire the arrows again</button></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">R (roster form)</div><div class="rval" id="rR" style="font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Domain</div><div class="rval" id="rD" style="color:var(--f-blue);font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Range</div><div class="rval" id="rG" style="color:var(--f-green);font-size:var(--fs-sm)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Codomain</div><div class="rval" id="rC" style="color:var(--f-red);font-size:var(--fs-sm)"></div></div></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let rel=REL4[0], k=1, hl='auto', t=0, hlT=0, hlIdx=0; const arr=makeArrows();
+  chips($('#relB'),REL4.map(r=>({id:r.id,label:r.label})),rel.id,id=>{ rel=REL4.find(r=>r.id===id); $('#kBox').classList.toggle('hidden',!rel.k); arr.clear(); });
+  chips($('#hlB'),[{id:'auto',label:'Auto'},{id:'dom',label:'Domain'},{id:'ran',label:'Range'},{id:'cod',label:'Codomain'}],hl,id=>{ hl=id; });
+  $('#kR').oninput=e=>{ k=+e.target.value; };
+  $('#replayB').onclick=()=>arr.replay();
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const A=rel.A, B=rel.B;
+    const g=adLayout(ctx,w,h,A.map(relLab),B.map(relLab));
+    const pairs=[]; A.forEach((x,i)=>B.forEach((y,j)=>{ if(rel.test(x,y,k)) pairs.push([i,j]); }));
+    arr.want(pairs); arr.step(dt);
+    $('#kV').textContent=(k>0?'+':'')+k;
+    const dom=new Set(pairs.map(p=>p[0])), ran=new Set(pairs.map(p=>p[1]));
+    let mode=hl;
+    if(hl==='auto'){ hlT+=dt; if(hlT>2.4){ hlT=0; hlIdx=(hlIdx+1)%3; } mode=['dom','ran','cod'][hlIdx]; }
+    const pulse=1+0.07*Math.sin(t*5);
+    setOval(ctx,g.ax,g.cy,g.rwA,g.rhA,COL.blue,rel.nA,mode==='dom'?4:2.4);
+    setOval(ctx,g.bx,g.cy,g.rwB,g.rhB,COL.red,rel.nB,mode==='cod'?4.6:2.4);
+    if(mode==='cod'){ ctx.save(); ctx.globalAlpha=0.08+0.05*Math.sin(t*5); ctx.fillStyle=COL.red; ctx.beginPath(); ctx.ellipse(g.bx,g.cy,g.rwB,g.rhB,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+    if(mode==='dom'){ ctx.save(); ctx.globalAlpha=0.07+0.04*Math.sin(t*5); ctx.fillStyle=COL.blue; ctx.beginPath(); ctx.ellipse(g.ax,g.cy,g.rwA,g.rhA,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+    arr.all().forEach(a=>{
+      const pa=g.pA[a.i], pb=g.pB[a.j]; if(!pa||!pb) return;
+      arrowTo(ctx,pa.x+pa.w/2+3,pa.y,pb.x-pb.w/2-4,pb.y,a.s.x,COL.green,2.6);
+    });
+    A.forEach((x,i)=>{
+      const p=g.pA[i], inn=dom.has(i), on=mode==='dom'&&inn, dim=mode==='dom'&&!inn;
+      tok(ctx,p.x,p.y+Math.sin(t*1.7+i)*1.5,relLab(x),{r:g.r,stroke:COL.blue,text:COL.blue,fill:on?'#e6f1fc':'#fff',alpha:dim?0.4:1,sx:on?pulse:1,sy:on?pulse:1,stroke2:on?COL.blue:undefined});
+    });
+    B.forEach((y,j)=>{
+      const p=g.pB[j], inn=ran.has(j);
+      let fill='#fff', st=COL.red, al=1, sc=1, st2;
+      if(mode==='ran'){ if(inn){ fill='#e4f7ec'; st=COL.green; sc=pulse; st2=COL.green; } else { st=COL.yellow; al=0.7; } }
+      else if(mode==='cod'){ fill='#fdece7'; sc=pulse; st2=COL.red; }
+      tok(ctx,p.x,p.y+Math.sin(t*1.7+j*1.3)*1.5,relLab(y),{r:g.r,stroke:st,text:st===COL.yellow?COL.muted:st,fill:fill,alpha:al,sx:sc,sy:sc,stroke2:st2});
+    });
+    const cap={dom:['Domain — first elements that have an image',COL.blue],ran:['Range — second elements that are images (yellow: in codomain only)',COL.green],cod:['Codomain — the whole set B',COL.red]}[mode];
+    textAt(ctx,cap[0],16,24,{align:'left',weight:700,size:13,color:cap[1]});
+    const R=pairs.map(p=>pairS([relLab(A[p[0]]),relLab(B[p[1]])]));
+    $('#rR').textContent=R.length?'{ '+R.join(', ')+' }':'∅';
+    $('#rD').textContent=setS(A.filter((x,i)=>dom.has(i)).map(relLab));
+    $('#rG').textContent=setS(B.filter((y,j)=>ran.has(j)).map(relLab));
+    $('#rC').textContent=setS(B.map(relLab));
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.3b HOW MANY RELATIONS?  (Note + Example 9 — total relations = 2^(pq))
+   Every pair of A × B is a switch; each setting of the switches is one
+   relation. The binary odometer counts through all 2^(pq) of them while
+   the arrows retract and shoot out on springs.
+   ===================================================================== */
+function buildA5(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group">
+      <label>n(A) = p <span class="val" id="pV" style="color:var(--f-blue)"></span></label><input type="range" id="pR" min="1" max="3" step="1" value="2">
+      <label style="margin-top:9px;">n(B) = q <span class="val" id="qV" style="color:var(--f-red)"></span></label><input type="range" id="qR" min="1" max="3" step="1" value="2"></div>
+    <div class="control-group"><label style="margin-bottom:2px;">Flip a pair in or out</label><div class="chip-wrap" id="swB"></div></div>
+    <div class="control-group"><label>Speed <span class="val" id="spV"></span></label><input type="range" id="spR" min="0.5" max="8" step="0.5" value="2">
+      <div class="toggle-group"><button class="toggle-btn play" id="playB">▶ Play all relations</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Pairs in A × B</div><div class="rval" id="rPQ"></div></div>
+      <div class="rcard"><div class="rlabel">All relations</div><div class="rval" id="rTot" style="color:var(--f-green)"></div></div>
+      <div class="rcard wide"><div class="rlabel">This relation R</div><div class="rval" id="rR" style="font-size:var(--fs-sm)"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  const AV=[1,2,3], BV=[3,4,5];
+  let p=2, q=2, idx=5, play=true, spd=2, acc=0, t=0, odo=[], tile=[]; const arr=makeArrows();
+  const total=()=>Math.pow(2,p*q);
+  const bit=n=>((idx>>n)&1)===1;
+  function sync(){
+    $('#pV').textContent=p; $('#qV').textContent=q;
+    odo=Array.from({length:p*q},(_,n)=>({x:bit(n)?1:0,v:0})); tile=Array.from({length:p*q},(_,n)=>({x:bit(n)?1:0,v:0}));
+    const sb=$('#swB'); sb.innerHTML='';
+    for(let i=0;i<p;i++) for(let j=0;j<q;j++){
+      const n=i*q+j, b=document.createElement('button'); b.className='chip-btn'; b.textContent=pairS([AV[i],BV[j]]);
+      b.onclick=()=>{ idx^=(1<<n); }; sb.appendChild(b);
+    }
+    idx=Math.min(idx,total()-1);
+  }
+  $('#pR').oninput=e=>{ p=+e.target.value; arr.clear(); sync(); };
+  $('#qR').oninput=e=>{ q=+e.target.value; arr.clear(); sync(); };
+  $('#spR').oninput=e=>{ spd=+e.target.value; };
+  $('#playB').onclick=()=>{ play=!play; $('#playB').textContent=play?'❚❚ Pause':'▶ Play all relations'; $('#playB').classList.toggle('play',!play); $('#playB').classList.toggle('navy',play); };
+  $('#playB').textContent='❚❚ Pause'; $('#playB').classList.remove('play'); $('#playB').classList.add('navy');
+  sync();
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    $('#spV').textContent=fnum(spd,1)+' / s';
+    if(play){ acc+=dt*spd; while(acc>=1){ acc-=1; idx=(idx+1)%total(); } }
+    const A=AV.slice(0,p), B=BV.slice(0,q), N=p*q;
+    const lw=w*0.6;
+    // ---- arrow diagram (left 60%) ----
+    const g=adLayout(ctx,lw,h,A.map(String),B.map(String));
+    const pairs=[]; for(let i=0;i<p;i++) for(let j=0;j<q;j++) if(bit(i*q+j)) pairs.push([i,j]);
+    arr.want(pairs); arr.step(dt);
+    setOval(ctx,g.ax,g.cy,g.rwA,g.rhA,COL.blue,'A',2.4); setOval(ctx,g.bx,g.cy,g.rwB,g.rhB,COL.red,'B',2.4);
+    arr.all().forEach(a=>{ const pa=g.pA[a.i], pb=g.pB[a.j]; if(pa&&pb) arrowTo(ctx,pa.x+pa.w/2+3,pa.y,pb.x-pb.w/2-4,pb.y,a.s.x,COL.green,2.6); });
+    A.forEach((x,i)=>tok(ctx,g.pA[i].x,g.pA[i].y+Math.sin(t*1.7+i)*1.5,x,{r:g.r,stroke:COL.blue,text:COL.blue}));
+    B.forEach((y,j)=>tok(ctx,g.pB[j].x,g.pB[j].y+Math.sin(t*1.7+j*1.3)*1.5,y,{r:g.r,stroke:COL.red,text:COL.red}));
+    // ---- switch bank (right 40%) ----
+    const rx0=w*0.63, rw=w*0.35, ts=Math.min(78,(rw-6)/q,(h*0.42)/p), tx0=rx0+(rw-q*ts)/2, ty0=h*0.09;
+    textAt(ctx,'Each pair is a switch',rx0+rw/2,ty0-6,{align:'center',weight:700,size:12,color:COL.muted});
+    for(let i=0;i<p;i++) for(let j=0;j<q;j++){
+      const n=i*q+j, s=tile[n]; springTo(s,bit(n)?1:0,160,14,dt);
+      const cx=tx0+(j+0.5)*ts, cy=ty0+8+(i+0.5)*ts, on=clamp(s.x,0,1);
+      ctx.save(); rrect(ctx,cx-ts/2+3,cy-ts/2+3,ts-6,ts-6,10); ctx.fillStyle=mixCol('#ffffff','#e4f7ec',on); ctx.fill();
+      ctx.strokeStyle=mixCol('#c2d1e5',COL.green,on); ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+      textAt(ctx,pairS([A[i],B[j]]),cx,cy-ts*0.14,{align:'center',baseline:'middle',weight:700,size:clamp(ts*0.19,10,14),color:mixCol(COL.mid,COL.ink,on)});
+      const kw=ts*0.5, kh=ts*0.2, kx=cx-kw/2, ky=cy+ts*0.16;
+      ctx.save(); rrect(ctx,kx,ky,kw,kh,kh/2); ctx.strokeStyle=mixCol(COL.mid,COL.green,on); ctx.lineWidth=1.8; ctx.stroke(); ctx.restore();
+      circ(ctx,kx+kh/2+(kw-kh)*s.x,ky+kh/2,kh*0.36,mixCol(COL.mid,COL.green,on),mixCol('#ffffff',COL.green,on),1.6);
+    }
+    // ---- binary odometer ----
+    const dw=Math.min(36,(rw-4)/N), ox0=rx0+(rw-N*dw)/2, oy=h*0.63;
+    textAt(ctx,'Binary odometer',rx0+rw/2,oy-34,{align:'center',weight:700,size:12,color:COL.muted});
+    for(let n=0;n<N;n++){
+      const s=odo[n]; springTo(s,bit(N-1-n)?1:0,200,15,dt);
+      const sxk=Math.abs(1-2*s.x), on=s.x>0.5;
+      ctx.save(); ctx.translate(ox0+(n+0.5)*dw,oy); ctx.scale(Math.max(0.08,sxk),1);
+      rrect(ctx,-dw*0.42,-17,dw*0.84,34,6); ctx.fillStyle=on?'#e4f7ec':'#fff'; ctx.fill(); ctx.strokeStyle=on?COL.green:COL.mid; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=on?COL.green:COL.mid; ctx.font='700 '+Math.round(dw*0.55)+'px Poppins, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(on?'1':'0',0,1);
+      ctx.restore();
+    }
+    // progress track
+    const trx0=rx0+6, trx1=rx0+rw-6, ty=h*0.80, fr=idx/Math.max(1,total()-1);
+    line(ctx,trx0,ty,trx1,ty,COL.mid,3); line(ctx,trx0,ty,lerp(trx0,trx1,fr),ty,COL.green,4);
+    circ(ctx,lerp(trx0,trx1,fr),ty,7,COL.green,'#fff',3);
+    textAt(ctx,'relation '+(idx+1)+' of '+total(),rx0+rw/2,ty+26,{align:'center',weight:700,size:15,color:COL.ink});
+    textAt(ctx,'2'+sup(N)+' = '+total(),rx0+rw/2,h*0.95,{align:'center',weight:700,size:17,color:COL.green});
+    // readouts
+    $('#rPQ').textContent=p+' × '+q+' = '+N; $('#rTot').textContent='2'+sup(N)+' = '+total();
+    const R=pairs.map(pr=>pairS([A[pr[0]],B[pr[1]]]));
+    $('#rR').textContent=R.length?'{ '+R.join(', ')+' }':'∅';
+    const vd=$('#vd'); vd.className='fb '+(pairs.length===0||pairs.length===N?'warn':'ok');
+    vd.textContent=pairs.length===0?'The empty relation ∅ is a relation too':pairs.length===N?'The full product A × B is also a relation':'A subset of A × B — a relation';
+  });
+  return wrap;
+}
+const sup=n=>String(n).split('').map(d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+d]).join('');
+function mixCol(a,b,t){ const h=s=>[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)]; const A=h(a),B=h(b); t=clamp(t,0,1); return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')'; }
+
+/* =====================================================================
+   2.4a FUNCTION OR NOT?  (Definition 5 — Examples 10, 11, Misc. Q10)
+   A ball per input rolls down its arrow(s). One arrow: it lands in B.
+   Two arrows: it splits and the pair shakes. No arrow: it drops under
+   gravity (g = 1500 px/s², e = 0.42) into the "no image" pit.
+   ===================================================================== */
+const FN6=[
+  {id:'e11a', label:'Ex 11 (i)',   A:[2,3,4], B:[1,2], R:[[2,1],[3,1],[4,2]]},
+  {id:'e11b', label:'Ex 11 (ii)',  A:[2,3,4], B:[2,3,4], R:[[2,2],[2,4],[3,3],[4,4]]},
+  {id:'e11c', label:'Ex 11 (iii)', A:[1,2,3,4,5,6], B:[2,3,4,5,6,7], R:[[1,2],[2,3],[3,4],[4,5],[5,6],[6,7]]},
+  {id:'e7',   label:'Ex 7  y = x+1', A:[1,2,3,4,5,6], B:[1,2,3,4,5,6], R:[[1,2],[2,3],[3,4],[4,5],[5,6]]},
+  {id:'e8',   label:'Ex 8  x = y²', A:[1,4,9,25], B:[-5,-3,-2,2,3,5], R:[[4,2],[4,-2],[9,3],[9,-3],[25,5],[25,-5]]},
+  {id:'e10',  label:'Ex 10  y = 2x', A:[1,2,3,4,5], B:[2,4,6,8,10], R:[[1,2],[2,4],[3,6],[4,8],[5,10]]},
+  {id:'m10',  label:'Misc 10',     A:[1,2,3,4], B:[1,5,9,11,15,16], R:[[1,5],[2,9],[3,1],[4,5],[2,11]]}
+];
+function buildA6(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Relation</label><div class="chip-wrap" id="fnB"></div></div>
+    <div class="control-group">
+      <div class="toggle-group"><button class="toggle-btn navy" id="goB" style="margin-top:0">▶ Release the inputs</button></div>
+      <div class="toggle-group"><button class="toggle-btn play" id="autoB">Auto repeat · ON</button></div></div>
+    <div class="control-group"><label style="margin-bottom:2px;">Each input x</label><table class="log"><thead><tr><th>x</th><th>image(s)</th><th></th></tr></thead><tbody id="tb"></tbody></table>
+      <div class="fb" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let fn=FN6[0], auto=true, t=0, balls=[], res=[], pit=[], fx=[], spawnI=0, spawnT=0, idle=0, shakes=[], pulseB=[], sigPrev='';
+  const arr=makeArrows();
+  const imgs=i=>fn.R.filter(r=>r[0]===fn.A[i]).map(r=>fn.B.indexOf(r[1]));
+  const isFn=()=>fn.A.every((x,i)=>imgs(i).length===1);
+  function reset(){ balls=[]; res=fn.A.map(()=>null); pit=[]; spawnI=0; spawnT=0.5; idle=0; shakes=fn.A.map(()=>0); pulseB=fn.B.map(()=>0); fx=[]; }
+  chips($('#fnB'),FN6.map(f=>({id:f.id,label:f.label})),fn.id,id=>{ fn=FN6.find(f=>f.id===id); arr.clear(); reset(); });
+  $('#goB').onclick=()=>reset();
+  $('#autoB').onclick=()=>{ auto=!auto; $('#autoB').textContent='Auto repeat · '+(auto?'ON':'OFF'); $('#autoB').classList.toggle('play',auto); $('#autoB').classList.toggle('navy',!auto); };
+  reset();
+  const G=1500;
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const A=fn.A, B=fn.B, g=adLayout(ctx,w,h,A.map(relLab),B.map(relLab));
+    arr.want(fn.R.map(r=>[A.indexOf(r[0]),B.indexOf(r[1])])); arr.step(dt);
+    const floorY=Math.min(h-26,g.cy+g.rhA+34);
+    // pit below A
+    ctx.save(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.4; ctx.setLineDash([6,5]); ctx.beginPath();
+    ctx.moveTo(g.ax-g.rwA,floorY+16); ctx.lineTo(g.ax-g.rwA,floorY+6); ctx.moveTo(g.ax-g.rwA,floorY+16); ctx.lineTo(g.ax+g.rwA,floorY+16); ctx.lineTo(g.ax+g.rwA,floorY+6); ctx.stroke(); ctx.restore();
+    textAt(ctx,'no image',g.ax,floorY+34,{align:'center',weight:700,size:11,color:COL.yellow});
+    setOval(ctx,g.ax,g.cy,g.rwA,g.rhA,COL.blue,'A (domain)',2.4); setOval(ctx,g.bx,g.cy,g.rwB,g.rhB,COL.red,'B (codomain)',2.4);
+    arr.all().forEach(a=>{
+      const pa=g.pA[a.i], pb=g.pB[a.j]; if(!pa||!pb) return;
+      const many=imgs(a.i).length>1; arrowTo(ctx,pa.x+pa.w/2+3,pa.y,pb.x-pb.w/2-4,pb.y,a.s.x,many?COL.red:COL.green,many?2.8:2.4);
+    });
+    // spawning
+    spawnT-=dt;
+    if(spawnI<A.length && spawnT<=0){
+      const i=spawnI++, J=imgs(i), p=g.pA[i]; spawnT=0.62;
+      if(J.length===1){ balls.push({i:i,j:J[0],u:0,st:'go',x:p.x,y:p.y,col:COL.green,sq:mkSq()}); res[i]='ok'; }
+      else if(J.length>1){ J.forEach(j=>balls.push({i:i,j:j,u:0,st:'go',x:p.x,y:p.y,col:COL.red,sq:mkSq()})); res[i]='two'; shakes[i]=1; fxAdd(fx,p.x,p.y,COL.red,40); }
+      else { balls.push({i:i,st:'fall',x:p.x,y:p.y,vx:-30,vy:-280,col:COL.yellow,sq:mkSq(),bn:0,tm:0}); res[i]='none'; shakes[i]=1; fxAdd(fx,p.x,p.y,COL.yellow,40); }
+    }
+    // balls
+    for(let k=balls.length-1;k>=0;k--){
+      const b=balls[k]; stepSq(b,dt);
+      if(b.st==='go'){
+        const pa=g.pA[b.i], pb=g.pB[b.j], x0=pa.x+pa.w/2+3, y0=pa.y, x1=pb.x-pb.w/2-4, y1=pb.y, dx=(x1-x0)*0.45;
+        b.u=Math.min(1,b.u+dt/1.05); const e=b.u*b.u*(3-2*b.u), q=bezPt({x:x0,y:y0},{x:x0+dx,y:y0},{x:x1-dx,y:y1},{x:x1,y:y1},e);
+        b.x=q.x; b.y=q.y;
+        if(b.u>=1){ b.st='land'; b.tm=0; pulseB[b.j]=1; b.sq.v=-8; fxAdd(fx,pb.x,pb.y,b.col,36); }
+      } else if(b.st==='land'){ b.tm+=dt; const pb=g.pB[b.j]; b.x=pb.x; b.y=pb.y; if(b.tm>0.5){ balls.splice(k,1); continue; } }
+      else if(b.st==='fall'){
+        b.vy+=G*dt; b.x+=b.vx*dt; b.y+=b.vy*dt; b.tm+=dt;
+        if(b.y>=floorY && b.vy>0){ b.y=floorY; b.vy=-b.vy*0.42; b.vx*=0.7; b.bn++; b.sq.v=-6; if(Math.abs(b.vy)<70){ b.vy=0; b.st='rest'; b.tm=0; } }
+      } else if(b.st==='rest'){ b.tm+=dt; if(b.tm>1.4){ balls.splice(k,1); continue; } }
+      const q=squash(b), al=(b.st==='land')?1-b.tm/0.5:(b.st==='rest'?1-b.tm/1.4:1);
+      tok(ctx,b.x,b.y,relLab(A[b.i]),{r:g.r*0.8,fill:'#fff',stroke:b.col,text:b.col,alpha:al,sx:q.sx,sy:q.sy,size:Math.round(g.r*0.7)});
+    }
+    // tokens
+    A.forEach((x,i)=>{
+      const p=g.pA[i]; shakes[i]=approach(shakes[i],0,2.4,dt);
+      const sh=Math.sin(t*60)*5*shakes[i], st=res[i]==='ok'?COL.green:res[i]==='two'?COL.red:res[i]==='none'?COL.yellow:COL.blue;
+      tok(ctx,p.x+sh,p.y+Math.sin(t*1.7+i)*1.5,relLab(x),{r:g.r,stroke:COL.blue,text:COL.blue,stroke2:res[i]?st:undefined});
+    });
+    B.forEach((y,j)=>{
+      const p=g.pB[j]; pulseB[j]=approach(pulseB[j],0,3,dt); const sc=1+0.22*pulseB[j];
+      tok(ctx,p.x,p.y+Math.sin(t*1.7+j*1.3)*1.5,relLab(y),{r:g.r,stroke:COL.red,text:COL.red,fill:pulseB[j]>0.05?'#e4f7ec':'#fff',sx:sc,sy:sc});
+    });
+    fxDraw(ctx,fx,dt);
+    // loop: when everything has settled, wait then replay
+    if(spawnI>=A.length && balls.length===0){ idle+=dt; if(auto&&idle>1.8){ reset(); arr.replay(); } }
+    // readouts
+    const rows=A.map((x,i)=>{ const J=imgs(i), r=res[i];
+      return '<tr><td>'+relLab(x)+'</td><td>'+(J.length?J.map(j=>relLab(B[j])).join(', '):'—')+'</td><td class="'+(J.length===1?'r-ok':J.length>1?'r-bad':'r-warn')+'">'+(J.length===1?'1 ✓':J.length>1?'2+ ✗':'0 ✗')+'</td></tr>'; }).join('');
+    if(rows!==sigPrev){ $('#tb').innerHTML=rows; sigPrev=rows; }
+    const vd=$('#vd'), f=isFn(); vd.className='fb '+(f?'ok':'bad');
+    vd.textContent=f?'Function ✓ — every x has exactly one image':'Not a function ✗ — some x has none or more than one image';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4b THE FUNCTION MACHINE  (§2.4 — Examples 12–15 tables)
+   Input ball hops (parabola) into the hopper, the gears spin up, and the
+   image is fired out of the chute on a real ballistic arc: it lands on
+   the output line at f(x) and bounces with e = 0.45 until it rests.
+   x = 0 in 1/x jams the machine — 0 is not in the domain.
+   ===================================================================== */
+const FM=[
+  {id:'lin', label:'2x + 1  (Ex 12)', f:x=>2*x+1, txt:'f(x) = 2x + 1', xs:[1,2,3,4,5,6,7], sl:[1,2,3,4,5,6,7], out:[0,16]},
+  {id:'sq',  label:'x²  (Ex 13)',     f:x=>x*x,   txt:'f(x) = x²',     xs:[-4,-3,-2,-1,0,1,2,3,4], sl:[-4,-3,-2,-1,0,1,2,3,4], out:[0,16]},
+  {id:'cu',  label:'x³  (Ex 14)',     f:x=>x*x*x, txt:'f(x) = x³',     xs:[-3,-2,-1,0,1,2,3], sl:[-3,-2,-1,0,1,2,3], out:[-27,27]},
+  {id:'inv', label:'1/x  (Ex 15)',    f:x=>x===0?NaN:1/x, txt:'f(x) = 1 / x', xs:[-2,-1.5,-1,-0.5,0.25,0.5,1,1.5,2], sl:[-2,-1.5,-1,-0.5,0,0.25,0.5,1,1.5,2], out:[-4,4]}
+];
+function buildA7(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Rule inside the machine</label><div class="chip-wrap" id="ruB"></div></div>
+    <div class="control-group"><label>Input x <span class="val" id="xV" style="color:var(--f-blue)"></span></label><input type="range" id="xR" min="0" max="6" step="1" value="0">
+      <div class="toggle-group"><button class="toggle-btn navy" id="allB" style="margin-top:2px">▶ Fill the whole table</button></div>
+      <div class="toggle-group"><button class="toggle-btn" id="clrB">Clear table</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">Input x</div><div class="rval" id="rX" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">Output f(x)</div><div class="rval" id="rY" style="color:var(--f-green)"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  const G=1500;
+  let rule=FM[0], xi=0, t=0, run=null, queue=[], seqDelay=0, ob=null, rest=null, last=null, tcell={}, shake={x:0,v:0}, gear=0, gearW=1, smoke=[], fx=[], inX=1, jamMsg=0;
+  function setRule(r){ rule=r; xi=0; $('#xR').max=r.sl.length-1; $('#xR').value=0; run=null; queue=[]; ob=null; rest=null; last=null; tcell={}; inX=r.sl[0]; smoke=[]; fx=[]; }
+  chips($('#ruB'),FM.map(r=>({id:r.id,label:r.label})),rule.id,id=>setRule(FM.find(r=>r.id===id)));
+  function request(x,seq){ if(run){ queue=[{x:x,seq:seq}]; return; } startRun(x,seq); }
+  function startRun(x,seq){ run={x:x,ph:'hop',t:0,seq:!!seq,b:{x:0,y:0,sq:mkSq(),init:false}}; rest=null; ob=null; inX=x; }
+  $('#xR').oninput=e=>{ xi=+e.target.value; queue=[]; request(rule.sl[xi],false); };
+  $('#allB').onclick=()=>{ queue=rule.xs.map(x=>({x:x,seq:true})); if(!run) startRun(queue.shift().x,true); };
+  $('#clrB').onclick=()=>{ tcell={}; };
+  setRule(FM[0]);
+
+  function L(w,h){
+    return {inA:w*0.05, inB:w*0.34, ouA:w*0.66, ouB:w*0.95, ly:h*0.66, mx:w*0.39, mw:w*0.22, my:h*0.12, mh:h*0.40,
+      ix:w*0.415, iy:h*0.11, cx:w*0.61, cy:h*0.36};
+  }
+  const mapX=(v,lo,hi,a,b)=>lerp(a,b,(v-lo)/(hi-lo));
+  const inLo=()=>Math.min(...rule.sl), inHi=()=>Math.max(...rule.sl);
+  const inPos=(x,l)=>({x:mapX(x,inLo(),inHi(),l.inA+20,l.inB-20),y:l.ly-15});
+  const outPos=(y,l)=>({x:mapX(clamp(y,rule.out[0],rule.out[1]),rule.out[0],rule.out[1],l.ouA+20,l.ouB-20),y:l.ly-15});
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const l=L(w,h);
+    $('#xV').textContent=fnum(rule.sl[xi],2);
+    springTo(shake,0,260,9,dt);
+    const busy=run&&(run.ph==='proc'||run.ph==='jam');
+    gearW=approach(gearW,run&&run.ph==='jam'?0:busy?11:1.3,5,dt); gear+=gearW*dt;
+    // ---------- number lines ----------
+    line(ctx,l.inA,l.ly,l.inB,l.ly,COL.blue,2.6); line(ctx,l.ouA,l.ly,l.ouB,l.ly,COL.green,2.6);
+    rule.sl.forEach(x=>{ const p=inPos(x,l); line(ctx,p.x,l.ly-5,p.x,l.ly+5,COL.blue,2); textAt(ctx,fnum(x,2),p.x,l.ly+18,{size:10,color:COL.muted,align:'center',weight:600}); });
+    const oticks=[rule.out[0],(rule.out[0]+rule.out[1])/2,rule.out[1]];
+    oticks.forEach(v=>{ const p=outPos(v,l); line(ctx,p.x,l.ly-5,p.x,l.ly+5,COL.green,2); textAt(ctx,fnum(v,2),p.x,l.ly+18,{size:10,color:COL.muted,align:'center',weight:600}); });
+    textAt(ctx,'x',l.inA-2,l.ly-24,{color:COL.blue,weight:700,size:14}); textAt(ctx,'f(x)',l.ouA-2,l.ly-24,{color:COL.green,weight:700,size:14});
+    // ---------- machine ----------
+    ctx.save(); ctx.translate(shake.x,0);
+    const mx=l.mx, my=l.my, mw=l.mw, mh=l.mh;
+    ctx.save(); rrect(ctx,mx,my,mw,mh,16); ctx.fillStyle='#f6f9fc'; ctx.fill(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
+    // hopper (funnel)
+    ctx.save(); ctx.strokeStyle=COL.blue; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(mx-6,my-26); ctx.lineTo(mx+mw*0.34,my-26); ctx.lineTo(mx+mw*0.24,my); ctx.moveTo(mx-6,my-26); ctx.lineTo(mx+mw*0.06,my); ctx.stroke(); ctx.restore();
+    // chute
+    line(ctx,mx+mw,my+mh*0.30,l.cx+14,l.cy+14,COL.green,4);
+    // gears
+    const gr=Math.min(mw,mh)*0.2;
+    const gearD=(cx,cy,r,a,col)=>{ ctx.save(); ctx.translate(cx,cy); ctx.rotate(a); ctx.strokeStyle=col; ctx.lineWidth=2.6;
+      ctx.beginPath(); ctx.arc(0,0,r*0.78,0,Math.PI*2); ctx.stroke(); ctx.beginPath();
+      for(let k=0;k<10;k++){ const an=k*Math.PI/5; ctx.moveTo(Math.cos(an)*r*0.78,Math.sin(an)*r*0.78); ctx.lineTo(Math.cos(an)*r*1.0,Math.sin(an)*r*1.0); }
+      ctx.stroke(); ctx.beginPath(); ctx.moveTo(-r*0.4,0); ctx.lineTo(r*0.4,0); ctx.moveTo(0,-r*0.4); ctx.lineTo(0,r*0.4); ctx.stroke(); ctx.restore(); };
+    gearD(mx+mw*0.32,my+mh*0.30,gr,gear,COL.blue); gearD(mx+mw*0.32+gr*1.8,my+mh*0.30,gr*0.8,-gear*1.25+0.3,COL.red);
+    // face
+    textAt(ctx,rule.txt,mx+mw/2,my+mh*0.68,{align:'center',weight:700,size:clamp(mw*0.1,12,17),color:COL.ink});
+    const shown=run&&run.ph!=='hop'?run.x:(last?last.x:null);
+    let faceTxt='ready';
+    if(run&&run.ph==='proc') faceTxt=fnum(run.x,2)+'  →  '+(Math.floor(t*14)%2?'· · ·':'· ·');
+    else if(run&&run.ph==='jam') faceTxt='x = 0 ✗';
+    else if(last) faceTxt=fnum(last.x,2)+'  →  '+fnum(last.y,2);
+    textAt(ctx,faceTxt,mx+mw/2,my+mh*0.86,{align:'center',weight:700,size:clamp(mw*0.085,11,15),color:run&&run.ph==='jam'?COL.red:COL.muted});
+    ctx.restore();
+    // ---------- input ball at rest ----------
+    const ip=inPos(inX,l);
+    if(!run||run.ph==='hop'&&!run.b.init) tokDraw(ip.x,ip.y+Math.sin(t*2)*2,fnum(inX,2),COL.blue,1);
+    else tokDraw(ip.x,ip.y,fnum(inX,2),COL.blue,0.28,true);
+    function tokDraw(x,y,lab,col,al,ghost){ tok(ctx,x,y,lab,{r:15,stroke:col,text:col,alpha:al,size:11}); }
+    // ---------- run state machine ----------
+    if(run){
+      if(run.ph==='hop'){
+        if(!run.b.init){ const p=inPos(run.x,l); run.b.x=p.x; run.b.y=p.y; startFlight(run.b,l.ix,l.iy,0.8,120); run.b.init=true; }
+        run.b.fl.x1=l.ix; run.b.fl.y1=l.iy;
+        const landed=stepFlight(run.b,dt);
+        if(landed){ run.ph='proc'; run.t=0; shake.v=-330; fxAdd(fx,l.ix,l.iy,COL.blue,36); }
+        else { const q=squash(run.b); tok(ctx,run.b.x,run.b.y,fnum(run.x,2),{r:15,stroke:COL.blue,text:COL.blue,size:11,sx:q.sx,sy:q.sy}); }
+      } else if(run.ph==='proc'){
+        run.t+=dt; shake.x+=Math.sin(t*70)*0.35;
+        if(run.t>0.95){
+          const y=rule.f(run.x);
+          if(!isFinite(y)){ run.ph='jam'; run.t=0; shake.v=500; jamMsg=1;
+            run.b.x=l.ix; run.b.y=l.iy; const p=inPos(run.x,l); startFlight(run.b,p.x,p.y,0.9,150); }
+          else { run.ph='out'; run.t=0; run.y=y; const xT=outPos(y,l).x, Y=l.ly-15, x0=l.cx, y0=l.cy, vy0=-420, T0=(-vy0+Math.sqrt(vy0*vy0+2*G*(Y-y0)))/G;
+            ob={x:x0,y:y0,vx:(xT-x0)/T0,vy:vy0,hit:0,xT:xT,Y:Y,sq:mkSq(),done:false}; shake.v=300; }
+        }
+      } else if(run.ph==='jam'){
+        run.t+=dt; shake.x+=Math.sin(t*90)*0.6;
+        if(Math.random()<0.5) smoke.push({x:l.mx+l.mw*(0.2+0.6*Math.random()),y:l.my,r:5,t:0});
+        const landed=stepFlight(run.b,dt);
+        if(run.b.fl) tok(ctx,run.b.x,run.b.y,fnum(run.x,2),{r:15,stroke:COL.red,text:COL.red,size:11});
+        if(landed) fxAdd(fx,run.b.x,run.b.y,COL.red,36);
+        if(run.t>1.7) run=null;
+      } else if(run.ph==='out'){
+        const o=ob; o.vy+=G*dt; o.x+=o.vx*dt; o.y+=o.vy*dt; stepSq(o,dt);
+        if(o.y>=o.Y&&o.vy>0){
+          o.y=o.Y; o.vy=-o.vy*0.45; o.sq.v=-7;
+          if(o.hit===0){ o.x=o.xT; o.vx=0; const ix=rule.xs.indexOf(run.x); last={x:run.x,y:run.y}; fxAdd(fx,o.x,o.y,COL.green,36);
+            if(ix>=0){ tcell[ix]={pop:{x:0,v:-9}}; } }
+          o.hit++; if(Math.abs(o.vy)<70){ o.vy=0; o.done=true; }
+        }
+        const q=squash(o); tok(ctx,o.x,o.y,fnum(run.y,2),{r:15,stroke:COL.green,text:COL.green,size:11,sx:q.sx,sy:q.sy});
+        if(o.done){ run.t+=dt; if(run.t>0.35){ rest={y:run.y}; run=null; } }
+      }
+      if(!run){ ob=null; if(queue.length){ seqDelay=queue[0].seq?0.5:0; } }
+    }
+    if(!run&&queue.length){ seqDelay-=dt; if(seqDelay<=0){ const n=queue.shift(); startRun(n.x,n.seq); } }
+    if(!run&&rest){ const p=outPos(rest.y,l); tok(ctx,p.x,p.y+Math.sin(t*2+1)*2,fnum(rest.y,2),{r:15,stroke:COL.green,text:COL.green,size:11}); }
+    // smoke + fx
+    for(let i=smoke.length-1;i>=0;i--){ const s=smoke[i]; s.t+=dt; s.y-=60*dt; s.r+=14*dt; if(s.t>1){ smoke.splice(i,1); continue; } ctx.save(); ctx.globalAlpha=0.5*(1-s.t); circ(ctx,s.x,s.y,s.r,COL.red,null,2); ctx.restore(); }
+    fxDraw(ctx,fx,dt);
+    // ---------- table ----------
+    const n=rule.xs.length, cw=Math.min(70,(w-120)/n), tx0=(w-cw*n)/2+26, ty0=h*0.80, rh=h*0.075;
+    textAt(ctx,'x',tx0-14,ty0+rh*0.5,{align:'right',baseline:'middle',weight:700,size:13,color:COL.blue});
+    textAt(ctx,'f(x)',tx0-14,ty0+rh*1.5,{align:'right',baseline:'middle',weight:700,size:13,color:COL.green});
+    rule.xs.forEach((x,i)=>{
+      const cx=tx0+i*cw, tc=tcell[i]; if(tc) springTo(tc.pop,0,220,12,dt);
+      ctx.save(); ctx.strokeStyle='#c2d1e5'; ctx.lineWidth=1.6; ctx.strokeRect(cx,ty0,cw,rh); ctx.strokeRect(cx,ty0+rh,cw,rh); ctx.restore();
+      textAt(ctx,fnum(x,2),cx+cw/2,ty0+rh/2,{align:'center',baseline:'middle',weight:700,size:12,color:COL.blue});
+      if(tc){ const sc=1+clamp(tc.pop.x,-0.4,0.6)*-0.6; ctx.save(); ctx.translate(cx+cw/2,ty0+rh*1.5); ctx.scale(sc,sc);
+        ctx.fillStyle='rgba(31,157,85,0.12)'; ctx.fillRect(-cw/2+1,-rh/2+1,cw-2,rh-2);
+        ctx.fillStyle=COL.green; ctx.font='700 12px Poppins, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(fnum(rule.f(x),2),0,0); ctx.restore(); }
+      else textAt(ctx,'…',cx+cw/2,ty0+rh*1.5,{align:'center',baseline:'middle',size:12,color:COL.mid});
+    });
+    // readout
+    $('#rX').textContent=last?fnum(last.x,2):'—'; $('#rY').textContent=last?fnum(last.y,2):'—';
+    const vd=$('#vd');
+    if(run&&run.ph==='jam'||(!run&&jamMsg&&inX===0&&rule.id==='inv')){ vd.className='fb bad'; vd.textContent='x = 0 jams the machine — 0 is not in the domain of 1/x'; }
+    else { vd.className='fb ok'; vd.textContent=last?'Each input gives exactly one output':'Move the slider to feed the machine'; }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4.1 GRAPHS OF STANDARD FUNCTIONS  (Fig 2.8 – 2.15, Examples 13–15, 22, Misc. Q1)
+   A point rides the curve; blue drops to the x-axis (input), red runs to
+   the y-axis (output). A yellow vertical line counts its crossings —
+   one crossing everywhere means a function, two means it is not.
+   ===================================================================== */
+const GF=[
+  {id:'id',  label:'Identity',  txt:'f(x) = x',    dom:'ℝ', ran:'ℝ', v:{x0:-6,x1:6,y0:-6,y1:6}, eq:true, segs:[[-9,9,x=>x]], val:x=>[x]},
+  {id:'cs',  label:'Constant',  txt:'f(x) = c',    dom:'ℝ', ran:'{ c }', v:{x0:-6,x1:6,y0:-6,y1:6}, eq:true, param:true, segs:[[-9,9,(x,c)=>c]], val:(x,c)=>[c]},
+  {id:'sq',  label:'x²',        txt:'f(x) = x²',   dom:'ℝ', ran:'[0, ∞)', v:{x0:-4,x1:4,y0:-1.5,y1:10}, segs:[[-9,9,x=>x*x]], val:x=>[x*x]},
+  {id:'cu',  label:'x³',        txt:'f(x) = x³',   dom:'ℝ', ran:'ℝ', v:{x0:-3,x1:3,y0:-9,y1:9}, segs:[[-9,9,x=>x*x*x]], val:x=>[x*x*x]},
+  {id:'po',  label:'x³ − x² + 2', txt:'f(x) = x³ − x² + 2', dom:'ℝ', ran:'ℝ', v:{x0:-3,x1:3,y0:-6,y1:10}, segs:[[-9,9,x=>x*x*x-x*x+2]], val:x=>[x*x*x-x*x+2]},
+  {id:'inv', label:'1 / x',     txt:'f(x) = 1/x',  dom:'ℝ − {0}', ran:'ℝ − {0}', v:{x0:-5,x1:5,y0:-5,y1:5}, eq:true, segs:[[-9,-0.0001,x=>1/x],[0.0001,9,x=>1/x]], val:x=>x===0?[]:[1/x]},
+  {id:'ab',  label:'|x|',       txt:'f(x) = |x|',  dom:'ℝ', ran:'[0, ∞)', v:{x0:-5,x1:5,y0:-1,y1:6}, segs:[[-9,9,x=>Math.abs(x)]], val:x=>[Math.abs(x)]},
+  {id:'sg',  label:'Signum',    txt:'f(x) = 1, 0, −1', dom:'ℝ', ran:'{ −1, 0, 1 }', v:{x0:-4,x1:4,y0:-2.2,y1:2.2}, jump:true,
+    segs:[[-9,0,()=>-1],[0,9,()=>1]], marks:()=>[{x:0,y:1,open:true},{x:0,y:-1,open:true},{x:0,y:0,open:false}], val:x=>[x>0?1:x<0?-1:0]},
+  {id:'gi',  label:'[x]',       txt:'f(x) = [x]',  dom:'ℝ', ran:'ℤ (integers)', v:{x0:-4,x1:4,y0:-4.5,y1:4.5}, jump:true,
+    segs:Array.from({length:18},(_,i)=>[i-9,i-8,()=>i-9]),
+    marks:()=>{ const m=[]; for(let n=-6;n<=5;n++){ m.push({x:n,y:n,open:false}); m.push({x:n+1,y:n,open:true}); } return m; }, val:x=>[Math.floor(x)]},
+  {id:'pw',  label:'Example 22', txt:'f(x) = 1 − x (x<0),  x + 1 (x≥0)', dom:'ℝ', ran:'[1, ∞)', v:{x0:-5,x1:5,y0:-1,y1:7}, segs:[[-9,0,x=>1-x],[0,9,x=>x+1]], val:x=>[x<0?1-x:x+1]},
+  {id:'mf',  label:'Misc f',    txt:'x² (0≤x≤3),  3x (3≤x≤10)', dom:'[0, 10]', ran:'[0, 30]', v:{x0:-1,x1:11,y0:-3,y1:33}, lo:0, hi:10,
+    segs:[[0,3,x=>x*x],[3,10,x=>3*x]], val:x=>x<0||x>10?[]:[x<=3?x*x:3*x]},
+  {id:'mg',  label:'Misc g',    txt:'x² (0≤x≤2),  3x (2≤x≤10)', dom:'[0, 10]', ran:'NOT a function', v:{x0:-1,x1:11,y0:-3,y1:33}, lo:0, hi:10, snap:2,
+    segs:[[0,2,x=>x*x],[2,10,x=>3*x]], marks:()=>[{x:2,y:4,open:false},{x:2,y:6,open:false}], val:x=>x<0||x>10?[]:x<2?[x*x]:x===2?[4,6]:[3*x]}
+];
+function buildA8(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label><div class="chip-wrap" id="fB"></div></div>
+    <div class="control-group"><label>Input x <span class="val" id="xV" style="color:var(--f-blue)"></span></label><input type="range" id="xR" min="-6" max="6" step="0.05" value="-3">
+      <div id="cBox" class="hidden"><label style="margin-top:9px;">Constant c <span class="val" id="cV" style="color:var(--f-yellow)"></span></label><input type="range" id="cR" min="-4" max="4" step="0.5" value="3"></div>
+      <div class="toggle-group"><button class="toggle-btn play" id="swB">Auto sweep · ON</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">Rule</div><div class="rval" id="rT" style="font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Domain</div><div class="rval" id="rD" style="color:var(--f-blue);font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Range</div><div class="rval" id="rG" style="color:var(--f-green);font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">x</div><div class="rval" id="rX" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">f(x)</div><div class="rval" id="rY" style="color:var(--f-red)"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let fn=GF[0], c=3, sweep=true, ph=0, t=0, xS={x:-3,v:0}, yS=[{x:0,v:0},{x:0,v:0}], fx=[];
+  const view=Object.assign({},fn.v);
+  function pick(f){ fn=f; $('#cBox').classList.toggle('hidden',!f.param);
+    const lo=f.lo!==undefined?f.lo:f.v.x0, hi=f.hi!==undefined?f.hi:f.v.x1; const xr=$('#xR'); xr.min=lo; xr.max=hi; xr.value=clamp(+xr.value,lo,hi); }
+  chips($('#fB'),GF.map(f=>({id:f.id,label:f.label})),fn.id,id=>pick(GF.find(f=>f.id===id)));
+  $('#xR').oninput=()=>{ sweep=false; $('#swB').textContent='Auto sweep · OFF'; $('#swB').classList.remove('play'); $('#swB').classList.add('navy'); };
+  $('#cR').oninput=e=>{ c=+e.target.value; };
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').textContent='Auto sweep · '+(sweep?'ON':'OFF'); $('#swB').classList.toggle('play',sweep); $('#swB').classList.toggle('navy',!sweep); };
+  pick(fn);
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const lo=fn.lo!==undefined?fn.lo:fn.v.x0+0.3, hi=fn.hi!==undefined?fn.hi:fn.v.x1-0.3;
+    if(sweep){ ph+=dt*0.075; const m=ph%2, tri=m<1?m:2-m; $('#xR').value=(lo+(hi-lo)*tri).toFixed(2); }
+    let xT=+$('#xR').value; if(fn.snap!==undefined&&Math.abs(xT-fn.snap)<0.13) xT=fn.snap;
+    springTo(xS,xT,fn.jump?120:140,fn.jump?14:15,dt);
+    viewTween(view,fn.v,5,dt);
+    const V=mkView(w,h,view,{equal:!!fn.eq,pl:34,pb:26});
+    drawAxes(ctx,V);
+    // curve
+    fn.segs.forEach(s=>plotFn(ctx,V,x=>s[2](x,c),s[0],s[1],COL.green,3,{n:clamp(Math.ceil((s[1]-s[0])*40),2,420)}));
+    if(fn.id==='inv'){ line(ctx,V.X(0),V.T,V.X(0),V.B,COL.red,1.4,[6,5]); }
+    (fn.marks?fn.marks(c):[]).forEach(m=>{ if(m.x<V.x0||m.x>V.x1||m.y<V.y0||m.y>V.y1) return; circ(ctx,V.X(m.x),V.Y(m.y),5.2,COL.green,m.open?'#fff':COL.green,2.4); });
+    // vertical-line test
+    const x=xS.x, vals=fn.val(Math.abs(x-xT)<1e-3?xT:x,c), nI=vals.length;
+    const lineCol=nI===0?COL.red:nI>1?COL.red:COL.yellow;
+    line(ctx,V.X(x),V.T,V.X(x),V.B,lineCol,2,[7,5]);
+    vals.forEach((y,k)=>{
+      springTo(yS[k],y,fn.jump?320:900,fn.jump?26:60,dt);
+      const yy=fn.jump?yS[k].x:y, off=yy>V.y1||yy<V.y0, yd=clamp(yy,V.y0,V.y1);
+      project(ctx,V,x,yd,1);
+      dot(ctx,V.X(x),V.Y(yd),9,nI>1?COL.red:COL.green,'#fff',3);
+      if(off) textAt(ctx,yy>V.y1?'↑ off the chart':'↓ off the chart',V.X(x)+13,V.Y(yd)+(yy>V.y1?16:-8),{size:11,color:COL.muted,weight:700});
+      else textAt(ctx,'('+fnum(x,2)+', '+fnum(yy,2)+')',V.X(x)+13,V.Y(yd)-11-k*0,{weight:700,size:12.5});
+    });
+    if(nI===0){ textAt(ctx,'x = '+fnum(x,2)+' ∉ domain',V.X(x)+8,V.T+18,{weight:700,size:13,color:COL.red}); }
+    textAt(ctx,'line meets graph '+nI+(nI===1?' time':' times'),V.R-8,V.T+16,{align:'right',weight:700,size:13,color:nI===1?COL.green:COL.red});
+    $('#xV').textContent=fnum(xT,2); $('#cV').textContent=fnum(c,1);
+    $('#rT').textContent=fn.txt; $('#rD').textContent=fn.dom; $('#rG').textContent=fn.id==='cs'?'{ '+fnum(c,1)+' }':fn.ran;
+    $('#rX').textContent=fnum(x,2); $('#rY').textContent=nI===0?'undefined':nI===1?fnum(vals[0],2):vals.map(v=>fnum(v,2)).join(' & ');
+    const vd=$('#vd'); vd.className='fb '+(nI===1?'ok':'bad');
+    vd.textContent=nI===1?'One image at this x ✓':nI===0?'No image here — x is outside the domain':'Two images for one x ✗ — not a function';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4c LINEAR FUNCTION  f(x) = mx + c  (Remark after Ex 18; Example 20)
+   Tilt and lift the line — the springs let it swing and settle. Each
+   hollow target lights green when the line passes through it; the red
+   drop-lines are the errors and shrink to zero at the right (m, c).
+   ===================================================================== */
+const LIN9={
+  e18:{label:'Example 18: x + 10', m:1, c:10, pts:[[-10,0],[-2,8],[-1,9],[0,10],[1,11],[2,12],[10,20]], v:{x0:-13,x1:13,y0:-4,y1:24}},
+  e20:{label:'Example 20: 4 points', m:2, c:-1, pts:[[1,1],[2,3],[0,-1],[-1,-3]], v:{x0:-5,x1:5,y0:-5,y1:5}}
+};
+const linEq=(m,c)=>{ let s=''; if(m!==0) s+=m===1?'x':m===-1?'−x':fnum(m,1)+'x'; if(c!==0){ if(s) s+=(c>0?' + ':' − ')+fnum(Math.abs(c),0); else s+=fnum(c,0); } return 'f(x) = '+(s||'0'); };
+function buildA9(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Task</label><div class="chip-wrap" id="mdB"></div></div>
+    <div class="control-group">
+      <label>Slope m <span class="val" id="mV" style="color:var(--f-blue)"></span></label><input type="range" id="mR" min="-4" max="4" step="0.5" value="0">
+      <label style="margin-top:9px;">Intercept c <span class="val" id="cV" style="color:var(--f-red)"></span></label><input type="range" id="cR" min="-12" max="12" step="1" value="0"></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard"><div class="rlabel">f(0) = c</div><div class="rval" id="r0" style="color:var(--f-red)"></div></div>
+      <div class="rcard"><div class="rlabel">f(1) = m + c</div><div class="rval" id="r1" style="color:var(--f-green)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Your line</div><div class="rval" id="rE"></div></div></div>
+      <div class="fb warn" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let mode=LIN9.e18, m=0, c=0, t=0, fx=[], lit=[], locked=false;
+  const M={x:0,v:0}, C={x:0,v:0}, view=Object.assign({},mode.v);
+  chips($('#mdB'),Object.keys(LIN9).map(k=>({id:k,label:LIN9[k].label})),'e18',id=>{ mode=LIN9[id]; lit=[]; locked=false; });
+  $('#mR').oninput=e=>{ m=+e.target.value; }; $('#cR').oninput=e=>{ c=+e.target.value; };
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    springTo(M,m,55,7.5,dt); springTo(C,c,55,7.5,dt);
+    viewTween(view,mode.v,4,dt);
+    const V=mkView(w,h,view,{equal:true,pl:30,pb:24});
+    drawAxes(ctx,V);
+    // the line
+    plotFn(ctx,V,x=>M.x*x+C.x,V.x0,V.x1,COL.green,3.4,{n:2,noBreak:true});
+    // targets + residuals
+    let nLit=0;
+    mode.pts.forEach((p,i)=>{
+      const yl=M.x*p[0]+C.x, err=yl-p[1], ok=Math.abs(err)<0.13;
+      if(ok) nLit++;
+      if(ok&&!lit[i]) fxAdd(fx,V.X(p[0]),V.Y(p[1]),COL.green,30); lit[i]=ok;
+      const px=V.X(p[0]), py=V.Y(p[1]);
+      if(!ok) line(ctx,px,py,px,V.Y(yl),COL.red,1.8,[4,4]);
+      circ(ctx,px,py,ok?7:7+1.6*Math.sin(t*5+i),ok?COL.green:COL.yellow,ok?COL.green:'#fff',2.6);
+      if(mode.pts.length<=5) textAt(ctx,pairS(p),px+10,py-10,{weight:700,size:12,color:ok?COL.green:COL.muted});
+    });
+    // unit-step triangle gliding along the line: run 1 (blue), rise m (red)
+    const gx=lerp(V.x0*0.7,V.x1*0.7,0.5+0.5*Math.sin(t*0.5)), gy=M.x*gx+C.x;
+    const sx=V.X(gx), sy=V.Y(gy), ex=V.X(gx+1), ey=V.Y(gy+M.x);
+    line(ctx,sx,sy,ex,sy,COL.blue,3); line(ctx,ex,sy,ex,ey,COL.red,3);
+    dot(ctx,sx,sy,5,COL.green,COL.green,1);
+    textAt(ctx,'1',(sx+ex)/2,sy+(M.x>=0?16:-6),{align:'center',weight:700,size:12,color:COL.blue});
+    textAt(ctx,'m = '+fnum(M.x,1),ex+7,(sy+ey)/2,{weight:700,size:12,color:COL.red,baseline:'middle'});
+    // lock
+    const hit=nLit===mode.pts.length&&Math.abs(m-mode.m)<1e-6&&Math.abs(c-mode.c)<1e-6;
+    if(hit&&!locked) mode.pts.forEach(p=>fxAdd(fx,V.X(p[0]),V.Y(p[1]),COL.green,46));
+    locked=hit;
+    fxDraw(ctx,fx,dt);
+    if(locked) textAt(ctx,linEq(mode.m,mode.c)+'  ✓',V.R-10,V.T+22,{align:'right',weight:700,size:18,color:COL.green});
+    $('#mV').textContent=fnum(m,1); $('#cV').textContent=fnum(c,0);
+    $('#r0').textContent=fnum(c,0); $('#r1').textContent=fnum(m+c,1); $('#rE').textContent=linEq(m,c);
+    const vd=$('#vd'); vd.className='fb '+(locked?'ok':'warn');
+    vd.textContent=locked?'All points on the line — f(x) found':nLit+' of '+mode.pts.length+' points on the line';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4d DOMAIN & RANGE SCANNER  (Example 21; Ex 2.3 Q2, Q5; Misc. Q4–Q6)
+   A vertical scanner sweeps along x. Where f exists the blue domain
+   ruler fills in and the point's height paints the green range ruler;
+   where f does not exist the scanner turns red and the ruler stays red.
+   ===================================================================== */
+const DR=[
+  {id:'na', label:'−|x|',            f:x=>-Math.abs(x), v:{x0:-6,x1:6,y0:-6,y1:2}, dom:'ℝ', ran:'(−∞, 0]'},
+  {id:'r9', label:'√(9 − x²)',       f:x=>9-x*x>=0?Math.sqrt(9-x*x):null, v:{x0:-5,x1:5,y0:-1.5,y1:4.5}, dom:'[−3, 3]', ran:'[0, 3]'},
+  {id:'r1', label:'√(x − 1)',        f:x=>x>=1?Math.sqrt(x-1):null, v:{x0:-3,x1:9,y0:-1.5,y1:4.5}, dom:'[1, ∞)', ran:'[0, ∞)'},
+  {id:'p2', label:'x² + 2',          f:x=>x*x+2, v:{x0:-5,x1:5,y0:-1,y1:9}, dom:'ℝ', ran:'[2, ∞)'},
+  {id:'q1', label:'x² / (1 + x²)',   f:x=>x*x/(1+x*x), v:{x0:-6,x1:6,y0:-0.5,y1:1.5}, dom:'ℝ', ran:'[0, 1)'},
+  {id:'ra', label:'Example 21',      f:x=>(x*x+3*x+5)/(x*x-5*x+4), v:{x0:-3,x1:8,y0:-8,y1:10}, holes:[1,4], dom:'ℝ − { 1, 4 }', ran:'(read it off the ruler)', txt:'(x² + 3x + 5) / (x² − 5x + 4)'}
+];
+function buildA10(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Function</label><div class="chip-wrap" id="fB"></div></div>
+    <div class="control-group"><label>Scanner position <span class="val" id="pV" style="color:var(--f-yellow)"></span></label><input type="range" id="pR" min="0" max="1000" step="1" value="0">
+      <label style="margin-top:9px;">Sweep time <span class="val" id="tV"></span></label><input type="range" id="tR" min="4" max="20" step="1" value="12">
+      <div class="toggle-group"><button class="toggle-btn navy" id="runB">❚❚ Pause</button><button class="toggle-btn" id="rsB">⟲ Restart</button></div></div>
+    <div class="control-group"><div class="result-cards">
+      <div class="rcard wide"><div class="rlabel">Function</div><div class="rval" id="rF" style="font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Domain</div><div class="rval" id="rD" style="color:var(--f-blue);font-size:var(--fs-sm)"></div></div>
+      <div class="rcard"><div class="rlabel">Range</div><div class="rval" id="rG" style="color:var(--f-green);font-size:var(--fs-sm)"></div></div></div>
+      <div class="fb warn" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  const NB=520;
+  let fn=DR[0], p=0, pPrev=0, running=true, sweepT=12, t=0, hold=0, dom=new Uint8Array(NB), ran=new Uint8Array(NB), prevY=null;
+  const view=Object.assign({},fn.v);
+  const defined=(x)=>{ if(fn.holes&&fn.holes.some(hh=>Math.abs(x-hh)<0.07)) return null; const y=fn.f(x); return (y===null||y===undefined||!isFinite(y))?null:y; };
+  function restart(){ dom=new Uint8Array(NB); ran=new Uint8Array(NB); p=0; pPrev=0; prevY=null; hold=0; }
+  chips($('#fB'),DR.map(f=>({id:f.id,label:f.label})),fn.id,id=>{ fn=DR.find(f=>f.id===id); restart(); });
+  $('#tR').oninput=e=>{ sweepT=+e.target.value; };
+  $('#pR').oninput=e=>{ running=false; $('#runB').textContent='▶ Run'; p=+e.target.value/1000; };
+  $('#runB').onclick=()=>{ running=!running; $('#runB').textContent=running?'❚❚ Pause':'▶ Run'; if(running&&p>=1) restart(); };
+  $('#rsB').onclick=()=>{ restart(); running=true; $('#runB').textContent='❚❚ Pause'; };
+  restart();
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    $('#tV').textContent=sweepT+' s';
+    if(running){ if(p<1){ p=Math.min(1,p+dt/sweepT); } else { hold+=dt; if(hold>2.8){ restart(); } } }
+    viewTween(view,fn.v,5,dt);
+    const V=mkView(w,h,view,{pl:46,pb:44,pt:26,pr:16});
+    // paint rulers for the stretch the scanner just crossed
+    const i0=Math.floor(pPrev*NB), i1=Math.min(NB-1,Math.floor(p*NB));
+    if(p>=pPrev){
+      for(let i=i0;i<=i1;i++){
+        const x=fn.v.x0+(i+0.5)/NB*(fn.v.x1-fn.v.x0), y=defined(x);
+        if(y===null){ dom[i]=2; prevY=null; continue; }
+        dom[i]=1;
+        const yc=clamp(y,fn.v.y0,fn.v.y1), a=Math.floor((yc-fn.v.y0)/(fn.v.y1-fn.v.y0)*(NB-1));
+        let b=a; if(prevY!==null) b=Math.floor((clamp(prevY,fn.v.y0,fn.v.y1)-fn.v.y0)/(fn.v.y1-fn.v.y0)*(NB-1));
+        for(let k=Math.min(a,b);k<=Math.max(a,b);k++) ran[k]=1;
+        prevY=y;
+      }
+    }
+    pPrev=p;
+    drawAxes(ctx,V);
+    // ghost + scanned curve
+    const xs=lerp(fn.v.x0,fn.v.x1,p);
+    plotFn(ctx,V,x=>defined(x),fn.v.x0,fn.v.x1,COL.mid,1.6,{dash:[3,5],alpha:0.6,n:520});
+    plotFn(ctx,V,x=>defined(x),fn.v.x0,xs,COL.green,3.2,{n:520});
+    (fn.holes||[]).forEach(hh=>{ line(ctx,V.X(hh),V.T,V.X(hh),V.B,COL.red,1.4,[6,5]); });
+    // rulers
+    const rb=V.B+14, rl=V.L-14;
+    line(ctx,V.L,rb,V.R,rb,'#e2e9f2',7); line(ctx,rl,V.T,rl,V.B,'#e2e9f2',7);
+    ctx.save(); ctx.lineWidth=7; ctx.lineCap='butt';
+    for(let i=0;i<NB;i++){ if(!dom[i]) continue; const xa=V.L+(i/NB)*(V.R-V.L), xb=V.L+((i+1)/NB)*(V.R-V.L)+0.6; ctx.strokeStyle=dom[i]===1?COL.blue:COL.red; ctx.beginPath(); ctx.moveTo(xa,rb); ctx.lineTo(xb,rb); ctx.stroke(); }
+    for(let i=0;i<NB;i++){ if(!ran[i]) continue; const ya=V.B-(i/NB)*(V.B-V.T), yb=V.B-((i+1)/NB)*(V.B-V.T)-0.6; ctx.strokeStyle=COL.green; ctx.beginPath(); ctx.moveTo(rl,ya); ctx.lineTo(rl,yb); ctx.stroke(); }
+    ctx.restore();
+    textAt(ctx,'domain',V.R,rb+22,{align:'right',size:11,weight:700,color:COL.blue}); textAt(ctx,'range',rl-6,V.T-3,{align:'left',size:11,weight:700,color:COL.green});
+    // scanner
+    const y=defined(xs), sx=V.X(xs);
+    const col=y===null?COL.red:COL.yellow;
+    line(ctx,sx,V.T,sx,V.B,col,2.4,y===null?[6,5]:undefined);
+    circ(ctx,sx,rb,6,col,'#fff',2.6);
+    if(y!==null){
+      const yc=clamp(y,V.y0,V.y1), sy=V.Y(yc);
+      line(ctx,sx,sy,V.L,sy,COL.red,1.8,[5,4]); circ(ctx,rl,sy,6,COL.green,'#fff',2.6);
+      dot(ctx,sx,sy,8,COL.green,'#fff',3);
+      textAt(ctx,'('+fnum(xs,2)+', '+(Math.abs(y)>99?'big':fnum(y,2))+')',sx+12,sy-10,{weight:700,size:12.5});
+    } else textAt(ctx,'f('+fnum(xs,2)+') does not exist',sx+8,V.T+18,{weight:700,size:13,color:COL.red});
+    // readouts
+    if(!$('#pR').matches(':active')) $('#pR').value=Math.round(p*1000);
+    $('#pV').textContent='x = '+fnum(xs,2);
+    $('#rF').textContent='f(x) = '+(fn.txt||fn.label); const done=p>=0.999;
+    $('#rD').textContent=done?fn.dom:'…'; $('#rG').textContent=done?fn.ran:'…';
+    const vd=$('#vd'); vd.className='fb '+(done?'ok':'warn'); vd.textContent=done?'Blue = domain · green = range · red = not defined':'Scanning… the rulers fill as the line moves';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   2.4.2 ALGEBRA OF FUNCTIONS  (Examples 16, 17)
+   (f+g)(x) = f(x)+g(x)  …  Bars at the chosen x show it physically:
+   for + and − the red g-bar slides onto the blue f-bar and stacks.
+   ===================================================================== */
+const AL=[
+  {id:'e16', label:'f = x², g = 2x + 1', f:x=>x*x, g:x=>2*x+1, lo:-3, hi:3, v:{x0:-3.6,x1:3.6,y0:-4,y1:13},
+    txt:{add:'x² + 2x + 1',sub:'x² − 2x − 1',mul:'2x³ + x²',div:'x² / (2x + 1),  x ≠ −½',sc:'k · x²'}},
+  {id:'e17', label:'f = √x, g = x', f:x=>x>=0?Math.sqrt(x):NaN, g:x=>x, lo:0, hi:4, v:{x0:-0.8,x1:4.8,y0:-1.5,y1:6},
+    txt:{add:'√x + x',sub:'√x − x',mul:'x√x = x^(3/2)',div:'√x / x = 1/√x,  x > 0',sc:'k · √x'}}
+];
+const OPS=[{id:'add',label:'f + g'},{id:'sub',label:'f − g'},{id:'mul',label:'f · g'},{id:'div',label:'f / g'},{id:'sc',label:'k · f'}];
+function buildA11(){
+  const wrap=labShell();
+  wrap.querySelector('.lab-side').innerHTML=`
+    <div class="control-group"><label style="margin-bottom:4px;">Functions</label><div class="chip-wrap" id="pB"></div>
+      <label style="margin:9px 0 2px;">Operation</label><div class="chip-wrap" id="oB"></div></div>
+    <div class="control-group"><label>Input x <span class="val" id="xV" style="color:var(--f-blue)"></span></label><input type="range" id="xR" min="-3" max="3" step="0.1" value="1">
+      <div id="kBox" class="hidden"><label style="margin-top:9px;">Scalar k <span class="val" id="kV" style="color:var(--f-yellow)"></span></label><input type="range" id="kR" min="-3" max="3" step="0.5" value="2"></div>
+      <div class="toggle-group"><button class="toggle-btn play" id="swB">Auto sweep · ON</button></div></div>
+    <div class="control-group"><div class="result-cards three">
+      <div class="rcard"><div class="rlabel">f(x)</div><div class="rval" id="rf" style="color:var(--f-blue)"></div></div>
+      <div class="rcard"><div class="rlabel">g(x)</div><div class="rval" id="rg" style="color:var(--f-red)"></div></div>
+      <div class="rcard"><div class="rlabel" id="rrL">(f+g)(x)</div><div class="rval" id="rr" style="color:var(--f-green)"></div></div>
+      <div class="rcard wide"><div class="rlabel">Formula</div><div class="rval" id="rE" style="font-size:var(--fs-sm)"></div></div></div>
+      <div class="fb ok" id="vd"></div></div>`;
+  const $=s=>wrap.querySelector(s);
+  const canvas=$('canvas');
+  let pr=AL[0], op='add', k=2, sweep=true, ph=0, t=0, xS={x:1,v:0}, stack={x:1,v:0}, fx=[];
+  const view=Object.assign({},pr.v);
+  const res=(x)=>{ const f=pr.f(x), g=pr.g(x); switch(op){ case 'add': return f+g; case 'sub': return f-g; case 'mul': return f*g; case 'div': return g===0||!isFinite(f)?NaN:f/g; default: return k*f; } };
+  const opSym={add:'f+g',sub:'f−g',mul:'f·g',div:'f/g',sc:'k·f'};
+  function pickPair(p){ pr=p; const xr=$('#xR'); xr.min=p.lo; xr.max=p.hi; xr.value=clamp(+xr.value,p.lo,p.hi); }
+  chips($('#pB'),AL.map(p=>({id:p.id,label:p.label})),pr.id,id=>pickPair(AL.find(p=>p.id===id)));
+  chips($('#oB'),OPS,op,id=>{ op=id; $('#kBox').classList.toggle('hidden',id!=='sc'); });
+  $('#kR').oninput=e=>{ k=+e.target.value; };
+  $('#xR').oninput=()=>{ sweep=false; $('#swB').textContent='Auto sweep · OFF'; $('#swB').classList.remove('play'); $('#swB').classList.add('navy'); };
+  $('#swB').onclick=()=>{ sweep=!sweep; $('#swB').textContent='Auto sweep · '+(sweep?'ON':'OFF'); $('#swB').classList.toggle('play',sweep); $('#swB').classList.toggle('navy',!sweep); };
+  pickPair(pr);
+
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(sweep){ ph+=dt*0.07; const m=ph%2, tri=m<1?m:2-m; $('#xR').value=(pr.lo+(pr.hi-pr.lo)*tri).toFixed(1); }
+    let xT=+$('#xR').value; if(pr.id==='e16'&&Math.abs(xT+0.5)<0.07) xT=-0.5;
+    springTo(xS,xT,120,15,dt);
+    springTo(stack,(op==='add'||op==='sub')?1:0,70,12,dt);
+    viewTween(view,pr.v,5,dt);
+    const V=mkView(w,h,view,{pl:34,pb:26});
+    drawAxes(ctx,V);
+    plotFn(ctx,V,pr.f,V.x0,V.x1,COL.blue,2.2,{alpha:0.9});
+    plotFn(ctx,V,pr.g,V.x0,V.x1,COL.red,2.2,{alpha:0.9});
+    plotFn(ctx,V,x=>{ const f=pr.f(x); return isFinite(f)?res(x):NaN; },V.x0,V.x1,COL.green,3.6,{n:480});
+    if(pr.id==='e16'&&op==='div') line(ctx,V.X(-0.5),V.T,V.X(-0.5),V.B,COL.red,1.4,[6,5]);
+    // legend
+    textAt(ctx,'f',V.L+10,V.T+16,{color:COL.blue,weight:700,size:14}); textAt(ctx,'g',V.L+28,V.T+16,{color:COL.red,weight:700,size:14}); textAt(ctx,'('+opSym[op]+')',V.L+46,V.T+16,{color:COL.green,weight:700,size:14});
+    // bars at x
+    const x=xS.x, f=pr.f(x), g=pr.g(x), r=res(x), okR=isFinite(r), s=clamp(stack.x,-0.2,1.2);
+    const bw=Math.max(12,Math.min(26,(V.R-V.L)*0.032)), cx=V.X(x), y0=V.Y(0);
+    line(ctx,cx,V.T,cx,V.B,COL.yellow,1.8,[6,5]);
+    const bar=(bx,ya,yb,col,alpha)=>{ if(!isFinite(ya)||!isFinite(yb)) return; ctx.save(); ctx.beginPath(); ctx.rect(V.L,V.T,V.R-V.L,V.B-V.T); ctx.clip();
+      ctx.globalAlpha=alpha||1; const top=Math.min(V.Y(ya),V.Y(yb)), hh=Math.abs(V.Y(ya)-V.Y(yb)); ctx.fillStyle=col+'33'; ctx.fillRect(bx-bw/2,top,bw,hh); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.strokeRect(bx-bw/2,top,bw,hh); ctx.restore(); };
+    const xf=cx-bw*1.4, xg=lerp(cx,xf,s), xr=cx+bw*1.4;
+    bar(xf,0,f,COL.blue);
+    const gb=op==='add'?s*f:op==='sub'?s*f:0, ge=op==='sub'?gb-g:gb+g;
+    bar(xg,gb,ge,COL.red);
+    if(okR) bar(xr,0,r,COL.green);
+    if(okR&&(op==='add'||op==='sub')){ line(ctx,xf,V.Y(r),xr+bw/2,V.Y(r),COL.green,1.4,[3,4]); }
+    dot(ctx,cx,okR?clamp(V.Y(r),V.T,V.B):y0,0.1,COL.green,COL.green,0);
+    if(!okR) textAt(ctx,'undefined here',cx+10,V.T+38,{weight:700,size:13,color:COL.red});
+    // readouts
+    $('#xV').textContent=fnum(xT,1); $('#kV').textContent=fnum(k,1);
+    $('#rf').textContent=fnum(f,2); $('#rg').textContent=fnum(g,2); $('#rrL').textContent=op==='sc'?'(kf)(x)':'('+opSym[op]+')(x)';
+    $('#rr').textContent=okR?fnum(r,2):'undefined'; $('#rE').textContent='('+(op==='sc'?'kf':opSym[op])+')(x) = '+pr.txt[op];
+    const vd=$('#vd'); vd.className='fb '+(okR?'ok':'bad');
+    vd.textContent=okR?(op==='add'?fnum(f,2)+' + '+fnum(g,2)+' = '+fnum(r,2):op==='sub'?fnum(f,2)+' − '+fnum(g,2)+' = '+fnum(r,2):op==='mul'?fnum(f,2)+' × '+fnum(g,2)+' = '+fnum(r,2):op==='div'?fnum(f,2)+' ÷ '+fnum(g,2)+' = '+fnum(r,2):fnum(k,1)+' × '+fnum(f,2)+' = '+fnum(r,2)):'g(x) = 0 (or f undefined) — quotient does not exist';
+  });
+  return wrap;
+}
+
+/* ---------------------------------------------------------------------
+   ACTIVITY LIST + BOOT
+   --------------------------------------------------------------------- */
+const activities = [
+  { num:'2.2a', title:'Cartesian Product',        desc:'Build every pair · n(A × B) = pq · order flips',     build: buildA1 },
+  { num:'2.2b', title:'Ordered Pairs',            desc:'(a, b) ≠ (b, a) · equal pairs match both parts',     build: buildA2 },
+  { num:'2.2c', title:'ℝ × ℝ and ℝ × ℝ × ℝ',     desc:'A rectangle of pairs · a box of triplets',           build: buildA3 },
+  { num:'2.3a', title:'Relations & Arrow Diagrams', desc:'Domain · range · codomain from a subset of A × B',  build: buildA4 },
+  { num:'2.3b', title:'How Many Relations?',      desc:'Each pair is a switch · 2^(pq) relations',           build: buildA5 },
+  { num:'2.4a', title:'Function or Not?',         desc:'One image each — or the ball splits or falls',       build: buildA6 },
+  { num:'2.4b', title:'Function Machine',         desc:'Feed x in · f(x) is fired out · the table fills',    build: buildA7 },
+  { num:'2.4.1', title:'Graphs of Functions',     desc:'Ride the curve · vertical-line test',                build: buildA8 },
+  { num:'2.4c', title:'Linear Function',          desc:'Tilt and lift the line through the points',          build: buildA9 },
+  { num:'2.4d', title:'Domain & Range',           desc:'Sweep x · the rulers fill in',                       build: buildA10 },
+  { num:'2.4.2', title:'Algebra of Functions',    desc:'f ± g · fg · f/g · kf as stacking bars',             build: buildA11 },
+];
+(function(){ const i=parseInt(new URLSearchParams(location.search).get('a'),10); if(i>=0&&i<activities.length) currentIndex=i; })();
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>

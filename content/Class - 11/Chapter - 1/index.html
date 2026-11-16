@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 11 · Physics Part 1 · Chapter 1 — Units and Measurement | Botclub Labs</title>
+<style>
+:root{
+  --navy-1:#0f2640; --navy-2:#1a3a5c; --navy-3:#234a73;
+  --accent:#2f8fe0; --accent-2:#5cc8ff;
+  --bg:#eef2f8; --surface-0:#ffffff; --surface-1:#f6f9fc; --surface-2:#eef2f8;
+  --border:#dbe4f0; --border-strong:#c2d1e5;
+  --text-1:#132a44; --text-2:#4c6178; --text-3:#8195ab;
+  --f-red:#d9432b; --f-blue:#2f8fe0; --f-green:#1f9d55; --f-yellow:#d9a017;
+  --radius:14px; --radius-sm:9px;
+  --fs-xs:clamp(10px,0.62vw,12px); --fs-sm:clamp(11px,0.72vw,13.5px);
+  --fs-md:clamp(12.5px,0.85vw,15px); --fs-lg:clamp(15px,1.15vw,19px);
+  --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:22px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{ font-family:'Poppins',system-ui,sans-serif; background:var(--bg); color:var(--text-1); overflow:hidden; }
+button, input, select{font-family:inherit;}
+.app{height:100vh; display:flex; flex-direction:column; min-height:0;}
+.topbar{ flex:0 0 auto; background:linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 55%, var(--navy-3) 100%);
+  color:#fff; padding:clamp(9px,1vh,16px) clamp(14px,1.6vw,28px); display:flex; align-items:center; gap:var(--sp-4); box-shadow:0 2px 10px rgba(15,38,64,0.25); z-index:5; }
+.topbar .brand-badge{ width:clamp(32px,2.4vw,40px); height:clamp(32px,2.4vw,40px); border-radius:10px; background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:clamp(15px,1.3vw,20px); flex:0 0 auto; }
+.topbar .chip{ display:inline-block; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  border-radius:6px; padding:2px 9px; font-size:var(--fs-xs); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; margin-bottom:3px; }
+.topbar h1{font-size:var(--fs-lg); font-weight:600; line-height:1.2; white-space:nowrap;}
+.topbar .spacer{flex:1;}
+.topbar .legend{display:flex; gap:14px; font-size:var(--fs-xs); color:rgba(255,255,255,0.85); align-items:center;}
+.topbar .legend span{display:inline-flex; align-items:center; gap:5px;}
+.topbar .legend i{width:12px; height:4px; border-radius:2px; display:inline-block;}
+.body-wrap{flex:1; display:flex; min-height:0; overflow:hidden;}
+.sidenav{ flex:0 0 clamp(170px,13.5vw,230px); background:var(--surface-0); border-right:1px solid var(--border);
+  overflow-y:auto; padding:var(--sp-2); display:flex; flex-direction:column; gap:4px; }
+.nav-item{ display:flex; align-items:center; gap:8px; text-align:left; width:100%; border:1px solid var(--border); background:var(--surface-1);
+  border-radius:var(--radius-sm); padding:7px 10px; cursor:pointer; transition:all .15s ease; color:var(--text-1); }
+.nav-item:hover{background:var(--surface-2); border-color:var(--border-strong);}
+.nav-item.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.nav-item .n-num{font-size:var(--fs-xs); font-weight:700; color:var(--accent); flex:0 0 auto; min-width:26px;}
+.nav-item.active .n-num{color:var(--accent-2);}
+.nav-item .n-title{font-size:var(--fs-sm); font-weight:600; line-height:1.25;}
+.content{flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden;}
+.panel-head{flex:0 0 auto; padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-0); display:flex; align-items:baseline; gap:12px;}
+.panel-badge{background:var(--navy-2); color:#fff; font-size:var(--fs-xs); font-weight:700; padding:3px 10px; border-radius:6px;}
+.panel-head h2{font-size:var(--fs-lg); font-weight:600; color:var(--text-1);}
+.panel-head p{font-size:var(--fs-sm); color:var(--text-2); flex:1; text-align:right;}
+.panel-body{flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-5); display:flex;}
+.lab-view{flex:1; display:flex; gap:var(--sp-4); min-height:0; min-width:0;}
+.lab-canvas-wrap{flex:7 1 0; min-width:0; min-height:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); position:relative; overflow:hidden;}
+.lab-canvas-wrap canvas{width:100%; height:100%; display:block;}
+.lab-side{flex:3 1 0; min-width:230px; display:flex; flex-direction:column; gap:var(--sp-3); min-height:0; overflow-y:auto; padding-right:2px;}
+.control-group{background:var(--surface-0); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px;}
+.control-group label{font-size:var(--fs-sm); font-weight:600; color:var(--text-1); display:flex; justify-content:space-between;}
+.control-group label .val{color:var(--accent); font-weight:700;}
+.control-group input[type=range]{width:100%; margin-top:7px; accent-color:var(--f-yellow); cursor:pointer;}
+.toggle-group{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
+.toggle-group:first-child{margin-top:0;}
+.toggle-btn{flex:1; min-width:56px; padding:7px 5px; border-radius:8px; border:1px solid var(--border-strong); background:var(--surface-1); font-size:var(--fs-sm); font-weight:600; cursor:pointer; text-align:center; color:var(--text-2);}
+.toggle-btn:hover{border-color:var(--navy-2);}
+.toggle-btn.active{background:var(--navy-2); border-color:var(--navy-2); color:#fff;}
+.toggle-btn.navy{background:var(--navy-2); border-color:var(--navy-2); color:#fff; width:100%;}
+.toggle-btn.small{font-size:10.5px; padding:6px 3px;}
+.glabel{font-size:var(--fs-sm); font-weight:600; margin-bottom:6px; display:block;}
+.result-cards{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.rcard{background:var(--surface-0); border:1px solid var(--border); border-radius:9px; padding:7px 9px;}
+.rcard .rlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600;}
+.rcard .rval{font-size:var(--fs-md); font-weight:700; color:var(--text-1); margin-top:1px; word-break:break-word;}
+.rcard.wide{grid-column:1/-1;}
+.hint{font-size:var(--fs-xs); color:var(--text-3); margin-top:6px; line-height:1.4;}
+::-webkit-scrollbar{width:7px; height:7px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+@media (max-width:1000px){
+  .body-wrap{flex-direction:column;}
+  .sidenav{flex:0 0 auto; width:100%; height:auto; flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:6px;}
+  .nav-item{flex:0 0 auto; width:150px;}
+  .panel-body{overflow-y:auto;}
+  .lab-view{flex-direction:column;}
+  .lab-canvas-wrap{min-height:320px;}
+  .lab-side{min-width:0;}
+  .content{overflow-y:auto;}
+  .topbar .legend{display:none;}
+  .topbar h1{white-space:normal;}
+}
+</style>
+<link href="../../vendor/fonts/fonts.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-badge">⚖️</div>
+    <div>
+      <div class="chip">Grade 11 · Physics Part 1 · Ch 1</div>
+      <h1>Units and Measurement</h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend">
+      <span><i style="background:var(--f-yellow)"></i>What you change</span>
+      <span><i style="background:var(--f-blue)"></i>Reference · Unit · Length</span>
+      <span><i style="background:var(--f-green)"></i>Certain · Correct</span>
+      <span><i style="background:var(--f-red)"></i>Uncertain · Error · Mismatch</span>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <nav class="sidenav" id="sideNav"></nav>
+    <main class="content">
+      <div class="panel-head">
+        <div class="panel-badge" id="panelBadge">1.1</div>
+        <h2 id="panelTitle"></h2>
+        <p id="panelDesc"></p>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   GRADE 11 PHYSICS PART 1 — CHAPTER 1: UNITS AND MEASUREMENT
+   Every activity runs on a continuous animation loop. Sliders and buttons
+   only set a TARGET; the drawn object springs, rolls, swings or falls toward
+   it every frame — it never jumps. Colours: yellow = what you change,
+   blue = reference / unit / length, green = certain / correct,
+   red = uncertain / error / mismatch.
+   ========================================================================= */
+const COL = {red:'#d9432b', blue:'#2f8fe0', green:'#1f9d55', yellow:'#d9a017', ink:'#132a44', muted:'#4c6178', mid:'#8195ab', faint:'#dbe4f0'};
+
+/* ---------------- canvas + drawing helpers ---------------- */
+function fitCanvas(canvas){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(200, r.width), h = Math.max(160, r.height);
+  if(canvas._w!==w || canvas._h!==h || canvas._dpr!==dpr){
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    canvas._w=w; canvas._h=h; canvas._dpr=dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+function line(ctx,x1,y1,x2,y2,color,width,dash){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width||2; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrowHead(ctx,x,y,ang,color,size){
+  size=size||7; ctx.save(); ctx.fillStyle=color; ctx.translate(x,y); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*0.42); ctx.lineTo(-size,-size*0.42); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function vec(ctx,x1,y1,x2,y2,color,width){
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  line(ctx,x1,y1,x2,y2,color,width||2.6); arrowHead(ctx,x2,y2,Math.atan2(y2-y1,x2-x1),color,7);
+}
+function dimLine(ctx,x1,y1,x2,y2,color){
+  const a=Math.atan2(y2-y1,x2-x1);
+  line(ctx,x1,y1,x2,y2,color,1.6); arrowHead(ctx,x1,y1,a+Math.PI,color,6); arrowHead(ctx,x2,y2,a,color,6);
+}
+function textAt(ctx,txt,x,y,opts){
+  opts=opts||{}; ctx.save();
+  ctx.font=(opts.weight||500)+' '+(opts.size||12)+'px Poppins, system-ui, sans-serif';
+  ctx.fillStyle=opts.color||COL.ink; ctx.textAlign=opts.align||'left'; ctx.textBaseline=opts.baseline||'alphabetic';
+  if(opts.alpha!==undefined) ctx.globalAlpha=opts.alpha;
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+function rect(ctx,x,y,w,h,stroke,fill,lw,dash){
+  ctx.save(); ctx.lineWidth=lw===undefined?2.2:lw; ctx.setLineDash(dash||[]);
+  if(fill){ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);} if(lw!==0){ctx.strokeStyle=stroke; ctx.strokeRect(x,y,w,h);} ctx.restore();
+}
+function circ(ctx,x,y,r,stroke,fill,lw,dash){
+  ctx.save(); ctx.lineWidth=lw||2.2; ctx.setLineDash(dash||[]); ctx.beginPath(); ctx.arc(x,y,Math.max(0.1,r),0,Math.PI*2);
+  if(fill){ctx.fillStyle=fill; ctx.fill();} if(stroke){ctx.strokeStyle=stroke; ctx.stroke();} ctx.restore();
+}
+function rrect(ctx,x,y,w,h,r){ r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function box(ctx,x,y,w,h,r,stroke,fill,lw,dash){
+  ctx.save(); rrect(ctx,x,y,w,h,r); if(fill){ctx.fillStyle=fill; ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||2; ctx.setLineDash(dash||[]); ctx.stroke();} ctx.restore();
+}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function fmt(x,d){ if(!isFinite(x)) return '—'; d=d===undefined?2:d; return Number(x.toFixed(d)).toString(); }
+function fixed(x,d){ return isFinite(x)?x.toFixed(d):'—'; }
+function sup(n){ const m={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'}; return String(n).split('').map(c=>m[c]||c).join(''); }
+function smooth01(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* ---------------- animation engine ---------------- */
+let activeStops = [];
+function stopAllLoops(){ activeStops.forEach(s=>{ try{ s(); }catch(e){} }); activeStops=[]; }
+function animLoop(tick){
+  let last = performance.now(), raf;
+  function frame(now){
+    const dt = Math.max(0, Math.min(0.04, (now-last)/1000));
+    last = now; tick(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  const stop = ()=>cancelAnimationFrame(raf);
+  activeStops.push(stop);
+  return stop;
+}
+/** frame-rate independent exponential ease */
+function approach(cur,tgt,rate,dt){ return cur + (tgt-cur)*(1-Math.exp(-rate*dt)); }
+/** spring-damper — natural overshoot and settle */
+function springTo(s,target,k,damping,dt){
+  const sub=Math.max(1,Math.ceil(dt/0.008)), h=dt/sub;
+  for(let i=0;i<sub;i++){ s.v += ((target-s.x)*k - s.v*damping)*h; s.x += s.v*h; }
+  return s.x;
+}
+function toggleWire(btns,cb){
+  btns.forEach(b=>b.onclick=()=>{ btns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); cb(b); });
+}
+
+/* ---------------- UI builders ---------------- */
+function lab(side){
+  const wrap=document.createElement('div'); wrap.className='lab-view';
+  wrap.innerHTML = `<div class="lab-canvas-wrap"><canvas></canvas></div><div class="lab-side">${side}</div>`;
+  const $=s=>wrap.querySelector(s);
+  return {wrap,$,canvas:$('canvas')};
+}
+function slider(id,label,min,max,step,val){
+  return `<div class="control-group"><label>${label}<span class="val" id="${id}V"></span></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function toggles(id,items,cls){
+  return `<div class="toggle-group" id="${id}">${items.map((it,i)=>`<button class="toggle-btn ${cls||''}${i?'':' active'}" data-v="${it[0]}">${it[1]}</button>`).join('')}</div>`;
+}
+function group(inner){ return `<div class="control-group">${inner}</div>`; }
+function cards(arr){
+  return `<div class="control-group"><div class="result-cards">${arr.map(c=>`<div class="rcard${c.wide?' wide':''}"><div class="rlabel">${c.l}</div><div class="rval" id="${c.id}" style="${c.col?'color:'+c.col:''}">—</div></div>`).join('')}</div></div>`;
+}
+function hint(t){ return `<p class="hint">${t}</p>`; }
+</script>
+<script>
+
+/* =====================================================================
+   1.1  MEASURE WITH A UNIT      (Sections 1.1 – 1.2)
+   A measurement = number × unit. Same rod, different unit → different number.
+   ===================================================================== */
+function buildA1(){
+  const {wrap,$,canvas}=lab(
+    slider('len','Length of rod',0.3,2,0.01,1.2)+
+    group(`<span class="glabel">Unit used to measure</span>${toggles('unit',[['0.01','cm'],['0.3048','ft'],['1','m']])}
+      <div class="toggle-group"><button class="toggle-btn navy" id="again">▶ Measure again</button></div>`)+
+    cards([{l:'Number',id:'n',col:COL.blue},{l:'Unit',id:'u'},{l:'Same rod',id:'oth',wide:1}])+
+    hint('Result of a measurement = number × unit.'));
+  const UN={'0.01':'cm','0.3048':'ft','1':'m'};
+  let u=0.01, Lq=1.2, tau=0, lastKey='', t=0;
+  const Ls={x:1.2,v:0};
+  toggleWire(wrap.querySelectorAll('#unit button'),b=>{ u=+b.dataset.v; });
+  $('#again').onclick=()=>{ tau=0; };
+  animLoop(dt=>{
+    t+=dt;
+    const L=+$('#len').value; $('#lenV').textContent=fmt(L,2)+' m';
+    const key=L+'|'+u; if(key!==lastKey){ lastKey=key; tau=0; }
+    tau+=dt;
+    springTo(Ls,L,60,9,dt);
+    const N=L/u, ease=smooth01(0,3.2,tau), p=N*ease;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const x0=w*0.07, pxM=(w*0.86)/2.0, rodY=h*0.40, up=u*pxM;
+    // laid-down unit blocks (blue/yellow alternate), fractional last block dashed red
+    const full=Math.floor(p+1e-9), frac=p-full;
+    for(let i=0;i<full;i++){
+      const bx=x0+i*up;
+      rect(ctx,bx,rodY-34,up,22,COL.blue,i%2?'rgba(217,160,23,0.16)':'rgba(47,143,224,0.16)',up>6?1.8:0.6);
+    }
+    if(frac>0.002 && full<Math.floor(N+1e-9)+1){
+      const bx=x0+full*up;
+      const isLast=full>=Math.floor(N+1e-9);
+      const hop=Math.sin(Math.PI*clamp(frac,0,1))*clamp(up*0.7+12,12,70);
+      if(p<N-1e-6 && !isLast){
+        rect(ctx,bx+frac*up,rodY-34-hop,up,22,COL.yellow,'rgba(217,160,23,0.22)',2);
+      } else {
+        rect(ctx,bx,rodY-34,up*frac,22,COL.red,'rgba(217,67,43,0.12)',1.8,[4,3]);
+      }
+    }
+    // the rod (stretches with a settle when the slider moves)
+    const rl=Ls.x*pxM;
+    box(ctx,x0,rodY-8,rl,16,4,COL.ink,'#fff',2.4);
+    line(ctx,x0,rodY-46,x0,rodY+26,COL.ink,2); line(ctx,x0+rl,rodY-14,x0+rl,rodY+26,COL.ink,2);
+    dimLine(ctx,x0,rodY+20,x0+rl,rodY+20,COL.blue);
+    textAt(ctx,'one '+({0.01:'centimetre',0.3048:'foot',1:'metre'}[u])+' laid end to end',x0,rodY-58,{size:12,weight:600,color:COL.muted});
+    // live count
+    textAt(ctx,fixed(p,u===1?2:(u===0.01?1:2))+' × '+UN[u],w*0.5,h*0.19,{align:'center',size:Math.min(38,w*0.05),weight:700,color:COL.blue});
+    // same length, three numbers
+    const rows=[[0.01,'cm','centimetre'],[0.3048,'ft','foot'],[1,'m','metre']];
+    rows.forEach((r,i)=>{
+      const y=h*0.64+i*h*0.105, act=(r[0]===u);
+      box(ctx,x0,y,rl,16,4,act?COL.blue:COL.mid,act?'rgba(47,143,224,0.18)':'#f6f9fc',act?2.4:1.4);
+      const n=Ls.x/r[0];
+      textAt(ctx,fixed(n,r[0]===0.01?0:2)+' '+r[1],Math.max(x0+rl+12,w*0.2),y+13,{size:15,weight:act?700:500,color:act?COL.blue:COL.muted});
+    });
+    textAt(ctx,'the length never changes — only the number does',w*0.5,h*0.97,{align:'center',size:12,color:COL.mid});
+    $('#n').textContent=fixed(N,u===0.01?0:2); $('#u').textContent={0.01:'centimetre (CGS)',0.3048:'foot (FPS)',1:'metre (MKS / SI)'}[u];
+    $('#oth').textContent=fixed(L*100,0)+' cm = '+fixed(L/0.3048,2)+' ft = '+fixed(L,2)+' m';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.2  PLANE ANGLE — THE RADIAN      (Fig 1.1a)   dθ = ds / r
+   ===================================================================== */
+function buildA2(){
+  const {wrap,$,canvas}=lab(
+    slider('r','Radius r',3,10,0.1,6)+
+    slider('th','Angle θ',0,360,1,57.3)+
+    group(`<div class="toggle-group"><button class="toggle-btn" id="sw">⟳ Sweep the angle</button><button class="toggle-btn" id="one">θ = 1 rad</button></div>`)+
+    cards([{l:'Arc  s',id:'s',col:COL.red},{l:'Radius  r',id:'rr',col:COL.blue},{l:'θ = s / r',id:'a',col:COL.green},{l:'In degrees',id:'d'}])+
+    hint('1 radian is the angle whose arc is exactly one radius long.'));
+  let sweep=false, t=0;
+  const R={x:6,v:0}, TH={x:1,v:0};
+  $('#sw').onclick=()=>{ sweep=!sweep; $('#sw').classList.toggle('active',sweep); };
+  $('#one').onclick=()=>{ sweep=false; $('#sw').classList.remove('active'); $('#th').value=57.2958; };
+  animLoop(dt=>{
+    t+=dt;
+    let thT=+$('#th').value*Math.PI/180;
+    if(sweep){ thT=(0.5-0.5*Math.cos(t*0.55))*2*Math.PI; $('#th').value=thT*180/Math.PI; }
+    $('#rV').textContent=fmt(+$('#r').value,1)+' cm'; $('#thV').textContent=fmt(thT*180/Math.PI,0)+'°';
+    springTo(R,+$('#r').value,70,10,dt); springTo(TH,thT,sweep?400:80,sweep?40:11,dt);
+    const rcm=R.x, th=Math.max(0,TH.x), s=rcm*th;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.30, cy=h*0.46, Rmax=Math.min(h*0.36,w*0.24), Rp=Rmax*rcm/10, k=Rp/rcm;
+    circ(ctx,cx,cy,Rp,COL.faint,null,2);
+    // arc pieces, each exactly one radius long (alternate red / yellow)
+    const full=Math.floor(th), ro=Rp+9;
+    for(let i=0;i<=full;i++){
+      const a0=i, a1=Math.min(i+1,th); if(a1-a0<1e-4) continue;
+      ctx.save(); ctx.strokeStyle=(i%2)?COL.yellow:COL.red; ctx.lineWidth=5; ctx.lineCap='butt';
+      ctx.beginPath(); ctx.arc(cx,cy,ro,-a0,-a1,true); ctx.stroke(); ctx.restore();
+      if(a1-a0>0.999){ const am=a0+0.5; textAt(ctx,'r',cx+Math.cos(-am)*(ro+16),cy+Math.sin(-am)*(ro+16)+4,{align:'center',size:12,weight:700,color:COL.blue}); }
+    }
+    // radii
+    line(ctx,cx,cy,cx+Rp,cy,COL.blue,2.8);
+    const bx=cx+Math.cos(-th)*Rp, by=cy+Math.sin(-th)*Rp;
+    line(ctx,cx,cy,bx,by,COL.blue,2.8);
+    ctx.save(); ctx.strokeStyle=COL.green; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(cx,cy,Math.min(26,Rp*0.3),0,-th,true); ctx.stroke(); ctx.restore();
+    textAt(ctx,'θ',cx+Math.cos(-th/2)*Math.min(40,Rp*0.42),cy+Math.sin(-th/2)*Math.min(40,Rp*0.42)+5,{align:'center',size:15,weight:700,color:COL.green});
+    circ(ctx,cx,cy,4,COL.ink,COL.ink,1);
+    // a dot walks the arc while its twin walks the unrolled bar — measuring s with the radius
+    const f=th>0.01?((t*0.35)%1):0, da=f*th;
+    circ(ctx,cx+Math.cos(-da)*Rp,cy+Math.sin(-da)*Rp,6,COL.ink,'#fff',2.2);
+    // unrolled bar
+    const bx0=w*0.60, by0=h*0.80, bw=Math.min(w*0.34,Rmax*2.6*th/6.3+30);
+    const unit=Rp, bl=Math.min(th*unit,w*0.36);
+    const sc=bl/Math.max(1e-6,th*unit);
+    const rpx=unit*sc*(th*unit>w*0.36?1:1);
+    textAt(ctx,'radius laid along a straight line',bx0,by0-62,{size:12,weight:600,color:COL.muted});
+    line(ctx,bx0,by0-40,bx0+Rp*sc,by0-40,COL.blue,5); line(ctx,bx0,by0-48,bx0,by0-32,COL.blue,2); line(ctx,bx0+Rp*sc,by0-48,bx0+Rp*sc,by0-32,COL.blue,2);
+    textAt(ctx,'r',bx0+Rp*sc/2,by0-50,{align:'center',size:12,weight:700,color:COL.blue});
+    for(let i=0;i<=full;i++){
+      const a0=i, a1=Math.min(i+1,th); if(a1-a0<1e-4) continue;
+      line(ctx,bx0+a0*Rp*sc,by0,bx0+a1*Rp*sc,by0,(i%2)?COL.yellow:COL.red,7);
+      line(ctx,bx0+a0*Rp*sc,by0-8,bx0+a0*Rp*sc,by0+8,COL.ink,1.6);
+    }
+    line(ctx,bx0+th*Rp*sc,by0-8,bx0+th*Rp*sc,by0+8,COL.ink,1.6);
+    circ(ctx,bx0+da*Rp*sc,by0,6,COL.ink,'#fff',2.2);
+    textAt(ctx,'arc  s = '+fixed(s,1)+' cm  =  '+fixed(th,2)+' radii',bx0,by0+30,{size:13,weight:700,color:COL.red});
+    $('#s').textContent=fixed(s,2)+' cm'; $('#rr').textContent=fixed(rcm,1)+' cm'; $('#a').textContent=fixed(th,3)+' rad'; $('#d').textContent=fixed(th*180/Math.PI,1)+'°';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.3  SOLID ANGLE — THE STERADIAN      (Fig 1.1b)   dΩ = dA / r²
+   cap of a cone on a sphere:  Ω = 2π(1 − cos α)
+   ===================================================================== */
+function buildA3(){
+  const {wrap,$,canvas}=lab(
+    slider('om','Solid angle Ω',0.2,12.5,0.1,1)+
+    slider('r','Sphere radius r',2,8,0.1,4)+
+    group(`<div class="toggle-group"><button class="toggle-btn" id="b1">Ω = 1 sr</button><button class="toggle-btn" id="b4">Whole sphere</button></div>`)+
+    cards([{l:'Patch area  A',id:'A',col:COL.yellow},{l:'Radius  r',id:'rr',col:COL.blue},{l:'Ω = A / r²',id:'o',col:COL.green},{l:'Share of sphere',id:'f'}])+
+    hint('Make the sphere bigger: the patch grows as r², but Ω does not change.'));
+  let t=0;
+  const OM={x:1,v:0}, R={x:4,v:0};
+  $('#b1').onclick=()=>{ $('#om').value=1; }; $('#b4').onclick=()=>{ $('#om').value=12.5; };
+  animLoop(dt=>{
+    t+=dt;
+    const omT=+$('#om').value; $('#omV').textContent=fmt(omT,1)+' sr'; $('#rV').textContent=fmt(+$('#r').value,1)+' cm';
+    springTo(OM,omT,60,9,dt); springTo(R,+$('#r').value,70,10,dt);
+    const om=clamp(OM.x,0.01,4*Math.PI-0.001), rcm=R.x;
+    const al=Math.acos(clamp(1-om/(2*Math.PI),-1,1));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.5, cy=h*0.5, Rp=Math.min(h*0.40,w*0.36)*(0.55+0.45*rcm/8);
+    const yaw=t*0.5, tilt=0.42;
+    const ax=[0.35,0.55,0.76]; const an=Math.hypot(...ax); const a=ax.map(v=>v/an);
+    // orthonormal frame around axis a
+    let u=[a[1],-a[0],0]; const un=Math.hypot(...u); u=u.map(v=>v/un);
+    const v=[a[1]*u[2]-a[2]*u[1], a[2]*u[0]-a[0]*u[2], a[0]*u[1]-a[1]*u[0]];
+    const P=p=>{ // rotate about vertical, then tilt; return [sx,sy,depth]
+      const x1=p[0]*Math.cos(yaw)+p[2]*Math.sin(yaw), z1=-p[0]*Math.sin(yaw)+p[2]*Math.cos(yaw);
+      const y2=p[1]*Math.cos(tilt)-z1*Math.sin(tilt), z2=p[1]*Math.sin(tilt)+z1*Math.cos(tilt);
+      return [cx+x1*Rp, cy-y2*Rp, z2];
+    };
+    // sphere outline + two faint rings
+    circ(ctx,cx,cy,Rp,COL.blue,'rgba(47,143,224,0.04)',2.4);
+    const ring=(fn,col)=>{ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.setLineDash([4,5]); ctx.beginPath();
+      for(let i=0;i<=60;i++){ const q=P(fn(i/60*Math.PI*2)); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); } ctx.stroke(); ctx.restore(); };
+    ring(th=>[Math.cos(th),0,Math.sin(th)],COL.faint); ring(th=>[Math.cos(th),Math.sin(th),0],COL.faint);
+    // cone rim
+    const rim=[]; const N=48;
+    for(let i=0;i<N;i++){ const ph=i/N*Math.PI*2;
+      const p=[0,1,2].map(k=>a[k]*Math.cos(al)+Math.sin(al)*(Math.cos(ph)*u[k]+Math.sin(ph)*v[k])); rim.push(P(p)); }
+    const O=P([0,0,0]);
+    // cap (yellow = area A)
+    ctx.save(); ctx.beginPath(); rim.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath();
+    ctx.fillStyle='rgba(217,160,23,0.30)'; ctx.fill(); ctx.strokeStyle=COL.yellow; ctx.lineWidth=2.6; ctx.stroke(); ctx.restore();
+    // cone edges (red) and axis radius (blue)
+    for(let i=0;i<N;i+=4){ line(ctx,O[0],O[1],rim[i][0],rim[i][1],COL.red,1.8); }
+    const ap=P(a); line(ctx,O[0],O[1],ap[0],ap[1],COL.blue,2.8,[7,4]);
+    textAt(ctx,'r',(O[0]+ap[0])/2+10,(O[1]+ap[1])/2-4,{size:13,weight:700,color:COL.blue});
+    circ(ctx,O[0],O[1],4.5,COL.ink,COL.ink,1);
+    textAt(ctx,'O',O[0]-14,O[1]+16,{size:13,weight:700});
+    textAt(ctx,'A',ap[0]+10,ap[1]-8,{size:14,weight:700,color:COL.yellow});
+    // 1-steradian reference square (area r² drawn flat at left) beside the live patch
+    const sx=w*0.05, sy=h*0.70, sq=Math.min(w*0.12,Rp*0.5);
+    textAt(ctx,'a square of area r²',sx,sy-10,{size:12,weight:600,color:COL.muted});
+    rect(ctx,sx,sy,sq,sq,COL.blue,'rgba(47,143,224,0.12)',2);
+    textAt(ctx,'r',sx+sq/2,sy+sq+16,{align:'center',size:12,weight:700,color:COL.blue});
+    textAt(ctx,'r',sx-10,sy+sq/2+4,{align:'center',size:12,weight:700,color:COL.blue});
+    textAt(ctx,'= 1 steradian',sx,sy+sq+36,{size:12,weight:700,color:COL.green});
+    textAt(ctx,'Ω = '+fixed(om,2)+' sr',w*0.96,h*0.1,{align:'right',size:Math.min(30,w*0.04),weight:700,color:COL.green});
+    $('#A').textContent=fixed(om*rcm*rcm,1)+' cm²'; $('#rr').textContent=fixed(rcm,1)+' cm'; $('#o').textContent=fixed(om,2)+' sr'; $('#f').textContent=fixed(om/(4*Math.PI)*100,1)+' %';
+  });
+  return wrap;
+}
+
+/* ---------------- shared digit-tile helper ---------------- */
+function tile(ctx,x,y,tw,th,txt,kind,alpha){
+  const S={ sure:[COL.green,'#e4f7ec',COL.ink,null], est:[COL.red,'#fdece7',COL.red,null],
+            lead:[COL.red,'#fdf3f0',COL.mid,[4,3]], trail:[COL.yellow,'#fdf4dc',COL.mid,[4,3]],
+            plain:[COL.border||COL.faint,'#f6f9fc',COL.ink,null], blue:[COL.blue,'#e6f1fc',COL.ink,null], drop:[COL.red,'#fdece7',COL.red,[3,3]] }[kind]||[COL.mid,'#fff',COL.ink,null];
+  ctx.save(); if(alpha!==undefined) ctx.globalAlpha=clamp(alpha,0,1);
+  box(ctx,x-tw/2,y-th/2,tw,th,tw*0.16,S[0],S[1],2.2,S[3]);
+  textAt(ctx,txt,x,y+th*0.2,{align:'center',size:th*0.62,weight:700,color:S[2]});
+  ctx.restore();
+}
+function dotMark(ctx,x,y,r,alpha){ ctx.save(); ctx.globalAlpha=clamp(alpha===undefined?1:alpha,0,1); circ(ctx,x,y,r,COL.ink,COL.ink,1); ctx.restore(); }
+
+/* =====================================================================
+   1.4  READING AN INSTRUMENT — certain digits + one uncertain digit  (1.3)
+   ===================================================================== */
+function buildA4(){
+  const {wrap,$,canvas}=lab(
+    slider('L','Length of the rod',4,12,0.001,7.34)+
+    group(`<span class="glabel">Marks on the scale</span>${toggles('lc',[['1','1 cm'],['0.1','1 mm'],['0.01','0.1 mm']])}`)+
+    cards([{l:'Reading',id:'rd',col:COL.green},{l:'Significant figures',id:'sf'},{l:'Least count',id:'lcv'},{l:'Uncertain digit is',id:'ud',col:COL.red}])+
+    hint('Green digits are certain. The last digit, red, is your estimate between two marks.'));
+  let lc=1, t=0; const Ls={x:7.34,v:0};
+  toggleWire(wrap.querySelectorAll('#lc button'),b=>{ lc=+b.dataset.v; });
+  animLoop(dt=>{
+    t+=dt;
+    const Lt=+$('#L').value; $('#LV').textContent='';
+    springTo(Ls,Lt,38,5.5,dt);
+    const L=Ls.x, d=Math.round(-Math.log10(lc));
+    let cert=Math.floor(L/lc+1e-9)*lc, est=Math.round((L-cert)/lc*10);
+    if(est>=10){ cert+=lc; est=0; }
+    const reading=(cert+est*lc/10);
+    const rs=reading.toFixed(d+1);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // --- ruler with the rod being pulled out
+    const x0=w*0.06, pc=(w*0.88)/14, ry=h*0.20;
+    box(ctx,x0,ry,14*pc,h*0.075,4,COL.ink,'#f6f9fc',2);
+    for(let i=0;i<=140;i++){ const x=x0+i*pc/10, big=i%10===0; line(ctx,x,ry,x,ry+(big?h*0.05:h*0.022),COL.ink,big?1.6:0.8); if(big) textAt(ctx,String(i/10),x,ry+h*0.073,{align:'center',size:10.5,weight:600,color:COL.muted}); }
+    textAt(ctx,'cm',x0+14*pc+4,ry+h*0.05,{size:10.5,color:COL.muted});
+    box(ctx,x0,ry-h*0.085,Math.max(4,L*pc),h*0.05,4,COL.blue,'rgba(47,143,224,0.16)',2.4);
+    const tipX=x0+L*pc;
+    line(ctx,tipX,ry-h*0.095,tipX,ry+h*0.01,COL.red,2.2);
+    // --- leader lines to the zoom window
+    const zx=w*0.08, zw=w*0.84, zy=h*0.57, zh=h*0.31;
+    line(ctx,tipX,ry+h*0.01,zx,zy,COL.blue,1.2,[5,5]); line(ctx,tipX,ry+h*0.01,zx+zw,zy,COL.blue,1.2,[5,5]);
+    // --- zoom window: ticks slide past as the rod settles
+    ctx.save(); box(ctx,zx,zy,zw,zh,8,COL.blue,'#fff',2.4); ctx.clip();
+    const span=8*lc, ppu=zw/span, cxz=zx+zw/2, at=v=>cxz+(v-L)*ppu/1;
+    const kk0=Math.floor((L-span/2)/lc)-1, kk1=Math.ceil((L+span/2)/lc)+1;
+    // rod body to the tip
+    rect(ctx,zx,zy+zh*0.12,cxz-zx,zh*0.2,COL.blue,'rgba(47,143,224,0.14)',2);
+    line(ctx,cxz,zy+zh*0.05,cxz,zy+zh*0.95,COL.red,2.6);
+    for(let k=kk0;k<=kk1;k++){
+      const v=k*lc, x=at(v); line(ctx,x,zy+zh*0.5,x,zy+zh*0.78,COL.ink,2);
+      textAt(ctx,v.toFixed(d),x,zy+zh*0.93,{align:'center',size:13,weight:700,color:COL.ink});
+    }
+    // the ten sub-divisions your eye imagines between the two marks around the tip
+    const gx0=at(cert), gw=lc*ppu;
+    for(let j=0;j<=10;j++){ line(ctx,gx0+gw*j/10,zy+zh*0.5,gx0+gw*j/10,zy+zh*(j%5===0?0.66:0.6),COL.mid,1); }
+    ctx.fillStyle='rgba(217,67,43,0.18)'; ctx.fillRect(gx0+gw*(est-0.5)/10,zy+zh*0.5,gw/10,zh*0.28);
+    ctx.restore();
+    textAt(ctx,'eye-estimated tenth of a division',cxz+10,zy+zh*0.46,{size:11,weight:600,color:COL.red});
+    // --- the reading, digit by digit
+    const ty=h*0.455, tw=Math.min(54,w*0.07), th=tw*1.15, n=rs.length, sx=w/2-(n*tw)/2+tw/2;
+    for(let i=0;i<n;i++){
+      const ch=rs[i], isEst=(i===n-1);
+      if(ch==='.') dotMark(ctx,sx+i*tw,ty+th*0.35,4); else tile(ctx,sx+i*tw,ty,tw*0.9,th,ch,isEst?'est':'sure');
+    }
+    textAt(ctx,'cm',sx+n*tw-tw*0.3,ty+th*0.25,{size:Math.min(22,tw*0.5),weight:700,color:COL.blue});
+    $('#rd').textContent=rs+' cm'; $('#sf').textContent=String(rs.replace('.','').length);
+    $('#lcv').textContent=lc===1?'1 cm':(lc===0.1?'1 mm':'0.1 mm'); $('#ud').textContent=rs[rs.length-1]+'  (±1)';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.5  THE DECIMAL SLIDES, THE FIGURES STAY     (1.3 rules + scientific notation)
+   ===================================================================== */
+const NUMS={
+  a:{D:'2308',e:-3,base:2,txt:'2.308 cm'},   // base unit index into UNITS below
+  b:{D:'4700',e:-3,base:1,txt:'4.700 m'},
+  c:{D:'123', e:0, base:1,txt:'123 m'},
+  d:{D:'3500',e:-3,base:1,txt:'3.500 m'}
+};
+const UNITS=[['km',3],['m',0],['cm',-2],['mm',-3]];
+function layoutNum(D,q){
+  const n=D.length, out=[];
+  if(q>=0){ for(let i=0;i<n;i++) out.push({ch:D[i],id:'d'+i,k:'sig'}); for(let j=0;j<q;j++) out.push({ch:'0',id:'zr'+j,k:'trail'}); }
+  else{ const m=-q;
+    if(m<n){ for(let i=0;i<n;i++){ if(i===n-m) out.push({ch:'.',id:'dot',k:'dot'}); out.push({ch:D[i],id:'d'+i,k:'sig'}); } }
+    else{ out.push({ch:'0',id:'zl0',k:'lead'}); out.push({ch:'.',id:'dot',k:'dot'}); for(let j=0;j<m-n;j++) out.push({ch:'0',id:'zl'+(j+1),k:'lead'}); for(let i=0;i<n;i++) out.push({ch:D[i],id:'d'+i,k:'sig'}); }
+  }
+  return out;
+}
+function sigByRules(s){
+  const hasPt=s.includes('.'); let d=s.replace('.','').replace(/^0+/,''); if(!hasPt) d=d.replace(/0+$/,''); return d.length;
+}
+function buildA5(){
+  const {wrap,$,canvas}=lab(
+    group(`<span class="glabel">Measured value</span>${toggles('num',[['a','2.308 cm'],['b','4.700 m'],['c','123 m'],['d','3.500 m']],'small')}`)+
+    group(`<span class="glabel">Write it in</span>${toggles('un',[['0','km'],['1','m'],['2','cm'],['3','mm']])}
+      <div class="toggle-group"><button class="toggle-btn" id="sci">Scientific notation</button></div>`)+
+    cards([{l:'Written as',id:'wr',col:COL.blue},{l:'Real figures',id:'tr',col:COL.green},{l:'Plain rules say',id:'ru'},{l:'Verdict',id:'vd',wide:1}])+
+    hint('Changing units slides the decimal point. It never changes how many figures were measured.'));
+  let cur='a', ui=2, sci=false, t=0; const T={};
+  const st=id=>T[id]||(T[id]={x:{x:0,v:0},a:0,init:false,y:0});
+  toggleWire(wrap.querySelectorAll('#num button'),b=>{ cur=b.dataset.v; ui=NUMS[cur].base; setUnitBtn(); });
+  const ub=wrap.querySelectorAll('#un button');
+  function setUnitBtn(){ ub.forEach((b,i)=>b.classList.toggle('active',i===ui)); }
+  ub.forEach((b,i)=>b.onclick=()=>{ ui=i; setUnitBtn(); });
+  setUnitBtn(); ui=2;
+  $('#sci').onclick=()=>{ sci=!sci; $('#sci').classList.toggle('active',sci); };
+  const expS={x:0,v:0};
+  animLoop(dt=>{
+    t+=dt;
+    const N=NUMS[cur], D=N.D, n=D.length, q=N.e+UNITS[N.base][1]-UNITS[ui][1];
+    let chars, str, expo=q+n-1;
+    if(sci){ chars=[]; for(let i=0;i<n;i++){ if(i===1) chars.push({ch:'.',id:'dot',k:'dot'}); chars.push({ch:D[i],id:'d'+i,k:'sig'}); } str=D[0]+(n>1?'.'+D.slice(1):''); }
+    else{ chars=layoutNum(D,q); str=chars.map(c=>c.ch).join(''); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const tw=clamp(w*0.8/(chars.length+(sci?4:1)),30,66), th=tw*1.15;
+    const widths=chars.map(c=>c.k==='dot'?tw*0.4:tw);
+    const total=widths.reduce((a,b)=>a+b,0)+(sci?tw*3.4:0);
+    let px=w/2-total/2; const ty=h*0.47;
+    const seen={};
+    chars.forEach((c,i)=>{
+      const s=st(c.id), x=px+widths[i]/2; px+=widths[i]; seen[c.id]=1;
+      if(!s.init){ s.init=true; s.x.x=x; s.x.v=0; s.y=-26; s.a=0; }
+      springTo(s.x,x,110,15,dt); s.a=approach(s.a,1,9,dt); s.y=approach(s.y,0,10,dt);
+      if(c.k==='dot') dotMark(ctx,s.x.x,ty+th*0.35+s.y,5,s.a);
+      else tile(ctx,s.x.x,ty+s.y,tw*0.9,th,c.ch,c.k==='sig'?'sure':(c.k==='lead'?'lead':'trail'),s.a);
+    });
+    Object.keys(T).forEach(id=>{ if(!seen[id]){ T[id].a=approach(T[id].a,0,12,dt); if(T[id].a<0.02) T[id].init=false; else if(T[id].init){ const s=T[id]; tile(ctx,s.x.x,ty,tw*0.9,th,'0','lead',s.a); } } });
+    if(sci){
+      const ex=px+tw*0.2; springTo(expS,expo,60,10,dt);
+      textAt(ctx,'× 10',ex,ty+th*0.2,{size:th*0.55,weight:700,color:COL.blue});
+      textAt(ctx,fixed(expS.x,0),ex+th*1.18,ty-th*0.12,{size:th*0.42,weight:700,color:COL.blue});
+    }
+    // fixed physical rod: same length whatever the number says
+    const rx0=w*0.2, rx1=w*0.8, ry=h*0.17;
+    box(ctx,rx0,ry-8,rx1-rx0,16,4,COL.ink,'#fff',2.4);
+    line(ctx,rx0,ry-24,rx0,ry+24,COL.ink,2); line(ctx,rx1,ry-24,rx1,ry+24,COL.ink,2);
+    dimLine(ctx,rx0,ry+30,rx1,ry+30,COL.blue);
+    textAt(ctx,(sci?str+' × 10'+sup(expo):str)+' '+UNITS[ui][0],w/2,ry-34,{align:'center',size:15,weight:700,color:COL.blue});
+    textAt(ctx,'the same rod, the same length',w/2,ry+52,{align:'center',size:11.5,color:COL.mid});
+    // counting balls
+    const rules=sci?n:sigByRules(str), tru=n, by=h*0.72;
+    textAt(ctx,'figures measured',w*0.5,by-30,{align:'center',size:12,weight:700,color:COL.green});
+    for(let i=0;i<tru;i++){ const bob=Math.abs(Math.sin(t*3+i*0.7))*6; circ(ctx,w/2+(i-(tru-1)/2)*26,by-bob,9,COL.green,'#e4f7ec',2.2); }
+    const bad=rules!==tru;
+    textAt(ctx,'figures the plain rules would count',w*0.5,by+36,{align:'center',size:12,weight:700,color:bad?COL.red:COL.green});
+    for(let i=0;i<rules;i++){ const bob=Math.abs(Math.sin(t*3+i*0.7+1))*6; circ(ctx,w/2+(i-(rules-1)/2)*26,by+62-bob,9,bad?COL.red:COL.green,bad?'#fdece7':'#e4f7ec',2.2); }
+    $('#wr').textContent=(sci?str+' × 10'+sup(expo):str)+' '+UNITS[ui][0]; $('#tr').textContent=String(tru); $('#ru').textContent=String(rules);
+    $('#vd').textContent=bad?'Trailing zeros are ambiguous — use scientific notation':'Consistent';
+    $('#vd').style.color=bad?COL.red:COL.green;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.6  ARITHMETIC WITH SIGNIFICANT FIGURES   (1.3.1 – 1.3.2)
+   modes: × ÷  |  + −  |  rounding off
+   ===================================================================== */
+function toSigStr(x,n){ return Number(x).toPrecision(n); }
+function buildA6(){
+  const {wrap,$,canvas}=lab(
+    group(`<span class="glabel">Operation</span>${toggles('mode',[['md','× ÷'],['as','+ −'],['rd','Round off']])}`)+
+    `<div id="pmd">`+
+      group(`<span class="glabel">Operator</span>${toggles('opm',[['d','÷ divide'],['m','× multiply']],'small')}`)+
+      slider('A','A',1,9.999,0.001,4.237)+slider('nA','Figures in A',2,5,1,4)+
+      slider('B','B',1,9.999,0.001,2.51)+slider('nB','Figures in B',2,5,1,3)+
+    `</div><div id="pas" style="display:none;flex-direction:column;gap:12px">`+
+      group(`<span class="glabel">Operator</span>${toggles('opa',[['p','+ add'],['s','− subtract']],'small')}`)+
+      slider('P','First number',100,999.999,0.001,436.32)+slider('dP','Decimal places in first',0,3,1,2)+
+      slider('Q','Second number',0.1,99.999,0.001,22.7)+slider('dQ','Decimal places in second',0,3,1,1)+
+    `</div><div id="prd" style="display:none;flex-direction:column;gap:12px">`+
+      slider('X','Number to round',2.73,2.76,0.001,2.745)+
+      group(`<div class="toggle-group"><button class="toggle-btn" id="r1">2.745</button><button class="toggle-btn" id="r2">2.735</button><button class="toggle-btn" id="r3">2.746</button></div>`)+
+    `</div>`+
+    cards([{l:'Answer',id:'ans',col:COL.green},{l:'Keep',id:'keep'},{l:'Calculator shows',id:'raw',wide:1}]));
+  wrap.querySelector('#pas').style.display='none';
+  let mode='md', op='d', opa='p', t=0;
+  toggleWire(wrap.querySelectorAll('#mode button'),b=>{ mode=b.dataset.v; $('#pmd').style.display=mode==='md'?'flex':'none'; $('#pas').style.display=mode==='as'?'flex':'none'; $('#prd').style.display=mode==='rd'?'flex':'none'; });
+  $('#pmd').style.display='flex'; $('#pmd').style.flexDirection='column'; $('#pmd').style.gap='12px';
+  toggleWire(wrap.querySelectorAll('#opm button'),b=>op=b.dataset.v);
+  toggleWire(wrap.querySelectorAll('#opa button'),b=>opa=b.dataset.v);
+  ['r1','r2','r3'].forEach((id,i)=>$('#'+id).onclick=()=>{ $('#X').value=[2.745,2.735,2.746][i]; });
+  const F=[]; for(let i=0;i<40;i++) F.push({y:0,vy:0,a:1,kept:true,x:0});
+  const ball={x:1.5,v:0}; let lastX=null, lastDrop=0;
+  function fall(i,kept,dt){
+    const f=F[i];
+    if(kept){ if(!f.kept){ f.kept=true; f.y=-24; f.vy=0; f.a=1; } f.y=approach(f.y,0,12,dt); f.a=1; }
+    else{ if(f.kept){ f.kept=false; f.vy=-120; } f.vy+=1900*dt; f.y+=f.vy*dt; f.a=clamp(1-f.y/140,0,1); }
+    return f;
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    if(mode==='md'){
+      const nA=+$('#nA').value, nB=+$('#nB').value, Av=+$('#A').value, Bv=+$('#B').value;
+      $('#AV').textContent=toSigStr(Av,nA); $('#nAV').textContent=nA; $('#BV').textContent=toSigStr(Bv,nB); $('#nBV').textContent=nB;
+      const sA=toSigStr(Av,nA), sB=toSigStr(Bv,nB), a=+sA, b=+sB, res=op==='d'?a/b:a*b, keep=Math.min(nA,nB);
+      const raw=res.toPrecision(10);
+      const tw=Math.min(50,w*0.062), th=tw*1.15;
+      const row=(s,y,lab,col,fixedKind)=>{
+        const sx=w/2-(s.length*tw)/2+tw/2;
+        textAt(ctx,lab,sx-tw*1.1,y+th*0.2,{align:'right',size:15,weight:700,color:col});
+        for(let i=0;i<s.length;i++){ if(s[i]==='.') dotMark(ctx,sx+i*tw,y+th*0.35,4); else tile(ctx,sx+i*tw,y,tw*0.9,th,s[i],fixedKind); }
+      };
+      row(sA,h*0.14,'A =',COL.blue,'blue'); textAt(ctx,nA+' figures',w*0.86,h*0.14+th*0.2,{size:12,weight:700,color:COL.green});
+      textAt(ctx,op==='d'?'÷':'×',w/2,h*0.255,{align:'center',size:28,weight:700,color:COL.yellow});
+      row(sB,h*0.34,'B =',COL.blue,'blue'); textAt(ctx,nB+' figures',w*0.86,h*0.34+th*0.2,{size:12,weight:700,color:COL.green});
+      // calculator display
+      const dx=w/2-(raw.length*tw)/2-18, dy=h*0.46, dwid=raw.length*tw+36;
+      box(ctx,dx,dy,dwid,th+46,12,COL.ink,'#f6f9fc',2.6);
+      textAt(ctx,'calculator',dx+10,dy+16,{size:11,weight:700,color:COL.mid});
+      const sx=w/2-(raw.length*tw)/2+tw/2, ry=dy+34+th/2;
+      let digIdx=0, started=false;
+      for(let i=0;i<raw.length;i++){
+        const c=raw[i];
+        if(c==='.'){ dotMark(ctx,sx+i*tw,ry+th*0.35,4); continue; }
+        if(c!=='0') started=true;
+        const sig=started; const idx=sig?digIdx++:-1;
+        const kept=!sig||idx<keep; const f=fall(i,kept,dt);
+        ctx.save(); ctx.globalAlpha=f.a; tile(ctx,sx+i*tw,ry+f.y,tw*0.9,th,c,kept?(sig?'sure':'plain'):'drop'); ctx.restore();
+      }
+      // answer
+      const ans=toSigStr(res,keep);
+      row(ans,h*0.80,'answer',COL.green,'sure');
+      textAt(ctx,'only '+keep+' figures are trustworthy — the fewest of the two',w/2,h*0.955,{align:'center',size:12.5,weight:700,color:COL.red});
+      $('#ans').textContent=ans; $('#keep').textContent=keep+' figures'; $('#raw').textContent=raw;
+    }
+    else if(mode==='as'){
+      const dP=+$('#dP').value, dQ=+$('#dQ').value, Pv=+$('#P').value, Qv=+$('#Q').value;
+      const sP=Pv.toFixed(dP), sQ=Qv.toFixed(dQ); $('#PV').textContent=sP; $('#QV').textContent=sQ; $('#dPV').textContent=dP; $('#dQV').textContent=dQ;
+      const a=+sP, b=+sQ, res=opa==='p'?a+b:a-b, mx=Math.max(dP,dQ), keep=Math.min(dP,dQ);
+      const rawS=res.toFixed(mx), ansS=res.toFixed(keep);
+      const tw=Math.min(54,w*0.07), th=tw*1.15, cx0=w*0.58;
+      const colx=c=>cx0+(c+0.5)*tw+(c>=0?tw*0.25:-tw*0.25);
+      const drawNum=(s,y,lab,kind)=>{
+        const parts=s.split('.'), ip=parts[0], fp=parts[1]||'';
+        for(let j=0;j<ip.length;j++) tile(ctx,colx(-(ip.length-j)),y,tw*0.9,th,ip[j],kind);
+        if(mx>0) dotMark(ctx,cx0,y+th*0.35,4);
+        for(let j=0;j<mx;j++){ if(j<fp.length) tile(ctx,colx(j),y,tw*0.9,th,fp[j],kind); else { ctx.save(); box(ctx,colx(j)-tw*0.45,y-th/2,tw*0.9,th,tw*0.14,COL.red,'#fff',1.6,[3,3]); ctx.restore(); textAt(ctx,'?',colx(j),y+th*0.2,{align:'center',size:th*0.6,weight:700,color:COL.red,alpha:0.7}); } }
+        textAt(ctx,lab,cx0-(ip.length+0.7)*tw,y+th*0.2,{align:'right',size:18,weight:700,color:COL.yellow});
+      };
+      drawNum(sP,h*0.13,'','blue'); drawNum(sQ,h*0.31,opa==='p'?'+':'−','blue');
+      line(ctx,cx0-6*tw,h*0.405,cx0+4*tw,h*0.405,COL.ink,2.4);
+      // limit line: precision of the least precise number
+      const lx=cx0+keep*tw+tw*0.25;
+      line(ctx,lx,h*0.06,lx,h*0.92,COL.red,2,[7,5]);
+      textAt(ctx,'least precise number ends here',lx+8,h*0.065,{size:11.5,weight:700,color:COL.red});
+      // raw sum with falling digits
+      const parts=rawS.split('.'), ip=parts[0], fp=parts[1]||'';
+      let k=0;
+      for(let j=0;j<ip.length;j++){ const f=fall(k++,true,dt); tile(ctx,colx(-(ip.length-j)),h*0.50+f.y,tw*0.9,th,ip[j],'plain'); }
+      if(mx>0) dotMark(ctx,cx0,h*0.50+th*0.35,4);
+      for(let j=0;j<mx;j++){ const f=fall(k++,j<keep,dt); ctx.save(); ctx.globalAlpha=f.a; tile(ctx,colx(j),h*0.50+f.y,tw*0.9,th,fp[j],j<keep?'plain':'drop'); ctx.restore(); }
+      textAt(ctx,'calculator',cx0-(ip.length+0.7)*tw,h*0.50+th*0.2,{align:'right',size:12,weight:700,color:COL.mid});
+      drawNum(ansS,h*0.78,'','sure');
+      textAt(ctx,'answer',cx0-(ansS.split('.')[0].length+0.7)*tw,h*0.78+th*0.2,{align:'right',size:12,weight:700,color:COL.green});
+      textAt(ctx,'count decimal places here — not total figures',w/2,h*0.955,{align:'center',size:12.5,weight:700,color:COL.red});
+      $('#ans').textContent=ansS; $('#keep').textContent=keep+' decimal place'+(keep===1?'':'s'); $('#raw').textContent=rawS;
+    }
+    else{
+      const xs=+$('#X').value; $('#XV').textContent=xs.toFixed(3);
+      const u0=2.73, uS=(xs-u0)/0.01, fr=uS-Math.floor(uS);
+      const tie=Math.abs(fr-0.5)<0.02;
+      let tgtU=Math.round(uS);
+      if(tie){ const lo=Math.floor(uS+1e-6); tgtU=(Math.round(u0*100+lo)%2===0)?lo:lo+1; }
+      if(lastX!==xs){ lastX=xs; ball.x=uS; ball.v=0; lastDrop=t; }
+      const sub=Math.max(1,Math.ceil(dt/0.004)), hh=dt/sub;
+      for(let s=0;s<sub;s++){
+        let acc=-90*Math.sin(2*Math.PI*ball.x)-6*ball.v;
+        if(tie && t-lastDrop<0.35) acc+=(tgtU>ball.x?1:-1)*40;
+        ball.v+=acc*hh; ball.x+=ball.v*hh;
+      }
+      const U0=-0.6, U1=3.6, X=uu=>w*0.07+(uu-U0)/(U1-U0)*w*0.86, base=h*0.55, amp=h*0.2;
+      const Yat=uu=>base+0.5*amp*Math.cos(2*Math.PI*uu);
+      ctx.save(); ctx.strokeStyle=COL.ink; ctx.lineWidth=3; ctx.beginPath();
+      for(let i=0;i<=240;i++){ const uu=U0+(U1-U0)*i/240; i?ctx.lineTo(X(uu),Yat(uu)):ctx.moveTo(X(uu),Yat(uu)); } ctx.stroke(); ctx.restore();
+      for(let n=0;n<=3;n++){ textAt(ctx,(u0+0.01*n).toFixed(2),X(n),Yat(n)+34,{align:'center',size:15,weight:700,color:COL.green}); circ(ctx,X(n),Yat(n)+9,3,COL.green,COL.green,1); }
+      for(let n=0;n<3;n++){ line(ctx,X(n+0.5),Yat(n+0.5)-6,X(n+0.5),Yat(n+0.5)-30,COL.red,1.6,[4,4]); textAt(ctx,(u0+0.01*n+0.005).toFixed(3),X(n+0.5),Yat(n+0.5)-36,{align:'center',size:11,weight:700,color:COL.red}); }
+      const ux=X(clamp(uS,U0,U1));
+      vec(ctx,ux,h*0.14,ux,Yat(uS)-34,COL.yellow,2.6);
+      textAt(ctx,xs.toFixed(3),ux,h*0.115,{align:'center',size:15,weight:700,color:COL.yellow});
+      circ(ctx,X(ball.x),Yat(ball.x)-12,12,COL.blue,'#e6f1fc',2.6);
+      const rounded=u0+0.01*tgtU;
+      textAt(ctx,'rounded to 3 figures:  '+rounded.toFixed(2),w/2,h*0.86,{align:'center',size:Math.min(26,w*0.034),weight:700,color:COL.green});
+      const dd=Math.round(xs*1000)%10;
+      textAt(ctx,tie?'dropped digit is exactly 5 → make the kept digit even':'dropped digit '+dd+(dd>5?' > 5 → round up':' < 5 → keep'),w/2,h*0.935,{align:'center',size:13,weight:700,color:tie?COL.red:COL.muted});
+      $('#ans').textContent=rounded.toFixed(2); $('#keep').textContent='3 figures'; $('#raw').textContent=xs.toFixed(3);
+    }
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.7  UNCERTAINTY OF A PRODUCT      (1.3.3, area of a sheet)
+   l = 16.2 ± 0.1 cm,  b = 10.1 ± 0.1 cm  →  A = 164 ± 3 cm²
+   relative errors add:  δA/A = δl/l + δb/b
+   ===================================================================== */
+function buildA7(){
+  const {wrap,$,canvas}=lab(
+    slider('l','Length  l',5,25,0.1,16.2)+slider('b','Breadth  b',5,25,0.1,10.1)+
+    slider('d','Reading error  ± δ',0.05,0.5,0.05,0.1)+
+    cards([{l:'Area  l × b',id:'ar'},{l:'Error in area',id:'er',col:COL.red},{l:'Quote as',id:'q',col:COL.green,wide:1},{l:'δl / l',id:'pl',col:COL.blue},{l:'δb / b',id:'pb',col:COL.green}])+
+    hint('Sheet edges breathe inside their ± limits. Percent errors add when you multiply.'));
+  let t=0; const Ls={x:16.2,v:0}, Bs={x:10.1,v:0}, Dd={x:0.1,v:0};
+  animLoop(dt=>{
+    t+=dt;
+    const lT=+$('#l').value, bT=+$('#b').value, dT=+$('#d').value;
+    $('#lV').textContent=fmt(lT,1)+' cm'; $('#bV').textContent=fmt(bT,1)+' cm'; $('#dV').textContent='± '+fmt(dT,2)+' cm';
+    springTo(Ls,lT,60,9,dt); springTo(Bs,bT,60,9,dt); springTo(Dd,dT,60,9,dt);
+    const l=Ls.x, b=Bs.x, de=Dd.x;
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pc=Math.min(w*0.46,h*0.62)/25, ox=w*0.06, oy=h*0.08+25*pc;
+    const lj=l+de*Math.sin(t*1.9), bj=b+de*Math.sin(t*1.3+1.2);
+    // limits (dashed): inner and outer rectangle
+    rect(ctx,ox,oy-(b+de)*pc,(l+de)*pc,(b+de)*pc,COL.red,'rgba(217,67,43,0.07)',1.8,[6,4]);
+    rect(ctx,ox,oy-(b-de)*pc,(l-de)*pc,(b-de)*pc,COL.red,'rgba(255,255,255,0.0)',1.8,[6,4]);
+    // the sheet
+    rect(ctx,ox,oy-bj*pc,lj*pc,bj*pc,COL.ink,'rgba(47,143,224,0.14)',2.6);
+    dimLine(ctx,ox,oy+18,ox+lj*pc,oy+18,COL.blue); textAt(ctx,'l = '+fixed(l,1)+' ± '+fixed(de,2)+' cm',ox+lj*pc/2,oy+38,{align:'center',size:13,weight:700,color:COL.blue});
+    dimLine(ctx,ox-18,oy,ox-18,oy-bj*pc,COL.green); ctx.save(); ctx.translate(ox-26,oy-bj*pc/2); ctx.rotate(-Math.PI/2); textAt(ctx,'b = '+fixed(b,1)+' ± '+fixed(de,2)+' cm',0,0,{align:'center',size:13,weight:700,color:COL.green}); ctx.restore();
+    textAt(ctx,'A = '+fixed(lj*bj,1),ox+lj*pc/2,oy-bj*pc/2+6,{align:'center',size:Math.min(22,pc*2.4),weight:700,color:COL.ink});
+    // percent-error bars (right)
+    const rl=de/l*100, rb=de/b*100, ra=rl+rb, A=l*b, dA=A*ra/100;
+    const bx=w*0.62, bw=w*0.32, sc=bw/Math.max(8,ra*1.25);
+    textAt(ctx,'relative errors (%)',bx,h*0.14,{size:13,weight:700,color:COL.muted});
+    const rowY=[h*0.22,h*0.34,h*0.50];
+    rect(ctx,bx,rowY[0],rl*sc,22,COL.blue,'rgba(47,143,224,0.30)',2); textAt(ctx,'δl/l = '+fixed(rl,2)+' %',bx+rl*sc+8,rowY[0]+16,{size:12,weight:700,color:COL.blue});
+    rect(ctx,bx,rowY[1],rb*sc,22,COL.green,'rgba(31,157,85,0.30)',2); textAt(ctx,'δb/b = '+fixed(rb,2)+' %',bx+rb*sc+8,rowY[1]+16,{size:12,weight:700,color:COL.green});
+    line(ctx,bx-8,h*0.43,bx+bw,h*0.43,COL.faint,1.4,[4,4]);
+    rect(ctx,bx,rowY[2],rl*sc,22,COL.blue,'rgba(47,143,224,0.30)',2); rect(ctx,bx+rl*sc,rowY[2],rb*sc,22,COL.green,'rgba(31,157,85,0.30)',2);
+    rect(ctx,bx,rowY[2]-3,ra*sc,28,COL.red,null,2.4);
+    textAt(ctx,'δA/A = '+fixed(ra,2)+' %',bx,rowY[2]+50,{size:14,weight:700,color:COL.red});
+    // area readout
+    textAt(ctx,'A = l × b = '+fixed(A,2)+' cm²',bx,h*0.76,{size:14,weight:700,color:COL.ink});
+    textAt(ctx,'δA = '+fixed(dA,2)+' cm²',bx,h*0.82,{size:14,weight:700,color:COL.red});
+    // quote: error to 1 figure, value to the same place
+    const pw=Math.pow(10,Math.floor(Math.log10(dA))), er1=Math.round(dA/pw)*pw, vr=Math.round(A/pw)*pw, dec=Math.max(0,-Math.round(Math.log10(pw)));
+    const quote=fixed(vr,dec)+' ± '+fixed(er1,dec)+' cm²';
+    textAt(ctx,'quote:  '+quote,bx,h*0.91,{size:Math.min(20,w*0.028),weight:700,color:COL.green});
+    $('#ar').textContent=fixed(A,2)+' cm²'; $('#er').textContent='± '+fixed(dA,2)+' cm²'; $('#q').textContent=quote; $('#pl').textContent=fixed(rl,2)+' %'; $('#pb').textContent=fixed(rb,2)+' %';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.8  ORDER OF MAGNITUDE — powers of ten      (1.3)
+   a × 10^b  →  round a to 1 (a ≤ 5) or 10 (a > 5);  order = b or b+1
+   Earth 1.28×10⁷ m,  hydrogen atom 1.06×10⁻¹⁰ m  → 17 orders apart
+   ===================================================================== */
+const OBJS=[
+  {k:'h',n:'Hydrogen atom',a:1.06,b:-10,col:COL.blue},
+  {k:'r',n:'Width of a hair',a:8.0,b:-5,col:COL.yellow},
+  {k:'a',n:'An ant',a:3.0,b:-3,col:COL.green},
+  {k:'p',n:'A person',a:1.7,b:0,col:COL.red},
+  {k:'e',n:'Diameter of Earth',a:1.28,b:7,col:COL.blue}
+];
+function ordOf(o){ return o.a<=5?o.b:o.b+1; }
+function buildA8(){
+  const {wrap,$,canvas}=lab(
+    slider('z','View width = 10ˣ metres',-11,8,0.01,0)+
+    group(`<span class="glabel">Fly to</span><div class="toggle-group" id="fly">${OBJS.map(o=>`<button class="toggle-btn small" data-v="${o.k}">${o.n}</button>`).join('')}</div>
+      <div class="toggle-group"><button class="toggle-btn navy" id="auto">▶ Auto zoom out</button></div>`)+
+    cards([{l:'Selected',id:'sel',col:COL.blue},{l:'Size',id:'sz'},{l:'Order of magnitude',id:'om',col:COL.green},{l:'Earth vs hydrogen',id:'gap',col:COL.red,wide:1}])+
+    hint('a ≤ 5 rounds down, a > 5 rounds up to the next power of ten.'));
+  let t=0, sel=OBJS[3], autoOn=false; const Z={x:0,v:0};
+  wrap.querySelectorAll('#fly button').forEach(bt=>bt.onclick=()=>{ sel=OBJS.find(o=>o.k===bt.dataset.v); autoOn=false; $('#auto').classList.remove('active'); $('#z').value=Math.log10(sel.a*Math.pow(10,sel.b))+0.2; });
+  $('#auto').onclick=()=>{ autoOn=!autoOn; $('#auto').classList.toggle('active',autoOn); };
+  function drawObj(ctx,o,cx,cy,d,t){
+    ctx.save();
+    if(o.k==='h'){ circ(ctx,cx,cy,d/2,COL.blue,'rgba(47,143,224,0.07)',2); circ(ctx,cx,cy,Math.max(1.5,d*0.04),COL.red,COL.red,1);
+      const a=t*3; circ(ctx,cx+Math.cos(a)*d/2,cy+Math.sin(a)*d/2,Math.max(2,d*0.04),COL.blue,COL.blue,1); }
+    else if(o.k==='r'){ const L=Math.min(d*40,9000); box(ctx,cx-L/2,cy-d/2,L,d,d/2,COL.yellow,'rgba(217,160,23,0.10)',2); }
+    else if(o.k==='a'){ const L=d, wob=Math.sin(t*9);
+      for(let i=0;i<3;i++){ for(const s of [-1,1]){ const x=cx+(i-1)*L*0.16; line(ctx,x,cy,x+Math.sin(t*9+i*2+(s>0?0:3))*L*0.08,cy+s*L*0.3,COL.green,Math.max(1,L*0.012)); } }
+      [[-0.32,0.2,0.13],[0,0.07,0.06],[0.3,0.1,0.08]].forEach(p=>{ ctx.beginPath(); ctx.ellipse(cx+p[0]*L,cy,p[1]*L,p[2]*L,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=COL.green; ctx.lineWidth=Math.max(1.4,L*0.012); ctx.stroke(); });
+      line(ctx,cx+0.36*L,cy-0.02*L,cx+0.5*L,cy-0.12*L+wob*L*0.01,COL.green,Math.max(1,L*0.01)); line(ctx,cx+0.36*L,cy+0.02*L,cx+0.5*L,cy+0.12*L-wob*L*0.01,COL.green,Math.max(1,L*0.01)); }
+    else if(o.k==='p'){ const H=d, sw=Math.sin(t*3)*0.25, hx=cx, top=cy-H/2;
+      circ(ctx,hx,top+H*0.08,H*0.07,COL.red,'#fff',Math.max(1.4,H*0.012));
+      const lw=Math.max(1.4,H*0.014), sh=top+H*0.17, hip=top+H*0.55;
+      line(ctx,hx,sh,hx,hip,COL.red,lw);
+      line(ctx,hx,sh+H*0.02,hx+Math.sin(sw)*H*0.2,sh+H*0.3,COL.red,lw); line(ctx,hx,sh+H*0.02,hx-Math.sin(sw)*H*0.2,sh+H*0.3,COL.red,lw);
+      line(ctx,hx,hip,hx+Math.sin(-sw)*H*0.2,top+H,COL.red,lw); line(ctx,hx,hip,hx-Math.sin(-sw)*H*0.2,top+H,COL.red,lw); }
+    else if(o.k==='e'){ circ(ctx,cx,cy,d/2,COL.blue,'rgba(47,143,224,0.05)',2.4);
+      ctx.beginPath(); ctx.arc(cx,cy,d/2,0,Math.PI*2); ctx.clip();
+      for(let i=-2;i<=2;i++){ const ph=((t*0.4+i*0.4)%2+2)%2-1; ctx.beginPath(); ctx.ellipse(cx,cy,Math.abs(Math.cos(ph*Math.PI/2))*d/2,d/2,0,0,Math.PI*2); ctx.strokeStyle=COL.blue; ctx.globalAlpha=0.35; ctx.lineWidth=1.2; ctx.stroke(); }
+      ctx.globalAlpha=0.35; for(let i=-2;i<=2;i++){ line(ctx,cx-d/2,cy+i*d*0.2,cx+d/2,cy+i*d*0.2,COL.blue,1); } }
+    ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    if(autoOn){ let z=+$('#z').value+dt*1.1; if(z>8) z=-11; $('#z').value=z; }
+    const zT=+$('#z').value; springTo(Z,zT,30,9,dt);
+    $('#zV').textContent='10'+sup(fmt(zT,1))+' m';
+    const z=Z.x, {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w*0.5, cy=h*0.38, S=Math.min(w*0.8,h*0.62);
+    // stage (the view) with a scale tick
+    box(ctx,cx-S/2,cy-S/2,S,S,10,COL.faint,'#fbfdff',2);
+    ctx.save(); box(ctx,cx-S/2,cy-S/2,S,S,10); ctx.clip();
+    const list=OBJS.map(o=>({o,d:Math.pow(10,Math.log10(o.a)+o.b-z)*S})).filter(q=>q.d>1.2).sort((a,b)=>b.d-a.d);
+    list.forEach(q=>{
+      const act=(q.o===sel);
+      if(q.d<5){ circ(ctx,cx,cy,3,q.o.col,q.o.col,1); }
+      else drawObj(ctx,q.o,cx,cy,Math.min(q.d,S*30),t);
+    });
+    ctx.restore();
+    list.forEach((q,i)=>{ if(q.d>=5&&q.d<S*0.96){ const ly=cy-q.d/2; line(ctx,cx+q.d/2*0.0,ly,cx+S/2+10,ly,q.o.col,1,[3,4]); textAt(ctx,q.o.n,cx+S/2+14,ly+4,{size:11.5,weight:700,color:q.o.col}); } else if(q.d<5){ textAt(ctx,q.o.n+' (a dot at this scale)',cx+S/2+14,cy+4+i*14,{size:11,weight:600,color:q.o.col}); } });
+    textAt(ctx,'this box is 10'+sup(fmt(z,1))+' m wide',cx,cy-S/2-10,{align:'center',size:13,weight:700,color:COL.blue});
+    // log axis
+    const ax0=w*0.07, ax1=w*0.93, ay=h*0.88, X=v=>ax0+(v+11)/19*(ax1-ax0);
+    line(ctx,ax0,ay,ax1,ay,COL.ink,2.4);
+    for(let v=-11;v<=8;v++){ line(ctx,X(v),ay-(v%3===0?9:5),X(v),ay+(v%3===0?9:5),COL.ink,1.4); if(v%3===0||v===-10||v===7) textAt(ctx,'10'+sup(v),X(v),ay+26,{align:'center',size:11,weight:600,color:COL.muted}); }
+    OBJS.forEach(o=>{ const v=Math.log10(o.a)+o.b; circ(ctx,X(v),ay,5.5,o.col,o.col,1); textAt(ctx,o.n.replace('Diameter of ','').replace('Width of a ',''),X(v),ay-14-(o.k==='r'||o.k==='p'?14:0),{align:'center',size:10.5,weight:700,color:o.col}); });
+    // the view window marker (yellow)
+    line(ctx,X(z),ay-48,X(z),ay+8,COL.yellow,3.4); arrowHead(ctx,X(z),ay+10,Math.PI/2,COL.yellow,9);
+    textAt(ctx,'view',X(z),ay-54,{align:'center',size:11,weight:700,color:COL.yellow});
+    const o=sel, ord=ordOf(o);
+    $('#sel').textContent=o.n; $('#sz').textContent=o.a+' × 10'+sup(o.b)+' m'; $('#om').textContent=(o.a<=5?'a ≤ 5 → ':'a > 5 → ')+'10'+sup(ord)+'  (order '+ord+')';
+    $('#gap').textContent=(ordOf(OBJS[4])-ordOf(OBJS[0]))+' orders of magnitude larger';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.9  DIMENSIONS OF QUANTITIES      (1.4 – 1.5)
+   [M^a L^b T^c] — the powers of the three base quantities
+   ===================================================================== */
+const QTY=[
+  {k:'vol',n:'Volume',d:[0,3,0],how:'L × L × L'},
+  {k:'spd',n:'Speed',d:[0,1,-1],how:'length ÷ time'},
+  {k:'acc',n:'Acceleration',d:[0,1,-2],how:'speed ÷ time'},
+  {k:'frc',n:'Force',d:[1,1,-2],how:'mass × acceleration'},
+  {k:'den',n:'Density',d:[1,-3,0],how:'mass ÷ volume'},
+  {k:'eng',n:'Kinetic energy',d:[1,2,-2],how:'½ × mass × speed²'}
+];
+function dimStr(d){
+  const nm=['M','L','T']; let s=''; d.forEach((e,i)=>{ if(e!==0) s+=nm[i]+(e!==1?sup(e):'')+' '; });
+  return '['+(s.trim()||'1')+']';
+}
+function buildA9(){
+  const {wrap,$,canvas}=lab(
+    group(`<span class="glabel">Quantity</span><div class="toggle-group" id="qb">${QTY.map((q,i)=>`<button class="toggle-btn small${i?'':' active'}" data-v="${i}">${q.n}</button>`).join('')}</div>`)+
+    slider('eM','Power of mass  [M]',-3,3,1,0)+slider('eL','Power of length  [L]',-3,3,1,3)+slider('eT','Power of time  [T]',-3,3,1,0)+
+    cards([{l:'Dimensional formula',id:'df',col:COL.blue,wide:1},{l:'Quantity',id:'qn',col:COL.green},{l:'Built from',id:'bf'}]));
+  let t=0, qi=0; const Em={x:0,v:0}, El={x:3,v:0}, Et={x:0,v:0};
+  const sl=['eM','eL','eT'].map(id=>$('#'+id));
+  wrap.querySelectorAll('#qb button').forEach(bt=>bt.onclick=()=>{
+    wrap.querySelectorAll('#qb button').forEach(x=>x.classList.remove('active')); bt.classList.add('active');
+    const q=QTY[+bt.dataset.v]; sl.forEach((s,i)=>s.value=q.d[i]); });
+  const AX=(a,b)=>a.map((v,i)=>v===b[i]).every(Boolean);
+  function scene(ctx,k,x0,y0,sw,sh,t){
+    const cx=x0+sw/2, cy=y0+sh/2, u=Math.min(sw,sh);
+    ctx.save();
+    if(k==='vol'){ // rotating wire cube; three edges glow blue
+      const s=u*0.28, yaw=t*0.8, pit=0.5;
+      const pts=[]; for(let i=0;i<8;i++){ const x=(i&1?1:-1), y=(i&2?1:-1), z=(i&4?1:-1);
+        const x1=x*Math.cos(yaw)+z*Math.sin(yaw), z1=-x*Math.sin(yaw)+z*Math.cos(yaw);
+        const y2=y*Math.cos(pit)-z1*Math.sin(pit); pts.push([cx+x1*s,cy-y2*s]); }
+      const E=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+      E.forEach((e,i)=>line(ctx,pts[e[0]][0],pts[e[0]][1],pts[e[1]][0],pts[e[1]][1],i%4===0&&i<12&&[0,4,8].includes(i)?COL.blue:COL.mid,[0,4,8].includes(i)?3.2:1.6));
+      textAt(ctx,'L',(pts[0][0]+pts[1][0])/2,(pts[0][1]+pts[1][1])/2-8,{size:15,weight:700,color:COL.blue,align:'center'});
+      textAt(ctx,'L',(pts[0][0]+pts[2][0])/2-12,(pts[0][1]+pts[2][1])/2,{size:15,weight:700,color:COL.blue,align:'center'});
+      textAt(ctx,'L',(pts[0][0]+pts[4][0])/2-12,(pts[0][1]+pts[4][1])/2,{size:15,weight:700,color:COL.blue,align:'center'});
+    }
+    else if(k==='spd'||k==='acc'||k==='eng'){ // a cart on a track, markers each 1 s
+      const tr=cy+u*0.12, L=sw*0.84, xs=x0+sw*0.08, per=4;
+      line(ctx,xs,tr,xs+L,tr,COL.ink,2.4); for(let i=0;i<=8;i++) line(ctx,xs+L*i/8,tr,xs+L*i/8,tr+8,COL.ink,1.4);
+      const ph=(t%per)/per, tt=ph*per;
+      let pos, vel; if(k==='acc'){ pos=0.5*0.5*tt*tt/ (0.5*0.5*per*per)*0.95; vel=0.5*tt; } else { pos=ph*0.95; vel=1.8; }
+      const cx2=xs+L*pos; box(ctx,cx2-24,tr-30,48,22,4,COL.ink,'#fff',2.2); circ(ctx,cx2-12,tr-6,6,COL.ink,'#fff',2); circ(ctx,cx2+12,tr-6,6,COL.ink,'#fff',2);
+      if(k==='eng'){ textAt(ctx,'m',cx2,tr-14,{align:'center',size:13,weight:700,color:COL.red}); }
+      vec(ctx,cx2,tr-40,cx2+vel*30+4,tr-40,COL.yellow,3);
+      textAt(ctx,k==='acc'?'v grows each second':(k==='spd'?'v = L / T':'v'),cx2+vel*30+10,tr-36,{size:12,weight:700,color:COL.yellow});
+      textAt(ctx,fixed(tt,1)+' s',xs,tr-60,{size:15,weight:700,color:COL.green});
+      for(let i=0;i<Math.floor(tt);i++){ circ(ctx,xs+L*(k==='acc'?(0.5*0.5*(i+1)*(i+1))/(0.5*0.5*per*per)*0.95:(i+1)/per*0.95),tr+22,4,COL.green,COL.green,1); }
+    }
+    else if(k==='frc'){ // a pushed block: a = F/m
+      const tr=cy+u*0.12, L=sw*0.84, xs=x0+sw*0.08, per=3.5, ph=(t%per)/per, tt=ph*per;
+      line(ctx,xs,tr,xs+L,tr,COL.ink,2.4);
+      const pos=0.5*tt*tt/(per*per)*0.9, bx=xs+L*pos+30;
+      box(ctx,bx,tr-44,60,44,4,COL.red,'rgba(217,67,43,0.10)',2.6); textAt(ctx,'m',bx+30,tr-16,{align:'center',size:16,weight:700,color:COL.red});
+      vec(ctx,bx-70,tr-22,bx-2,tr-22,COL.yellow,4); textAt(ctx,'F',bx-76,tr-17,{align:'right',size:15,weight:700,color:COL.yellow});
+      vec(ctx,bx+62,tr-22,bx+62+tt*14,tr-22,COL.blue,3);
+      textAt(ctx,'a',bx+62+tt*14+8,tr-17,{size:14,weight:700,color:COL.blue});
+    }
+    else if(k==='den'){ // box filling with mass particles inside a fixed volume
+      const s=u*0.3, bx=cx-s, by=cy-s*0.8;
+      box(ctx,bx,by,s*2,s*1.6,6,COL.ink,'#fff',2.6);
+      const R=(function(){ let q=7; return ()=>{ q=(Math.imul(q,1664525)+1013904223)>>>0; return q/4294967296; }; })();
+      for(let i=0;i<42;i++){ const px=bx+14+R()*(s*2-28), py=by+14+R()*(s*1.6-28);
+        circ(ctx,px+Math.sin(t*3+i)*3,py+Math.cos(t*2.4+i*1.7)*3,4.5,COL.red,'rgba(217,67,43,0.25)',1.6); }
+      textAt(ctx,'M inside L³',cx,by+s*1.6+22,{align:'center',size:14,weight:700,color:COL.red});
+    }
+    ctx.restore();
+  }
+  animLoop(dt=>{
+    t+=dt;
+    const d=sl.map(s=>+s.value); ['M','L','T'].forEach((n,i)=>$('#e'+n+'V').textContent=d[i]);
+    springTo(Em,d[0],90,12,dt); springTo(El,d[1],90,12,dt); springTo(Et,d[2],90,12,dt);
+    const match=QTY.findIndex(q=>AX(q.d,d));
+    wrap.querySelectorAll('#qb button').forEach((b,i)=>b.classList.toggle('active',i===match));
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    // scene (top)
+    if(match>=0) scene(ctx,QTY[match].k,w*0.04,h*0.04,w*0.92,h*0.5,t);
+    else { textAt(ctx,'No everyday quantity has this combination — try another',w/2,h*0.25,{align:'center',size:14,weight:600,color:COL.mid}); }
+    // formula banner
+    textAt(ctx,(match>=0?QTY[match].n+'  ':'')+dimStr(d),w/2,h*0.60,{align:'center',size:Math.min(34,w*0.045),weight:700,color:COL.blue});
+    // three gauges (bars rise / sink about zero)
+    const gy=h*0.80, gh=h*0.15, names=['M  mass','L  length','T  time'], cols=[COL.red,COL.blue,COL.yellow], E=[Em.x,El.x,Et.x];
+    names.forEach((nm,i)=>{
+      const gx=w*(0.2+i*0.3), bw=Math.min(46,w*0.07);
+      line(ctx,gx-bw*1.1,gy,gx+bw*1.1,gy,COL.ink,2);
+      for(let k=-3;k<=3;k++){ if(k===0) continue; line(ctx,gx-bw*1.1,gy-k*gh/3.4,gx-bw*1.1+5,gy-k*gh/3.4,COL.mid,1.2); }
+      const hh=E[i]*gh/3.4;
+      rect(ctx,gx-bw/2,Math.min(gy,gy-hh),bw,Math.abs(hh),cols[i],E[i]>=0?'rgba(31,157,85,0.18)':'rgba(217,67,43,0.14)',2.6);
+      textAt(ctx,nm,gx,h*0.975,{align:'center',size:12,weight:700,color:cols[i]});
+      textAt(ctx,(Math.round(E[i])>0?'+':'')+Math.round(E[i]),gx+bw*0.9,gy-hh/2+5,{size:15,weight:700,color:COL.ink});
+    });
+    $('#df').textContent=dimStr(d); $('#qn').textContent=match>=0?QTY[match].n:'—'; $('#bf').textContent=match>=0?QTY[match].how:'—';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.10  THE DIMENSIONAL BALANCE     (1.6.1, Examples 1.3 and 1.4)
+   Only quantities with the same dimensions can be added or equated.
+   ===================================================================== */
+const FORMS=[
+  {k:'0',lab:'½mv² = mgh', L:[['½ m v²',[1,2,-2]]], R:[['m g h',[1,2,-2]]], note:'Example 1.3 — both sides [M L² T⁻²]'},
+  {k:'a',lab:'K = m²v³',   L:[['K',[1,2,-2]]], R:[['m² v³',[2,3,-3]]], note:'Example 1.4 (a)'},
+  {k:'b',lab:'K = ½mv²',   L:[['K',[1,2,-2]]], R:[['½ m v²',[1,2,-2]]], note:'Example 1.4 (b) — passes'},
+  {k:'c',lab:'K = ma',     L:[['K',[1,2,-2]]], R:[['m a',[1,1,-2]]], note:'Example 1.4 (c)'},
+  {k:'d',lab:'K = 3⁄16 mv²',L:[['K',[1,2,-2]]], R:[['3⁄16 m v²',[1,2,-2]]], note:'Example 1.4 (d) — also passes! Dimensions cannot tell (b) from (d).'},
+  {k:'e',lab:'K = ½mv² + ma',L:[['K',[1,2,-2]]], R:[['½ m v²',[1,2,-2]],['m a',[1,1,-2]]], note:'Example 1.4 (e) — unlike quantities added'},
+  {k:'f',lab:'x = x₀ + v₀t + ½at²',L:[['x',[0,1,0]]], R:[['x₀',[0,1,0]],['v₀ t',[0,1,0]],['½ a t²',[0,1,0]]], note:'every term is a length [L]'},
+  {k:'g',lab:'x = x₀ + v₀ + ½at²',L:[['x',[0,1,0]]], R:[['x₀',[0,1,0]],['v₀',[0,1,-1]],['½ a t²',[0,1,0]]], note:'v₀ alone is [L T⁻¹] — it cannot be added to a length'}
+];
+function buildA10(){
+  const {wrap,$,canvas}=lab(
+    group(`<span class="glabel">Put an equation on the balance</span><div class="toggle-group" id="fm">${FORMS.map((f,i)=>`<button class="toggle-btn small${i?'':' active'}" data-v="${i}" style="flex:1 1 44%">${f.lab}</button>`).join('')}</div>`)+
+    cards([{l:'Left side',id:'ls',col:COL.blue},{l:'Right side',id:'rs',col:COL.blue},{l:'Verdict',id:'vd',wide:1}])+
+    hint('Passing the test does not prove an equation right — failing it proves it wrong.'));
+  let fi=0, t=0, tChange=0; const A={x:0.5,v:0};
+  toggleWire(wrap.querySelectorAll('#fm button'),b=>{ fi=+b.dataset.v; tChange=t; A.v+=(fi%2?4:-4); });
+  const same=(a,b)=>a.every((v,i)=>v===b[i]);
+  const side=terms=>({ok:terms.every(x=>same(x[1],terms[0][1])), d:terms[0][1]});
+  animLoop(dt=>{
+    t+=dt;
+    const F=FORMS[fi], L=side(F.L), R=side(F.R);
+    const bothOk=L.ok&&R.ok, equal=bothOk&&same(L.d,R.d);
+    const wt=d=>d.reduce((s,e)=>s+Math.abs(e),0);
+    let tgt=0;
+    if(!bothOk) tgt=0.16*Math.sin((t-tChange)*11)*Math.min(1,(t-tChange)*4);
+    else if(!equal) tgt=clamp((wt(R.d)-wt(L.d))*0.07,-0.3,0.3)*(-1);
+    springTo(A,tgt,equal?55:70,equal?5:6,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const cx=w/2, py=h*0.30, bl=Math.min(w*0.3,h*0.6), th=A.x;
+    // stand
+    line(ctx,cx,py,cx,h*0.90,COL.ink,5); line(ctx,cx-w*0.1,h*0.90,cx+w*0.1,h*0.90,COL.ink,6);
+    // beam (rotates about the pivot)
+    const ex=Math.cos(th)*bl, ey=Math.sin(th)*bl;
+    line(ctx,cx-ex,py-ey,cx+ex,py+ey,equal?COL.green:(bothOk?COL.red:COL.red),5);
+    circ(ctx,cx,py,9,COL.ink,'#fff',3);
+    // pans
+    [[-1,F.L,L],[1,F.R,R]].forEach(([sg,terms,S])=>{
+      const bx=cx+sg*ex, by=py+sg*ey, hang=h*0.2;
+      const col=S.ok?COL.blue:COL.red, shake=S.ok?0:Math.sin(t*40+sg)*3;
+      line(ctx,bx,by,bx-sg*0,by+hang*0.55,COL.ink,1.6);
+      const pw=Math.min(bl*0.85,w*0.22,230);
+      line(ctx,bx,by,bx-pw/2+shake,by+hang,COL.ink,1.4); line(ctx,bx,by,bx+pw/2+shake,by+hang,COL.ink,1.4);
+      line(ctx,bx-pw/2+shake,by+hang,bx+pw/2+shake,by+hang,COL.ink,4);
+      terms.forEach((tm,i)=>{
+        const ch=Math.min(64,h*0.1), cwid=Math.min(pw*0.92,150), yy=by+hang-ch*(i+1)-2+Math.sin(t*30+i)*(S.ok?0:2);
+        box(ctx,bx-cwid/2+shake,yy,cwid,ch-4,7,(S.ok?(equal?COL.green:COL.blue):COL.red),S.ok?(equal?'#e4f7ec':'#e6f1fc'):'#fdece7',2.2);
+        textAt(ctx,tm[0],bx+shake,yy+ch*0.36,{align:'center',size:Math.min(15,cwid*0.11),weight:700,color:COL.ink});
+        textAt(ctx,dimStr(tm[1]),bx+shake,yy+ch*0.75,{align:'center',size:Math.min(12,cwid*0.09),weight:700,color:(S.ok&&!equal)?COL.red:COL.blue});
+      });
+    });
+    // verdict banner
+    const msg=!bothOk?'cannot be added — unlike dimensions':(equal?'dimensionally consistent':'dimensions differ → equation is wrong');
+    textAt(ctx,F.lab,cx,h*0.09,{align:'center',size:Math.min(28,w*0.034),weight:700,color:COL.ink});
+    textAt(ctx,msg,cx,h*0.15,{align:'center',size:15,weight:700,color:equal?COL.green:COL.red});
+    textAt(ctx,F.note,cx,h*0.96,{align:'center',size:12,weight:600,color:COL.muted});
+    $('#ls').textContent=L.ok?dimStr(L.d):'mixed'; $('#rs').textContent=R.ok?dimStr(R.d):'mixed';
+    $('#vd').textContent=!bothOk?'Wrong — unlike dimensions added':(equal?'Dimensionally correct':'Wrong — dimensions differ'); $('#vd').style.color=equal?COL.green:COL.red;
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.11  EVERY TERM IS A LENGTH     (1.6.1)   x = x₀ + v₀ t + ½ a t²
+   ===================================================================== */
+function buildA11(){
+  const {wrap,$,canvas}=lab(
+    slider('x0','Start position  x₀',0,10,0.5,3)+slider('v0','Initial velocity  v₀',-3,8,0.5,4)+slider('a','Acceleration  a',-2,3,0.5,1)+
+    group(`<span class="glabel">Equation</span>${toggles('eq',[['ok','x₀ + v₀t + ½at²'],['bad','x₀ + v₀ + ½at²']],'small')}
+      <div class="toggle-group"><button class="toggle-btn navy" id="rp">↺ Run again</button></div>`)+
+    cards([{l:'x₀  [L]',id:'c0',col:COL.blue},{l:'v₀t  [L T⁻¹][T]',id:'c1',col:COL.green},{l:'½at²  [L T⁻²][T²]',id:'c2',col:COL.yellow},{l:'Position  x',id:'cx'}]));
+  let t=0, tm=0, bad=false, lastK=''; const V={lo:{x:-2,v:0},hi:{x:12,v:0}};
+  const T=6;
+  toggleWire(wrap.querySelectorAll('#eq button'),b=>{ bad=b.dataset.v==='bad'; tm=0; });
+  $('#rp').onclick=()=>{ tm=0; };
+  animLoop(dt=>{
+    t+=dt;
+    const x0=+$('#x0').value, v0=+$('#v0').value, a=+$('#a').value;
+    $('#x0V').textContent=fmt(x0,1)+' m'; $('#v0V').textContent=fmt(v0,1)+' m/s'; $('#aV').textContent=fmt(a,1)+' m/s²';
+    const key=x0+'|'+v0+'|'+a; if(key!==lastK){ lastK=key; tm=0; }
+    tm+=dt; if(tm>T+1.6) tm=0;
+    const ts=clamp(tm,0,T), xs=tm>T+1?0:0;
+    const X=s=>x0+v0*s+0.5*a*s*s;
+    let lo=Math.min(0,x0), hi=Math.max(x0,3);
+    for(let i=0;i<=30;i++){ const x=X(i/30*T); lo=Math.min(lo,x); hi=Math.max(hi,x); }
+    springTo(V.lo,lo-1.5,40,9,dt); springTo(V.hi,hi+1.5,40,9,dt);
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const ax0=w*0.06, ax1=w*0.94, M=m=>ax0+(m-V.lo.x)/(V.hi.x-V.lo.x)*(ax1-ax0), ty=h*0.34;
+    // track
+    line(ctx,ax0,ty,ax1,ty,COL.ink,2.6);
+    const step=Math.max(1,Math.ceil((V.hi.x-V.lo.x)/18));
+    for(let m=Math.ceil(V.lo.x);m<=V.hi.x;m++){ if(m%step) continue; line(ctx,M(m),ty,M(m),ty+9,COL.ink,1.4); textAt(ctx,String(m),M(m),ty+26,{align:'center',size:11,weight:600,color:COL.muted}); }
+    textAt(ctx,'m',ax1+2,ty+26,{size:11,color:COL.muted});
+    // cart with spinning wheels
+    const x=X(ts), cxp=M(x), spin=x*3;
+    box(ctx,cxp-30,ty-44,60,28,5,COL.ink,'#fff',2.6);
+    [-18,18].forEach(o=>{ circ(ctx,cxp+o,ty-10,9,COL.ink,'#fff',2.4); line(ctx,cxp+o,ty-10,cxp+o+Math.cos(spin)*8,ty-10+Math.sin(spin)*8,COL.ink,1.8); });
+    const vel=v0+a*ts;
+    vec(ctx,cxp,ty-60,cxp+clamp(vel*10,-120,120),ty-60,COL.green,3.4); textAt(ctx,'v',cxp+clamp(vel*10,-120,120)+(vel>=0?8:-14),ty-56,{size:13,weight:700,color:COL.green});
+    if(Math.abs(a)>0.01){ vec(ctx,cxp,ty-78,cxp+clamp(a*26,-110,110),ty-78,COL.yellow,3.4); textAt(ctx,'a',cxp+clamp(a*26,-110,110)+(a>=0?8:-14),ty-74,{size:13,weight:700,color:COL.yellow}); }
+    circ(ctx,M(x0),ty,5,COL.blue,'#fff',2.2); textAt(ctx,'x₀',M(x0),ty+44,{align:'center',size:12,weight:700,color:COL.blue});
+    textAt(ctx,'t = '+fixed(ts,1)+' s',ax0,h*0.09,{size:20,weight:700,color:COL.ink});
+    // stacked bar: how x is built from the three terms
+    const by=h*0.64, bh=h*0.1, s1=x0, s2=v0*ts, s3=0.5*a*ts*ts;
+    textAt(ctx,'x is the sum of three lengths',ax0,by-bh-16,{size:13,weight:700,color:COL.muted});
+    line(ctx,M(0),by-bh-6,M(0),by+bh+36,COL.faint,1.6,[4,4]);
+    let cur=0;
+    const seg=(len,col,fill,lab,dim,dashed)=>{
+      const a0=M(cur), a1=M(cur+len);
+      box(ctx,Math.min(a0,a1),by,Math.max(2,Math.abs(a1-a0)),bh,5,col,fill,2.4,dashed?[6,4]:[]);
+      textAt(ctx,lab,(a0+a1)/2,by+bh*0.45,{align:'center',size:13,weight:700,color:col});
+      textAt(ctx,dim,(a0+a1)/2,by+bh*0.82,{align:'center',size:11,weight:700,color:col});
+      cur+=len;
+    };
+    seg(s1,COL.blue,'rgba(47,143,224,0.18)','x₀','[L]');
+    if(!bad) seg(s2,COL.green,'rgba(31,157,85,0.18)','v₀t','[L]'); else { seg(v0,COL.red,'rgba(217,67,43,0.14)','v₀','[L T⁻¹]',true); }
+    seg(s3,COL.yellow,'rgba(217,160,23,0.20)','½at²','[L]');
+    line(ctx,M(cur),by+bh+4,M(cur),ty+8,bad?COL.red:COL.green,1.8,[5,4]);
+    textAt(ctx,bad?'a speed cannot join a length — the sum has no meaning':'x = '+fixed(cur,2)+' m',M(cur),by+bh+28,{align:'center',size:13,weight:700,color:bad?COL.red:COL.green});
+    $('#c0').textContent=fixed(s1,2)+' m'; $('#c1').textContent=bad?'not a length':fixed(s2,2)+' m'; $('#c2').textContent=fixed(s3,2)+' m'; $('#cx').textContent=bad?'meaningless':fixed(x,2)+' m';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   1.12  PENDULUM BY DIMENSIONS     (Example 1.5)
+   T = k l^x g^y m^z   →   x = ½,  y = −½,  z = 0   →   T = 2π√(l/g)
+   ===================================================================== */
+function buildA12(){
+  const {wrap,$,canvas}=lab(
+    slider('l','Length  l',0.2,2,0.01,1)+
+    group(`<span class="glabel">Where is it swinging?  (g)</span>${toggles('pl',[['9.8','Earth 9.8'],['1.62','Moon 1.62'],['24.8','Jupiter 24.8']],'small')}`)+
+    slider('m','Mass of bob  m',0.1,2,0.05,0.5)+slider('am','Starting angle',3,20,1,10)+
+    cards([{l:'T = 2π√(l/g)',id:'tf',col:COL.blue},{l:'Stopwatch T',id:'tw',col:COL.green},{l:'Exponents',id:'ex',wide:1}]));
+  let g=9.8, t=0, phi=0, ph0=0, lastCross=0, Tm=0, cnt=0; const H=[], H0=[];
+  toggleWire(wrap.querySelectorAll('#pl button'),b=>{ g=+b.dataset.v; });
+  const Lv={x:1,v:0}, Mv={x:0.5,v:0}, GG={x:9.8,v:0};
+  animLoop(dt=>{
+    t+=dt;
+    const lT=+$('#l').value, mT=+$('#m').value, am=+$('#am').value*Math.PI/180;
+    $('#lV').textContent=fmt(lT,2)+' m'; $('#mV').textContent=fmt(mT,2)+' kg'; $('#amV').textContent=fmt(am*180/Math.PI,0)+'°';
+    springTo(Lv,lT,50,9,dt); springTo(Mv,mT,50,9,dt); springTo(GG,g,50,9,dt);
+    const l=Lv.x, om=Math.sqrt(GG.x/l), om0=Math.sqrt(9.8/1);
+    const prev=phi; phi+=om*dt; ph0+=om0*dt;
+    if(Math.floor(prev/(2*Math.PI))<Math.floor(phi/(2*Math.PI))){ Tm=t-lastCross; lastCross=t; cnt++; if(cnt<2) Tm=0; }
+    const th=am*Math.cos(phi), th0=am*Math.cos(ph0);
+    H.push([t,th]); H0.push([t,th0]); while(H.length&&H[0][0]<t-6){ H.shift(); H0.shift(); }
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h);
+    const pxM=h*0.27, py=h*0.07;
+    // pendulum drawing (yellow = what you change)
+    const draw=(px,len,ang,mass,col,dash)=>{
+      line(ctx,px-50,py,px+50,py,COL.ink,5);
+      const bx=px+Math.sin(ang)*len*pxM, by=py+Math.cos(ang)*len*pxM, r=8+11*Math.cbrt(mass);
+      ctx.save(); ctx.strokeStyle=COL.faint; ctx.lineWidth=1.2; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.arc(px,py,len*pxM,Math.PI/2-am*1.25,Math.PI/2+am*1.25); ctx.stroke(); ctx.restore();
+      line(ctx,px,py,bx,by,col,2.6,dash);
+      circ(ctx,bx,by,r,col,dash?'rgba(47,143,224,0.12)':'rgba(217,160,23,0.20)',2.8,dash);
+      circ(ctx,px,py,4,COL.ink,COL.ink,1);
+      return [bx,by];
+    };
+    line(ctx,w*0.07,py,w*0.07+0.01,py,COL.ink,1);
+    const p1=w*0.26, p2=w*0.58;
+    draw(p2,1,th0,0.5,COL.blue,[6,4]); textAt(ctx,'reference:  1 m · Earth',p2,py+1.0*pxM+54,{align:'center',size:11.5,weight:700,color:COL.blue});
+    draw(p1,l,th,Mv.x,COL.yellow);
+    dimLine(ctx,p1-70,py,p1-70,py+l*pxM,COL.blue); textAt(ctx,'l',p1-84,py+l*pxM/2+5,{align:'right',size:14,weight:700,color:COL.blue});
+    // scrolling θ(t) traces
+    const gx=w*0.06, gw=w*0.88, gy=h*0.84, gh=h*0.09;
+    box(ctx,gx,gy-gh-6,gw,2*gh+12,6,COL.faint,'#fbfdff',1.6);
+    line(ctx,gx,gy,gx+gw,gy,COL.faint,1.4);
+    const tr=(arr,col,dash)=>{ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.setLineDash(dash||[]); ctx.beginPath();
+      arr.forEach((p,i)=>{ const X=gx+(p[0]-(t-6))/6*gw, Y=gy-p[1]/am*gh; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }); ctx.stroke(); ctx.restore(); };
+    tr(H0,COL.blue,[6,4]); tr(H,COL.yellow);
+    textAt(ctx,'swing angle against time (last 6 s)',gx+8,gy-gh+6,{size:11,weight:600,color:COL.mid});
+    // dimensional-analysis panel
+    const qx=w*0.66, qy=h*0.12, fz=Math.min(13.5,w*0.021);
+    textAt(ctx,'T = k · lˣ · gʸ · mᶻ',qx,qy,{size:Math.min(19,w*0.024),weight:700,color:COL.ink});
+    textAt(ctx,'[T] = [L]ˣ [L T⁻²]ʸ [M]ᶻ',qx,qy+30,{size:fz,weight:600,color:COL.blue});
+    textAt(ctx,'x + y = 0     −2y = 1     z = 0',qx,qy+56,{size:fz,weight:600,color:COL.muted});
+    textAt(ctx,'x = +½   y = −½',qx,qy+86,{size:15,weight:700,color:COL.green});
+    box(ctx,qx-8,qy+100,w*0.31,40,8,COL.red,'#fdece7',2.2);
+    textAt(ctx,'z = 0  →  mass does not matter',qx+4,qy+125,{size:fz,weight:700,color:COL.red});
+    const Tf=2*Math.PI*Math.sqrt(l/GG.x);
+    textAt(ctx,'T = 2π √(l / g) = '+fixed(Tf,2)+' s',qx,qy+174,{size:Math.min(17,w*0.022),weight:700,color:COL.blue});
+    $('#tf').textContent=fixed(Tf,2)+' s'; $('#tw').textContent=Tm>0?fixed(Tm,2)+' s':'timing…';
+    $('#ex').textContent='x = ½ ,  y = −½ ,  z = 0';
+  });
+  return wrap;
+}
+
+/* =====================================================================
+   ACTIVITIES + ROUTER
+   ===================================================================== */
+const activities = [
+  { num:'1.1',  title:'Measure with a Unit',      desc:'Same rod · different unit · different number', build: buildA1 },
+  { num:'1.2',  title:'The Radian',               desc:'Lay the radius along the arc', build: buildA2 },
+  { num:'1.3',  title:'The Steradian',            desc:'A patch of area r² on a sphere', build: buildA3 },
+  { num:'1.4',  title:'Reading an Instrument',    desc:'Certain digits and one uncertain digit', build: buildA4 },
+  { num:'1.5',  title:'Decimal Slides, Figures Stay', desc:'Change units · count figures', build: buildA5 },
+  { num:'1.6',  title:'Arithmetic with Figures',  desc:'Digits you cannot trust fall away', build: buildA6 },
+  { num:'1.7',  title:'Error in an Area',         desc:'Percent errors add when you multiply', build: buildA7 },
+  { num:'1.8',  title:'Orders of Magnitude',      desc:'Zoom through powers of ten', build: buildA8 },
+  { num:'1.9',  title:'Dimensions of Quantities', desc:'Powers of [M] [L] [T]', build: buildA9 },
+  { num:'1.10', title:'The Dimensional Balance',  desc:'Both sides must carry the same dimensions', build: buildA10 },
+  { num:'1.11', title:'Every Term a Length',      desc:'x = x₀ + v₀t + ½at²', build: buildA11 },
+  { num:'1.12', title:'Pendulum by Dimensions',   desc:'T = k lˣ gʸ mᶻ  →  T = 2π√(l/g)', build: buildA12 },
+];
+let currentIndex = 0;
+function buildNav(){
+  const nav = document.getElementById('sideNav'); nav.innerHTML='';
+  activities.forEach((a,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-item'+(i===currentIndex?' active':'');
+    btn.innerHTML = `<span class="n-num">${a.num}</span><span class="n-title">${a.title}</span>`;
+    btn.onclick = ()=>{ currentIndex=i; render(); };
+    nav.appendChild(btn);
+  });
+}
+function render(){
+  stopAllLoops(); buildNav();
+  const a = activities[currentIndex];
+  document.getElementById('panelBadge').textContent = a.num;
+  document.getElementById('panelTitle').textContent = a.title;
+  document.getElementById('panelDesc').textContent = a.desc||'';
+  const body = document.getElementById('panelBody'); body.innerHTML='';
+  body.appendChild(a.build());
+}
+render();
+</script>
+<script src="../../nav/back-button.js"></script>
+</body>
+</html>
