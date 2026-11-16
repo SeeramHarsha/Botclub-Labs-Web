@@ -211,21 +211,26 @@
     showClass(cls[0]);
   }, function () { senPanel.replaceChildren(h('div', { class: 'empty', text: 'The Class 11 and 12 list could not be loaded. Please refresh the page.' })); });
 
-  // ------------------------------------------------------------------ Class 6 to 10: one card per class with its chapters
+  // ------------------------------------------------------------------ Class 6 to 10: a row of class tiles; the chapters of the chosen class are listed below
   var junPanel = document.getElementById('juniorPanel');
   if (junPanel) BL.api('/syllabus').then(function (r) {
-    var COL = { 6: 'var(--blue)', 7: 'var(--green)', 8: 'var(--yellow)', 9: 'var(--navy-2)', 10: 'var(--cyan)' }, tc = 0, ta = 0;
-    var cards = [6, 7, 8, 9, 10].filter(function (c) { return r.classes[c] && r.classes[c].chapters; }).map(function (c) {
-      var d = r.classes[c], list = d.subjects.reduce(function (a, s) { return a.concat(s.groups); }, []);
-      tc += d.chapters; ta += d.activities;
-      return h('div', { class: 'sub-card reveal', style: '--c:' + COL[c] },
-        h('h3', { text: 'Class ' + c }), h('div', { class: 'sub-n' }, h('b', { text: d.chapters }), ' chapters · ', h('b', { text: d.activities }), ' activities'),
-        h('details', null, h('summary', { text: 'See the chapters' }), h('div', { class: 'sub-list' }, list.map(function (g) {
-          return h('ol', null, g.chapters.map(function (x) { return h('li', null, x.title, h('span', { text: x.activities + ' activities' })); }));
-        }))));
+    var COL = { 6: 'var(--blue)', 7: 'var(--green)', 8: 'var(--yellow)', 9: 'var(--navy-3)', 10: 'var(--cyan)' }, tc = 0, ta = 0;
+    var classes = [6, 7, 8, 9, 10].filter(function (c) { return r.classes[c] && r.classes[c].chapters; });
+    classes.forEach(function (c) { tc += r.classes[c].chapters; ta += r.classes[c].activities; });
+    var tiles = h('div', { class: 'ctiles' }), panel = h('div', { class: 'cpanel' }), btns = {};
+    function show(c) {
+      classes.forEach(function (k) { btns[k].classList.toggle('on', k === c); btns[k].setAttribute('aria-pressed', k === c); });
+      var d = r.classes[c], list = d.subjects.reduce(function (acc, s) { return acc.concat(s.groups.reduce(function (z, g) { return z.concat(g.chapters); }, [])); }, []);
+      panel.replaceChildren(h('div', { class: 'cp-head' }, h('h3', { text: 'Class ' + c + ' · Science' }), h('span', { class: 'micro', text: d.chapters + ' chapters · ' + d.activities + ' activities' })),
+        h('ol', { class: 'cp-list' }, list.map(function (x, i) { return h('li', null, h('span', { class: 'cp-n', text: i + 1 }), h('span', { class: 'cp-t', text: x.title }), h('span', { class: 'cp-a', text: x.activities + ' activities' })); })));
+    }
+    classes.forEach(function (c) {
+      var d = r.classes[c];
+      btns[c] = h('button', { class: 'ctile', type: 'button', style: '--c:' + COL[c], onclick: function () { show(c); } },
+        h('span', { class: 'cl', text: 'Class' }), h('b', { class: 'cn', text: c }), h('small', { text: d.chapters + ' chapters' }), h('small', { text: d.activities + ' activities' }));
+      tiles.appendChild(btns[c]);
     });
-    junPanel.replaceChildren.apply(junPanel, cards);
-    [].forEach.call(junPanel.querySelectorAll('.reveal'), function (e) { e.classList.add('in'); });
+    junPanel.replaceChildren(tiles, panel); show(classes[0]);
     var jl = document.getElementById('juniorLead');
     if (jl) jl.textContent = 'The NCERT science textbooks for Classes 6 to 10: ' + tc + ' chapters and ' + ta + ' activities you can try, not just read.';
   }, function () { junPanel.replaceChildren(h('div', { class: 'empty', text: 'The chapter list could not be loaded. Please refresh the page.' })); });
