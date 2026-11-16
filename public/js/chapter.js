@@ -37,7 +37,7 @@
       + '#bl-rot svg{width:84px;height:84px;animation:bl-turn 2.4s ease-in-out infinite}@keyframes bl-turn{0%,25%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}'
       + '#bl-rot button{all:unset;cursor:pointer;background:#2f8fe0;color:#fff;font:600 15px Poppins,system-ui,sans-serif;padding:13px 26px;border-radius:12px;margin-top:6px}'
       + '#bl-rot a{color:rgba(242,247,252,.65);font-size:13px;text-decoration:underline;cursor:pointer}'
-      + '@media (orientation:landscape) and (max-height:480px){#bl-bar{bottom:6px!important;padding:3px!important}#bl-bar a,#bl-bar button{padding:6px 12px!important;font-size:12px!important}}';
+      + '@media (orientation:landscape) and (max-height:480px){#bl-bar{top:5px!important;bottom:auto!important;left:auto!important;right:10px!important;transform:none!important;padding:3px!important;opacity:.96}#bl-bar a,#bl-bar button{padding:5px 11px!important;font-size:11.5px!important}}';
     document.head.appendChild(st);
     var ov = document.createElement('div'); ov.id = 'bl-rot';
     ov.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#5cc8ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg>';

@@ -59,6 +59,8 @@ function fixPage(html, cls, k) {
     const i = h.lastIndexOf('</script>', h.indexOf('back-button') > 0 ? h.indexOf('back-button') : h.length);
     if (i > 0) h = h.slice(0, i) + 'render();\n' + h.slice(i);
   }
+  // phones held sideways keep the side-by-side layout (canvas + controls), like the Class 6 to 10 chapters; only portrait or tall screens stack it
+  h = h.replace(/@media \(max-width:1000px\)\{(\s*\.body-wrap\{flex-direction:column;\})/, '@media (max-width:1000px) and (orientation:portrait), (max-width:1000px) and (min-height:601px){$1');
   // the "back" button used by every other chapter
   if (!/nav\/back-button\.js/.test(h)) h = h.replace(/<\/body>/i, '<script src="../../nav/back-button.js"></script>\n</body>');
   return h;
