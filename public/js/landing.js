@@ -211,6 +211,25 @@
     showClass(cls[0]);
   }, function () { senPanel.replaceChildren(h('div', { class: 'empty', text: 'The Class 11 and 12 list could not be loaded. Please refresh the page.' })); });
 
+  // ------------------------------------------------------------------ Class 6 to 10: one card per class with its chapters
+  var junPanel = document.getElementById('juniorPanel');
+  if (junPanel) BL.api('/syllabus').then(function (r) {
+    var COL = { 6: 'var(--blue)', 7: 'var(--green)', 8: 'var(--yellow)', 9: 'var(--navy-2)', 10: 'var(--cyan)' }, tc = 0, ta = 0;
+    var cards = [6, 7, 8, 9, 10].filter(function (c) { return r.classes[c] && r.classes[c].chapters; }).map(function (c) {
+      var d = r.classes[c], list = d.subjects.reduce(function (a, s) { return a.concat(s.groups); }, []);
+      tc += d.chapters; ta += d.activities;
+      return h('div', { class: 'sub-card reveal', style: '--c:' + COL[c] },
+        h('h3', { text: 'Class ' + c }), h('div', { class: 'sub-n' }, h('b', { text: d.chapters }), ' chapters · ', h('b', { text: d.activities }), ' activities'),
+        h('details', null, h('summary', { text: 'See the chapters' }), h('div', { class: 'sub-list' }, list.map(function (g) {
+          return h('ol', null, g.chapters.map(function (x) { return h('li', null, x.title, h('span', { text: x.activities + ' activities' })); }));
+        }))));
+    });
+    junPanel.replaceChildren.apply(junPanel, cards);
+    [].forEach.call(junPanel.querySelectorAll('.reveal'), function (e) { e.classList.add('in'); });
+    var jl = document.getElementById('juniorLead');
+    if (jl) jl.textContent = 'The NCERT science textbooks for Classes 6 to 10: ' + tc + ' chapters and ' + ta + ' activities you can try, not just read.';
+  }, function () { junPanel.replaceChildren(h('div', { class: 'empty', text: 'The chapter list could not be loaded. Please refresh the page.' })); });
+
   // ------------------------------------------------------------------ numbers from the server, hero counters, example school report
   function setNumbers() { [].forEach.call(document.querySelectorAll('[data-n]'), function (e) { var k = e.getAttribute('data-n'); if (N[k] != null && !e.hasAttribute('data-count')) e.textContent = N[k]; }); }
   var strip = document.getElementById('statStrip');

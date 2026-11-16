@@ -346,6 +346,21 @@ test('Class 11 and 12 sell one subject at a time (1499 each); the two groups of 
   assert.ok((await s.call('/api/catalog')).json.classes.find((x) => x.cls === 12).chapters.filter((x) => /^Chemistry/.test(x.group)).every((x) => x.access));
 });
 
+test('the syllabus lists Class 6 to 12; a site without a one-subject plan gets one added at start', async () => {
+  const sy = (await browser().call('/api/syllabus')).json.classes;
+  assert.deepEqual(Object.keys(sy), ['6', '7', '8', '9', '10', '11', '12']);
+  assert.equal(sy['8'].chapters, 13); assert.equal(sy['8'].subjects[0].name, 'Science'); assert.equal(sy['8'].activities, 94);
+  assert.equal(sy['8'].subjects[0].groups[0].chapters[0].title, 'Exploring the Investigative World of Science');
+  const db = require('../src/db'), plans = require('../src/plans'), count = async () => (await browser().call('/api/plans')).json.plans.filter((x) => x.scope === 'subject').length;
+  assert.equal(await count(), 1);
+  await db.get().collection('plans').deleteMany({ scope: 'subject' });                    // like a site made before Class 11 and 12
+  assert.equal(await count(), 0);
+  await plans.seed();
+  assert.equal(await count(), 1);
+  await plans.seed();                                                                     // and never twice
+  assert.equal(await count(), 1);
+});
+
 test('a site with a missing setting or no database still starts and says what is wrong', async () => {
   const { spawn } = require('node:child_process'), path = require('node:path');
   const run = async (env, port) => {

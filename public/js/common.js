@@ -37,7 +37,7 @@
   /** the top bar. `active` highlights a link on the landing page. */
   BL.nav = function (mount, opts) {
     opts = opts || {};
-    var links = opts.landing ? [['#how', 'How it works'], ['#senior', 'Class 11 & 12'], ['#labs', 'Labs'], ['#pricing', 'Pricing'], ['#institutes', 'For schools'], ['#faq', 'FAQ']] : [];
+    var links = opts.landing ? [['#junior', 'Class 6-10'], ['#senior', 'Class 11-12'], ['#labs', 'Labs'], ['#pricing', 'Pricing'], ['#institutes', 'For schools'], ['#faq', 'FAQ']] : [];
     var linkBox = BL.h('div', { class: 'links' }, links.map(function (l) { return BL.h('a', { href: (opts.landing ? '' : '/') + l[0], text: l[1], onclick: function () { linkBox.classList.remove('open'); } }); }));
     var mobileLogin = BL.h('a', { class: 'only-m', href: '/login.html', text: 'Log in' });
     linkBox.appendChild(mobileLogin);

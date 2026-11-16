@@ -25,10 +25,10 @@ router.get('/config', (req, res) => {
 /** Class 11 and 12 syllabus (Physics, Chemistry, Mathematics) for the home page: groups, chapter names and activity counts */
 router.get('/syllabus', (req, res) => {
   const cat = catalog.load(), out = {};
-  for (const c of [11, 12]) {
+  for (const c of [6, 7, 8, 9, 10, 11, 12]) {
     const list = cat.classes[c] || [], subjects = [];
     for (const x of list) {
-      const name = (x.group || 'Other').split(' · ')[0];
+      const name = (x.group || 'Science').split(' · ')[0];
       let s = subjects.find((y) => y.name === name); if (!s) subjects.push(s = { name, chapters: 0, activities: 0, groups: [] });
       let g = s.groups.find((y) => y.name === (x.group || name)); if (!g) s.groups.push(g = { name: x.group || name, chapters: [] });
       g.chapters.push({ chapter: x.chapter, title: x.title, activities: x.activities }); s.chapters++; s.activities += x.activities;

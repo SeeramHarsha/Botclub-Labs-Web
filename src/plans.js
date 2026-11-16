@@ -19,7 +19,9 @@ const DEFAULT_PLANS = [
 
 async function seed() {
   const plans = db.get().collection('plans');
-  if (await plans.estimatedDocumentCount() === 0) await plans.insertMany(DEFAULT_PLANS);
+  if (await plans.estimatedDocumentCount() === 0) { await plans.insertMany(DEFAULT_PLANS); return; }
+  // a site made before Class 11 and 12 were sold has no one-subject plan: add it (prices are edited in Admin > Plans; a hidden plan still counts as present)
+  if (!(await plans.findOne({ scope: 'subject' }))) await plans.insertOne(DEFAULT_PLANS.find((p) => p.scope === 'subject'));
 }
 const list = async ({ onlyActive = true } = {}) => db.get().collection('plans').find(onlyActive ? { active: true } : {}).sort({ sort: 1, priceInr: 1 }).toArray();
 const get = (id) => db.get().collection('plans').findOne({ _id: String(id) });
