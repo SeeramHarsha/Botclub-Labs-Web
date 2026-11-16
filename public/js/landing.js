@@ -186,29 +186,37 @@
     fl.appendChild(item);
   });
 
-  // ------------------------------------------------------------------ Class 11 and 12: subjects and chapter lists
+  // ------------------------------------------------------------------ Class 11 and 12: pick the class, then a subject tile; its chapters are listed below
   var senTabs = document.getElementById('seniorTabs'), senPanel = document.getElementById('seniorPanel');
   if (senTabs && senPanel) BL.api('/syllabus').then(function (r) {
-    var cls = ['11', '12'].filter(function (c) { return r.classes[c]; }), data = r.classes, totalCh = 0, totalAct = 0;
+    var cls = ['11', '12'].filter(function (c) { return r.classes[c] && r.classes[c].chapters; }), data = r.classes, totalCh = 0, totalAct = 0;
     cls.forEach(function (c) { totalCh += data[c].chapters; totalAct += data[c].activities; });
     var lead = document.getElementById('seniorLead');
     if (lead) lead.textContent = 'The same learn-by-doing way, for the two board years: ' + totalCh + ' chapters and ' + totalAct + ' activities from the NCERT textbooks.';
-    var COLORS = { Physics: 'var(--blue)', Chemistry: 'var(--green)', Mathematics: 'var(--yellow)' };
+    var COL = { Physics: 'var(--blue)', Chemistry: 'var(--green)', Mathematics: 'var(--yellow)' }, curClass = cls[0], curSubject = null;
+    var tiles = h('div', { class: 'ctiles three' }), panel = h('div', { class: 'cpanel' });
+    function showSubject(name) {
+      curSubject = name;
+      [].forEach.call(tiles.children, function (t) { var on = t.getAttribute('data-s') === name; t.classList.toggle('on', on); t.setAttribute('aria-pressed', on); });
+      var s = data[curClass].subjects.filter(function (x) { return x.name === name; })[0];
+      panel.replaceChildren.apply(panel, [h('div', { class: 'cp-head' }, h('h3', { text: 'Class ' + curClass + ' · ' + s.name }), h('span', { class: 'micro', text: s.chapters + ' chapters · ' + s.activities + ' activities' }))].concat(s.groups.map(function (g) {
+        var n = 0;
+        return h('div', null, s.groups.length > 1 ? h('div', { class: 'grp', text: g.name.replace(s.name + ' · ', '') }) : null,
+          h('ol', { class: 'cp-list' }, g.chapters.map(function (x) { n++; return h('li', null, h('span', { class: 'cp-n', text: n }), h('span', { class: 'cp-t', text: x.title }), h('span', { class: 'cp-a', text: x.activities + ' activities' })); })));
+      })));
+    }
     function showClass(c) {
+      curClass = c;
       [].forEach.call(senTabs.children, function (b) { b.classList.toggle('on', b.getAttribute('data-c') === c); });
-      var d = data[c];
-      senPanel.replaceChildren.apply(senPanel, d.subjects.map(function (s) {
-        return h('div', { class: 'sub-card reveal', style: '--c:' + (COLORS[s.name] || 'var(--blue)') },
-          h('h3', { text: s.name }), h('div', { class: 'sub-n' }, h('b', { text: s.chapters }), ' chapters · ', h('b', { text: s.activities }), ' activities'),
-          h('details', null, h('summary', { text: 'See the chapters' }), h('div', { class: 'sub-list' }, s.groups.map(function (g) {
-            return h('div', null, s.groups.length > 1 ? h('div', { class: 'grp', text: g.name.replace(s.name + ' · ', '') }) : null,
-              h('ol', null, g.chapters.map(function (x) { return h('li', null, x.title, h('span', { text: x.activities + ' activities' })); })));
-          }))));
+      var subjects = data[c].subjects;
+      tiles.replaceChildren.apply(tiles, subjects.map(function (s) {
+        return h('button', { class: 'ctile', type: 'button', 'data-s': s.name, style: '--c:' + (COL[s.name] || 'var(--blue)'), onclick: function () { showSubject(s.name); } },
+          h('span', { class: 'cl', text: 'Class ' + c }), h('b', { class: 'cn word', text: s.name }), h('small', { text: s.chapters + ' chapters' }), h('small', { text: s.activities + ' activities' }));
       }));
-      [].forEach.call(senPanel.querySelectorAll('.reveal'), function (e) { e.classList.add('in'); });
+      showSubject(subjects.filter(function (s) { return s.name === curSubject; })[0] ? curSubject : subjects[0].name);
     }
     cls.forEach(function (c) { senTabs.appendChild(h('button', { class: 'tab', role: 'tab', type: 'button', 'data-c': c, text: 'Class ' + c, onclick: function () { showClass(c); } })); });
-    showClass(cls[0]);
+    senPanel.replaceChildren(tiles, panel); showClass(cls[0]);
   }, function () { senPanel.replaceChildren(h('div', { class: 'empty', text: 'The Class 11 and 12 list could not be loaded. Please refresh the page.' })); });
 
   // ------------------------------------------------------------------ Class 6 to 10: a row of class tiles; the chapters of the chosen class are listed below
