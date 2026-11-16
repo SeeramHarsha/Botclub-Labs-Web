@@ -189,7 +189,7 @@
   // ------------------------------------------------------------------ Class 11 and 12: subjects and chapter lists
   var senTabs = document.getElementById('seniorTabs'), senPanel = document.getElementById('seniorPanel');
   if (senTabs && senPanel) BL.api('/syllabus').then(function (r) {
-    var cls = Object.keys(r.classes), data = r.classes, totalCh = 0, totalAct = 0;
+    var cls = ['11', '12'].filter(function (c) { return r.classes[c]; }), data = r.classes, totalCh = 0, totalAct = 0;
     cls.forEach(function (c) { totalCh += data[c].chapters; totalAct += data[c].activities; });
     var lead = document.getElementById('seniorLead');
     if (lead) lead.textContent = 'The same learn-by-doing way, for the two board years: ' + totalCh + ' chapters and ' + totalAct + ' activities from the NCERT textbooks.';
