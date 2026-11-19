@@ -45,7 +45,7 @@
       h('h2', { style: 'font-size:18px;margin:6px 0 12px', text: 'Your classes' }),
       h('div', { class: 'class-grid' }, S.cat.classes.map(function (c) {
         var acts = c.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0), open = c.chapters.filter(function (x) { return x.access; }).length, done = c.chapters.filter(function (x) { return x.done; }).length;
-        return h('a', { class: 'cls', href: '#/class/' + c.cls }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + acts + ' activities' }), c.chapters[0] && c.chapters[0].group ? h('div', { class: 'micro', style: 'margin:-6px 0 6px', text: 'Physics · Chemistry · Mathematics' }) : null, h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
+        return h('a', { class: 'cls', href: '#/class/' + c.cls, onclick: function () { delete chosenSubject[c.cls]; } }, h('h3', { text: 'Class ' + c.cls }), h('div', { class: 'm', text: c.chapters.length + ' chapters · ' + acts + ' activities' }), c.chapters[0] && c.chapters[0].group ? h('div', { class: 'micro', style: 'margin:-6px 0 6px', text: 'Physics · Chemistry · Mathematics' }) : null, h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
           h('div', { class: 'bar' }, h('i', { style: 'width:' + (c.chapters.length ? Math.round(done / c.chapters.length * 100) : 0) + '%' })), h('div', { class: 'micro', style: 'margin-top:6px', text: done + ' of ' + c.chapters.length + ' done' }));
       })),
     ]));
@@ -53,9 +53,35 @@
   function lessonUrl(c, n) { return '/learn/' + encodeURI('Class - ' + c + '/Chapter - ' + n + '/index.html'); }
 
   // ------------------------------------------------------------------ one class
+  var chosenSubject = {};       // Class 11 and 12: the subject the student picked, per class
   function viewClass(c) {
     var cl = S.cat.classes.find(function (x) { return x.cls === c; });
     if (!cl) return go('#/');
+    var senior = cl.chapters.length && cl.chapters[0].group;
+    var subjectOf = function (x) { return String(x.group || '').split(' · ')[0]; };
+    if (senior) {
+      var names = [];
+      cl.chapters.forEach(function (x) { if (names.indexOf(subjectOf(x)) < 0) names.push(subjectOf(x)); });
+      var saved = chosenSubject[c];
+      if (names.indexOf(saved) < 0) saved = null;
+      if (!saved) {            // first ask which subject
+        var COL = { Physics: 'var(--blue)', Chemistry: 'var(--green)', Mathematics: 'var(--yellow)' };
+        return render(head('#/', 'Class ' + c, 'Which subject do you want to study?').concat([
+          h('div', { class: 'crumbs' }, h('a', { href: '#/', text: '← All classes' })),
+          h('div', { class: 'class-grid' }, names.map(function (n) {
+            var list = cl.chapters.filter(function (x) { return subjectOf(x) === n; }), acts = list.reduce(function (t, x) { return t + (x.activities || 0); }, 0), open = list.filter(function (x) { return x.access; }).length, done = list.filter(function (x) { return x.done; }).length;
+            return h('a', { class: 'cls', href: '#/class/' + c, style: 'border-top:5px solid ' + (COL[n] || 'var(--blue)'), onclick: function (e) { e.preventDefault(); chosenSubject[c] = n; viewClass(c); } },
+              h('h3', { text: n }), h('div', { class: 'm', text: list.length + ' chapters · ' + acts + ' activities' }), h('div', { class: 'micro', style: 'margin:-6px 0 10px', text: open + (open === 1 ? ' chapter' : ' chapters') + ' open to you' }),
+              h('div', { class: 'bar' }, h('i', { style: 'width:' + (list.length ? Math.round(done / list.length * 100) : 0) + '%' })), h('div', { class: 'micro', style: 'margin-top:6px', text: done + ' of ' + list.length + ' done' }));
+          })),
+        ]));
+      }
+      var only = { cls: c, chapters: cl.chapters.filter(function (x) { return subjectOf(x) === saved; }) };
+      return render(head('#/', 'Class ' + c + ' · ' + saved, only.chapters.length + ' chapters · ' + only.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0) + ' activities').concat([
+        h('div', { class: 'crumbs' }, h('a', { href: '#/', text: '← All classes' }), ' · ', h('a', { href: '#/class/' + c, text: 'Change subject', onclick: function (e) { e.preventDefault(); delete chosenSubject[c]; viewClass(c); } })),
+        h('div', { class: 'chapters' }, chapterRows(only, c)),
+      ]));
+    }
     render(head('#/', 'Class ' + c, cl.chapters.length + ' chapters · ' + cl.chapters.reduce(function (n, x) { return n + (x.activities || 0); }, 0) + ' activities').concat([
       h('div', { class: 'crumbs' }, h('a', { href: '#/', text: '← All classes' })),
       h('div', { class: 'chapters' }, chapterRows(cl, c)),
