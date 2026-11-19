@@ -81,7 +81,7 @@ test('free trial opens only the trial chapters; the rest is locked and never sen
   await b.call('/api/auth/register', { method: 'POST', body: student(2) });
   const cat = (await b.call('/api/catalog')).json;
   const open = cat.classes.flatMap((c) => c.chapters.filter((x) => x.access).map((x) => `${c.cls}/${x.chapter}`));
-  assert.deepEqual(open.sort(), ['10/1', '11/1', '12/1', '6/1', '7/1', '8/1', '9/1'].sort());
+  assert.deepEqual(open.sort(), ['10/1', '11/1', '11/14', '11/23', '12/1', '12/15', '12/25', '6/1', '7/1', '8/1', '9/1'].sort());
   const free = await b.call('/learn/' + encodeURI('Class - 8/Chapter - 1/index.html'));
   assert.equal(free.status, 200); assert.match(free.text, /<script src="\/js\/chapter\.js"/); assert.doesNotMatch(free.text, /activity-tracker/);
   const locked = await b.call('/learn/' + encodeURI('Class - 8/Chapter - 2/index.html'));
@@ -334,8 +334,8 @@ test('Class 11 and 12 sell one subject at a time (1499 each); the two groups of 
   assert.equal((await s.call('/api/billing/demo-pay', { method: 'POST', body: { orderId: ok.json.orderId } })).status, 200);
   const cat = (await s.call('/api/catalog')).json, chs = (c) => cat.classes.find((x) => x.cls === c).chapters;
   assert.ok(chs(11).filter((x) => /^Physics/.test(x.group)).every((x) => x.access) && chs(11).filter((x) => /^Physics/.test(x.group)).length === 13);
-  assert.ok(chs(11).filter((x) => /^(Chemistry|Mathematics)/.test(x.group) && x.chapter !== 1).every((x) => !x.access));      // other subjects stay locked
-  assert.ok(chs(12).filter((x) => x.chapter !== 1).every((x) => !x.access));                    // and so does Class 12
+  assert.ok(chs(11).filter((x) => /^(Chemistry|Mathematics)/.test(x.group) && ![14, 23].includes(x.chapter)).every((x) => !x.access));      // other subjects stay locked, apart from their free first chapter
+  assert.ok(chs(12).filter((x) => ![1, 15, 25].includes(x.chapter)).every((x) => !x.access));                    // and so does Class 12
   const me = (await s.call('/api/me')).json; assert.deepEqual(me.access.subjects.map((x) => [x.cls, x.subject]), [[11, 'Physics']]);
   assert.ok((await s.call('/api/billing/orders')).json.orders.some((o) => o.label === 'Class 11 · Physics'));
   const lesson = await s.call('/learn/' + encodeURI('Class - 11/Chapter - 5/index.html')), locked = await s.call('/learn/' + encodeURI('Class - 11/Chapter - 20/index.html'));

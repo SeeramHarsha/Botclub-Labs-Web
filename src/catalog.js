@@ -30,6 +30,8 @@ const total = () => Object.values(load().classes).reduce((a, l) => a + l.length,
 const totalActivities = () => Object.values(load().classes).reduce((a, l) => a + l.reduce((x, y) => x + y.activities, 0), 0);
 /** the chapter keys ("11/3") of one subject of a class, e.g. Physics of Class 11 */
 const subjectChapters = (c, subject) => (load().classes[c] || []).filter((x) => (x.group || '').split(' · ')[0] === subject).map((x) => `${c}/${x.chapter}`);
+/** the first chapter of every subject of Class 11 and 12 (Physics, Chemistry, Mathematics): free for everyone */
+const firstOfEachSubject = () => [11, 12].flatMap((c) => { const seen = new Set(); return (load().classes[c] || []).filter((x) => { const s = (x.group || '').split(' · ')[0]; if (!s || seen.has(s)) return false; seen.add(s); return true; }).map((x) => `${c}/${x.chapter}`); });
 const reset = () => { cache = null; };
 
-module.exports = { load, has, total, totalActivities, subjectChapters, reset, CONTENT };
+module.exports = { load, has, total, totalActivities, subjectChapters, firstOfEachSubject, reset, CONTENT };

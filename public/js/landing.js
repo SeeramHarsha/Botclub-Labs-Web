@@ -143,7 +143,7 @@
     var span = function (d) { return d % 365 === 0 ? 'year' : d % 30 === 0 ? (d / 30) + ' months' : d + ' days'; };
     var GROUPS = [['junior', 'Classes 6 to 10'], ['senior', 'Classes 11 and 12']];
     function cardsFor(tk) {
-      var free = tk === 'senior' ? ['Chapter 1 of Class 11 and of Class 12', 'Every simulation in those chapters', 'Progress tracking'] : ['Chapter 1 of every class (6 to 10)', 'Every simulation in those chapters', 'Progress tracking'];
+      var free = tk === 'senior' ? ['The first chapter of Physics, Chemistry and Maths', 'In Class 11 and in Class 12', 'Every simulation in those chapters'] : ['Chapter 1 of every class (6 to 10)', 'Every simulation in those chapters', 'Progress tracking'];
       var cards = [h('div', { class: 'price' }, h('h3', { text: 'Free trial' }), h('div', { class: 'tg', text: tk === 'senior' ? 'Try Class 11 and 12, no card needed' : 'Taste every class, no card needed' }),
         h('div', { class: 'amt' }, '₹0', h('small', { text: ' forever' })),
         h('ul', null, free.map(function (t) { return h('li', { text: t }); })),

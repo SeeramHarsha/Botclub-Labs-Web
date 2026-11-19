@@ -23,7 +23,7 @@ function allows(ents, c, n) {
 
 /** the free trial: a few chapters for every registered student, no end date */
 async function ensureTrial(userId) {
-  const chapters = config.trialChapters.filter((k) => { const [c, n] = k.split('/').map(Number); return catalog.has(c, n) || !catalog.total(); });
+  const chapters = [...new Set([...config.trialChapters, ...catalog.firstOfEachSubject()])].filter((k) => { const [c, n] = k.split('/').map(Number); return catalog.has(c, n) || !catalog.total(); });
   if (!chapters.length) return null;
   const have = await col().findOne({ userId: String(userId), source: 'trial' });
   if (have) {                                  // chapters added to the free trial later (a new class, say) reach existing students too
