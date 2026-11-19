@@ -86,6 +86,7 @@
     var group = q.get('track') || (myCls >= 11 ? 'senior' : 'junior');
     var picked0 = pick && S.plans.filter(function (x) { return x.id === pick; })[0];
     if (picked0) group = picked0.track || 'junior';
+    var seniorCls = Number(q.get('cls')) === 12 || (!q.get('cls') && myCls === 12) ? 12 : 11, wantSubject = q.get('subject');
     var body = h('div'), tabs = h('div', { class: 'tabs', style: 'justify-content:flex-start;margin-bottom:22px' }), ordersBox = h('div');
     (S.syl ? Promise.resolve() : BL.api('/syllabus').then(function (r) { S.syl = r.classes; }, function () { S.syl = {}; })).then(function () { draw(); });
 
@@ -133,10 +134,24 @@
         h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: (p.scope === 'subject' ? ' per subject / ' : ' / ') + (p.durationDays % 365 === 0 ? 'year' : p.durationDays + ' days') })),
         h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })), sel, btn);
     }
+    /** Class 11 and 12 subject plan: choose the class, then a card for each subject (Physics, Chemistry, Mathematics) */
+    function subjectCards(p) {
+      var pills = h('div', { class: 'sub-pick', style: 'grid-column:1/-1' }, h('div', { class: 'micro', text: 'Choose the class' }), h('div', { class: 'chips' }, [11, 12].map(function (c) {
+        return h('button', { class: 'cpill' + (c === seniorCls ? ' on' : ''), type: 'button', text: 'Class ' + c, onclick: function () { seniorCls = c; draw(); } });
+      })));
+      var subs = ((S.syl && S.syl[seniorCls]) || { subjects: [] }).subjects;
+      if (!subs.length) subs = ['Physics', 'Chemistry', 'Mathematics'].map(function (n) { return { name: n }; });
+      return [pills].concat(subs.map(function (sj) {
+        var btn = h('button', { class: 'btn primary', type: 'button', text: 'Buy for ' + BL.fmtInr(p.priceInr), onclick: function () { buy(p, { cls: seniorCls, subject: sj.name }, btn); } });
+        return h('div', { class: 'price', id: wantSubject === sj.name ? 'plan-' + p.id : null }, h('h3', { text: 'Class ' + seniorCls + ' · ' + sj.name }), h('div', { class: 'tg', text: sj.chapters ? sj.chapters + ' chapters · ' + sj.activities + ' activities' : 'Every chapter of the subject' }),
+          h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: ' / ' + (p.durationDays % 365 === 0 ? 'year' : p.durationDays + ' days') })),
+          h('ul', null, ['Every chapter of Class ' + seniorCls + ' ' + sj.name, 'Every simulation, unlimited use', 'Progress tracking and streaks'].map(function (t) { return h('li', { text: t }); })), btn);
+      }));
+    }
     function draw() {
       tabs.replaceChildren.apply(tabs, GROUPS.map(function (g) { return h('button', { class: 'tab' + (g[0] === group ? ' on' : ''), type: 'button', text: g[1], onclick: function () { group = g[0]; draw(); } }); }));
       var mine = S.plans.filter(function (p) { return (p.track || 'junior') === group; });
-      body.replaceChildren(mine.length ? h('div', { class: 'plans' }, mine.map(planCard)) : h('div', { class: 'empty', text: 'Plans for this group are coming soon.' }));
+      body.replaceChildren(mine.length ? h('div', { class: 'plans' }, mine.reduce(function (acc, p) { return acc.concat(p.scope === 'subject' ? subjectCards(p) : [planCard(p)]); }, [])) : h('div', { class: 'empty', text: 'Plans for this group are coming soon.' }));
       if (pick && document.getElementById('plan-' + pick)) { document.getElementById('plan-' + pick).scrollIntoView({ block: 'center' }); pick = null; }
     }
     render(head('#/plans', 'Plans', 'One payment, a full year, no auto-renewal').concat([

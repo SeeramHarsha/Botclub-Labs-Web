@@ -29,7 +29,7 @@
   var plan = params.get('plan');
   submit('registerForm', function (f) {
     return BL.api('/auth/register', { method: 'POST', body: { name: f.name.value, email: f.email.value, password: f.password.value, cls: f.cls.value, school: f.school.value, phone: f.phone.value, consent: f.consent.checked } }).then(function () {
-      location.href = plan ? '/app#/plans?plan=' + encodeURIComponent(plan) : '/app#/welcome';
+      location.href = plan ? '/app#/plans?plan=' + encodeURIComponent(plan) + (params.get('cls') ? '&cls=' + encodeURIComponent(params.get('cls')) : '') + (params.get('subject') ? '&subject=' + encodeURIComponent(params.get('subject')) : '') : '/app#/welcome';
     });
   });
   var pw = document.querySelector('#registerForm [name=password]'), meter = $('pwMeter');

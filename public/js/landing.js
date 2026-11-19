@@ -138,8 +138,8 @@
 
   // ------------------------------------------------------------------ pricing: Classes 6 to 10 and Classes 11 and 12 shown separately (live from the server, so prices can be changed in the admin area)
   var box = document.getElementById('prices'), priceTabs = document.getElementById('priceTabs');
-  if (box) Promise.all([BL.api('/plans'), BL.me()]).then(function (r) {
-    var plans = r[0].plans, signedIn = r[1] && r[1].user;
+  if (box) Promise.all([BL.api('/plans'), BL.me(), BL.api('/syllabus').then(function (x) { return x.classes; }, function () { return {}; })]).then(function (r) {
+    var plans = r[0].plans, signedIn = r[1] && r[1].user, syl = r[2] || {}, seniorCls = signedIn && signedIn.user && Number(signedIn.user.cls) === 12 ? 12 : 11;
     var span = function (d) { return d % 365 === 0 ? 'year' : d % 30 === 0 ? (d / 30) + ' months' : d + ' days'; };
     var GROUPS = [['junior', 'Classes 6 to 10'], ['senior', 'Classes 11 and 12']];
     function cardsFor(tk) {
@@ -149,6 +149,20 @@
         h('ul', null, free.map(function (t) { return h('li', { text: t }); })),
         h('a', { class: 'btn ghost', href: signedIn ? '/app' : '/register.html', text: signedIn ? 'Open the app' : 'Start free' }))];
       plans.filter(function (p) { return (p.track || 'junior') === tk; }).forEach(function (p) {
+        if (p.scope === 'subject') {            // Class 11 and 12: first the class, then one card for each subject
+          cards.push(h('div', { class: 'sub-pick' }, h('div', { class: 'micro', text: 'Choose the class' }), h('div', { class: 'chips' }, [11, 12].map(function (c) {
+            return h('button', { class: 'cpill' + (c === seniorCls ? ' on' : ''), type: 'button', text: 'Class ' + c, onclick: function () { seniorCls = c; showGroup('senior'); } });
+          }))));
+          var subs = ((syl[seniorCls] || {}).subjects || []).map(function (x) { return x; });
+          if (!subs.length) subs = ['Physics', 'Chemistry', 'Mathematics'].map(function (n) { return { name: n }; });
+          subs.forEach(function (sj) {
+            cards.push(h('div', { class: 'price' }, h('h3', { text: 'Class ' + seniorCls + ' · ' + sj.name }), h('div', { class: 'tg', text: sj.chapters ? sj.chapters + ' chapters · ' + sj.activities + ' activities' : 'Every chapter of the subject' }),
+              h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: ' / ' + span(p.durationDays) })),
+              h('ul', null, ['Every chapter of Class ' + seniorCls + ' ' + sj.name, 'Every simulation, unlimited use', 'Progress tracking and streaks'].map(function (t) { return h('li', { text: t }); })),
+              h('a', { class: 'btn primary', href: (signedIn ? '/app#/plans?plan=' : '/register.html?plan=') + encodeURIComponent(p.id) + '&cls=' + seniorCls + '&subject=' + encodeURIComponent(sj.name), text: 'Get ' + sj.name })));
+          });
+          return;
+        }
         cards.push(h('div', { class: 'price' + (p.badge ? ' best' : '') }, p.badge ? h('span', { class: 'badge gold', text: p.badge }) : null, h('h3', { text: p.name }), h('div', { class: 'tg', text: p.tagline }),
           h('div', { class: 'amt' }, BL.fmtInr(p.priceInr), h('small', { text: (p.scope === 'subject' ? ' per subject / ' : ' / ') + span(p.durationDays) })),
           h('ul', null, p.features.map(function (t) { return h('li', { text: t }); })),
